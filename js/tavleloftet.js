@@ -61,6 +61,6 @@
     e.preventDefault();
     var s = skjema.querySelector('.status');
     s.hidden = false;
-    s.textContent = 'Dette er en skisse. Innlogging med klassekode kommer når den første skreddersydde verdenen er bestilt.';
+    s.textContent = 'Dette er en skisse – innloggingen kobles til når verdenene flytter hit.';
   });
 })();

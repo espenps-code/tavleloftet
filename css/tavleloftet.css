@@ -184,6 +184,23 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 .bunn{background:var(--tavle-mork);border-top:1px solid var(--linje);padding:40px 24px}
 .bunn .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px;color:var(--lys-dempet)}
 .bunn .navn{font-family:var(--display);font-weight:700;font-size:24px;color:var(--lys)}
-.bunn nav{display:flex;gap:22px;flex-wrap:wrap}
+.bunn nav{display:flex;gap:22px;flex-wrap:wrap;align-items:center}
+
+/* «Kommer»-lenker (meny og bunn) – ikke klikkbare ennå */
+.snart-lenke{display:inline-flex;align-items:center;gap:6px;color:var(--lys-dempet);font-weight:700;padding:12px 4px;cursor:default}
+.snart-lenke small{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--rav)}
+.kommer-lys{box-shadow:inset 0 0 0 2px #D4EFEA;color:var(--papir)}
+
+/* Skreddersydd: toppfelt i to kolonner, eksempler og pakker */
+.sidetopp-to{display:flex;flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:48px!important}
+.sidetopp-tekst{flex:999 1 440px;min-width:0;display:flex;flex-direction:column;gap:20px}
+.sidetopp-bilde{flex:1 1 380px;min-width:0}
+.sidetopp-bilde img{width:100%;height:auto;display:block;border-radius:28px;box-shadow:0 26px 50px rgba(0,0,0,.45)}
+.eksempelgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:28px}
+.eksempelgrid .kort-bilde{height:auto;aspect-ratio:16/10}
+.eksempelgrid .kort-tekst h3{font-size:30px}
+.pakkegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px;align-items:stretch}
+.pakke-merke{align-self:flex-start;background:var(--rav);color:var(--blekk);font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.brikker.mork strong{font-weight:800}
 
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
