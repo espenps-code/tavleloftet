@@ -1,0 +1,26 @@
+/* Innloggingssida for læringsverdenene (Dinoparken, Lyslaget). Farger settes per verden i logginn.html. */
+@font-face{font-family:'Fredoka';font-weight:600;font-display:swap;src:url(../fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url(../fonts/fredoka-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:700;font-display:swap;src:url(../fonts/nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:800;font-display:swap;src:url(../fonts/nunito-latin-800-normal.woff2) format('woff2')}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px;background:var(--bg);color:var(--blekk);font:700 18px/1.45 'Nunito',system-ui,sans-serif}
+.kort{width:min(460px,100%);background:#fffdf6;border-radius:28px;padding:32px 28px 26px;text-align:center;box-shadow:0 10px 0 var(--skygge),0 24px 50px rgba(0,0,0,.18)}
+.ikon{width:96px;height:96px;border-radius:24px;margin:-80px auto 10px;display:block;box-shadow:0 6px 0 var(--skygge);background:#fff}
+h1{font:700 2rem/1.15 'Fredoka',system-ui,sans-serif;margin:6px 0 6px;color:var(--hoved)}
+p{margin:0 0 16px;color:#40524c}
+.rad{display:flex;gap:10px;align-items:center;justify-content:center}
+input{width:100%;font:700 2.4rem/1 'Fredoka',system-ui,sans-serif;letter-spacing:.18em;text-align:center;text-transform:uppercase;padding:14px 8px;border:4px solid #d9d2bf;border-radius:18px;background:#fff;color:var(--blekk);outline:none}
+input:focus{border-color:var(--hoved);box-shadow:0 0 0 5px color-mix(in srgb,var(--hoved) 22%,transparent)}
+button{font:700 1.35rem/1 'Fredoka',system-ui,sans-serif;border:0;border-radius:18px;cursor:pointer}
+.start{width:100%;margin-top:16px;padding:18px;background:var(--hoved);color:#fff;box-shadow:0 6px 0 var(--skygge)}
+.start:active{transform:translateY(4px);box-shadow:0 2px 0 var(--skygge)}
+.start:disabled{opacity:.55;cursor:default}
+.les{flex:0 0 auto;width:56px;height:56px;font-size:1.6rem;background:#efe8d6;color:var(--blekk)}
+.melding{min-height:1.6em;margin:14px 0 0;font-size:1.05rem}
+.melding.feil{color:#b3261e}
+.melding.ok{color:var(--hoved)}
+.liten{margin:18px 0 0;font-size:.9rem;color:#6b7a74;font-weight:700}
+@media (prefers-reduced-motion:reduce){.start:active{transform:none}}
+input::placeholder{color:#cfc7b2;opacity:1}

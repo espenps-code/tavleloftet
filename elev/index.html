@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#102224">
+<title>Elev · Tavleloftet</title>
+<script src="../js/tavleloftet-firebase.js"></script>
+<link rel="stylesheet" href="../css/elev-logginn.css">
+<style>
+  :root{--bg:radial-gradient(circle at 50% 0%,#1d3a3a 0%,#102224 65%,#0c1a1e 100%);--hoved:#0F6E63;--skygge:#0A4D45;--blekk:#1b2b27}
+  .merke{font:700 1.15rem 'Fredoka',system-ui,sans-serif;color:#0F6E63;letter-spacing:.02em;margin:0 0 4px}
+  .merke span{color:#B9861F}
+  .fortsett{display:none;margin:0 0 18px;padding:14px;border-radius:18px;background:#f3efe4}
+  .fortsett p{margin:0 0 10px;font-size:1rem}
+  .fortsett button{display:block;width:100%;margin-top:8px;padding:14px;background:#fff;color:var(--blekk);border:3px solid #d9d2bf;font-size:1.1rem}
+  .fortsett button:active{transform:translateY(2px)}
+</style>
+</head>
+<body>
+<main class="kort" style="margin-top:0">
+  <p class="merke">Tavle<span>loftet</span></p>
+  <h1>Hei! 👋</h1>
+  <div class="fortsett" id="fortsett"><p>Fortsett der du slapp:</p><div id="knapper"></div></div>
+  <p>Skriv inn koden din, så tar vi deg til riktig sted.</p>
+  <form id="skjema" autocomplete="off">
+    <div class="rad">
+      <input id="kode" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="7" placeholder="ABC-234" aria-label="Koden din">
+      <button type="button" class="les" id="les" aria-label="Les opp">🔊</button>
+    </div>
+    <button class="start" id="start" type="submit">Gå videre ➜</button>
+  </form>
+  <p class="melding" id="melding" role="status" aria-live="polite"></p>
+  <p class="liten">Har du ikke kode? Spør en voksen.</p>
+</main>
+<script>
+(function(){
+  'use strict';
+  /* Verdener som kan logges inn i. Ny verden: legg den til her (mappe + navn + emoji). */
+  var VERDENER = {
+    dinoparken: { navn: 'Dinoparken', emoji: '🦕' },
+    lyslaget:   { navn: 'Lyslaget',   emoji: '🤖' }
+  };
+  var KODE_RE = /^[A-HJ-NP-Z2-9]{6}$/;
+  var CFG = window.TAVLELOFTET_FIREBASE;
+  var $ = function(id){ return document.getElementById(id); };
+  var inn = $('kode'), melding = $('melding'), start = $('start');
+  var fmt = function(k){ return k.slice(0,3) + '-' + k.slice(3); };
+  function vis(t, type){ melding.textContent = t; melding.className = 'melding' + (type ? ' ' + type : ''); }
+  function snakk(t){ try{ var u = new SpeechSynthesisUtterance(t); u.lang = 'nb-NO'; u.rate = .95; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+  function gåTil(verden, kode){ location.href = '../' + verden + '/logginn.html' + (kode ? '?kode=' + kode : ''); }
+
+  // Er eleven allerede logget inn på denne iPaden? Vis snarveier.
+  var knapper = $('knapper'), noen = false;
+  Object.keys(VERDENER).forEach(function(v){
+    var okt = null; try { okt = JSON.parse(localStorage.getItem('tl-okt-' + v)); } catch (e) {}
+    if (okt && KODE_RE.test(okt.kode || '')) {
+      noen = true;
+      var b = document.createElement('button'); b.type = 'button';
+      b.textContent = VERDENER[v].emoji + ' ' + VERDENER[v].navn + ' (' + fmt(okt.kode) + ')';
+      b.onclick = function(){ location.href = '../' + v + '/'; };
+      knapper.appendChild(b);
+    }
+  });
+  if (noen) $('fortsett').style.display = 'block';
+
+  inn.addEventListener('input', function(){
+    var r = inn.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[IO01]/g, '').slice(0, 6);
+    inn.value = r.length > 3 ? r.slice(0,3) + '-' + r.slice(3) : r;
+    if (melding.className.indexOf('feil') > -1) vis('');
+  });
+  $('les').addEventListener('click', function(){ snakk('Hei! Skriv inn koden din, så tar vi deg til riktig sted. Har du ikke kode, spør en voksen.'); });
+
+  $('skjema').addEventListener('submit', function(e){
+    e.preventDefault();
+    var kode = inn.value.replace('-', '');
+    if (!KODE_RE.test(kode)) { vis('Koden har seks tegn, for eksempel ABC-234.', 'feil'); return; }
+    if (!CFG || !CFG.databaseURL) { vis('Innlogging er ikke slått på ennå.', 'feil'); return; }
+    start.disabled = true; vis('Leter etter koden …');
+    fetch(CFG.databaseURL.replace(/\/$/, '') + '/elever/' + kode + '/info.json', { cache: 'no-store' })
+      .then(function(r){ if (!r.ok) throw new Error('nett'); return r.json(); })
+      .then(function(info){
+        var v = info && VERDENER[info.verden];
+        if (!v) { start.disabled = false; vis('Fant ikke den koden. Sjekk at den er riktig.', 'feil'); snakk('Fant ikke den koden. Prøv igjen.'); return; }
+        vis(v.emoji + ' Til ' + v.navn + '!', 'ok');
+        setTimeout(function(){ gåTil(info.verden, kode); }, 400);
+      })
+      .catch(function(){ start.disabled = false; vis('Får ikke kontakt med nettet. Prøv igjen om litt.', 'feil'); });
+  });
+
+  // Lenke med kode (f.eks. fra QR): …/elev/?kode=ABC234
+  var fraLenke = (new URLSearchParams(location.search).get('kode') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (KODE_RE.test(fraLenke)) { inn.value = fmt(fraLenke); $('skjema').requestSubmit(); }
+  else if (!noen) setTimeout(function(){ inn.focus(); }, 150);
+})();
+</script>
+</body>
+</html>
