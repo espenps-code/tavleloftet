@@ -5,7 +5,7 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 
 ## Hva er hva
 - `index.html` – forsiden
-- `spill.html` – spillrommet (lenker til spillene på mykjespill.no)
+- `spill.html` – spillrommet (lenker til spillene i `spill/`)
 - `skreddersydd.html` – skreddersydde verdener (bestilling og klassekode er bare skisser ennå)
 - `personvern.html` – midlertidig side til foretaket er registrert
 - `css/tavleloftet.css` – utseendet (farger, skrift, knapper) for alle sidene
