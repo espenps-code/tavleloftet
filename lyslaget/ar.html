@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<script src="../js/tavleloftet-firebase.js"></script>
+<script src="../js/tavleloftet-elev.js" data-verden="lyslaget"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0d2b52">
+<title>Robotkort i AR – Lyslaget</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bangers&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bp: #133a6b; --bp-deep: #0d2b52; --chalk: #e9f1ff; --chalk-dim: #a9bfdf;
+  --hazard: #ffc83d; --hazard-deep: #e0a800; --hazard-ink: #241a00; --alarm: #d3302c;
+  --f-display: 'Bangers', 'Impact', 'Arial Black', sans-serif;
+  --f-body: 'Atkinson Hyperlegible', 'Verdana', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bp-deep); color: var(--chalk); font: 18px/1.4 var(--f-body); -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+[hidden] { display: none !important; }
+button { font: inherit; cursor: pointer; }
+
+/* Selve 3D-/kameraflaten */
+#flate { position: fixed; inset: 0; touch-action: none; }
+#flate video { object-fit: cover; }
+
+/* Startskjerm */
+#start { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 16px;
+  background-color: var(--bp);
+  background-image: linear-gradient(rgba(150,195,255,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(150,195,255,.14) 1px, transparent 1px);
+  background-size: 48px 48px; overflow-y: auto; }
+.startkort { width: min(560px, 100%); background: rgba(13,43,82,.92); border: 2px solid rgba(169,191,223,.35); border-radius: 22px; padding: 28px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.startkort h1 { font: 400 clamp(44px, 9vw, 64px)/1 var(--f-display); letter-spacing: .03em; margin: 0 0 6px; color: var(--hazard); text-shadow: 3px 3px 0 #0008; }
+.startkort .under { margin: 0 0 22px; color: var(--chalk-dim); }
+.steg { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 10px; text-align: left; }
+.steg li { display: flex; gap: 12px; align-items: center; background: rgba(255,255,255,.06); border-radius: 14px; padding: 10px 14px; }
+.steg b.nr { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--hazard); color: var(--hazard-ink); font-family: var(--f-display); font-size: 22px; font-weight: 400; }
+.knapper { display: grid; gap: 12px; }
+.stor { border: 0; border-radius: 16px; padding: 16px 20px; font-weight: 700; font-size: 21px; }
+.stor.gul { background: var(--hazard); color: var(--hazard-ink); box-shadow: 0 5px 0 var(--hazard-deep); }
+.stor.gul:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--hazard-deep); }
+.stor.lys { background: rgba(255,255,255,.1); color: var(--chalk); border: 2px solid rgba(169,191,223,.4); }
+.personvern { margin: 18px 0 0; font-size: 15px; color: var(--chalk-dim); }
+.feil { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #5a1414; color: #ffe1e1; font-size: 16px; text-align: left; }
+a.tilbake { color: var(--chalk-dim); font-size: 16px; display: inline-block; margin-top: 16px; }
+
+/* Topplinje i AR/visning */
+#topp { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(#0d2b52cc, transparent); pointer-events: none; }
+#topp > * { pointer-events: auto; }
+.pille { border: 0; border-radius: 999px; padding: 10px 16px; background: rgba(13,43,82,.85); color: var(--chalk); font-weight: 700; font-size: 17px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1.5px solid rgba(169,191,223,.35); }
+#navnchip { font: 400 30px/1 var(--f-display); letter-spacing: .04em; padding: 8px 18px 6px; border-radius: 999px; background: var(--c, var(--alarm)); color: #fff; text-shadow: 2px 2px 0 #0006; }
+
+/* Melding midt på (skann / kommer snart / laster) */
+#melding { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 9; width: min(420px, calc(100% - 32px)); text-align: center; pointer-events: none;
+  background: rgba(13,43,82,.82); border-radius: 20px; padding: 18px 20px; border: 1.5px solid rgba(169,191,223,.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+#melding .ikon { font-size: 44px; line-height: 1; margin-bottom: 6px; }
+#melding p { margin: 0; font-weight: 700; font-size: 20px; }
+#melding small { display: block; margin-top: 6px; color: var(--chalk-dim); font-size: 16px; font-weight: 400; }
+.ramme { width: 150px; height: 210px; margin: 0 auto 12px; border-radius: 14px; position: relative; }
+.ramme::before, .ramme::after { content: ''; position: absolute; inset: 0; border-radius: 14px; border: 4px dashed var(--hazard); opacity: .9; }
+.ramme::after { animation: puls 1.6s ease-in-out infinite; border-style: solid; opacity: 0; }
+@keyframes puls { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.18); opacity: 0; } }
+.snurr { width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 50%; border: 5px solid rgba(255,255,255,.2); border-top-color: var(--hazard); animation: snu 0.9s linear infinite; }
+@keyframes snu { to { transform: rotate(360deg); } }
+
+/* Bunnpanel */
+#bunn { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 18px) max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(transparent, #0d2b52cc); pointer-events: none; }
+#bunn > * { pointer-events: auto; }
+#forvandle { min-width: min(320px, 100%); font: 400 34px/1 var(--f-display); letter-spacing: .05em; padding: 16px 28px 13px; border: 0; border-radius: 20px;
+  background: var(--hazard); color: var(--hazard-ink); box-shadow: 0 6px 0 var(--hazard-deep), 0 10px 30px rgba(0,0,0,.4); }
+#forvandle:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hazard-deep); }
+#forvandle:disabled { opacity: .55; }
+#hint { margin: 0; font-size: 15px; color: var(--chalk-dim); text-shadow: 0 1px 3px #000; text-align: center; }
+#velger { position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top, 0px) + 66px); width: calc(100% - 32px); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 720px; }
+#velger button { border: 2px solid transparent; border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 16px; background: rgba(13,43,82,.85); color: var(--chalk); }
+#velger button[aria-pressed="true"] { border-color: var(--hazard); }
+#velger button:disabled { opacity: .45; }
+
+@media (prefers-reduced-motion: reduce) { .ramme::after, .snurr { animation: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+  "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+} }
+</script>
+</head>
+<body>
+
+<section id="start">
+  <div class="startkort">
+    <h1>Robotkort i AR</h1>
+    <p class="under">Se robotene stå på kortet ditt – og forvandle dem!</p>
+    <ol class="steg">
+      <li><b class="nr">1</b><span>Legg et robotkort flatt på bordet.</span></li>
+      <li><b class="nr">2</b><span>Trykk <b>Start kamera</b> og pek iPaden mot kortet.</span></li>
+      <li><b class="nr">3</b><span>Trykk <b>Forvandle!</b> når roboten står på kortet.</span></li>
+    </ol>
+    <div class="knapper">
+      <button type="button" class="stor gul" id="startAR">📷 Start kamera</button>
+      <button type="button" class="stor lys" id="start3D">Se robotene uten kort</button>
+    </div>
+    <div class="feil" id="feil" hidden></div>
+    <p class="personvern">Kamerabildet blir på denne enheten. Ingenting tas opp, lagres eller sendes.</p>
+    <a class="tilbake" href="index.html">← Tilbake til Lyslaget</a>
+  </div>
+</section>
+
+<div id="flate"></div>
+
+<header id="topp" hidden>
+  <button type="button" class="pille" id="avslutt">← Tilbake</button>
+  <span id="navnchip" hidden></span>
+</header>
+
+<div id="melding" hidden></div>
+
+<footer id="bunn" hidden>
+  <div id="velger" hidden></div>
+  <button type="button" id="forvandle" hidden>Forvandle!</button>
+  <p id="hint" hidden>Dra med fingeren for å snu roboten</p>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+// Rekkefølgen MÅ være den samme som bildene i ar/kort.mind (01-volt … 10-skrot).
+// Når en robot får 3D-modeller: legg til robot: og kjoretoy: med filstiene.
+const ROBOTER = [
+  { id: 'volt',  navn: 'Volt',  blir: 'buss',         farge: '#2C4A9A' },
+  { id: 'pil',   navn: 'Pil',   blir: 'sportsbil',    farge: '#D3302C', robot: 'ar/pil-robot.glb', kjoretoy: 'ar/pil-bil.glb' },
+  { id: 'brum',  navn: 'Brum',  blir: 'gravemaskin',  farge: '#C99300' },
+  { id: 'sky',   navn: 'Sky',   blir: 'helikopter',   farge: '#2E9C7C' },
+  { id: 'bolge', navn: 'Bølge', blir: 'redningsbåt',  farge: '#13889A' },
+  { id: 'spor',  navn: 'Spor',  blir: 'tog',          farge: '#9A7414' },
+  { id: 'bit',   navn: 'Bit',   blir: 'drone',        farge: '#5E9E12' },
+  { id: 'knas',  navn: 'Knas',  blir: 'monstertruck', farge: '#56368A' },
+  { id: 'snik',  navn: 'Snik',  blir: 'motorsykkel',  farge: '#D9661A' },
+  { id: 'skrot', navn: 'Skrot', blir: 'bergingsbil',  farge: '#7A4A26' },
+];
+const BITER = 1400;           // antall metallbiter i forvandlingen
+const VARIGHET = 2.6;         // sekunder
+
+const $ = id => document.getElementById(id);
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const klar = r => r.robot && r.kjoretoy;
+
+/* ---------- Hjelpere ---------- */
+const glatt = x => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+
+function normaliser(gltfScene, type) {
+  const holder = new THREE.Group();
+  holder.add(gltfScene);
+  let box = new THREE.Box3().setFromObject(gltfScene);
+  const size = box.getSize(new THREE.Vector3());
+  const s = type === 'robot' ? 1 / size.y : 0.95 / Math.max(size.x, size.z);
+  gltfScene.scale.multiplyScalar(s);
+  box = new THREE.Box3().setFromObject(gltfScene);
+  const c = box.getCenter(new THREE.Vector3());
+  gltfScene.position.x -= c.x; gltfScene.position.z -= c.z; gltfScene.position.y -= box.min.y;
+  gltfScene.traverse(o => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = false; } });
+  return holder;
+}
+
+function pikselLeser(map) {
+  if (!map || !map.image) return null;
+  try {
+    const img = map.image, w = img.width, h = img.height, s = Math.min(1, 256 / Math.max(w, h));
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+    const ctx = c.getContext('2d', { willReadFrequently: true }); ctx.drawImage(img, 0, 0, c.width, c.height);
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    return (u, v) => {
+      u = ((u % 1) + 1) % 1; v = ((v % 1) + 1) % 1;
+      const x = Math.min(c.width - 1, Math.floor(u * c.width));
+      const y = Math.min(c.height - 1, Math.floor((map.flipY ? 1 - v : v) * c.height));
+      const i = (y * c.width + x) * 4; return [d[i] / 255, d[i + 1] / 255, d[i + 2] / 255];
+    };
+  } catch { return null; }
+}
+
+// Plukker n punkter (med farge) jevnt fordelt over overflaten til modellen
+function lagPunkter(holder, n, reserveFarge) {
+  holder.updateMatrixWorld(true);
+  const deler = [];
+  holder.traverse(o => {
+    if (!o.isMesh) return;
+    const sampler = new MeshSurfaceSampler(o).build();
+    const areal = sampler.distribution[sampler.distribution.length - 1] || 0;
+    const mat = Array.isArray(o.material) ? o.material[0] : o.material;
+    deler.push({ o, sampler, areal, les: pikselLeser(mat && mat.map), base: mat && mat.color ? mat.color : null });
+  });
+  const tot = deler.reduce((s, d) => s + d.areal, 0) || 1;
+  const pos = [], col = [];
+  const p = new THREE.Vector3(), nrm = new THREE.Vector3(), cc = new THREE.Color(), uv = new THREE.Vector2();
+  for (const d of deler) {
+    const k = Math.round(n * d.areal / tot);
+    for (let i = 0; i < k && pos.length < n; i++) {
+      d.sampler.sample(p, nrm, cc, uv);
+      pos.push(p.clone().applyMatrix4(d.o.matrixWorld));
+      const c = new THREE.Color();
+      if (d.les) { const [r, g, b] = d.les(uv.x, uv.y); c.setRGB(r, g, b, THREE.SRGBColorSpace); }
+      else if (d.base) c.copy(d.base); else c.set(reserveFarge);
+      col.push(c);
+    }
+  }
+  while (pos.length < n) { const j = Math.floor(Math.random() * Math.max(1, pos.length)); pos.push(pos[j] ? pos[j].clone() : new THREE.Vector3()); col.push(col[j] ? col[j].clone() : new THREE.Color(reserveFarge)); }
+  return { pos, col };
+}
+
+function ring(farge, indre, ytre, opasitet) {
+  const m = new THREE.Mesh(new THREE.RingGeometry(indre, ytre, 72),
+    new THREE.MeshBasicMaterial({ color: farge, transparent: true, opacity: opasitet, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+  m.rotation.x = -Math.PI / 2; m.position.y = 0.003; return m;
+}
+
+/* ---------- Lyd (lages i nettleseren, ingen lydfiler) ---------- */
+let ac;
+function forvandlingsLyd(tilKjoretoy) {
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+    const t = ac.currentTime, ut = ac.createGain(); ut.gain.value = 0.9; ut.connect(ac.destination);
+    // stigende/fallende sveip
+    const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+    o.type = 'sawtooth'; f.type = 'lowpass'; f.frequency.value = 1400;
+    const [a, b] = tilKjoretoy ? [140, 900] : [900, 140];
+    o.frequency.setValueAtTime(a, t); o.frequency.exponentialRampToValueAtTime(b, t + 1.6);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
+    o.connect(f).connect(g).connect(ut); o.start(t); o.stop(t + 2.3);
+    // mekaniske klikk og klank
+    for (let k = 0; k < 12; k++) {
+      const tt = t + 0.25 + k * 0.14 + Math.random() * 0.05;
+      const q = ac.createOscillator(), qg = ac.createGain();
+      q.type = 'square'; q.frequency.setValueAtTime(220 + Math.random() * 520, tt);
+      qg.gain.setValueAtTime(0.06, tt); qg.gain.exponentialRampToValueAtTime(0.0001, tt + 0.07);
+      q.connect(qg).connect(ut); q.start(tt); q.stop(tt + 0.08);
+    }
+    // tungt «klonk» til slutt
+    const z = ac.createOscillator(), zg = ac.createGain(); const tz = t + VARIGHET * 0.82;
+    z.type = 'sine'; z.frequency.setValueAtTime(160, tz); z.frequency.exponentialRampToValueAtTime(45, tz + 0.35);
+    zg.gain.setValueAtTime(0.35, tz); zg.gain.exponentialRampToValueAtTime(0.0001, tz + 0.45);
+    z.connect(zg).connect(ut); z.start(tz); z.stop(tz + 0.5);
+  } catch { /* lyd er bare pynt */ }
+}
+
+/* ---------- Én robot med forvandling ---------- */
+class RobotScene {
+  constructor(r) { this.r = r; this.gruppe = new THREE.Group(); this.form = 'robot'; this.anim = null; }
+
+  async last() {
+    const [ga, gb] = await Promise.all([loader.loadAsync(this.r.robot), loader.loadAsync(this.r.kjoretoy)]);
+    this.robot = normaliser(ga.scene, 'robot');
+    this.bil = normaliser(gb.scene, 'kjoretoy');
+    if (this.r.kjoretoyRotasjon) this.bil.rotation.y = this.r.kjoretoyRotasjon;
+    const A = lagPunkter(this.robot, BITER, this.r.farge);
+    const B = lagPunkter(this.bil, BITER, this.r.farge);
+    // Sorter begge etter høyde, så bitene fra hodet havner øverst på bilen osv. (ser mer «mekanisk» ut)
+    const idx = arr => arr.pos.map((p, i) => i).sort((i, j) => arr.pos[i].y - arr.pos[j].y);
+    const ia = idx(A), ib = idx(B);
+    this.A = ia.map(i => A.pos[i]); this.cA = ia.map(i => A.col[i]);
+    this.B = ib.map(i => B.pos[i]); this.cB = ib.map(i => B.col[i]);
+    this.forsink = this.A.map(() => Math.random());
+    this.vri = this.A.map(() => (0.8 + Math.random() * 1.6) * (Math.random() < 0.5 ? -1 : 1));
+    this.akse = this.A.map(() => new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).normalize());
+
+    const geo = new THREE.BoxGeometry(0.032, 0.032, 0.012);
+    const mat = new THREE.MeshStandardMaterial({ metalness: 0.7, roughness: 0.3 });
+    this.biter = new THREE.InstancedMesh(geo, mat, BITER);
+    this.biter.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.biter.frustumCulled = false; this.biter.visible = false;
+    for (let i = 0; i < BITER; i++) this.biter.setColorAt(i, this.cA[i]);
+
+    this.glod = ring(this.r.farge, 0.38, 0.5, 0.35);
+    this.bolge = ring(this.r.farge, 0.46, 0.52, 0);
+    this.lys = new THREE.PointLight(new THREE.Color(this.r.farge), 0, 3); this.lys.position.set(0, 0.5, 0.4);
+
+    this.bil.visible = false;
+    this.gruppe.add(this.robot, this.bil, this.biter, this.glod, this.bolge, this.lys);
+    return this;
+  }
+
+  forvandle() {
+    if (this.anim) return false;
+    const tilBil = this.form === 'robot';
+    this.anim = { t: 0, fra: tilBil ? this.robot : this.bil, til: tilBil ? this.bil : this.robot, tilBil };
+    // retning: fra A→B eller B→A
+    this.P0 = tilBil ? this.A : this.B; this.P1 = tilBil ? this.B : this.A;
+    this.C0 = tilBil ? this.cA : this.cB; this.C1 = tilBil ? this.cB : this.cA;
+    forvandlingsLyd(tilBil);
+    if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
+    return true;
+  }
+
+  oppdater(dt, tid) {
+    // pustende glød under roboten
+    this.glod.material.opacity = 0.25 + 0.12 * Math.sin(tid * 2.2);
+    const a = this.anim;
+    if (!a) {
+      if (this.form === 'robot') this.robot.position.y = 0.012 * Math.sin(tid * 1.8);
+      return;
+    }
+    a.t += dt / VARIGHET; const t = Math.min(1, a.t);
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color();
+
+    // 1) kilden «lader opp» og forsvinner
+    if (t < 0.13) { const k = t / 0.13; a.fra.visible = true; a.fra.scale.setScalar(1 + 0.06 * Math.sin(k * Math.PI * 6) * k); }
+    else { a.fra.visible = false; a.fra.scale.setScalar(1); }
+
+    // 2) bitene virvler fra form A til form B
+    this.biter.visible = t > 0.1 && t < 1;
+    if (this.biter.visible) {
+      const krymp = 1 - glatt((t - 0.84) / 0.16);
+      for (let i = 0; i < BITER; i++) {
+        const st = 0.11 + this.forsink[i] * 0.22, sl = 0.6 + this.forsink[i] * 0.22;
+        const e = glatt((t - st) / (sl - st)), bue = Math.sin(Math.PI * e);
+        p.lerpVectors(this.P0[i], this.P1[i], e);
+        const vinkel = bue * this.vri[i] * 1.6, cs = Math.cos(vinkel), sn = Math.sin(vinkel);
+        const r = 1 + bue * 0.55, x = p.x * r, z = p.z * r;
+        p.x = x * cs - z * sn; p.z = x * sn + z * cs; p.y += bue * (0.25 + this.forsink[i] * 0.35);
+        q.setFromAxisAngle(this.akse[i], e * 9 * this.vri[i]);
+        const skal = (t < 0.14 ? (t - 0.1) / 0.04 : 1) * krymp * (1 + bue * 0.6);
+        s.setScalar(Math.max(0.0001, skal));
+        m.compose(p, q, s); this.biter.setMatrixAt(i, m);
+        c.copy(this.C0[i]).lerp(this.C1[i], e); this.biter.setColorAt(i, c);
+      }
+      this.biter.instanceMatrix.needsUpdate = true; this.biter.instanceColor.needsUpdate = true;
+    }
+
+    // 3) målet bygger seg opp
+    if (t > 0.78) { const k = glatt((t - 0.78) / 0.22); a.til.visible = true; a.til.scale.setScalar(0.82 + 0.18 * k + 0.04 * Math.sin(k * Math.PI)); }
+    else a.til.visible = false;
+
+    // lys og trykkbølger
+    this.lys.intensity = 6 * (Math.exp(-Math.pow((t - 0.12) / 0.06, 2)) + Math.exp(-Math.pow((t - 0.82) / 0.06, 2)));
+    const bolgeT = t < 0.5 ? (t - 0.08) / 0.3 : (t - 0.8) / 0.3;
+    if (bolgeT > 0 && bolgeT < 1) { this.bolge.scale.setScalar(1 + bolgeT * 1.6); this.bolge.material.opacity = 0.7 * (1 - bolgeT); }
+    else this.bolge.material.opacity = 0;
+
+    if (t >= 1) { this.bolge.material.opacity = 0; this.lys.intensity = 0; a.til.scale.setScalar(1); this.form = a.tilBil ? 'kjoretoy' : 'robot'; this.anim = null; this.biter.visible = false; this.etterForvandling && this.etterForvandling(this.form); }
+  }
+}
+
+const cache = new Map();
+function hentRobot(r) {
+  if (!cache.has(r.id)) cache.set(r.id, new RobotScene(r).last().catch(e => { cache.delete(r.id); throw e; }));
+  return cache.get(r.id);
+}
+
+/* ---------- Felles grensesnitt ---------- */
+let aktiv = null, aktivR = null, modus = null, stopp = null;
+
+function melding(html) { const el = $('melding'); if (!html) { el.hidden = true; return; } el.innerHTML = html; el.hidden = false; }
+const skannMelding = () => melding('<div class="ramme"></div><p>Pek kameraet mot et robotkort</p><small>Hold iPaden rolig, ca. en halv meter over kortet</small>');
+const lasteMelding = r => melding(`<div class="snurr"></div><p>Henter ${r.navn} …</p>`);
+const snartMelding = r => melding(`<div class="ikon">🔧</div><p>${r.navn} er på verkstedet!</p><small>${r.navn} kommer i 3D snart. Prøv Pil-kortet så lenge.</small>`);
+
+function visNavn(r) {
+  const chip = $('navnchip');
+  if (!r) { chip.hidden = true; return; }
+  chip.textContent = r.navn; chip.style.setProperty('--c', r.farge); chip.hidden = false;
+}
+function oppdaterKnapp() {
+  const b = $('forvandle');
+  b.hidden = !aktiv; $('hint').hidden = !aktiv;
+  if (aktiv) b.textContent = aktiv.form === 'robot' ? `Forvandle til ${aktiv.r.blir}!` : `Tilbake til robot!`;
+}
+$('forvandle').addEventListener('click', () => { if (aktiv && aktiv.forvandle()) $('forvandle').disabled = true; });
+function koble(scene) {
+  scene.etterForvandling = () => { $('forvandle').disabled = false; oppdaterKnapp(); };
+}
+
+// Dra med fingeren for å snu roboten (begge moduser)
+let dra = null;
+$('flate').addEventListener('pointerdown', e => { dra = { x: e.clientX }; });
+addEventListener('pointermove', e => { if (!dra || !aktiv || modus !== 'ar') return; aktiv.gruppe.rotation.y += (e.clientX - dra.x) * 0.012; dra.x = e.clientX; });
+addEventListener('pointerup', () => { dra = null; });
+
+function lagMiljo(renderer, scene) {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x334466, 0.6));
+  const sol = new THREE.DirectionalLight(0xffffff, 1.4); sol.position.set(1, 2, 1.5); scene.add(sol);
+}
+
+function visUI() { $('start').hidden = true; $('topp').hidden = false; $('bunn').hidden = false; }
+function tilbakeTilStart() {
+  if (stopp) { try { stopp(); } catch {} stopp = null; }
+  $('flate').innerHTML = ''; aktiv = null; aktivR = null; modus = null;
+  for (const id of ['topp', 'bunn', 'melding', 'forvandle', 'hint', 'velger']) $(id).hidden = true;
+  visNavn(null); $('start').hidden = false;
+}
+$('avslutt').addEventListener('click', tilbakeTilStart);
+
+function visFeil(tekst) { const f = $('feil'); f.innerHTML = tekst; f.hidden = false; }
+
+/* ---------- AR-modus: kamera + kortgjenkjenning ---------- */
+$('startAR').addEventListener('click', async () => {
+  $('feil').hidden = true;
+  const knapp = $('startAR'); knapp.disabled = true; knapp.textContent = 'Starter kamera …';
+  try {
+    if (!window.isSecureContext || !navigator.mediaDevices) throw new Error('usikker');
+    const { MindARThree } = await import('mindar-image-three');
+    const mindar = new MindARThree({
+      container: $('flate'), imageTargetSrc: 'ar/kort.mind', maxTrack: 1,
+      uiLoading: 'no', uiScanning: 'no', uiError: 'no', filterMinCF: 0.0001, filterBeta: 10,
+    });
+    const { renderer, scene, camera } = mindar;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    lagMiljo(renderer, scene);
+
+    // «Scene» som roboten står på: kortet ligger flatt, så vi vipper y-aksen opp av kortet.
+    const plattform = new THREE.Group(); plattform.rotation.x = Math.PI / 2; plattform.scale.setScalar(0.95);
+
+    ROBOTER.forEach((r, i) => {
+      const anker = mindar.addAnchor(i);
+      anker.onTargetFound = async () => {
+        aktivR = r; visNavn(r);
+        if (!klar(r)) { aktiv = null; oppdaterKnapp(); snartMelding(r); return; }
+        lasteMelding(r);
+        try {
+          const rs = await hentRobot(r);
+          if (aktivR !== r) return;
+          koble(rs);
+          plattform.clear(); plattform.add(rs.gruppe); anker.group.add(plattform);
+          aktiv = rs; melding(null); oppdaterKnapp();
+        } catch (e) { console.error(e); melding(`<div class="ikon">⚠️</div><p>Klarte ikke å hente ${r.navn}</p><small>Sjekk nettet og prøv igjen.</small>`); }
+      };
+      anker.onTargetLost = () => {
+        if (aktivR !== r) return;
+        aktivR = null; aktiv = null; visNavn(null); oppdaterKnapp(); skannMelding();
+      };
+    });
+
+    modus = 'ar'; visUI(); skannMelding();
+    await mindar.start();
+    const klokke = new THREE.Clock();
+    renderer.setAnimationLoop(() => {
+      const dt = Math.min(0.05, klokke.getDelta());
+      if (aktiv) aktiv.oppdater(dt, klokke.elapsedTime);
+      renderer.render(scene, camera);
+    });
+    stopp = () => { renderer.setAnimationLoop(null); mindar.stop(); renderer.dispose(); };
+  } catch (e) {
+    console.error(e);
+    tilbakeTilStart();
+    const navn = e && e.name;
+    if (e && e.message === 'usikker') visFeil('Kameraet virker bare når siden åpnes fra nettadressen (https). Åpne siden fra Lyslaget-nettsiden i stedet for som fil.');
+    else if (navn === 'NotAllowedError') visFeil('Kameraet fikk ikke lov. Trykk «Tillat» når iPaden spør. Har du sagt nei før? Gå til Innstillinger → Safari → Kamera og velg «Spør» eller «Tillat».');
+    else if (navn === 'NotFoundError') visFeil('Fant ikke noe kamera på denne enheten. Prøv «Se robotene uten kort».');
+    else visFeil('Kameraet startet ikke. Sjekk at du har nett, og prøv igjen. Du kan også trykke «Se robotene uten kort».');
+  } finally { knapp.disabled = false; knapp.textContent = '📷 Start kamera'; }
+});
+
+/* ---------- Visning uten kort ---------- */
+$('start3D').addEventListener('click', () => {
+  $('feil').hidden = true;
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setSize(innerWidth, innerHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  $('flate').appendChild(renderer.domElement);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color('#0d2b52');
+  scene.fog = new THREE.Fog('#0d2b52', 4, 9);
+  lagMiljo(renderer, scene);
+  const grid = new THREE.GridHelper(12, 48, 0x4a78b8, 0x234a7e); grid.material.transparent = true; grid.material.opacity = 0.5; scene.add(grid);
+  const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.05, 50);
+  camera.position.set(1.15, 0.85, 1.75);
+  const kontroll = new OrbitControls(camera, renderer.domElement);
+  kontroll.target.set(0, 0.32, 0); kontroll.enableDamping = true; kontroll.autoRotate = true; kontroll.autoRotateSpeed = 1.2;
+  kontroll.minDistance = 1.2; kontroll.maxDistance = 5; kontroll.maxPolarAngle = Math.PI * 0.49; kontroll.enablePan = false;
+  kontroll.addEventListener('start', () => { kontroll.autoRotate = false; });
+  const holder = new THREE.Group(); scene.add(holder);
+
+  const velger = $('velger');
+  velger.innerHTML = ROBOTER.map(r => `<button type="button" data-id="${r.id}" ${klar(r) ? '' : 'disabled title="Kommer snart"'}>${r.navn}${klar(r) ? '' : ' 🔧'}</button>`).join('');
+  velger.hidden = false;
+  async function velg(r) {
+    aktivR = r; visNavn(r); aktiv = null; oppdaterKnapp(); lasteMelding(r);
+    velger.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === r.id)));
+    try {
+      const rs = await hentRobot(r); if (aktivR !== r) return;
+      koble(rs); holder.clear(); holder.add(rs.gruppe); aktiv = rs; melding(null); oppdaterKnapp();
+    } catch (e) { console.error(e); melding(`<div class="ikon">⚠️</div><p>Klarte ikke å hente ${r.navn}</p><small>Sjekk nettet og prøv igjen.</small>`); }
+  }
+  velger.onclick = e => { const b = e.target.closest('button'); if (b && !b.disabled) velg(ROBOTER.find(r => r.id === b.dataset.id)); };
+
+  const tilpass = () => { camera.aspect = innerWidth / innerHeight; camera.fov = camera.aspect < 1 ? 58 : 40; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); };
+  tilpass();
+  addEventListener('resize', tilpass);
+  const klokke = new THREE.Clock();
+  let tid = 0;
+  const steg = dt => { tid += dt; if (aktiv) aktiv.oppdater(dt, tid); kontroll.update(dt); renderer.render(scene, camera); };
+  // ?opptak=1 brukes bare for å lage demovideo: da styres tiden utenfra, bilde for bilde
+  if (new URLSearchParams(location.search).get('opptak')) window.__steg = steg;
+  else renderer.setAnimationLoop(() => steg(Math.min(0.05, klokke.getDelta())));
+  stopp = () => { renderer.setAnimationLoop(null); removeEventListener('resize', tilpass); renderer.dispose(); };
+  modus = '3d'; visUI(); $('hint').textContent = 'Dra for å snu, klyp for å zoome';
+  velg(ROBOTER.find(klar));
+});
+
+// Til testing: ?vis=3d hopper rett til visningen uten kort
+if (new URLSearchParams(location.search).get('vis') === '3d') $('start3D').click();
+</script>
+</body>
+</html>

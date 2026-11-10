@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<script src="../js/tavleloftet-firebase.js"></script>
+<script src="../js/tavleloftet-elev.js" data-verden="dinoparken" data-side="logginn"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6b3a">
+<title>Logg inn · Dinoparken</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="../css/elev-logginn.css">
+<style>:root{--bg:linear-gradient(180deg,#cdeefa 0%,#bfe6c4 100%);--hoved:#2f6b3a;--skygge:#1e4a27;--blekk:#1b2b27}</style>
+</head>
+<body>
+<main class="kort">
+  <img class="ikon" src="icon-192.png" alt="">
+  <h1>Velkommen til Dinoparken!</h1>
+  <p id="tekst">Skriv inn koden din for å fortsette der du slapp.</p>
+  <form id="skjema" autocomplete="off">
+    <div class="rad">
+      <input id="kode" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="7" placeholder="ABC-234" aria-label="Koden din">
+      <button type="button" class="les" id="les" aria-label="Les opp">🔊</button>
+    </div>
+    <button class="start" id="start" type="submit">Inn i parken 🦕</button>
+  </form>
+  <p class="melding" id="melding" role="status" aria-live="polite"></p>
+  <p class="liten">Har du ikke kode? Spør en voksen.</p>
+</main>
+<script>
+(function(){
+  var TL = window.TL || {};
+  var $ = function(id){ return document.getElementById(id); };
+  var inn = $('kode'), melding = $('melding'), start = $('start');
+  var q = new URLSearchParams(location.search);
+  var til = q.get('til') || 'index.html';
+  if (!/^[a-z0-9-]+\.html([?#].*)?$/i.test(til)) til = 'index.html';   // bare sider i denne mappa
+  function vis(t, type){ melding.textContent = t; melding.className = 'melding' + (type ? ' ' + type : ''); }
+  function snakk(t){ try{ var u = new SpeechSynthesisUtterance(t); u.lang = 'nb-NO'; u.rate = .95; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+
+  if (TL.testmodus) { vis('Testmodus: skylagring er ikke slått på ennå.', 'ok'); setTimeout(function(){ location.replace(til); }, 900); return; }
+  if (q.get('melding') === 'slettet') vis('Koden er ikke i bruk lenger. Spør en voksen om en ny.', 'feil');
+
+  inn.addEventListener('input', function(){
+    var r = inn.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[IO01]/g, function(c){ return {I:'',O:'',0:'',1:''}[c]; }).slice(0, 6);
+    inn.value = r.length > 3 ? r.slice(0,3) + '-' + r.slice(3) : r;
+    if (melding.className.indexOf('feil') > -1) vis('');
+  });
+  $('les').addEventListener('click', function(){ snakk('Velkommen til Dinoparken! Skriv inn koden din. Har du ikke kode, spør en voksen.'); });
+
+  function provKode(kode){
+    start.disabled = true; vis('Henter parken din …');
+    TL.hentElev(kode).then(function(elev){
+      if (!elev || !elev.info) { start.disabled = false; vis('Fant ikke den koden. Sjekk at den er riktig.', 'feil'); snakk('Fant ikke den koden. Prøv igjen.'); return; }
+      if (elev.info.verden !== 'dinoparken') {
+        var v = (TL.VERDENER[elev.info.verden] || {}).navn || 'en annen verden';
+        start.disabled = false; vis('Denne koden hører til ' + v + '.', 'feil'); return;
+      }
+      vis('Hei igjen! 🎉', 'ok');
+      TL.loggInn(kode, elev, til);
+    }).catch(function(){ start.disabled = false; vis('Får ikke kontakt med nettet. Prøv igjen om litt.', 'feil'); });
+  }
+  $('skjema').addEventListener('submit', function(e){
+    e.preventDefault();
+    var kode = inn.value.replace('-', '');
+    if (!TL.KODE_RE.test(kode)) { vis('Koden har seks tegn, for eksempel ABC-234.', 'feil'); return; }
+    provKode(kode);
+  });
+  var fraLenke = (q.get('kode') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (TL.KODE_RE && TL.KODE_RE.test(fraLenke)) { inn.value = TL.formater(fraLenke); provKode(fraLenke); }
+  else setTimeout(function(){ inn.focus(); }, 150);
+})();
+</script>
+</body>
+</html>
