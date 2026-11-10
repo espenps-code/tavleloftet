@@ -3,43 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#102224">
+<meta name="theme-color" content="#070b14">
 <title>Elev · Tavleloftet</title>
 <script src="../js/tavleloftet-firebase.js"></script>
 <link rel="stylesheet" href="../css/elev-logginn.css">
 <style>
-  :root{--bg:radial-gradient(circle at 50% 0%,#1d3a3a 0%,#102224 65%,#0c1a1e 100%);--hoved:#0F6E63;--skygge:#0A4D45;--blekk:#1b2b27}
+  :root{--hoved:#0F6E63;--skygge:#0A4D45;--blekk:#1b2b27}
+  body{background:#070b14 radial-gradient(circle at 50% 45%,#1d3a3a 0%,#0b1420 45%,#070b14 80%);overflow:hidden}
+  #portal{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .kort{position:relative;z-index:1;background:rgba(255,253,246,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+        box-shadow:0 10px 0 var(--skygge),0 0 60px rgba(var(--glod),.45),0 24px 50px rgba(0,0,0,.35);transition:transform .9s cubic-bezier(.6,0,.4,1),opacity .7s,box-shadow .6s}
+  body{--glod:244,185,66}
   .merke{font:700 1.15rem 'Fredoka',system-ui,sans-serif;color:#0F6E63;letter-spacing:.02em;margin:0 0 4px}
   .merke span{color:#B9861F}
   .fortsett{display:none;margin:0 0 18px;padding:14px;border-radius:18px;background:#f3efe4}
   .fortsett p{margin:0 0 10px;font-size:1rem}
   .fortsett button{display:block;width:100%;margin-top:8px;padding:14px;background:#fff;color:var(--blekk);border:3px solid #d9d2bf;font-size:1.1rem}
   .fortsett button:active{transform:translateY(2px)}
+  body.inn .kort{transform:scale(.15) translateY(-40px);opacity:0}
+  #blink{position:fixed;inset:0;z-index:2;pointer-events:none;background:#fff;opacity:0;transition:opacity .45s}
+  body.inn #blink{opacity:1;transition-delay:.7s}
+  @media (prefers-reduced-motion:reduce){ .kort{transition:opacity .4s} body.inn .kort{transform:none} }
 </style>
 </head>
 <body>
-<main class="kort" style="margin-top:0">
+<canvas id="portal" aria-hidden="true"></canvas>
+<main class="kort">
   <p class="merke">Tavle<span>loftet</span></p>
   <h1>Hei! 👋</h1>
   <div class="fortsett" id="fortsett"><p>Fortsett der du slapp:</p><div id="knapper"></div></div>
-  <p>Skriv inn koden din, så tar vi deg til riktig sted.</p>
+  <p>Skriv inn koden din, så åpner portalen seg.</p>
   <form id="skjema" autocomplete="off">
     <div class="rad">
       <input id="kode" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="7" placeholder="ABC-234" aria-label="Koden din">
       <button type="button" class="les" id="les" aria-label="Les opp">🔊</button>
     </div>
-    <button class="start" id="start" type="submit">Gå videre ➜</button>
+    <button class="start" id="start" type="submit">Åpne portalen ✨</button>
   </form>
   <p class="melding" id="melding" role="status" aria-live="polite"></p>
   <p class="liten">Har du ikke kode? Spør en voksen.</p>
 </main>
+<div id="blink"></div>
+
+<script>
+/* =========================================================================
+   PORTALEN – tegnes med WebGL (ekte 3D-effekt i grafikkortet, ingen bilder).
+   Fargen kan byttes (Portal.farge) og den kan «suge inn» (Portal.inn).
+   ========================================================================= */
+var Portal = (function(){
+  var cv = document.getElementById('portal');
+  var gl = cv.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false });
+  var rolig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NØYTRAL = [0.96, 0.73, 0.26];          // gull (Tavleloftet-rav)
+  var NØYTRAL2 = [0.10, 0.75, 0.66];         // turkis
+  var farge = NØYTRAL.slice(), farge2 = NØYTRAL2.slice(), målA = NØYTRAL, målB = NØYTRAL2;
+  var sug = 0, sugStart = 0, mus = [0, 0], musMål = [0, 0], t0 = performance.now();
+  if (!gl) return { farge: function(){}, inn: function(cb){ setTimeout(cb, 300); }, nøytral: function(){} };
+
+  var VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
+  var FS = [
+    'precision mediump float;',
+    'uniform vec2 uRes; uniform float uT; uniform vec3 uA; uniform vec3 uB; uniform float uSug; uniform vec2 uMus;',
+    'float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }',
+    'float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);',
+    '  return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }',
+    'float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<4;i++){ v+=a*n(p); p*=2.03; a*=.5; } return v; }',
+    'void main(){',
+    '  float m = min(uRes.x, uRes.y);',
+    '  vec2 p = (gl_FragCoord.xy - .5*uRes) / m;',
+    '  p -= uMus * .035;',
+    '  float R = mix(.43, 2.2, uSug*uSug);',                   // portalens radius (vokser når den suger)
+    '  float r = length(p), a = atan(p.y, p.x);',
+    '  vec3 col = vec3(0.);',
+    // stjerner som flyr mot deg (tunnel-dybde)
+    '  float z = .35 / max(r, .02);',
+    '  for(int k=0;k<3;k++){ float fk=float(k);',
+    '    vec2 g = vec2(a*8./6.2832*(3.+fk), z*(1.+fk*.5) - uT*(.25+fk*.12) - uSug*3.);',
+    '    vec2 c = floor(g*4.); vec2 f = fract(g*4.)-.5;',
+    '    float s = h(c+fk*17.); float d = length(f - (vec2(h(c+3.),h(c+7.))-.5)*.6);',
+    '    col += smoothstep(.08, 0., d) * step(.86, s) * (.35 + .4*s) * smoothstep(.05,.5,r); }',
+    // virvel inne i portalen
+    '  float sw = a + uT*.6 + 2.2/(r+.25) + uSug*6.;',
+    '  float v = fbm(vec2(cos(sw), sin(sw))*2.2 + vec2(r*5.-uT*.8, uT*.15));',
+    '  float inni = smoothstep(R+.02, R-.12, r);',
+    '  vec3 virvel = mix(uB, uA, smoothstep(.3,.75,v)) * (.3 + 1.0*v*v) * (.5 + .55*smoothstep(R, 0., r));',
+    '  col = mix(col, col*.3 + virvel, inni*.92);',
+    // lysende ring med flammende kant
+    '  float kant = fbm(vec2(a*3. + uT*1.3, uT*.4)) * .05;',
+    '  float ring = exp(-abs(r - R - kant) * 38.);',
+    '  float glod = exp(-abs(r - R) * 7.) * .45;',
+    '  col += uA * ring * 1.05 + mix(uA, uB, smoothstep(R-.02, R+.06, r)) * glod * .75;',
+    // gnister rundt ringen
+    '  float gn = step(.985, h(floor(vec2(a*40., (r-R)*60. - uT*6.))));',
+    '  col += uA * gn * smoothstep(.09, 0., abs(r-R-.04)) * .9;',
+    '  col += vec3(1.) * smoothstep(.6, 1., uSug) * .8;',      // hvitt lys til slutt
+    '  float alpha = clamp(max(max(col.r,col.g),col.b)*1.4, 0., 1.);',
+    '  gl_FragColor = vec4(col, alpha);',
+    '}'].join('\n');
+
+  function sh(type, src){ var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.warn(gl.getShaderInfoLog(s)); return s; }
+  var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var U = {}; ['uRes','uT','uA','uB','uSug','uMus'].forEach(function(k){ U[k] = gl.getUniformLocation(pr, k); });
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  function størrelse(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.25);   // skånsomt mot iPad-batteriet
+    cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+    gl.viewport(0, 0, cv.width, cv.height);
+  }
+  addEventListener('resize', størrelse); størrelse();
+
+  // Vipp litt med mus eller når iPaden beveges
+  addEventListener('pointermove', function(e){ musMål = [(e.clientX/innerWidth - .5)*2, -(e.clientY/innerHeight - .5)*2]; });
+  addEventListener('deviceorientation', function(e){ if (e.gamma == null) return;
+    musMål = [Math.max(-1, Math.min(1, e.gamma/25)), Math.max(-1, Math.min(1, (e.beta-45)/25))]; });
+
+  function lerp(a, b, k){ return a + (b - a) * k; }
+  var ferdig = null;
+  function tegn(nå){
+    var t = (nå - t0) / 1000 * (rolig ? .35 : 1);
+    for (var i = 0; i < 3; i++){ farge[i] = lerp(farge[i], målA[i], .05); farge2[i] = lerp(farge2[i], målB[i], .05); }
+    if (sugStart) { var k = Math.min(1, (nå - sugStart) / 1500); sug = k * k * (3 - 2 * k); }   // 1,5 sek inn i portalen
+    mus[0] = lerp(mus[0], musMål[0], .06); mus[1] = lerp(mus[1], musMål[1], .06);
+    gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(U.uRes, cv.width, cv.height); gl.uniform1f(U.uT, t);
+    gl.uniform3fv(U.uA, farge); gl.uniform3fv(U.uB, farge2);
+    gl.uniform1f(U.uSug, rolig ? 0 : sug); gl.uniform2f(U.uMus, mus[0], mus[1]);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (ferdig && sug >= 1) { var cb = ferdig; ferdig = null; cb(); }
+    requestAnimationFrame(tegn);
+  }
+  requestAnimationFrame(tegn);
+
+  function hex(h){ var n = parseInt(h.slice(1), 16); return [(n>>16&255)/255, (n>>8&255)/255, (n&255)/255]; }
+  return {
+    farge: function(a, b){ målA = hex(a); målB = hex(b || a);
+      document.body.style.setProperty('--glod', målA.map(function(x){ return Math.round(x*255); }).join(',')); },
+    nøytral: function(){ målA = NØYTRAL; målB = NØYTRAL2; document.body.style.setProperty('--glod', '244,185,66'); },
+    inn: function(cb){
+      if (rolig) { setTimeout(cb, 600); return; }
+      sugStart = performance.now(); ferdig = cb;
+      setTimeout(function(){ if (ferdig) { var f = ferdig; ferdig = null; f(); } }, 2200);   // sikkerhetssperre
+    }
+  };
+})();
+</script>
+
 <script>
 (function(){
   'use strict';
-  /* Verdener som kan logges inn i. Ny verden: legg den til her (mappe + navn + emoji). */
+  /* Verdener som kan logges inn i. Ny verden: legg den til her (mappe, navn, emoji og to portalfarger). */
   var VERDENER = {
-    dinoparken: { navn: 'Dinoparken', emoji: '🦕' },
-    lyslaget:   { navn: 'Lyslaget',   emoji: '🤖' }
+    dinoparken: { navn: 'Dinoparken', emoji: '🦕', farge: '#5fd35a', farge2: '#e8c24a' },
+    lyslaget:   { navn: 'Lyslaget',   emoji: '🤖', farge: '#3aa8ff', farge2: '#7af0ff' }
   };
   var KODE_RE = /^[A-HJ-NP-Z2-9]{6}$/;
   var CFG = window.TAVLELOFTET_FIREBASE;
@@ -48,9 +169,17 @@
   var fmt = function(k){ return k.slice(0,3) + '-' + k.slice(3); };
   function vis(t, type){ melding.textContent = t; melding.className = 'melding' + (type ? ' ' + type : ''); }
   function snakk(t){ try{ var u = new SpeechSynthesisUtterance(t); u.lang = 'nb-NO'; u.rate = .95; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
-  function gåTil(verden, kode){ location.href = '../' + verden + '/logginn.html' + (kode ? '?kode=' + kode : ''); }
 
-  // Er eleven allerede logget inn på denne iPaden? Vis snarveier.
+  // Portalen åpner seg i verdenens farge og suger eleven inn
+  function reis(verden, url){
+    var v = VERDENER[verden];
+    Portal.farge(v.farge, v.farge2);
+    setTimeout(function(){
+      document.body.classList.add('inn');
+      Portal.inn(function(){ location.href = url; });
+    }, 650);
+  }
+
   var knapper = $('knapper'), noen = false;
   Object.keys(VERDENER).forEach(function(v){
     var okt = null; try { okt = JSON.parse(localStorage.getItem('tl-okt-' + v)); } catch (e) {}
@@ -58,7 +187,7 @@
       noen = true;
       var b = document.createElement('button'); b.type = 'button';
       b.textContent = VERDENER[v].emoji + ' ' + VERDENER[v].navn + ' (' + fmt(okt.kode) + ')';
-      b.onclick = function(){ location.href = '../' + v + '/'; };
+      b.onclick = function(){ reis(v, '../' + v + '/'); };
       knapper.appendChild(b);
     }
   });
@@ -67,31 +196,33 @@
   inn.addEventListener('input', function(){
     var r = inn.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[IO01]/g, '').slice(0, 6);
     inn.value = r.length > 3 ? r.slice(0,3) + '-' + r.slice(3) : r;
-    if (melding.className.indexOf('feil') > -1) vis('');
+    if (melding.className.indexOf('feil') > -1) { vis(''); Portal.nøytral(); }
   });
-  $('les').addEventListener('click', function(){ snakk('Hei! Skriv inn koden din, så tar vi deg til riktig sted. Har du ikke kode, spør en voksen.'); });
+  $('les').addEventListener('click', function(){ snakk('Hei! Skriv inn koden din, så åpner portalen seg. Har du ikke kode, spør en voksen.'); });
 
   $('skjema').addEventListener('submit', function(e){
     e.preventDefault();
     var kode = inn.value.replace('-', '');
     if (!KODE_RE.test(kode)) { vis('Koden har seks tegn, for eksempel ABC-234.', 'feil'); return; }
     if (!CFG || !CFG.databaseURL) { vis('Innlogging er ikke slått på ennå.', 'feil'); return; }
-    start.disabled = true; vis('Leter etter koden …');
+    start.disabled = true; vis('Portalen leter …');
     fetch(CFG.databaseURL.replace(/\/$/, '') + '/elever/' + kode + '/info.json', { cache: 'no-store' })
       .then(function(r){ if (!r.ok) throw new Error('nett'); return r.json(); })
       .then(function(info){
         var v = info && VERDENER[info.verden];
-        if (!v) { start.disabled = false; vis('Fant ikke den koden. Sjekk at den er riktig.', 'feil'); snakk('Fant ikke den koden. Prøv igjen.'); return; }
+        if (!v) { start.disabled = false; Portal.farge('#ff7a6b', '#ffb36b'); vis('Fant ikke den koden. Sjekk at den er riktig.', 'feil'); snakk('Fant ikke den koden. Prøv igjen.'); return; }
         vis(v.emoji + ' Til ' + v.navn + '!', 'ok');
-        setTimeout(function(){ gåTil(info.verden, kode); }, 400);
+        reis(info.verden, '../' + info.verden + '/logginn.html?kode=' + kode);
       })
       .catch(function(){ start.disabled = false; vis('Får ikke kontakt med nettet. Prøv igjen om litt.', 'feil'); });
   });
 
-  // Lenke med kode (f.eks. fra QR): …/elev/?kode=ABC234
   var fraLenke = (new URLSearchParams(location.search).get('kode') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (KODE_RE.test(fraLenke)) { inn.value = fmt(fraLenke); $('skjema').requestSubmit(); }
   else if (!noen) setTimeout(function(){ inn.focus(); }, 150);
+
+  // Kommer eleven tilbake med «tilbake»-knappen, skal siden være klar igjen
+  addEventListener('pageshow', function(e){ if (e.persisted) { document.body.classList.remove('inn'); location.reload(); } });
 })();
 </script>
 </body>
