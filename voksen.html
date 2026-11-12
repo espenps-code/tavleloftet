@@ -44,6 +44,7 @@ button{font:700 1rem 'Fredoka',system-ui,sans-serif;border:0;border-radius:12px;
 .elev .kode{font:700 1.15rem 'Fredoka',sans-serif;letter-spacing:.1em;color:var(--rav)}
 .elev .knapper{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .elev .knapper button{padding:8px 12px;font-size:.88rem}
+.rapportlenke{font:700 .88rem 'Fredoka',system-ui,sans-serif;padding:8px 12px;border-radius:12px;background:var(--rav);color:var(--blekk);text-decoration:none}
 @media (max-width:760px){.elev{grid-template-columns:1fr 1fr}.elev .knapper{grid-column:1/-1;justify-content:flex-start}}
 .merke{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:800;background:#0f2a2b;border:1px solid var(--linje)}
 .tom{color:var(--dempet);padding:10px 0}
@@ -57,7 +58,12 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
   #lapp .ramme{border:3px dashed #999;border-radius:24px;padding:30px;max-width:520px;margin:0 auto}
   #lapp h1{font:700 2.2rem 'Fredoka',sans-serif;margin:0 0 6px}
   #lapp .kode{font:700 3.4rem 'Fredoka',sans-serif;letter-spacing:.14em;margin:14px 0}
-  #lapp svg{width:190px;height:190px}
+  #lapp svg{width:170px;height:170px}
+  #lapp .klipp{color:#999;margin:14px 0;font-size:.9rem;white-space:nowrap;overflow:hidden}
+  #lapp .voksen h2{font:700 1.4rem 'Fredoka',sans-serif;margin:0 0 6px}
+  #lapp .liten-kode{font-size:2.2rem}
+  #lapp .voksen svg{width:120px;height:120px}
+  #lapp .ramme{padding:20px 26px;break-inside:avoid}
 }
 </style>
 </head>
@@ -75,7 +81,7 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
 
   <section class="boks" id="innlogging" hidden>
     <h2>Logg inn</h2>
-    <p class="liten">For lærere og foresatte som har fått tilgang. Elevene logger ikke inn her – de bruker elevkoden sin inne i verdenen.</p>
+    <p class="liten">Bare for Tavleloftet. Elevene bruker elevkoden sin inne i verdenen, og voksne åpner rapporten med voksenkoden.</p>
     <form id="loggInnSkjema">
       <div class="felt"><label for="ep">E-post</label><input id="ep" type="email" autocomplete="username" required></div>
       <div class="felt"><label for="pw">Passord</label><input id="pw" type="password" autocomplete="current-password" required></div>
@@ -102,7 +108,7 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
         <button class="hoved" type="submit">Lag elevkode</button>
       </form>
       <p class="liten" style="margin:10px 0 0">Navnet lagres bare på din konto, og eleven ser det aldri. Bruk gjerne kallenavn eller fornavn. Framgangen lagres under koden, uten navn.</p>
-      <div class="nykode" id="nyKode"><span class="liten">Ny elevkode til <span id="nyNavn"></span>:</span><b id="nyKodeTekst"></b><span class="liten">Eleven går til <b id="elevAdr"></b> og skriver inn koden.</span></div>
+      <div class="nykode" id="nyKode"><span class="liten">Ny elevkode til <span id="nyNavn"></span>:</span><b id="nyKodeTekst"></b><span class="liten">Eleven går til <b id="elevAdr"></b> og skriver inn koden.</span><span class="liten" style="display:block;margin-top:8px">Voksenkode til rapporten: <b id="nyVk" style="display:inline;font-size:1.1rem;letter-spacing:.08em"></b></span></div>
       <p class="melding" id="nyMld"></p>
     </section>
 
@@ -120,6 +126,14 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
   <div class="kode" id="lappKode"></div>
   <div id="lappQr"></div>
   <p style="font-size:.9rem;color:#555">…eller skann QR-koden med iPaden.</p>
+</div>
+<p class="klipp">✂ – – – – – – – – – – – – – – – – – – – – – – – – – – – – –</p>
+<div class="ramme voksen">
+  <h2>Til den voksne: framgangsrapport</h2>
+  <p>Se hvilke mål <span id="lappNavn2"></span> har nådd, og skriv ut en rapport.<br>Åpne <b id="lappAdr2"></b> og skriv inn voksenkoden:</p>
+  <div class="kode liten-kode" id="lappVk"></div>
+  <div id="lappQr2"></div>
+  <p style="font-size:.9rem;color:#555">Voksenkoden viser bare framgangen til denne ene eleven. Ikke del den med eleven.</p>
 </div></div>
 
 <script>
@@ -177,10 +191,16 @@ $('google').addEventListener('click', function(){
     .catch(function(e){ mld('innMld', e && e.code === 'auth/unauthorized-domain' ? 'Denne adressen er ikke godkjent i Firebase ennå.' : 'Google-innloggingen ble avbrutt.', 'feil'); });
 });
 
-function nyKode(){
-  var a = new Uint32Array(6); crypto.getRandomValues(a);
-  var k = ''; for (var i = 0; i < 6; i++) k += ALFABET[a[i] % ALFABET.length];
+function nyKode(lengde){
+  lengde = lengde || 6;
+  var a = new Uint32Array(lengde); crypto.getRandomValues(a);
+  var k = ''; for (var i = 0; i < lengde; i++) k += ALFABET[a[i] % ALFABET.length];
   return k;
+}
+/* Voksenkoden (10 tegn) åpner rapporten for én elev. Den sendes til den voksne sammen med elevkoden. */
+var fmtVk = function(k){ return k ? k.slice(0,5) + '-' + k.slice(5) : ''; };
+function husk(vk, navn){            // så rapport.html på denne maskinen kjenner eleven ved navn
+  try { var l = JSON.parse(localStorage.getItem('tl-voksenkoder')) || {}; l[vk] = { navn: navn }; localStorage.setItem('tl-voksenkoder', JSON.stringify(l)); } catch (e) {}
 }
 function ledigKode(forsok){
   var k = nyKode();
@@ -196,10 +216,11 @@ $('nyElev').addEventListener('submit', function(e){
   if (!navn) return;
   mld('nyMld', 'Lager kode …'); $('nyKode').style.display = 'none';
   ledigKode(0).then(function(k){
-    var nå = firebase.database.ServerValue.TIMESTAMP, opp = {};
+    var nå = firebase.database.ServerValue.TIMESTAMP, opp = {}, vk = nyKode(10);
     opp['elever/' + k + '/info'] = { eier: bruker.uid, verden: verden, opprettet: nå };
-    opp['voksne/' + bruker.uid + '/elever/' + k] = { navn: navn, verden: verden, opprettet: nå };
-    return db.ref().update(opp).then(function(){ return k; });
+    opp['voksenkoder/' + vk + '/info'] = { elev: k, eier: bruker.uid, opprettet: nå };
+    opp['voksne/' + bruker.uid + '/elever/' + k] = { navn: navn, verden: verden, opprettet: nå, voksenkode: vk };
+    return db.ref().update(opp).then(function(){ $('nyVk').textContent = fmtVk(vk); return k; });
   }).then(function(k){
     $('nyNavn').textContent = navn + ' (' + VERDENER[verden] + ')';
     $('nyKodeTekst').textContent = fmt(k); $('nyKode').style.display = 'block';
@@ -228,6 +249,15 @@ var elever = {};
 function lastListe(){
   db.ref('voksne/' + bruker.uid + '/elever').get().then(function(s){
     elever = s.val() || {};
+    // Elever som ble laget før voksenkoden fantes, får en nå.
+    var opp = {}, mangler = Object.keys(elever).filter(function(k){ return !elever[k].voksenkode; });
+    mangler.forEach(function(k){
+      var vk = nyKode(10); elever[k].voksenkode = vk;
+      opp['voksenkoder/' + vk + '/info'] = { elev: k, eier: bruker.uid, opprettet: firebase.database.ServerValue.TIMESTAMP };
+      opp['voksne/' + bruker.uid + '/elever/' + k + '/voksenkode'] = vk;
+    });
+    return mangler.length ? db.ref().update(opp).catch(function(){ mangler.forEach(function(k){ delete elever[k].voksenkode; }); }) : null;
+  }).then(function(){
     var koder = Object.keys(elever).sort(function(a, b){ return (elever[a].navn || '').localeCompare(elever[b].navn || '', 'nb'); });
     if (!koder.length) { $('liste').innerHTML = '<p class="tom">Ingen elever ennå. Lag den første over.</p>'; return; }
     return Promise.all(koder.map(function(k){ return db.ref('elever/' + k).get().then(function(x){ return [k, x.val()]; }, function(){ return [k, null]; }); }))
@@ -236,9 +266,9 @@ function lastListe(){
           var k = r[0], sky = r[1] || {}, e = elever[k];
           return '<div class="elev" data-kode="' + k + '">' +
             '<div><div class="navn">' + esc(e.navn) + '</div><span class="merke">' + esc(VERDENER[e.verden] || e.verden) + '</span></div>' +
-            '<div class="kode">' + fmt(k) + '</div>' +
+            '<div><div class="kode">' + fmt(k) + '</div><div class="liten">' + (e.voksenkode ? 'Voksenkode: ' + fmtVk(e.voksenkode) : 'Voksenkode mangler') + '</div></div>' +
             '<div class="liten">Sist aktiv: ' + tid(sky.oppdatert) + '<br>' + esc(sammendrag(e.verden, sky.data)) + '</div>' +
-            '<div class="knapper"><button class="sek" data-g="lapp">Innloggingslapp</button><button class="sek" data-g="kopi">Sikkerhetskopi</button><button class="fare" data-g="null">Nullstill</button><button class="fare" data-g="slett">Slett</button></div>' +
+            '<div class="knapper">' + (e.voksenkode ? '<a class="rapportlenke" href="rapport.html?v=' + e.voksenkode + '">Rapport</a>' : '') + '<button class="sek" data-g="lapp">Innloggingslapp</button><button class="sek" data-g="kopi">Sikkerhetskopi</button><button class="fare" data-g="null">Nullstill</button><button class="fare" data-g="slett">Slett</button></div>' +
           '</div>';
         }).join('');
       });
@@ -246,6 +276,8 @@ function lastListe(){
 }
 
 $('liste').addEventListener('click', function(e){
+  var lenke = e.target.closest('a.rapportlenke');
+  if (lenke) { var ek = lenke.closest('.elev').dataset.kode; husk(elever[ek].voksenkode, elever[ek].navn); return; }
   var b = e.target.closest('button[data-g]'); if (!b) return;
   var k = b.closest('.elev').dataset.kode, el = elever[k], g = b.dataset.g;
   if ((g === 'null' || g === 'slett') && !b.dataset.sikker) {
@@ -257,6 +289,7 @@ $('liste').addEventListener('click', function(e){
     db.ref('elever/' + k).update({ data: null, oppdatert: firebase.database.ServerValue.TIMESTAMP }).then(lastListe);
   } else if (g === 'slett') {
     var opp = {}; opp['elever/' + k] = null; opp['voksne/' + bruker.uid + '/elever/' + k] = null;
+    if (el.voksenkode) opp['voksenkoder/' + el.voksenkode] = null;
     db.ref().update(opp).then(lastListe);
   } else if (g === 'kopi') {
     db.ref('elever/' + k).get().then(function(s){
@@ -269,7 +302,10 @@ $('liste').addEventListener('click', function(e){
     $('lappVerden').textContent = VERDENER[el.verden]; $('lappNavn').textContent = el.navn;
     $('lappAdr').textContent = base.replace(/^https?:\/\//, ''); $('lappKode').textContent = fmt(k);
     var qrUrl = base + '?kode=' + k;
-    var skriv = function(){ try { var q = qrcode(0, 'M'); q.addData(qrUrl); q.make(); $('lappQr').innerHTML = q.createSvgTag({ scalable: true, margin: 2 }); } catch (x) { $('lappQr').textContent = ''; } setTimeout(function(){ print(); }, 150); };
+    var rapAdr = base.replace(/elev\/$/, 'rapport.html');
+    $('lappNavn2').textContent = el.navn; $('lappAdr2').textContent = rapAdr.replace(/^https?:\/\//, ''); $('lappVk').textContent = fmtVk(el.voksenkode);
+    var qr = function(id, adr){ try { var q = qrcode(0, 'M'); q.addData(adr); q.make(); $(id).innerHTML = q.createSvgTag({ scalable: true, margin: 2 }); } catch (x) { $(id).textContent = ''; } };
+    var skriv = function(){ qr('lappQr', qrUrl); qr('lappQr2', rapAdr + '?v=' + el.voksenkode); setTimeout(function(){ print(); }, 150); };
     window.qrcode ? skriv() : last('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js').then(skriv, skriv);
   }
 });

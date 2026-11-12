@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Framgangsrapport · Tavleloftet</title>
+<!-- Felles oppsett og «karakterboka». Én målfil per verden: legg til en linje her for hver nye verden. -->
+<script src="js/tavleloftet-firebase.js"></script>
+<script src="js/maal-dinoparken.js"></script>
+<script src="js/tavleloftet-framgang.js"></script>
+<style>
+@font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url(fonts/fredoka-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:400;font-display:swap;src:url(fonts/nunito-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
+:root{--tavle:#102224;--kort:#1D3A3A;--linje:#2c4b49;--lys:#F3EFE4;--dempet:#C9D3CC;--rav:#F4B942;--rav-s:#B9861F;
+  --blekk:#1B2B27;--graa:#5b6763;--strek:#d9ddd6;--gronn:#0F6E63;--gronn-l:#dff1ea;--gul-l:#fdf1d2;--rod:#a8321f;--rod-l:#fbe3de}
+*{box-sizing:border-box}
+body{margin:0;background:var(--tavle);color:var(--lys);font:400 16px/1.5 'Nunito',system-ui,sans-serif}
+h1,h2,h3{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:700;margin:0}
+a{color:var(--rav)}
+button{font:700 .95rem 'Nunito',system-ui,sans-serif;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+.hoved{background:var(--rav);color:var(--blekk);box-shadow:0 3px 0 var(--rav-s)}
+.sek{background:transparent;color:var(--lys);border:2px solid var(--linje)}
+select,input{font:700 1rem 'Nunito',system-ui,sans-serif;padding:10px 12px;border-radius:10px;border:2px solid var(--linje);background:#0f2a2b;color:var(--lys);max-width:100%}
+.topp{max-width:860px;margin:0 auto;padding:18px 16px 0}
+.topp header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.topp h1{font-size:1.5rem}.topp h1 span{color:var(--rav)}
+.linje{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.boks{background:var(--kort);border:1px solid var(--linje);border-radius:16px;padding:18px;margin-bottom:16px}
+.liten{font-size:.88rem;color:var(--dempet)}
+.demo{background:var(--rav);color:var(--blekk);font-weight:800;border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.feil{color:#ff9c8f;font-weight:700}
+#vk{text-transform:uppercase;letter-spacing:.08em;width:15em}
+.ark h1[contenteditable]{outline:none;border-bottom:2px dashed transparent;cursor:text}
+.ark h1[contenteditable]:hover,.ark h1[contenteditable]:focus{border-bottom-color:var(--strek)}
+.tips{font-size:.8rem;color:var(--graa)}
+
+/* ---------- Selve rapporten: et hvitt ark ---------- */
+.ark{max-width:860px;margin:16px auto 60px;background:#fff;color:var(--blekk);border-radius:6px;padding:34px 38px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.ark h1{font-size:1.7rem}.ark h2{font-size:1.15rem;margin:26px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--blekk)}
+.hode{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:3px solid var(--blekk);padding-bottom:12px}
+.hode .meta{text-align:right;font-size:.9rem;color:var(--graa)}
+.tall{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.tall div{border:1.5px solid var(--strek);border-radius:10px;padding:10px 12px}
+.tall b{display:block;font:700 1.5rem 'Fredoka','Nunito',sans-serif}
+.tall span{font-size:.82rem;color:var(--graa)}
+.oppsum{margin:0;font-size:1rem}
+.oppsum li{margin-bottom:4px}
+.uker{display:flex;align-items:flex-end;gap:3px;height:70px;margin-top:6px}
+.uker i{flex:1;background:var(--gronn);border-radius:3px 3px 0 0;min-height:2px;display:block}
+.uker i.tom{background:var(--strek)}
+.ukeakse{display:flex;justify-content:space-between;font-size:.75rem;color:var(--graa);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--graa);padding:4px 8px 4px 0;font-weight:800}
+td{padding:7px 8px 7px 0;border-top:1px solid var(--strek);vertical-align:middle}
+tr.gruppe td{border-top:0;padding-top:16px;font:700 1rem 'Fredoka','Nunito',sans-serif}
+.merke{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.8rem;font-weight:800;white-space:nowrap;border:1.5px solid transparent}
+.m-naadd{background:var(--gronn-l);color:var(--gronn);border-color:var(--gronn)}
+.m-vei{background:var(--gul-l);color:#7a5600;border-color:#d8a52b}
+.m-ikke{color:var(--graa);border-color:var(--strek)}
+.m-rep{background:var(--rod-l);color:var(--rod);border-color:var(--rod)}
+.stolpe{height:8px;background:var(--strek);border-radius:99px;overflow:hidden;min-width:70px}
+.stolpe i{display:block;height:100%;background:var(--gronn);border-radius:99px}
+.detalj{font-size:.8rem;color:var(--graa);white-space:nowrap}
+.dato{white-space:nowrap;font-weight:700}
+td.gjor{text-align:right;white-space:nowrap}
+td.gjor button{padding:4px 10px;font-size:.78rem;background:#fff;color:var(--blekk);border:1.5px solid var(--strek)}
+textarea{width:100%;min-height:90px;font:400 1rem/1.5 'Nunito',system-ui,sans-serif;border:1.5px solid var(--strek);border-radius:10px;padding:10px 12px;color:var(--blekk);resize:vertical}
+.fot{margin-top:26px;padding-top:10px;border-top:1px solid var(--strek);font-size:.78rem;color:var(--graa)}
+.kunprint{display:none}
+@media (max-width:640px){
+  .ark{padding:22px 16px;border-radius:0;margin-top:10px}
+  .tall{grid-template-columns:repeat(2,1fr)}
+  .hode{flex-direction:column;align-items:flex-start}.hode .meta{text-align:left}
+  th.skjul,td.skjul{display:none}
+}
+@page{size:A4;margin:14mm}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .topp,.ikkeprint,td.gjor,th.gjor{display:none!important}
+  .ark{box-shadow:none;margin:0;padding:0;max-width:none;border-radius:0}
+  .kunprint{display:block}
+  tr,.tall,.blokk{break-inside:avoid}
+  h2{break-after:avoid}
+  .merke,.stolpe i,.uker i,.stolpe{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  textarea{border:0;padding:0;resize:none;min-height:0}
+  .blokk:has(textarea:placeholder-shown){display:none}
+  body{font-size:10pt} table{font-size:9.5pt} td{padding:3px 8px 3px 0} tr.gruppe td{padding-top:9px}
+  .ark h2{margin:14px 0 6px} .tall{margin-top:10px} .tall div{padding:6px 10px} .uker{height:45px}
+}
+</style>
+</head>
+<body>
+<div class="topp">
+  <header>
+    <h1>Tavle<span>loftet</span> · framgangsrapport</h1>
+  </header>
+  <div class="demo" id="demoMerke" hidden>Eksempelvisning med oppdiktede tall. Ingenting hentes eller lagres.</div>
+
+  <section class="boks" id="velger">
+    <div class="linje" id="harElever" hidden style="margin-bottom:14px">
+      <label for="elev" class="liten">Elev</label>
+      <select id="elev"></select>
+      <button class="hoved" id="skrivUt">Skriv ut / lagre som PDF</button>
+      <button class="sek" id="fjern">Fjern fra denne enheten</button>
+    </div>
+    <form id="leggTil" class="linje">
+      <input id="vk" placeholder="Voksenkode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" required>
+      <input id="vnavn" placeholder="Elevens navn (valgfritt)" maxlength="40">
+      <button class="sek" type="submit">Legg til elev</button>
+    </form>
+    <p class="liten" style="margin:10px 0 0">Voksenkoden fikk du sammen med elevkoden. Navnet lagres bare på denne enheten, aldri i skyen.</p>
+  </section>
+  <p class="feil" id="mld"></p>
+</div>
+
+<main class="ark" id="ark" hidden></main>
+
+<script>
+(function(){
+'use strict';
+var CFG = window.TAVLELOFTET_FIREBASE, F = window.TLFramgang, MAAL = window.TL_MAAL || {};
+var $ = function(id){ return document.getElementById(id); };
+var vis = function(id, ja){ $(id).hidden = !ja; };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+var fmtKode = function(k){ return k.slice(0,3) + '-' + k.slice(3); };
+function dato(s, kort){            // '2026-11-12' → '12. november 2026'
+  if (!s) return '';
+  var d = new Date(s + 'T12:00:00');
+  return d.toLocaleDateString('nb-NO', kort ? { day:'numeric', month:'short' } : { day:'numeric', month:'long', year:'numeric' });
+}
+function dagerSiden(s){ return Math.round((new Date(F.idag() + 'T12:00:00') - new Date(s + 'T12:00:00')) / 864e5); }
+
+var DB = CFG && CFG.databaseURL ? CFG.databaseURL.replace(/\/$/, '') : null;
+var VK_RE = /^[A-HJ-NP-Z2-9]{10}$/, LSK = 'tl-voksenkoder';
+var demo = /[?&]demo\b/.test(location.search) || location.protocol === 'file:' || !DB;
+var kjente = {};          // voksenkode → { navn }   (ligger bare på denne enheten)
+var elever = {};          // voksenkode → { navn, verden, kode }
+var overstyr = {};        // voksenkode → { maalId: { s:'godkjent'|'opphevet', dato } }
+var logger = {};          // voksenkode → { logg, oppdatert }
+var valgt = null;
+
+function hent(sti){ return fetch(DB + '/' + sti + '.json', { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error('nett'); return r.json(); }); }
+function lagreKjente(){ try { localStorage.setItem(LSK, JSON.stringify(kjente)); } catch (e) {} }
+function rens(t){ return String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function fmtVk(k){ return k.slice(0,5) + '-' + k.slice(5); }
+function mld(t){ $('mld').textContent = t || ''; }
+
+/* ================= Start ================= */
+if (demo) { vis('demoMerke', true); vis('leggTil', false); lagDemo(); fyllVelger('DEMO'); }
+else {
+  try { kjente = JSON.parse(localStorage.getItem(LSK)) || {}; } catch (e) { kjente = {}; }
+  // Kommer vi fra QR-koden på lappen (…/rapport.html?v=KODE)? Ta vare på koden og fjern den fra adressen.
+  var fraAdr = rens((location.search.match(/[?&]v=([^&]+)/) || [])[1]);
+  if (fraAdr) history.replaceState(null, '', location.pathname);
+  if (VK_RE.test(fraAdr) && !kjente[fraAdr]) { kjente[fraAdr] = { navn: '' }; lagreKjente(); }
+  fyllVelger(VK_RE.test(fraAdr) ? fraAdr : null);
+}
+$('skrivUt').addEventListener('click', function(){ print(); });
+$('elev').addEventListener('change', function(){ velg(this.value); });
+$('leggTil').addEventListener('submit', function(e){
+  e.preventDefault();
+  var vk = rens($('vk').value), navn = $('vnavn').value.trim();
+  if (!VK_RE.test(vk)) return mld('Voksenkoden har 10 tegn. Sjekk at du har skrevet den riktig.');
+  mld('Leter …');
+  hent('voksenkoder/' + vk + '/info').then(function(info){
+    if (!info) return mld('Fant ingen elev med den voksenkoden.');
+    kjente[vk] = { navn: navn || (kjente[vk] || {}).navn || '' }; lagreKjente();
+    $('vk').value = ''; $('vnavn').value = ''; delete logger[vk];
+    fyllVelger(vk);
+  }).catch(function(){ mld('Fikk ikke kontakt. Sjekk nettet og prøv igjen.'); });
+});
+$('fjern').addEventListener('click', function(){
+  var b = this;
+  if (!b.dataset.sikker) { b.dataset.sikker = 1; b.textContent = 'Sikker? Trykk igjen'; setTimeout(function(){ delete b.dataset.sikker; b.textContent = 'Fjern fra denne enheten'; }, 4000); return; }
+  delete b.dataset.sikker; b.textContent = 'Fjern fra denne enheten';
+  if (demo) return;
+  delete kjente[valgt]; delete logger[valgt]; lagreKjente(); fyllVelger(null);
+});
+
+function visNavn(vk){ var n = ((demo ? elever : kjente)[vk] || {}).navn; return n || 'Elev uten navn'; }
+function fyllVelger(start){
+  var koder = Object.keys(demo ? elever : kjente).sort(function(a, b){ return visNavn(a).localeCompare(visNavn(b), 'nb'); });
+  vis('harElever', !!koder.length);
+  if (!koder.length) { vis('ark', false); valgt = null; return; }
+  $('elev').innerHTML = koder.map(function(k){ return '<option value="' + k + '">' + esc(visNavn(k)) + (demo || kjente[k].navn ? '' : ' (' + fmtVk(k) + ')') + '</option>'; }).join('');
+  start = start && koder.indexOf(start) >= 0 ? start : koder[0];
+  $('elev').value = start; velg(start);
+}
+function velg(vk){
+  valgt = vk; mld('');
+  if (logger[vk]) return tegn();
+  vis('ark', false);
+  hent('voksenkoder/' + vk).then(function(v){
+    if (!v || !v.info) { mld('Fant ingen elev med voksenkoden ' + fmtVk(vk) + '. Den kan være slettet.'); return; }
+    overstyr[vk] = v.overstyr || {};
+    return hent('elever/' + v.info.elev).then(function(e){
+      if (!e || !e.info) { mld('Denne eleven finnes ikke lenger.'); return; }
+      var V = MAAL[e.info.verden], logg = null;
+      try { logg = JSON.parse((e.data || {})[V && V.nokkel]); } catch (x) {}
+      elever[vk] = { navn: kjente[vk].navn, verden: e.info.verden, kode: v.info.elev };
+      logger[vk] = { logg: logg && logg.v === 1 ? logg : F.ny(), oppdatert: e.oppdatert || 0 };
+      if (valgt === vk) tegn();
+    });
+  }).catch(function(){ mld('Klarte ikke å hente framgangen. Sjekk nettet og prøv igjen.'); });
+}
+
+/* ================= Regn ut status for hvert mål ================= */
+function status(kode){
+  var el = elever[kode], logg = logger[kode].logg, ov = overstyr[kode] || {};
+  return F.alleMaal(el.verden).map(function(x){
+    var m = logg.m[x.maal.id], k = F.krav(el.verden, x.maal.id), v = F.vurder(m, k), o = ov[x.maal.id];
+    var r = { gruppe: x.gruppe, maal: x.maal, krav: k, v: v, sist: m && m.l, type: 'ikke', naadd: null, manuelt: false };
+    if (o && o.s === 'godkjent') { r.type = 'naadd'; r.naadd = o.dato; r.manuelt = true; }
+    else if (o && o.s === 'opphevet') { r.type = v.antall ? 'vei' : 'ikke'; r.opphevet = true; }
+    else if (m && m.nd) { r.type = 'naadd'; r.naadd = m.nd; r.senest = !!m.fr; }
+    else if (v.antall) r.type = 'vei';
+    // Nådd før, men bommer mye nå? Da trenger det repetisjon.
+    if (r.type === 'naadd' && v.avSiste >= 10 && v.riktigeSiste / v.avSiste < 0.7) r.repeter = true;
+    return r;
+  });
+}
+
+/* ================= Tegn rapporten ================= */
+function tegn(){
+  var kode = valgt, el = elever[kode], V = MAAL[el.verden], ark = $('ark');
+  vis('ark', true);
+  if (!V) { ark.innerHTML = '<p>Denne verdenen har ingen målfil ennå, så det finnes ingen rapport for den.</p>'; return; }
+  var logg = logger[kode].logg, S = status(kode);
+  var naadd = S.filter(function(r){ return r.type === 'naadd'; }), vei = S.filter(function(r){ return r.type === 'vei'; });
+  var dager = Object.keys(logg.dag).sort(), n = 0, riktige = 0;
+  dager.forEach(function(d){ n += logg.dag[d][0]; riktige += logg.dag[d][1]; });
+  var forste = dager[0], siste = dager[dager.length - 1];
+
+  var h = '<div class="hode"><div><h1 id="navnFelt"' + (demo ? '' : ' contenteditable="plaintext-only" spellcheck="false"') + '>' + esc(el.navn || 'Elev') + '</h1><div>Framgangsrapport · ' + esc(V.navn) + (demo ? '' : ' <span class="tips ikkeprint">· trykk på navnet for å endre det</span>') + '</div></div>' +
+          '<div class="meta">Skrevet ut ' + dato(F.idag()) + '<br>' + (forste ? 'Periode: ' + dato(forste, true) + ' – ' + dato(siste) : 'Ingen oppgaver løst ennå') + '</div></div>';
+
+  h += '<div class="tall"><div><b>' + naadd.length + ' av ' + S.length + '</b><span>mål nådd</span></div>' +
+       '<div><b>' + n + '</b><span>oppgaver løst</span></div>' +
+       '<div><b>' + (n ? Math.round(riktige / n * 100) + ' %' : '–') + '</b><span>riktige på første forsøk</span></div>' +
+       '<div><b>' + dager.length + '</b><span>dager med øving</span></div></div>';
+
+  /* --- Oppsummering i klartekst --- */
+  h += '<h2>Oppsummering</h2><ul class="oppsum">';
+  if (!n) h += '<li>Eleven har ikke løst noen oppgaver ennå.</li>';
+  else {
+    var s28 = dager.filter(function(d){ return dagerSiden(d) < 28; }), n28 = 0;
+    s28.forEach(function(d){ n28 += logg.dag[d][0]; });
+    h += '<li>Siste fire uker: øvd <b>' + s28.length + ' ' + (s28.length === 1 ? 'dag' : 'dager') + '</b> og løst <b>' + n28 + ' oppgaver</b>. Sist aktiv ' + dato(siste) + '.</li>';
+    if (naadd.length) {
+      var nyest = naadd.slice().sort(function(a, b){ return a.naadd < b.naadd ? 1 : -1; }).slice(0, 3);
+      h += '<li><b>Sist nådde mål:</b> ' + nyest.map(function(r){ return esc(r.gruppe.navn) + ' – ' + esc(r.maal.navn) + ' (' + dato(r.naadd, true) + ')'; }).join(', ') + '.</li>';
+    }
+    var naer = vei.slice().sort(function(a, b){ return b.v.andel - a.v.andel; }).slice(0, 2);
+    if (naer.length) h += '<li><b>Nærmest neste mål:</b> ' + naer.map(function(r){ return esc(r.gruppe.navn) + ' – ' + esc(r.maal.navn) + ' (' + mangler(r) + ')'; }).join('; ') + '.</li>';
+    var strev = S.filter(function(r){ return r.repeter || (r.type === 'vei' && r.v.avSiste >= 10 && r.v.riktigeSiste / r.v.avSiste < 0.7); });
+    if (strev.length) h += '<li><b>Trenger mer øving:</b> ' + strev.map(function(r){ return esc(r.gruppe.navn) + ' – ' + esc(r.maal.navn) + ' (' + r.v.riktigeSiste + ' av de ' + r.v.avSiste + ' siste riktige)'; }).join('; ') + '.</li>';
+  }
+  h += '</ul>';
+
+  /* --- Aktivitet siste fire uker --- */
+  if (n) {
+    var maks = 1, sok = [], i, d;
+    for (i = 27; i >= 0; i--) { d = F.idag(new Date(Date.now() - i * 864e5)); sok.push([d, (logg.dag[d] || [0])[0]]); maks = Math.max(maks, (logg.dag[d] || [0])[0]); }
+    h += '<div class="blokk"><h2>Aktivitet siste fire uker</h2><div class="uker">' + sok.map(function(x){ return '<i class="' + (x[1] ? '' : 'tom') + '" style="height:' + (x[1] ? Math.max(8, x[1] / maks * 100) : 3) + '%" title="' + dato(x[0], true) + ': ' + x[1] + ' oppgaver"></i>'; }).join('') +
+         '</div><div class="ukeakse"><span>' + dato(sok[0][0], true) + '</span><span>Oppgaver per dag (høyeste: ' + maks + ')</span><span>' + dato(sok[27][0], true) + '</span></div></div>';
+  }
+
+  /* --- Alle målene --- */
+  h += '<h2>Målene</h2><table><thead><tr><th>Mål</th><th>Status</th><th>Dato nådd</th><th class="skjul">Framgang</th><th class="gjor"></th></tr></thead><tbody>';
+  var forrige = null;
+  S.forEach(function(r){
+    if (r.gruppe !== forrige) { forrige = r.gruppe; h += '<tr class="gruppe"><td colspan="5">' + (r.gruppe.ikon ? r.gruppe.ikon + ' ' : '') + esc(r.gruppe.navn) + '</td></tr>'; }
+    var merke = r.type === 'naadd' ? '<span class="merke m-naadd">✓ Nådd</span>' : r.type === 'vei' ? '<span class="merke m-vei">På vei</span>' : '<span class="merke m-ikke">Ikke startet</span>';
+    if (r.repeter) merke += ' <span class="merke m-rep">Bør repeteres</span>';
+    var detalj = r.v.antall ? r.v.antall + ' oppg. · ' + r.v.riktigeSiste + '/' + r.v.avSiste + ' siste riktige · ' + r.v.dager + (r.v.dager === 1 ? ' dag' : ' dager') : r.type === 'naadd' ? 'Nådd før rapporten ble koblet på' : 'Krav: ' + r.krav.riktige + ' riktige av de ' + r.krav.oppgaver + ' siste' + (r.krav.dager > 1 ? ', ' + r.krav.dager + ' dager' : '');
+    h += '<tr data-maal="' + esc(r.maal.id) + '"><td>' + esc(r.maal.navn) + '</td><td>' + merke + '</td>' +
+         '<td class="dato">' + (r.naadd ? dato(r.naadd) + (r.manuelt ? ' <span class="detalj">(godkjent av voksen)</span>' : r.senest ? ' <span class="detalj">(eller tidligere)</span>' : '') : r.opphevet ? '<span class="detalj">opphevet av voksen</span>' : '') + '</td>' +
+         '<td class="skjul"><div class="stolpe"><i style="width:' + Math.round((r.type === 'naadd' ? 1 : r.v.andel) * 100) + '%"></i></div><div class="detalj">' + detalj + '</div></td>' +
+         '<td class="gjor">' + (r.type === 'naadd' ? '<button data-g="opphev">Opphev</button>' : '<button data-g="godkjenn">Godkjenn</button>') + (r.manuelt || r.opphevet ? ' <button data-g="auto">Angre</button>' : '') + '</td></tr>';
+  });
+  h += '</tbody></table>';
+
+  h += '<div class="blokk"><h2>Kommentar</h2><textarea id="kommentar" placeholder="Skriv en kommentar som blir med på utskriften. Den lagres ikke."></textarea></div>';
+  var kk = F.krav(el.verden, '');
+  h += '<div class="fot">Et mål regnes som nådd når eleven har løst minst ' + kk.oppgaver + ' oppgaver i målet og hatt minst ' + kk.riktige + ' riktige av de ' + kk.oppgaver + ' siste på første forsøk' + (kk.dager > 1 ? ', fordelt på minst ' + kk.dager + ' ulike dager' : '') + '. Datoen viser første gang kravet ble oppfylt. «Bør repeteres» betyr at eleven har bommet mye på målet i det siste. En voksen kan godkjenne eller oppheve mål manuelt. ' +
+       'Elevkode ' + fmtKode(el.kode) + ' · tavleloftet.no</div>';
+  ark.innerHTML = h;
+  document.title = 'Framgangsrapport – ' + (el.navn || 'elev') + ' – ' + F.idag();
+}
+function mangler(r){
+  var ut = [], k = r.krav, v = r.v;
+  if (v.antall < k.oppgaver) ut.push((k.oppgaver - v.antall) + ' oppgaver til');
+  if (v.riktigeSiste < k.riktige && v.antall >= k.oppgaver) ut.push(v.riktigeSiste + ' av ' + k.riktige + ' riktige');
+  if (v.dager < k.dager) ut.push((k.dager - v.dager) + (k.dager - v.dager === 1 ? ' dag til' : ' dager til'));
+  return ut.join(', ') || 'opphevet av voksen';
+}
+
+/* ================= Læreren godkjenner / opphever ================= */
+$('ark').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-g]'); if (!b) return;
+  var id = b.closest('tr').dataset.maal, g = b.dataset.g;
+  var verdi = g === 'auto' ? null : { s: g === 'godkjenn' ? 'godkjent' : 'opphevet', dato: F.idag() };
+  var kommentar = ($('kommentar') || {}).value || '';
+  var ferdig = function(){
+    overstyr[valgt] = overstyr[valgt] || {};
+    if (verdi) overstyr[valgt][id] = verdi; else delete overstyr[valgt][id];
+    tegn(); $('kommentar').value = kommentar;
+  };
+  if (demo) return ferdig();
+  fetch(DB + '/voksenkoder/' + valgt + '/overstyr/' + encodeURIComponent(id) + '.json', verdi ? { method: 'PUT', body: JSON.stringify(verdi) } : { method: 'DELETE' })
+    .then(function(r){ if (!r.ok) throw 0; ferdig(); }).catch(function(){ mld('Klarte ikke å lagre avgjørelsen.'); });
+});
+/* Navnet øverst kan endres rett i rapporten. Det lagres bare på denne enheten. */
+$('ark').addEventListener('focusout', function(e){
+  if (e.target.id !== 'navnFelt' || demo) return;
+  var navn = e.target.textContent.trim().slice(0, 40);
+  if (navn === 'Elev' && !kjente[valgt].navn) return;
+  kjente[valgt].navn = elever[valgt].navn = navn; lagreKjente();
+  var o = $('elev').selectedOptions[0]; if (o) o.textContent = navn || 'Elev uten navn (' + fmtVk(valgt) + ')';
+  document.title = 'Framgangsrapport – ' + (navn || 'elev') + ' – ' + F.idag();
+});
+$('ark').addEventListener('keydown', function(e){ if (e.target.id === 'navnFelt' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+
+/* ================= Eksempeldata (bare i eksempelvisning) ================= */
+function lagDemo(){
+  var frø = 7; function rnd(){ frø = (frø * 16807) % 2147483647; return frø / 2147483647; }
+  elever = { DEMO: { navn: 'Eksempel-elev', verden: 'dinoparken', kode: 'DEMO22' } };
+  var L = F.ny();
+  // [mål, treffsikkerhet, første dag (dager siden), antall øvingsdager, oppgaver per dag]
+  [['klokke-1',.97,26,4,7],['klokke-2',.93,19,5,6],['klokke-3',.8,9,4,5],['penger-1',.96,25,3,8],['penger-2',.9,16,3,6],
+   ['tier-1',.98,24,3,8],['tier-2',.55,12,4,5],['lyder-1',.95,22,4,6],['lyder-2',.88,6,2,6],['stavelser-1',.94,20,4,6],['stavelser-2',.85,3,1,5]]
+  .forEach(function(x){
+    for (var d = 0; d < x[3]; d++) {
+      var siden = Math.max(0, x[2] - d * Math.ceil(x[2] / (x[3] + 1) * .8) - Math.floor(rnd() * 2));
+      var dag = F.idag(new Date(Date.now() - siden * 864e5));
+      for (var i = 0; i < x[4]; i++) F.leggTil(L, 'dinoparken', x[0], rnd() < x[1], dag);
+    }
+  });
+  logger.DEMO = { logg: L, oppdatert: Date.now() };
+}
+})();
+</script>
+</body>
+</html>

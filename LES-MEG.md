@@ -7,6 +7,8 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 - `index.html` – forsiden
 - `spill.html` – spillrommet (lenker til spillene i `spill/`)
 - `skreddersydd.html` – skreddersydde verdener (bestilling og klassekode er bare skisser ennå)
+- `voksen.html` – bare for Espen: lager elevkode og voksenkode, og skriver ut innloggingslapp
+- `rapport.html` – framgangsrapporten kjøperen åpner med voksenkoden (se `maler/laererrapport/LES-MEG.md`)
 - `personvern.html` – midlertidig side til foretaket er registrert
 - `css/tavleloftet.css` – utseendet (farger, skrift, knapper) for alle sidene
 - `js/tavleloftet.js` – karusellen og den lille bevegelsen i toppbildet

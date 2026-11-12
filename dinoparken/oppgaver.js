@@ -783,6 +783,8 @@ function open(id, {enc=1, onClose=null}={}){
   lagOverlay();
   const st=STASJONER.find(s=>s.id===id), L=lesLæring(), t=L.tema[id], K={...(KULISSE[enc]||KULISSE[1]), id:KULISSE[enc]?enc:1};
   const forfall=!!(t.rep && dayStr()>=t.rep.neste);
+  // lærerrapporten: stjerner eleven hadde fra før, blir med som nådde mål
+  if(window.TLFramgang) for(const s of STASJONER) for(const n of L.tema[s.id].mestret) TLFramgang.merkNaadd(s.id+'-'+n, true);
   const nivå=Math.min(t.nivå,BYGDE[id]);
   // én oppgave fra et tidligere nivå når eleven er på nivå 2 eller høyere
   const nivåer=Array(LÆRING.rundeLengde).fill(nivå);
@@ -847,8 +849,10 @@ function neste(){ R.i++; if(R.i>=R.ko.length) ferdig(); else visOppgave(); }
 function registrer(nivå, ok){
   const L=lesLæring(), t=L.tema[R.id];
   const h=t.hist[nivå]=(t.hist[nivå]||[]); h.push(ok?1:0); while(h.length>LÆRING.mestringAv) h.shift();
+  if(window.TLFramgang) TLFramgang.logg(R.id+'-'+nivå, ok);   // lærerrapporten (Tavleloftet)
   if(nivå===t.nivå && h.length>=LÆRING.mestringAv && h.reduce((a,b)=>a+b,0)>=LÆRING.mestringKrav && !t.mestret.includes(nivå)){
     t.mestret.push(nivå);
+    if(window.TLFramgang) TLFramgang.merkNaadd(R.id+'-'+nivå);   // stjerne i spillet = mål nådd i rapporten
     R.nyStjerne=nivå;
     if(t.nivå<BYGDE[R.id]) t.nivå++;
     if(!t.rep) t.rep={ steg:0, neste:addDays(LÆRING.repetisjonDager[0]) };
