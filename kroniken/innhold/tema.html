@@ -73,6 +73,7 @@ if(!l){
   return;
 }
 document.title='Krøniken – '+l.navn;
+try{sessionStorage.setItem('kroniken-tema',m);}catch(e){}
 const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
 const b=f=>`${m}/bilder/${f}`;
 const hovedIBok=l.hoved&&/[?&]p=/.test(l.hoved);
