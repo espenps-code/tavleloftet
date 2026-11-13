@@ -59,6 +59,36 @@ select{background:var(--card);color:var(--cream);border:2px solid var(--line);bo
 .pall b{display:block;font-family:"Fredoka";font-size:54px;color:var(--a2)}.pall strong{font-size:24px;display:block}
 @keyframes opp{from{opacity:0;transform:translateY(80px)}}
 .bunn{margin-top:auto;padding-top:20px;display:flex;gap:14px;align-items:center}
+/* ---- Oppsett: tre nummererte steg ---- */
+.steg{margin-top:22px}
+.stegh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.stegh h2{font-size:26px}
+.stegh select{width:auto;min-width:240px;margin-left:8px;font-weight:800}
+.nr{flex:none;width:38px;height:38px;border-radius:50%;background:var(--a);color:var(--ink);display:grid;place-items:center;font-family:"Fredoka";font-weight:700;font-size:22px}
+.lenke{background:none;border:0;color:var(--a2);font-weight:800;text-decoration:underline;padding:6px 4px}
+.temag{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.temag label,.modusg label{position:relative;background:var(--card);border:2px solid var(--line);border-radius:14px;cursor:pointer}
+.temag label{display:flex;gap:12px;align-items:center;padding:10px 40px 10px 12px;line-height:1.25}
+.temag input,.modusg input{position:absolute;opacity:0;pointer-events:none}
+.temag small,.modusg small{color:var(--muted);display:block;font-size:.8em}
+.tn{flex:none;width:34px;height:34px;border-radius:10px;background:var(--bg3);color:var(--a2);display:grid;place-items:center;font-family:"Fredoka";font-weight:700}
+.temag label:has(input:checked),.modusg label:has(input:checked){border-color:var(--a);background:var(--bg3)}
+.temag label:has(input:checked) .tn{background:var(--a);color:var(--ink)}
+.temag label:has(input:checked)::after,.modusg label:has(input:checked)::after{content:"✓";position:absolute;right:10px;top:10px;width:24px;height:24px;border-radius:50%;background:var(--a);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:15px}
+.temag label:has(input:focus-visible),.modusg label:has(input:focus-visible),.rad label:has(input:focus-visible){outline:3px solid var(--a2);outline-offset:2px}
+.modusg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.modusg label{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:16px 14px 14px;line-height:1.3}
+.modusg svg{width:76px;height:76px;margin-bottom:4px}
+.modusg b{font-family:"Fredoka";font-weight:600;font-size:22px}
+.lengde{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.inl h3{font-size:18px;color:var(--a2);margin-bottom:8px}
+#lagvalg{margin-top:14px;max-width:460px}
+#lagvalg[hidden]{display:none}
+.rad label{font-weight:800}
+#oppsum{font-size:16px}
+.valg.rad{flex-direction:row}
+.valg.rad label{padding:12px 14px}
+@media(max-width:700px){.lengde{grid-template-columns:1fr}.stegh select{margin-left:0;width:100%}}
 /* ---- Elev ---- */
 .elev{max-width:720px;margin:0 auto;padding:20px 18px 30px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .elev .midt{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:16px}

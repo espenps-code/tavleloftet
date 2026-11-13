@@ -38,35 +38,60 @@ let net=null,G=null,tikk=null;
 const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ok;document.body.appendChild(s);});
 
 /* ---------- 1. Oppsett ---------- */
+/* Tegninger til spillmodusene (ren SVG, ingen bildefiler). */
+const sek=(cx,cy,r)=>Array.from({length:6},(_,i)=>{const v=Math.PI/180*(60*i-90);return (cx+r*Math.cos(v)).toFixed(1)+','+(cy+r*Math.sin(v)).toFixed(1);}).join(' ');
+const hjerte=(x,y,f,o)=>`<path transform="translate(${x} ${y}) scale(1.45)" d="M10 18C-3 9 2-1 10 5c8-6 13 4 0 13z" fill="${f}" opacity="${o}"/>`;
+const IKON={
+  klassisk:`<circle cx="32" cy="37" r="20" fill="none" stroke="#fbf5ea" stroke-width="4"/><path d="M27 7h10v7H27z" fill="#fbf5ea"/><path d="M48 17l5 5" stroke="#fbf5ea" stroke-width="4" stroke-linecap="round"/><path d="M36 23L24 39h7l-3 12 13-17h-7z" fill="#f3d27a"/>`,
+  lag:`<circle cx="16" cy="22" r="7" fill="#e98554"/><path d="M5 50a11 14 0 0 1 22 0z" fill="#e98554"/><circle cx="48" cy="22" r="7" fill="#5fb0d9"/><path d="M37 50a11 14 0 0 1 22 0z" fill="#5fb0d9"/><circle cx="32" cy="27" r="8.5" fill="#f3d27a" stroke="#1f3231" stroke-width="3"/><path d="M18 58a14 16 0 0 1 28 0z" fill="#f3d27a" stroke="#1f3231" stroke-width="3"/>`,
+  sistemann:hjerte(2,6,'#ee7d6b',1)+hjerte(33,6,'#ee7d6b',1)+hjerte(17.5,33,'#ee7d6b',.3),
+  stige:`<g stroke="#f3d27a" stroke-width="4" stroke-linecap="round"><path d="M12 58L18 8M30 58L36 8M13.5 46h18M15 34h18M16.5 22h18"/></g><g transform="rotate(12 48 45)"><rect x="37" y="34" width="22" height="22" rx="5" fill="#fbf5ea"/><circle cx="43" cy="40" r="2.3" fill="#16211f"/><circle cx="48" cy="45" r="2.3" fill="#16211f"/><circle cx="53" cy="50" r="2.3" fill="#16211f"/></g>`,
+  erobring:[[32,32,'#e98554'],[32,12.4,'#5fb0d9'],[49,22.2,'#8fd0a8'],[49,41.8,'none'],[32,51.6,'#f3d27a'],[15,41.8,'#e98554'],[15,22.2,'none']].map(h=>`<polygon points="${sek(h[0],h[1],10.3)}" fill="${h[2]}" stroke="${h[2]==='none'?'#3a5753':'#162222'}" stroke-width="2"/>`).join('')};
+const ikon=k=>`<svg viewBox="0 0 64 64" aria-hidden="true">${IKON[k]}</svg>`;
 function oppsett(){
   const livssyn=Object.entries(KRONIKEN);
+  const rad=(navn,liste,valgt,etter)=>liste.map((n,i)=>`<label><input type="radio" name="${navn}" value="${n}"${i===valgt?' checked':''}>${n}${etter}</label>`).join('');
   app.innerHTML=`<p class="kicker">Krøniken · quiz</p><h1>Sett opp en quiz</h1>
-  <div class="oppsett"><div>
-    <h2>Innhold</h2><select id="ls" aria-label="Livssyn">${livssyn.map(([k,l])=>`<option value="${k}">${esc(l.navn)}</option>`).join('')}</select>
-    <div class="valg" id="tema" style="margin-top:10px"></div>
-    <h2 style="margin-top:20px">Antall spørsmål</h2><div class="valg rad" id="ant">${[10,15,20].map((n,i)=>`<label><input type="radio" name="ant" value="${n}"${i===0?' checked':''}>${n}</label>`).join('')}</div>
-    <h2 style="margin-top:20px">Tid per spørsmål</h2><div class="valg rad" id="tid">${[15,20,30].map((n,i)=>`<label><input type="radio" name="tid" value="${n}"${i===1?' checked':''}>${n} s</label>`).join('')}</div>
-  </div><div>
-    <h2>Spillmodus</h2><div class="valg" id="modus">${Object.entries(MODUS).map(([k,m],i)=>`<label><input type="radio" name="modus" value="${k}"${i===0?' checked':''}><span><b>${m.n}</b><small>${m.om}</small></span></label>`).join('')}</div>
-    <div id="lagvalg" hidden><h2 style="margin-top:20px">Antall lag</h2><div class="valg rad">${[2,3,4].map((n,i)=>`<label><input type="radio" name="lag" value="${n}"${i===0?' checked':''}>${n} lag</label>`).join('')}</div></div>
-  </div></div>
-  <div class="bunn"><button class="knapp" id="lag">Lag spill</button><span class="muted" id="feil"></span></div>`;
-  const tema=()=>{$('#tema').innerHTML=KRONIKEN[$('#ls').value].tema.map((t,i)=>`<label><input type="checkbox" value="${t.id}"${i===0?' checked':''}><span><b>Tema ${i+1}: ${esc(t.tittel)}</b><small>${esc(t.om)}</small></span></label>`).join('');};
-  $('#ls').onchange=tema;
+  <section class="steg">
+    <div class="stegh"><span class="nr">1</span><h2>Hva skal quizen handle om?</h2><select id="ls" aria-label="Livssyn">${livssyn.map(([k,l])=>`<option value="${k}">${esc(l.navn)}</option>`).join('')}</select><button type="button" class="lenke" id="alle">Velg alle</button></div>
+    <div class="temag" id="tema"></div>
+  </section>
+  <section class="steg">
+    <div class="stegh"><span class="nr">2</span><h2>Velg spillmodus</h2></div>
+    <div class="modusg" id="modus">${Object.entries(MODUS).map(([k,m],i)=>`<label><input type="radio" name="modus" value="${k}"${i===0?' checked':''}>${ikon(k)}<b>${m.n}</b><small>${m.om}</small></label>`).join('')}</div>
+    <div class="inl" id="lagvalg" hidden><h3>Antall lag</h3><div class="valg rad">${rad('lag',[2,3,4],0,' lag')}</div></div>
+  </section>
+  <section class="steg">
+    <div class="stegh"><span class="nr">3</span><h2>Hvor lang skal den være?</h2></div>
+    <div class="lengde"><div class="inl"><h3>Antall spørsmål</h3><div class="valg rad" id="ant">${rad('ant',[10,15,20],0,'')}</div></div>
+    <div class="inl"><h3>Tid per spørsmål</h3><div class="valg rad" id="tid">${rad('tid',[15,20,30],1,' s')}</div></div></div>
+  </section>
+  <div class="bunn"><button class="knapp" id="lag">Lag spill</button><span class="muted" id="oppsum"></span><span class="no" id="feil" style="font-weight:800"></span></div>`;
+  const v=n=>document.querySelector(`[name=${n}]:checked`).value;
+  const temaer=()=>[...document.querySelectorAll('#tema input')];
+  const oppsum=()=>{
+    const n=temaer().filter(i=>i.checked).length,alle=temaer().every(i=>i.checked);
+    $('#alle').textContent=alle?'Fjern alle':'Velg alle';$('#feil').textContent='';
+    $('#lagvalg').hidden=v('modus')!=='lag';
+    $('#oppsum').textContent=[KRONIKEN[$('#ls').value].navn,n+(n===1?' tema':' temaer'),v('ant')+' spørsmål',v('tid')+' s per spørsmål',MODUS[v('modus')].n+(v('modus')==='lag'?' ('+v('lag')+' lag)':'')].join(' · ');
+  };
+  const tema=()=>{$('#tema').innerHTML=KRONIKEN[$('#ls').value].tema.map((t,i)=>`<label><input type="checkbox" value="${t.id}"${i===0?' checked':''}><span class="tn">${i+1}</span><span><b>${esc(t.tittel)}</b><small>${esc(t.om)}</small></span></label>`).join('');};
+  $('#ls').onchange=()=>{tema();oppsum();};
+  $('#alle').onclick=()=>{const paa=!temaer().every(i=>i.checked);temaer().forEach(i=>i.checked=paa);oppsum();};
   /* ?ls=islam&t=tema2-koranen velger livssyn og del på forhånd (brukes fra temasidene) */
   const Qp=new URLSearchParams(location.search),qls=Qp.get('ls'),qt=Qp.get('t');
   if(qls&&KRONIKEN[qls])$('#ls').value=qls;
   tema();
-  if(qt&&[...document.querySelectorAll('#tema input')].some(i=>i.value===qt))document.querySelectorAll('#tema input').forEach(i=>i.checked=i.value===qt);
-  $('#modus').onchange=()=>{$('#lagvalg').hidden=document.querySelector('[name=modus]:checked').value!=='lag';};
+  if(qt&&temaer().some(i=>i.value===qt))temaer().forEach(i=>i.checked=i.value===qt);
+  app.onchange=oppsum;oppsum();
   $('#lag').onclick=async()=>{
-    const ls=$('#ls').value,ids=[...document.querySelectorAll('#tema input:checked')].map(x=>x.value);
+    const ls=$('#ls').value,ids=temaer().filter(x=>x.checked).map(x=>x.value);
     if(!ids.length){$('#feil').textContent='Velg minst ett tema.';return;}
     $('#lag').disabled=true;let alle=[];
     for(const id of ids){window.PRES=null;await last(ls+'/'+id+'.js');if(window.PRES&&PRES.quiz)alle=alle.concat(PRES.quiz);}
     if(!alle.length){$('#feil').textContent='Fant ingen spørsmål.';$('#lag').disabled=false;return;}
-    const v=n=>document.querySelector(`[name=${n}]:checked`).value;
     const sp=stokk(alle).slice(0,+v('ant')).map(q=>{const a=stokk(q.a.map((t,k)=>[t,k===q.r]));return{q:q.q,a:a.map(x=>x[0]),r:a.findIndex(x=>x[1])};});
+    app.onchange=null;
     start({modus:v('modus'),tid:+v('tid'),antLag:+v('lag'),sp,tittel:KRONIKEN[ls].navn});
   };
 }

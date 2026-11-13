@@ -43,4 +43,7 @@ window.KQNet=async function(kode){
 window.KQ_TEGN='ABDEFGHJKLMNPRSTUVXYZ';
 window.KQ_FARGE=i=>`hsl(${Math.round(i*137.508)%360} 72% 62%)`;
 window.KQ_SVAR=[{f:'#e98554',t:'A'},{f:'#5fb0d9',t:'B'},{f:'#f3d27a',t:'C'},{f:'#8fd0a8',t:'D'}];
+/* Dyrene i kallenavnene («Rask Rev») og figuren som hører til. */
+window.KQ_DYR={Rev:'🦊',Ugle:'🦉',Elg:'🦌',Bjørn:'🐻',Ulv:'🐺',Hare:'🐰',Ekorn:'🐿️',Oter:'🦦',Sel:'🦭',Hval:'🐳',Ørn:'🦅',Svane:'🦢',Pinnsvin:'🦔',Frosk:'🐸',Laks:'🐟',Gaupe:'🐱',Bever:'🦫',Krabbe:'🦀',Humle:'🐝',Sommerfugl:'🦋',Skilpadde:'🐢',Delfin:'🐬',Pingvin:'🐧',Mus:'🐭'};
+window.KQ_IKON=n=>KQ_DYR[String(n||'').split(' ').pop()]||'⭐';
 })();
