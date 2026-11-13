@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – lesehistorier</title>
+<style>
+@font-face{font-family:"Fredoka";font-weight:600;src:url("felles/fonts/fredoka-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:400;src:url("felles/fonts/nunito-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:700;src:url("felles/fonts/nunito-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:800;src:url("felles/fonts/nunito-latin-800-normal.woff2") format("woff2")}
+:root{--ink:#1b2a29;--a:#c9603a;--soft:#f6ece2;--line:#c9d1ce;--bg:#162222;--fs:19px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--fs)/1.65 "Nunito","Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;margin:0;line-height:1.15}
+button{font-family:inherit;cursor:pointer}
+#bar{position:sticky;top:0;z-index:5;background:#0d1616;color:#fbf5ea;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:15px}
+#bar b{margin-right:auto}
+#bar button{font-weight:800;font-size:15px;padding:8px 14px;border-radius:8px;border:1px solid #3a5753;background:#1f3231;color:#fbf5ea}
+#bar button.p{background:var(--a);border-color:var(--a)}
+#bar label{display:flex;gap:6px;align-items:center}
+/* Meny */
+#meny{max-width:1100px;margin:0 auto;padding:36px 20px 60px;color:#fbf5ea}
+#meny h1{font-size:clamp(36px,6vw,60px)}#meny p{color:#adc0ba;margin:6px 0 26px}
+#meny h2{font-size:24px;color:#f6b890;margin:28px 0 12px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.k{background:#fdfaf4;color:var(--ink);border:0;border-radius:18px;padding:0;text-align:left;overflow:hidden;transition:transform .2s;display:flex;flex-direction:column}
+.k:hover,.k:focus-visible{transform:translateY(-4px);outline:3px solid var(--a)}
+.k img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.k div{padding:12px 16px 16px}.k h3{font-size:22px}.k small{color:#5d6d6a;font-size:14px}
+/* Leseark */
+.ark{background:#fdfaf4;max-width:820px;margin:20px auto;padding:44px 56px;border-radius:18px;position:relative}
+.topp{display:flex;gap:22px;align-items:center;border-bottom:3px solid var(--a);padding-bottom:16px;margin-bottom:18px}
+.topp img{width:120px;height:160px;object-fit:cover;border-radius:12px;flex:none}
+.topp small{color:var(--a);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.68em}
+.topp h1{font-size:2.1em;margin:2px 0 4px}.topp em{font-style:normal;color:#5d6d6a;font-size:.8em}
+.ord{background:var(--soft);border-radius:12px;padding:12px 18px;margin-bottom:18px;font-size:.86em}
+.ord b{color:var(--a)}.ord div{margin:1px 0}
+.tekst p{margin:0 0 .75em;max-width:66ch}
+.sp h2{font-size:1.25em;color:var(--a);margin:22px 0 6px}
+.sp ol{margin:0;padding-left:1.3em}.sp li{margin-bottom:8px}
+.linje{border-bottom:1px solid var(--line);height:9mm}
+.skjerm .linje{display:none}
+.fasit{background:#eef4ef;border-left:4px solid #3f8a5f;border-radius:6px;padding:4px 12px;margin-top:4px;font-size:.88em}
+body:not(.medfasit) .fasit{display:none}
+.navn{display:none}
+@page{size:A4;margin:14mm 16mm}
+@media print{:root{--fs:11.5pt}body{background:#fff;line-height:1.5}#bar,#meny{display:none!important}.ark{margin:0;padding:0;max-width:none;border-radius:0;break-after:page;background:#fff}.topp{padding-bottom:8px;margin-bottom:10px}.ord{padding:8px 14px;margin-bottom:10px}.tekst p{margin-bottom:.55em;max-width:none}
+ .topp img{width:26mm;height:35mm}.skjerm .linje{display:block}.navn{display:flex;gap:10mm;font-size:11pt;margin-bottom:8px}.navn span{flex:1;border-bottom:1px solid var(--ink)}.sp{break-before:page}.sp li{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>Krøniken · lesehistorier</b>
+  <button id="tilbake" hidden>← Alle historier</button>
+  <button id="mindre" aria-label="Mindre skrift" hidden>A−</button><button id="storre" aria-label="Større skrift" hidden>A+</button>
+  <label id="fl" hidden><input type="checkbox" id="fasit"> Vis fasit (lærer)</label>
+  <button id="skriv" class="p" hidden>Skriv ut</button>
+  <button id="alle" class="p">Skriv ut alle som hefte</button>
+</div>
+<div id="meny"></div>
+<div id="les"></div>
+<script src="oversikt.js"></script>
+<script>
+(function(){
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const $=id=>document.getElementById(id);
+const SETT={};let fs=19;
+const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ok;document.body.appendChild(s);});
+const ant=h=>h.tekst.join(' ').split(/\s+/).length;
+function meny(){
+  $('les').innerHTML='';$('meny').hidden=false;['tilbake','mindre','storre','fl','skriv'].forEach(i=>$(i).hidden=true);$('alle').hidden=false;
+  $('meny').innerHTML='<h1>Lesehistorier</h1><p>Velg en historie. Hver historie har ordforklaringer og spørsmål, og kan skrives ut.</p>'+
+   Object.values(SETT).map(S=>`<h2>${esc(S.livssyn)}</h2>`+[['bibel',(S.kildenavn||{}).bibel||'Fra Bibelen'],['historie','Fra historien']].map(([k,n])=>{const l=S.historier.filter(h=>h.kilde===k);
+     return l.length?`<p style="margin:14px 0 8px;font-weight:800;color:#fbf5ea">${n}</p><div class="g">${l.map(h=>`<button class="k" data-s="${S.mappe}" data-h="${h.id}"><img src="${S.mappe}bilder/${h.bilde}" alt=""><div><h3>${esc(h.tittel)}</h3><small>${esc(h.henvisning)} · ${Math.round(ant(h)/10)*10} ord</small></div></button>`).join('')}</div>`:'';}).join('')).join('');
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+}
+function arkHTML(S,h){
+  const sp=(l,linjer)=>l.map(q=>`<li>${esc(q[0])}<div class="linje"></div>${linjer>1?'<div class="linje"></div>':''}<div class="fasit">${esc(q[1])}</div></li>`).join('');
+  return `<article class="ark skjerm"><div class="navn"><span>Navn:</span><span>Dato:</span></div>
+   <div class="topp"><img src="${S.mappe}bilder/${h.bilde}" alt=""><div><small>${esc(S.livssyn)} · ${h.kilde==='bibel'?((S.kildenavn||{}).bibel||'Fra Bibelen'):'Fra historien'}</small><h1>${esc(h.tittel)}</h1><em>${esc(h.henvisning)} · ${ant(h)} ord</em></div></div>
+   <div class="ord">${h.ord.map(o=>`<div><b>${esc(o[0])}:</b> ${esc(o[1])}</div>`).join('')}</div>
+   <div class="tekst">${h.tekst.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+   <div class="sp"><h2>Finn svaret i teksten</h2><ol>${sp(h.finn,1)}</ol>
+   <h2>Les mellom linjene</h2><ol start="${h.finn.length+1}">${sp(h.mellom,2)}</ol>
+   <h2>Snakk sammen</h2><p>${esc(h.snakk)}</p></div></article>`;
+}
+function vis(mappe,id){
+  const S=SETT[mappe],h=S.historier.find(x=>x.id===id);if(!h)return meny();
+  $('meny').hidden=true;['tilbake','mindre','storre','fl','skriv'].forEach(i=>$(i).hidden=false);$('alle').hidden=true;
+  $('les').innerHTML=arkHTML(S,h);
+  document.title=h.tittel+' – lesehistorie';scrollTo(0,0);
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+}
+/* Hefte: alle historiene etter hverandre, to sider per historie (tekst foran, spørsmål bak) */
+function hefte(){
+  $('meny').hidden=true;['tilbake','fl','skriv'].forEach(i=>$(i).hidden=false);['mindre','storre','alle'].forEach(i=>$(i).hidden=true);
+  $('les').innerHTML=Object.values(SETT).map(S=>S.historier.map(h=>arkHTML(S,h)).join('')).join('');
+  document.title='Lesehistorier – hefte';scrollTo(0,0);
+  setTimeout(()=>{try{window.print()}catch(e){}},400);
+}
+document.addEventListener('click',e=>{const k=e.target.closest('.k');if(k)vis(k.dataset.s,k.dataset.h);});
+$('tilbake').onclick=meny;$('alle').onclick=hefte;
+$('storre').onclick=()=>{fs=Math.min(30,fs+2);document.documentElement.style.setProperty('--fs',fs+'px');};
+$('mindre').onclick=()=>{fs=Math.max(15,fs-2);document.documentElement.style.setProperty('--fs',fs+'px');};
+$('fasit').onchange=e=>document.body.classList.toggle('medfasit',e.target.checked);
+$('skriv').onclick=()=>{try{window.print()}catch(e){}};
+(async()=>{for(const m of Object.keys(KRONIKEN)){await last(m+'/historier.js');if(window.HISTORIER){SETT[window.HISTORIER.mappe]=window.HISTORIER;window.HISTORIER=null;}}
+  const id=(location.hash||'').slice(1);const S=Object.values(SETT).find(s=>s.historier.some(h=>h.id===id));
+  S?vis(S.mappe,id):meny();})();
+})();
+</script>
+</body>
+</html>

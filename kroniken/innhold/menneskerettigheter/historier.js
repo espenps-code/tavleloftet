@@ -1,0 +1,101 @@
+/* Krøniken – lesetekster for modulen Menneskerettigheter.
+   kilde 'bibel' = tekster til ettertanke: et gjenfortalt, kjent tankeeksperiment, en argumenterende tekst og en faktatekst (vises som «Til ettertanke»).
+   kilde 'historie' = fortellende sakprosa om virkelige personer og hendelser. Ingen oppdiktede personer.
+   finn = svaret står i teksten, mellom = les mellom linjene, snakk = samtalespørsmål uten fasit. */
+window.HISTORIER={livssyn:'Menneskerettigheter',mappe:'menneskerettigheter/',kildenavn:{bibel:'Til ettertanke'},historier:[
+
+{id:'sloret',tittel:'Bak sløret',kilde:'bibel',henvisning:'Tankeeksperiment. Gjenfortalt etter filosofen John Rawls (1971)',bilde:'sloret.webp',
+ord:[['tankeeksperiment','en oppgave man løser bare ved å tenke seg at noe er slik'],['slør','et tynt stoff som skjuler noe'],['rettferdig','slik at alle får det de har krav på'],['egenskap','noe som kjennetegner en person']],
+tekst:[
+'Tenk deg at du og noen andre får en uvanlig oppgave. Dere skal lage reglene for et helt nytt samfunn. Dere bestemmer alt: hvem som skal få gå på skole, hvem som skal få hjelp når de er syke, hvem som skal bestemme, og hva som skal være lov.',
+'Det høres kanskje lett ut. Da lager du bare regler som passer for deg.',
+'Men det er en hake. Før dere begynner, blir det trukket et slør foran dere. Bak sløret vet du ingenting om hvem du kommer til å være i det nye samfunnet.',
+'Du vet ikke om du blir gutt eller jente. Du vet ikke om du blir rik eller fattig, frisk eller syk. Du vet ikke hvilken hudfarge du får, hvilket språk du snakker, eller hva du tror på. Du vet ikke om du blir en av de mange eller en av de få. Du vet ikke engang om du blir flink på skolen.',
+'Først når reglene er ferdige, blir sløret trukket bort. Da får du vite hvem du er. Og så må du leve i samfunnet dere har laget.',
+'Hvilke regler lager du nå?',
+'Ville du laget en regel om at bare gutter får gå på skole? Neppe. Du kunne jo bli jente. Ville du bestemt at de som tror på noe annet enn flertallet, skal ha færre rettigheter? Det ville vært dumt. Du kunne selv bli en av dem.',
+'Filosofen John Rawls fant på dette tankeeksperimentet i 1971. Han kalte det uvitenhetens slør. Han mente at det er en god prøve på om en regel er rettferdig: Ville du godtatt den hvis du ikke visste hvem du kom til å bli?',
+'De fleste som prøver, ender med regler som ligner på noe vi kjenner: Alle skal ha de samme grunnleggende rettighetene. Og den som har det vanskeligst, skal ikke bli glemt.'],
+finn:[['Hva skal du lage i tankeeksperimentet?','Reglene for et helt nytt samfunn.'],['Hva er det du ikke vet bak sløret?','Hvem du kommer til å være: kjønn, rik eller fattig, frisk eller syk, hudfarge, språk og tro.'],['Hvem fant på tankeeksperimentet?','Filosofen John Rawls.']],
+mellom:[['Hvorfor lager man mer rettferdige regler bak sløret?','Man kan ikke lage regler som bare er til fordel for en selv, når man ikke vet hvem man blir.'],['Hva har tankeeksperimentet med menneskerettighetene å gjøre?','Det viser hvorfor det er klokt at alle har de samme grunnleggende rettighetene, uansett hvem de er.']],
+snakk:'Tenk deg at klassen skulle lage klassereglene bak sløret, uten å vite hvem dere ble. Ville reglene blitt annerledes enn i dag?'},
+
+{id:'altlov',tittel:'Bør alt være lov å si?',kilde:'bibel',henvisning:'Argumenterende tekst. To syn på en vanskelig sak',bilde:'vekta.webp',
+ord:[['argument','en grunn for at noe er riktig'],['å forby','å bestemme at noe ikke er lov'],['hets','stygge og sårende ord om noen'],['å tie','å la være å si noe']],
+tekst:[
+'I Norge har vi ytringsfrihet. Likevel er ikke alt lov å si. Trusler er forbudt. Det samme er hets mot mennesker på grunn av hudfarge, religion og noen andre ting. Er det riktig at loven setter slike grenser? Her er folk uenige. Les begge sidene, og tenk selv.',
+'De som mener at nesten alt bør være lov, sier:',
+'For det første: Hvem skal bestemme hva som er for stygt? I dag er det kanskje noen du er enig med. I morgen kan det være noen andre. Den som får makt til å forby ord, kan bruke den makten til å stoppe meninger han ikke liker.',
+'For det andre: Dårlige meninger forsvinner ikke av å bli forbudt. De gjemmer seg bare. Det er bedre at de kommer fram i lyset, der andre kan svare på dem og vise hvorfor de er gale.',
+'For det tredje: Mange av dem som har forandret verden til det bedre, sa ting som flertallet syntes var uhørte. Hvis det bare er lov å si det som ikke støter noen, blir det nesten ingenting igjen.',
+'De som mener at loven må sette grenser, sier:',
+'For det første: Ord kan skade. Den som blir hetset dag etter dag for hvem hun er, blir redd og trekker seg unna. Til slutt tør hun ikke si noe selv. Da har hetsen tatt fra henne ytringsfriheten.',
+'For det andre: Friheten til én stopper der den skader en annen. Du har ikke lov til å slå, selv om du er fri. Hvorfor skulle du ha lov til å skade med ord?',
+'For det tredje: Historien viser at vold mot en gruppe ofte begynner med ord. Først blir menneskene omtalt som mindre verdt. Så blir det lettere å behandle dem slik.',
+'Begge sider er enige om én ting: Ytringsfriheten er svært verdifull. Det de er uenige om, er hvordan den best kan vernes.',
+'Hva mener du?'],
+finn:[['Nevn to ting som ikke er lov å si i Norge.','Trusler, og hets mot mennesker på grunn av blant annet hudfarge og religion.'],['Hva skjer med dårlige meninger når de blir forbudt, ifølge den første siden?','De forsvinner ikke. De gjemmer seg bare.'],['Hva er begge sider enige om?','At ytringsfriheten er svært verdifull.']],
+mellom:[['Hvordan kan hets ta ytringsfriheten fra noen?','Den som blir hetset, blir redd, trekker seg unna og tør til slutt ikke si noe selv.'],['Hvorfor er det farlig å gi noen makt til å forby ord?','Makten kan bli brukt til å stoppe meninger som de som styrer, ikke liker.']],
+snakk:'Hvilket av de seks argumentene synes du er sterkest? Hvilket er svakest? Begrunn.'},
+
+{id:'knaggene',tittel:'På knaggene i gangen',kilde:'bibel',henvisning:'Faktatekst om plagg og symboler',bilde:'symboler.webp',
+ord:[['symbol','et tegn som står for noe annet'],['hijab','et skjerf som dekker håret, brukt av mange muslimske jenter og kvinner'],['kippa','en liten, rund lue som mange jødiske gutter og menn bruker'],['turban','et langt tøystykke som vikles rundt hodet']],
+tekst:[
+'I gangen utenfor et norsk klasserom henger det jakker, luer og sekker. Ser du nøye etter, kan noe av det som henger der, fortelle hva eieren tror på.',
+'Et lite kors i en kjede rundt halsen er det vanligste kristne symbolet. Korset minner om at Jesus døde og sto opp igjen. Mange får det i gave til dåp eller konfirmasjon.',
+'En hijab er et skjerf som dekker håret og halsen. Mange muslimske jenter og kvinner bruker hijab når de er ute blant folk. Noen begynner i tenårene, noen senere, og mange bruker det aldri. De som bruker hijab, gir ulike grunner: at det er en del av troen, at det er en tradisjon i familien, eller at det viser hvem de er.',
+'En kippa er en liten, rund lue. Mange jødiske gutter og menn bruker den i synagogen og når de ber. Noen har den på hele dagen, for å vise respekt for Gud.',
+'En turban er et langt tøystykke som vikles rundt hodet. Sikher klipper ikke håret, og mange sikhiske menn samler det under turbanen. Yngre gutter har ofte håret i en knute på hodet med et lite tøystykke over.',
+'I norsk skole har elever lov til å bruke alle disse plaggene og symbolene. Det følger av religionsfriheten, som blant annet er retten til å vise troen sin. Det finnes ett unntak: I undervisningen er det ikke lov med plagg som dekker hele ansiktet. Lærere og elever må kunne se hverandre.',
+'To ting er verdt å huske. Det ene er at du ikke kan se på et menneske hva det tror. De fleste som har en tro, bærer ingen synlige symboler. Det andre er at plagget bare er en liten del av den som har det på.',
+'Og regnjakka og capsen på de andre knaggene? De forteller bare at det er meldt regn.'],
+finn:[['Hva minner korset om?','At Jesus døde og sto opp igjen.'],['Hvorfor bruker mange sikhiske menn turban?','De klipper ikke håret og samler det under turbanen.'],['Hvilke plagg er ikke tillatt i undervisningen?','Plagg som dekker hele ansiktet.']],
+mellom:[['Hvorfor har elever lov til å bruke religiøse plagg på skolen?','Det følger av religionsfriheten, som blant annet er retten til å vise troen sin.'],['Hva mener teksten med at plagget bare er en liten del av den som har det på?','At et menneske er mye mer enn troen sin, og at man ikke skal dømme noen ut fra et plagg.']],
+snakk:'Finnes det noe du har på deg eller med deg som forteller noe om hvem du er? Hva ville du ønsket at andre tenkte når de så det?'},
+
+{id:'jebb',tittel:'Kvinnen på Trafalgar Square',kilde:'historie',henvisning:'London og Genève, 1919–1924',bilde:'jebb.webp',
+ord:[['blokade','å stenge veiene inn til et land, slik at varer ikke kommer fram'],['løpeseddel','et ark med et budskap som deles ut til folk'],['bot','penger man må betale som straff'],['erklæring','en høytidelig tekst som slår fast noe viktig']],
+tekst:[
+'Første verdenskrig sluttet i november 1918. Men for barna i Tyskland og Østerrike var ikke nøden over. Landene som hadde vunnet krigen, fortsatte å stenge veiene for mat inn til taperne. Blokaden skulle presse dem til å skrive under på fredsavtalen. I mellomtiden sultet barna.',
+'I England var det mange som mente at det var til pass for fienden. En kvinne mente noe annet. Hun het Eglantyne Jebb, var førtito år og hadde vært lærer. Hun hadde sett bilder av barn fra Wien som var så avmagrede at de knapt kunne stå.',
+'En vårdag i 1919 stilte hun seg opp på Trafalgar Square, midt i London, og delte ut løpesedler. På dem var det et bilde av et sultent barn og en tekst som sa at blokaden tok livet av barn.',
+'Hun ble arrestert. Løpesedlene var ikke godkjent av myndighetene, slik loven krevde.',
+'I rettssalen forsvarte hun seg selv. Hun sa at saken ikke handlet om politikk, men om barn. Hun ble funnet skyldig og fikk en bot på fem pund. Men det fortelles at mannen som førte saken mot henne, ble så grepet at han etterpå ga henne fem pund av sin egen lomme.',
+'Jebb regnet dem som den første gaven. Noen uker senere startet hun og søsteren Dorothy en organisasjon for å samle inn penger til barna. De kalte den Save the Children. På norsk heter den Redd Barna.',
+'Eglantyne Jebb var ikke fornøyd med bare å dele ut mat. Hun mente at barn ikke skulle være avhengige av voksnes godhet. De måtte ha rettigheter. I 1923 skrev hun ned fem korte punkter om hva alle barn har krav på. Året etter ble de vedtatt av Folkeforbundet, som var forløperen til FN.',
+'Det var verdens første erklæring om barns rettigheter. Sekstifem år senere, i 1989, vokste den til FNs barnekonvensjon.'],
+finn:[['Hvorfor sultet barna i Tyskland og Østerrike etter krigen?','Landene som vant krigen, stengte veiene for mat inn til landene.'],['Hva ble Eglantyne Jebb arrestert for?','Hun delte ut løpesedler som ikke var godkjent av myndighetene.'],['Hva heter organisasjonen hun startet, på norsk?','Redd Barna.']],
+mellom:[['Hvorfor var det modig å dele ut løpesedlene?','Mange i England mente at fienden fortjente å lide, og hun risikerte å bli arrestert.'],['Hvorfor var det ikke nok for Jebb å dele ut mat?','Hun mente at barn ikke skulle være avhengige av voksnes godhet. De måtte ha rettigheter.']],
+snakk:'Jebb hjalp barna til dem som hadde vært landets fiender. Er det vanskeligere å hjelpe noen man har vært uvenner med? Bør det spille noen rolle?'},
+
+{id:'hauge',tittel:'Mannen som gikk og strikket',kilde:'historie',henvisning:'Norge, 1796–1814',bilde:'hauge.webp',
+ord:[['lekmann','en vanlig person som ikke er prest'],['å forkynne','å tale om troen sin for å få andre til å tro'],['konventikkel','et gammelt ord for et religiøst møte utenfor kirken'],['skreppe','en gammeldags ryggsekk']],
+tekst:[
+'Hans Nielsen Hauge ble født i 1771 på en gård i Tune i Østfold. Han var bondesønn og hadde bare noen få års skolegang. En vårdag i 1796, da han var tjuefem år og gikk og arbeidet på jordet, fikk han en sterk opplevelse av at Gud kalte ham.',
+'Fra den dagen brukte han livet til å fortelle andre om troen sin. Han la ut på vandring. I løpet av noen år gikk han tusenvis av kilometer, gjennom store deler av landet, fra gård til gård. Han hadde skreppe på ryggen, og det fortelles at han strikket mens han gikk, slik at ikke tiden skulle gå til spille.',
+'Der han kom, samlet han folk i stuene og talte. Han skrev bøker som ble lest over hele landet. Han startet også bedrifter, blant annet en papirmølle, og hjalp andre i gang med handel og håndverk. Tilhengerne hans, haugianerne, ble kjent som flittige og ærlige folk.',
+'Men Hauge gjorde noe ulovlig. En lov fra 1741 sa at vanlige folk ikke fikk holde religiøse møter uten at presten hadde gitt lov. Bare prestene skulle forkynne. Hauge var lekmann, og han spurte ikke om lov.',
+'Han ble arrestert gang på gang. I 1804 ble han satt i fengsel i Christiania, som Oslo het den gangen. Der ble han sittende i årevis mens saken ble utredet. Helsa hans ble ødelagt.',
+'Først i 1814, samme år som Norge fikk sin grunnlov, falt den endelige dommen. Da ble straffen bare en bot.',
+'Hauge døde i 1824. Loven han hadde brutt, ble opphevet i 1842. Tre år senere fikk kristne utenfor statskirken lov til å danne egne menigheter.',
+'Hauge ville ikke lage en ny kirke. Han var lutheraner hele livet. Det han krevde, var retten til å snakke høyt om det han trodde på.'],
+finn:[['Hvor ble Hans Nielsen Hauge født?','På en gård i Tune i Østfold.'],['Hva gjorde han mens han gikk, ifølge fortellingene?','Han strikket.'],['Hvilket år ble loven han brøt, opphevet?','1842.']],
+mellom:[['Hvorfor ble Hauge arrestert?','Han holdt religiøse møter og forkynte uten å være prest og uten å spørre presten om lov.'],['Hva har Hauges sak med både religionsfrihet og ytringsfrihet å gjøre?','Han krevde retten til å tro på sin måte og til å snakke høyt om det.']],
+snakk:'Hauge brøt loven fordi han mente den var urettferdig. Er det noen gang riktig å bryte en lov? Hva bør man i så fall være villig til å tåle?'},
+
+{id:'malala',tittel:'Jenta som ville gå på skolen',kilde:'historie',henvisning:'Pakistan, Storbritannia og Oslo, 2009–2014',bilde:'malala.webp',
+ord:[['Taliban','en væpnet, ytterliggående gruppe i Pakistan og Afghanistan'],['blogg','en dagbok på internett'],['dekknavn','et navn man bruker for å skjule hvem man er'],['fredspris','en pris til noen som har arbeidet for fred']],
+tekst:[
+'Malala Yousafzai ble født i 1997 i Swat-dalen i Pakistan, en grønn dal mellom høye fjell. Faren hennes drev en skole, og Malala elsket å lære.',
+'Da hun var ti år, tok den væpnede gruppen Taliban makten i dalen. De forbød musikk og TV. Og de bestemte at jenter ikke lenger skulle gå på skole. Mange jenteskoler ble sprengt.',
+'Malala var elleve år da hun begynte å skrive en blogg for den britiske kringkastingen BBC. Hun skrev under dekknavn om hvordan det var å være jente når skolen kunne bli stengt når som helst. Senere sto hun fram med eget navn og sa det samme på TV: Jenter har rett til å gå på skole.',
+'Det var farlig. Den 9. oktober 2012, da Malala var femten år, stoppet en bevæpnet mann skolebussen hun satt i. Han spurte hvem av dem som var Malala. Så skjøt han. Hun ble truffet i hodet.',
+'Malala ble fløyet til et sykehus i England. Legene reddet livet hennes, og etter mange operasjoner ble hun frisk nok til å begynne på skole igjen, nå i byen Birmingham.',
+'Angrepet skulle få henne til å tie. Det gikk motsatt. På sekstenårsdagen sin talte hun i FN. Der sa hun at ett barn, én lærer, én bok og én penn kan forandre verden.',
+'I desember 2014 kom Malala til Oslo for å ta imot Nobels fredspris. Hun var sytten år og er den yngste som noen gang har fått prisen. Hun delte den med inderen Kailash Satyarthi, som har arbeidet mot barnearbeid i mange tiår.',
+'Malala er selv muslim. Hun har mange ganger sagt at troen hennes lærer at både jenter og gutter skal søke kunnskap.',
+'Ennå i dag er det millioner av jenter i verden som ikke får gå på skole.'],
+finn:[['Hvor vokste Malala opp?','I Swat-dalen i Pakistan.'],['Hvor gammel var hun da hun begynte å skrive bloggen?','Elleve år.'],['Hvem delte hun Nobels fredspris med?','Kailash Satyarthi fra India.']],
+mellom:[['Hvorfor skrev Malala først under dekknavn?','Det var farlig å kritisere Taliban, og hun måtte skjule hvem hun var.'],['Hvilke to rettigheter handler fortellingen om?','Retten til skolegang og retten til å si det man mener, altså ytringsfrihet.']],
+snakk:'Malala fortsatte å si det hun mente, selv om det var farlig. Hva er det som gjør at noen tør det? Hva ville du vært villig til å ta en risiko for?'}
+]};

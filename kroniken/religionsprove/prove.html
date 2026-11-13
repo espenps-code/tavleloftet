@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C9586B'/%3E%3Crect x='17' y='12' width='30' height='42' rx='5' fill='none' stroke='%23fff' stroke-width='5'/%3E%3Crect x='25' y='8' width='14' height='8' rx='3' fill='%23fff'/%3E%3Cpath d='M24 33l6 6 11-12' fill='none' stroke='%23fff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Religionsprøven</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --night:#161433; --night-2:#201d47; --night-3:#2b2760; --parchment:#F3E9D2; --plate:#FAF5EC;
+    --ink:#2a2440; --gold:#E8B04B; --gold-soft:#f0c97a; --teal:#4FB8A8; --crimson:#C9586B;
+    --line:rgba(243,233,210,0.16); --rel:#E8B04B;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    background:radial-gradient(1100px 700px at 80% -10%, color-mix(in srgb, var(--rel) 22%, transparent), transparent 60%),
+               radial-gradient(900px 620px at 5% 110%, rgba(79,184,168,0.13), transparent 55%), var(--night);
+    color:var(--parchment); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+    transition:background .6s;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:18px 18px 60px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 16px;border-bottom:1px solid var(--line);margin-bottom:26px;flex-wrap:wrap}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:22px}
+  .brand .d{color:var(--gold)}
+  .brand small{font-family:'Atkinson Hyperlegible',sans-serif;font-weight:400;font-size:13px;color:rgba(243,233,210,.55);margin-left:10px}
+  .merke{font-size:13px;color:rgba(243,233,210,.7);display:flex;gap:8px;align-items:center}
+  .merke b{color:var(--parchment);font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:1px;background:var(--night-2);border:1px solid var(--line);padding:3px 8px;border-radius:7px}
+
+  .btn{font-family:'Fraunces',serif;font-weight:600;font-size:18px;background:var(--gold);color:var(--night);
+    border:none;border-radius:14px;padding:14px 26px;cursor:pointer;transition:transform .12s,box-shadow .2s,filter .2s;box-shadow:0 5px 0 rgba(0,0,0,0.28);display:inline-flex;align-items:center;gap:8px;justify-content:center}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.28)}
+  .btn:focus-visible,.svar:focus-visible,.prikk:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--parchment);border:1px solid var(--line);box-shadow:none}
+  .btn.rel{background:var(--rel);color:#fff}
+  .btn[disabled]{opacity:.45;pointer-events:none}
+  .hidden{display:none !important}
+  .status{margin-top:12px;font-size:15px;min-height:20px}
+  .status.ok{color:#7fd6c4}.status.feil{color:#f0a3b0}
+
+  /* ---------- Kode ---------- */
+  .mosaikk{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;border-radius:20px;overflow:hidden;margin-bottom:26px;height:170px}
+  .mosaikk img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+  .kodekort{max-width:520px;margin:0 auto;text-align:center}
+  .eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:8px}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(28px,5vw,42px);line-height:1.08;margin:0 0 10px}
+  .lead{font-size:18px;color:rgba(243,233,210,.8);margin:0 0 24px}
+  .kodefelt{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:34px;letter-spacing:8px;text-align:center;text-transform:uppercase;
+    background:var(--night-2);color:var(--parchment);border:2px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+  .kodefelt:focus{outline:none;border-color:var(--gold)}
+
+  /* ---------- Trekk ---------- */
+  .trekk-rad{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:22px 0 28px}
+  .tkort{border-radius:16px;overflow:hidden;background:var(--night-2);border:3px solid transparent;transition:transform .12s,border-color .12s,opacity .3s,filter .3s;opacity:.75}
+  .tkort img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .tkort .nv{font-family:'Fraunces',serif;font-weight:600;text-align:center;padding:8px 4px;font-size:15px}
+  .tkort.lys{border-color:var(--gold);transform:translateY(-6px) scale(1.04);opacity:1}
+  .tkort.vinner{border-color:var(--c);transform:translateY(-10px) scale(1.08);opacity:1;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+  .tkort.taper{opacity:.25;filter:grayscale(.7)}
+  .midt{text-align:center}
+  .avslor{border-radius:22px;overflow:hidden;background:var(--night-2);border:1px solid var(--line);max-width:760px;margin:0 auto}
+  .avslor .banner{position:relative;height:260px}
+  .avslor .banner img{width:100%;height:100%;object-fit:cover;display:block}
+  .avslor .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(22,20,51,.92))}
+  .avslor .banner h2{position:absolute;left:26px;bottom:14px;z-index:1;margin:0;font-family:'Fraunces',serif;font-size:44px;font-weight:700}
+  .avslor .innhold{padding:22px 26px 26px}
+  .avslor p{font-size:18px;margin:0 0 18px;color:rgba(243,233,210,.85)}
+
+  /* ---------- Spørsmål ---------- */
+  .rel-topp{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .rel-chip{display:inline-flex;align-items:center;gap:8px;background:color-mix(in srgb, var(--rel) 22%, transparent);border:1px solid color-mix(in srgb, var(--rel) 60%, transparent);color:var(--parchment);border-radius:999px;padding:6px 14px 6px 6px;font-weight:700}
+  .rel-chip img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+  .prikker{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  .prikk{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--parchment);font:inherit;font-weight:700;font-size:14px;cursor:pointer;padding:0}
+  .prikk.besvart{background:var(--rel);border-color:var(--rel);color:#fff}
+  .prikk.her{border-color:var(--parchment);box-shadow:0 0 0 3px rgba(243,233,210,.25)}
+  .spkort{display:grid;grid-template-columns:300px 1fr;gap:26px;background:var(--night-2);border:1px solid var(--line);border-radius:22px;padding:24px;align-items:start}
+  .plate{background:var(--plate);border-radius:16px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:18px;border-bottom:6px solid var(--rel)}
+  .plate img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+  .nr{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:6px}
+  .sptekst{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(22px,3.2vw,29px);line-height:1.2;margin:0 0 20px}
+  .svarliste{display:flex;flex-direction:column;gap:10px}
+  .svar{display:flex;align-items:center;gap:14px;text-align:left;width:100%;background:var(--night);border:2px solid var(--line);color:var(--parchment);border-radius:14px;padding:13px 16px;font:inherit;font-size:18px;cursor:pointer;transition:border-color .12s,background .12s,transform .08s}
+  .svar:hover{border-color:color-mix(in srgb, var(--rel) 70%, transparent)}
+  .svar:active{transform:scale(.99)}
+  .svar .bokst{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--night-3);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold-soft)}
+  .svar.valgt{border-color:var(--rel);background:color-mix(in srgb, var(--rel) 22%, var(--night))}
+  .svar.valgt .bokst{background:var(--rel);color:#fff}
+  .navrad{display:flex;justify-content:space-between;gap:10px;margin-top:20px;align-items:center}
+  .lagret{font-size:13px;color:rgba(243,233,210,.5)}
+
+  /* ---------- Oversikt / ferdig ---------- */
+  .panel{background:var(--night-2);border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:18px}
+  .ovliste{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px}
+  .ovliste li{display:flex;gap:12px;align-items:flex-start;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer}
+  .ovliste li:hover{border-color:var(--rel)}
+  .ovliste .n{font-weight:700;color:var(--gold-soft);min-width:24px}
+  .ovliste .q{font-weight:700}
+  .ovliste .a{font-size:15px;color:rgba(243,233,210,.75)}
+  .ovliste li.mangler{border-color:rgba(201,88,107,.7)}
+  .ovliste li.mangler .a{color:#f0a3b0}
+  .ovliste .merk{margin-left:auto;font-weight:700;font-size:20px}
+  .ovliste .rett{color:#7fd6c4} .ovliste .galt{color:#f0a3b0}
+  .poengring{width:150px;height:150px;border-radius:50%;margin:6px auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:conic-gradient(var(--rel) calc(var(--p)*1%), var(--night-3) 0);position:relative}
+  .poengring::before{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--night-2)}
+  .poengring span{position:relative;font-family:'Fraunces',serif;font-weight:700;font-size:40px;line-height:1}
+  .poengring small{position:relative;font-size:13px;color:rgba(243,233,210,.6)}
+
+  @media (max-width:760px){
+    .spkort{grid-template-columns:1fr;padding:18px}
+    .plate{aspect-ratio:auto;height:170px}
+    .trekk-rad{grid-template-columns:repeat(5,1fr);gap:6px}
+    .tkort .nv{font-size:11px}
+    .mosaikk{height:110px}
+    .prikker{margin-left:0}
+    .avslor .banner{height:180px} .avslor .banner h2{font-size:32px}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition-duration:.001ms !important;animation-duration:.001ms !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">Krøniken<span class="d">.</span><small id="proveTittel">Prøve</small></div>
+    <div class="merke" id="merke"></div>
+  </div>
+
+  <section id="s-laster"><p class="lead midt">Laster prøven …</p></section>
+
+  <section id="s-feil" class="hidden midt">
+    <h1 id="feilTit">Fant ikke prøven</h1>
+    <p class="lead" id="feilTekst">Sjekk at du har fått riktig lenke fra læreren.</p>
+  </section>
+
+  <section id="s-kode" class="hidden">
+    <div class="mosaikk" id="mosaikk"></div>
+    <div class="kodekort">
+      <div class="eyebrow" id="kodeEyebrow">KRLE-prøve</div>
+      <h1>Klar for prøve?</h1>
+      <p class="lead">Skriv inn koden du har fått av læreren.</p>
+      <input id="kode" class="kodefelt" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC23" aria-label="Din kode">
+      <button class="btn" id="kodeBtn">Fortsett →</button>
+      <div class="status" id="kodeStatus"></div>
+    </div>
+  </section>
+
+  <section id="s-trekk" class="hidden midt">
+    <div class="eyebrow" id="trekkEyebrow">Hvilken religion får du?</div>
+    <h1 id="trekkTit">Trekk din religion</h1>
+    <p class="lead" id="trekkLead">Du får 10 spørsmål om én av religionene. Trykk på knappen – så bestemmer tilfeldighetene!</p>
+    <div class="trekk-rad" id="trekkRad"></div>
+    <button class="btn" id="trekkBtn">Trekk min religion!</button>
+    <div class="status" id="trekkStatus"></div>
+  </section>
+
+  <section id="s-avslor" class="hidden">
+    <div class="avslor">
+      <div class="banner"><img id="avslorBilde" alt=""><h2 id="avslorNavn"></h2></div>
+      <div class="innhold">
+        <p id="avslorTekst"></p>
+        <button class="btn rel" id="startBtn">Start prøven →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="s-sp" class="hidden">
+    <div class="rel-topp">
+      <span class="rel-chip"><img id="chipBilde" alt=""><span id="chipNavn"></span></span>
+      <div class="prikker" id="prikker" aria-label="Spørsmål"></div>
+    </div>
+    <div class="spkort">
+      <div class="plate"><img id="spBilde" alt=""></div>
+      <div>
+        <div class="nr" id="spNr"></div>
+        <h2 class="sptekst" id="spTekst"></h2>
+        <div class="svarliste" id="svarliste"></div>
+        <div class="navrad">
+          <button class="btn ghost" id="forrigeBtn">← Forrige</button>
+          <span class="lagret" id="lagret"></span>
+          <button class="btn rel" id="nesteBtn">Neste →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s-oversikt" class="hidden">
+    <div class="panel">
+      <div class="eyebrow">Se over før du leverer</div>
+      <h1 style="font-size:30px">Dine svar</h1>
+      <p class="lead" id="ovTekst" style="font-size:16px"></p>
+      <ul class="ovliste" id="ovliste"></ul>
+      <div class="navrad">
+        <button class="btn ghost" id="tilbakeBtn">← Tilbake til spørsmålene</button>
+        <button class="btn rel" id="leverBtn">Lever prøven</button>
+      </div>
+      <div class="status" id="leverStatus"></div>
+    </div>
+  </section>
+
+  <section id="s-ferdig" class="hidden">
+    <div class="panel midt">
+      <div class="eyebrow">Levert</div>
+      <h1 id="ferdigTit">Takk – prøven er levert!</h1>
+      <div id="ferdigResultat"></div>
+    </div>
+    <div class="panel hidden" id="gjennomgang">
+      <h2 style="font-family:'Fraunces',serif;margin:0 0 12px">Gjennomgang</h2>
+      <ul class="ovliste" id="fasitliste"></ul>
+    </div>
+  </section>
+</div>
+
+<script src="felles.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const PID = params.get("p") || (ER_DEMO ? "demo7b" : "");
+let prove=null, kode="", doc=null, aktiv=0, lagreTimer=null;
+
+const SKJERMER=["s-laster","s-feil","s-kode","s-trekk","s-avslor","s-sp","s-oversikt","s-ferdig"];
+function vis(id){ SKJERMER.forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo({top:0,behavior:"smooth"}); }
+function feil(tit, tekst){ $("feilTit").textContent=tit; $("feilTekst").textContent=tekst; vis("s-feil"); }
+function settRel(rel){ document.documentElement.style.setProperty("--rel", temaInfo(prove, rel).farge); }
+const N = () => (doc && doc.sporsmal ? doc.sporsmal.length : proveAntall(prove));
+const erInnebygd = () => !(prove && prove.egne);
+
+/* ---------- Oppstart ---------- */
+(async function(){
+  if(!Lager.klar) return feil("Klarte ikke å koble til","Prøv å laste siden på nytt. Hvis det ikke hjelper: si fra til læreren.");
+  if(!PID) return feil("Mangler prøvelenke","Åpne lenken du fikk av læreren.");
+  try{ prove = await Lager.hentProve(PID); }catch(e){ return feil("Klarte ikke å hente prøven","Sjekk nettet og last siden på nytt."); }
+  if(!prove) return feil("Fant ikke prøven","Sjekk at du har fått riktig lenke fra læreren.");
+  PROVE_CTX = prove;
+  const mos = erInnebygd() ? REL_NOKLER : proveTemaer(prove).slice(0,6);
+  $("mosaikk").style.gridTemplateColumns = `repeat(${mos.length},1fr)`;
+  $("mosaikk").innerHTML = mos.map(r=>`<img src="${temaBilde(prove,r,1)}" alt="${esc(temaInfo(prove,r).navn)}">`).join("");
+  if(!erInnebygd()) $("kodeEyebrow").textContent = "KRLE-prøve · " + temaNavnListe(prove);
+  $("proveTittel").textContent = prove.tittel || "Prøve";
+  document.title = (prove.tittel||"Prøve") + " – Krøniken";
+  if(!prove.aktiv) return feil("Prøven er stengt","Læreren har ikke åpnet prøven ennå – eller den er ferdig.");
+  const lagret = params.get("k") || "";
+  if(lagret) $("kode").value = lagret;
+  vis("s-kode"); setTimeout(()=>$("kode").focus(),50);
+})();
+
+$("kode").addEventListener("input", e=>{ const v=normKode(e.target.value); if(e.target.value!==v) e.target.value=v; });
+$("kode").addEventListener("keydown", e=>{ if(e.key==="Enter") $("kodeBtn").click(); });
+$("kodeBtn").addEventListener("click", async ()=>{
+  const k = normKode($("kode").value);
+  if(k.length<4) return st("kodeStatus","Skriv inn hele koden.",false);
+  $("kodeBtn").disabled=true; st("kodeStatus","Sjekker koden …",null);
+  try{
+    if(!(await Lager.kodeFinnes(PID,k))){ st("kodeStatus","Fant ikke den koden. Sjekk at du har skrevet den riktig.",false); return; }
+    const r = await Lager.hentSvar(PID,k);
+    kode=k; $("merke").innerHTML = `Kode <b>${esc(k)}</b>`; st("kodeStatus","",null);
+    if(r.status==="levert") return feil("Du har allerede levert","Denne koden er brukt. Snakk med læreren hvis du tror noe er feil.");
+    if(r.status==="igang"){ doc=r.data; return visAvslor(true); }
+    if(proveModus(prove)==="blandet" || proveTemaer(prove).length<2){
+      // Ingen trekning: blandet prøve, eller bare ett tema
+      const ny = nyttSvarDoc(prove, kode, proveTemaer(prove)[0]);
+      await Lager.startSvar(PID,kode,ny); doc=ny; return visAvslor(false);
+    }
+    visTrekk();
+  }catch(e){ st("kodeStatus","Noe gikk galt. Sjekk nettet og prøv igjen.",false); }
+  finally{ $("kodeBtn").disabled=false; }
+});
+
+/* ---------- Trekk ---------- */
+function mulige(){ return proveTemaer(prove); }
+function visTrekk(){
+  const rels = erInnebygd() ? REL_NOKLER : mulige();
+  const n = proveAntall(prove);
+  if(!erInnebygd()){
+    $("trekkEyebrow").textContent="Hvilket tema får du?"; $("trekkTit").textContent="Trekk ditt tema"; $("trekkBtn").textContent="Trekk mitt tema!";
+    $("trekkLead").textContent=`Du får ${n} spørsmål om ett av temaene. Trykk på knappen – så bestemmer tilfeldighetene!`;
+  } else $("trekkLead").textContent=`Du får ${n} spørsmål om én av religionene. Trykk på knappen – så bestemmer tilfeldighetene!`;
+  $("trekkRad").style.gridTemplateColumns = rels.length>=5 ? "repeat(5,1fr)" : `repeat(${rels.length},minmax(0,190px))`;
+  $("trekkRad").style.justifyContent = "center";
+  $("trekkRad").innerHTML = rels.map(r=>{ const T=temaInfo(prove,r); return `<div class="tkort ${mulige().includes(r)?"":"taper"}" data-r="${r}" style="--c:${T.farge}">
+    <img src="${temaBilde(prove,r,1)}" alt=""><div class="nv">${esc(T.navn)}</div></div>`; }).join("");
+  vis("s-trekk");
+}
+$("trekkBtn").addEventListener("click", async ()=>{
+  $("trekkBtn").disabled=true; st("trekkStatus","",null);
+  const rel = tilfeldig(mulige());
+  const ny = nyttSvarDoc(prove, kode, rel);
+  try{ await Lager.startSvar(PID,kode,ny); }
+  catch(e){ $("trekkBtn").disabled=false; return st("trekkStatus","Klarte ikke å starte prøven. Kanskje den er stengt? Si fra til læreren.",false); }
+  doc=ny;
+  await animerTrekk(rel);
+  setTimeout(()=>visAvslor(false), 900);
+});
+function animerTrekk(mal){
+  return new Promise(res=>{
+    const kort=[...document.querySelectorAll(".tkort")].filter(k=>mulige().includes(k.dataset.r));
+    if(kort.length<2){ kort[0].classList.add("vinner"); return res(); }
+    const redusert = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const malIdx = kort.findIndex(k=>k.dataset.r===mal);
+    const steg = redusert ? 1 : kort.length*3 + ((malIdx - 0 + kort.length) % kort.length) + 1;
+    let i=0, pos=-1;
+    (function tikk(){
+      kort.forEach(k=>k.classList.remove("lys"));
+      pos=(pos+1)%kort.length; kort[pos].classList.add("lys"); i++;
+      if(i>=steg || redusert){
+        kort.forEach(k=>{ k.classList.remove("lys"); k.classList.add(k.dataset.r===mal?"vinner":"taper"); });
+        settRel(mal); return res();
+      }
+      const t=i/steg; setTimeout(tikk, 60 + 380*t*t*t);
+    })();
+  });
+}
+
+/* ---------- Avsløring ---------- */
+function visAvslor(fortsett){
+  const blandet = doc.religion==="_blandet", R=temaInfo(prove,doc.religion); settRel(doc.religion);
+  const navn = blandet ? (prove.tittel||"Prøve") : R.navn;
+  $("avslorBilde").src = blandet ? temaBilde(prove, proveTemaer(prove)[0], 1) : temaBilde(prove,doc.religion,1);
+  $("avslorNavn").textContent=navn;
+  const besvart=(doc.svar||[]).filter(v=>v!=null).length;
+  const om = blandet ? `fra ${esc(temaNavnListe(prove))}` : (erInnebygd() ? `om ${esc(R.navn.toLowerCase())}` : `om «${esc(R.navn)}»`);
+  $("avslorTekst").innerHTML = fortsett
+    ? `Velkommen tilbake! Du holder på med <b>${esc(navn)}</b> og har svart på ${besvart} av ${N()} spørsmål.`
+    : `Du skal svare på <b>${N()} spørsmål ${om}</b>. Svarene lagres underveis, og du kan gå fram og tilbake og endre før du leverer.`;
+  $("startBtn").textContent = fortsett ? "Fortsett prøven →" : "Start prøven →";
+  vis("s-avslor");
+}
+$("startBtn").addEventListener("click", ()=>{
+  const forste = doc.svar.findIndex(v=>v==null);
+  aktiv = forste<0 ? 0 : forste;
+  const blandet = doc.religion==="_blandet";
+  $("chipBilde").src = blandet ? temaBilde(prove, proveTemaer(prove)[0], 1) : temaBilde(prove,doc.religion,1);
+  $("chipNavn").textContent = blandet ? (prove.tittel||"Prøve") : temaInfo(prove,doc.religion).navn;
+  if(forste<0) visOversikt(); else visSp();
+});
+
+/* ---------- Spørsmål ---------- */
+function visSp(){
+  const h=hentSp(prove,doc,aktiv), q=h.q, blandet=doc.religion==="_blandet";
+  $("spNr").textContent=`Spørsmål ${aktiv+1} av ${N()}` + (blandet ? ` · ${temaInfo(prove,h.tema).navn}` : "");
+  $("spTekst").textContent=q.s;
+  $("spBilde").src=temaBilde(prove, h.tema, 2 + (aktiv % 6));
+  $("svarliste").innerHTML = q.a.map((a,i)=>`<button class="svar ${doc.svar[aktiv]===i?"valgt":""}" data-i="${i}"><span class="bokst">${"ABCD"[i]}</span><span>${esc(a)}</span></button>`).join("");
+  $("prikker").innerHTML = doc.sporsmal.map((_,i)=>`<button class="prikk ${doc.svar[i]!=null?"besvart":""} ${i===aktiv?"her":""}" data-i="${i}" aria-label="Spørsmål ${i+1}">${i+1}</button>`).join("");
+  $("forrigeBtn").style.visibility = aktiv===0?"hidden":"visible";
+  $("nesteBtn").textContent = aktiv===N()-1 ? "Se over svarene →" : "Neste →";
+  if($("s-sp").classList.contains("hidden")) vis("s-sp");
+}
+$("svarliste").addEventListener("click", e=>{
+  const b=e.target.closest(".svar"); if(!b) return;
+  velg(+b.dataset.i);
+});
+function velg(i){
+  doc.svar[aktiv]=i; visSp(); planleggLagring();
+  clearTimeout(velg.t);
+  velg.t=setTimeout(()=>{ if(aktiv<N()-1 && doc.svar[aktiv]===i){ aktiv++; visSp(); } }, 550);
+}
+$("prikker").addEventListener("click", e=>{ const b=e.target.closest(".prikk"); if(!b) return; clearTimeout(velg.t); aktiv=+b.dataset.i; visSp(); });
+$("forrigeBtn").addEventListener("click", ()=>{ clearTimeout(velg.t); if(aktiv>0){ aktiv--; visSp(); } });
+$("nesteBtn").addEventListener("click", ()=>{ clearTimeout(velg.t); if(aktiv<N()-1){ aktiv++; visSp(); } else visOversikt(); });
+document.addEventListener("keydown", e=>{
+  if($("s-sp").classList.contains("hidden") || e.target.tagName==="INPUT") return;
+  const k=e.key.toUpperCase(); const map={"1":0,"2":1,"3":2,"4":3,"A":0,"B":1,"C":2,"D":3};
+  if(k in map){ velg(map[k]); }
+  else if(e.key==="ArrowRight") $("nesteBtn").click();
+  else if(e.key==="ArrowLeft") $("forrigeBtn").click();
+});
+
+function planleggLagring(){
+  $("lagret").textContent="Lagrer …";
+  clearTimeout(lagreTimer);
+  lagreTimer=setTimeout(async ()=>{
+    try{ await Lager.lagreSvar(PID,kode,{svar:doc.svar}); $("lagret").textContent="✓ Lagret"; }
+    catch(e){ $("lagret").textContent="⚠ Ikke lagret – sjekk nettet"; }
+  }, 400);
+}
+
+/* ---------- Oversikt og levering ---------- */
+function visOversikt(){
+  const mangler = doc.svar.filter(v=>v==null).length;
+  $("ovTekst").textContent = mangler ? `Du mangler svar på ${mangler} spørsmål. Trykk på et spørsmål for å gå til det.` : "Du har svart på alle spørsmålene. Trykk på et spørsmål hvis du vil endre svaret.";
+  $("ovliste").innerHTML = doc.sporsmal.map((_,i)=>{
+    const q=hentSp(prove,doc,i).q, v=doc.svar[i];
+    return `<li data-i="${i}" class="${v==null?"mangler":""}"><span class="n">${i+1}.</span><div><div class="q">${esc(q.s)}</div><div class="a">${v==null?"Ikke besvart":esc(q.a[v])}</div></div></li>`;
+  }).join("");
+  $("leverBtn").textContent="Lever prøven"; $("leverBtn").dataset.bekreft=""; st("leverStatus","",null);
+  vis("s-oversikt");
+}
+$("ovliste").addEventListener("click", e=>{ const li=e.target.closest("li"); if(!li) return; aktiv=+li.dataset.i; vis("s-sp"); visSp(); });
+$("tilbakeBtn").addEventListener("click", ()=>{ vis("s-sp"); visSp(); });
+$("leverBtn").addEventListener("click", async ()=>{
+  const b=$("leverBtn");
+  if(!b.dataset.bekreft){
+    const mangler=doc.svar.filter(v=>v==null).length;
+    b.dataset.bekreft="1"; b.textContent="Ja, lever nå!";
+    st("leverStatus", mangler ? `Du har ${mangler} ubesvarte. Etter levering kan du ikke endre svarene. Trykk igjen for å levere.` : "Etter levering kan du ikke endre svarene. Trykk igjen for å levere.", null);
+    return;
+  }
+  b.disabled=true; clearTimeout(lagreTimer); st("leverStatus","Leverer …",null);
+  const riktige = riktigeAv(doc);
+  try{
+    await Lager.lagreSvar(PID,kode,{svar:doc.svar, levert:true, levertTid:Date.now(), riktige});
+    visFerdig(riktige);
+  }catch(e){
+    b.disabled=false; st("leverStatus","Klarte ikke å levere. Sjekk nettet og trykk igjen.",false);
+  }
+});
+function visFerdig(riktige){
+  if(prove.visResultat){
+    const p=Math.round(riktige/N()*100);
+    $("ferdigResultat").innerHTML = `<div class="poengring" style="--p:${p}"><span>${riktige}</span><small>av ${N()}</small></div>
+      <p class="lead">${p>=90?"Kjempebra jobbet!":p>=70?"Godt jobbet!":p>=50?"Bra innsats!":"Takk for innsatsen – se gjennomgangen under."}</p>`;
+    $("fasitliste").innerHTML = doc.sporsmal.map((_,i)=>{
+      const h=hentSp(prove,doc,i), q=h.q, v=doc.svar[i], f=h.f, ok=v===f;
+      return `<li style="cursor:default"><span class="n">${i+1}.</span><div><div class="q">${esc(q.s)}</div>
+        <div class="a">Ditt svar: ${v==null?"<i>ikke besvart</i>":esc(q.a[v])}${ok?"":` · <b style="color:#7fd6c4">Riktig: ${esc(q.a[f])}</b>`}</div></div>
+        <span class="merk ${ok?"rett":"galt"}">${ok?"✓":"✗"}</span></li>`;
+    }).join("");
+    $("gjennomgang").classList.remove("hidden");
+  } else {
+    $("ferdigResultat").innerHTML = `<p class="lead">Læreren din ser resultatet og gir deg tilbakemelding.</p>`;
+  }
+  vis("s-ferdig");
+}
+</script>
+</body>
+</html>

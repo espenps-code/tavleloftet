@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23161433'/%3E%3Ctext x='28' y='48' text-anchor='middle' font-family='Georgia%2Cserif' font-weight='700' font-size='44' fill='%23F3E9D2'%3EK%3C/text%3E%3Ccircle cx='50' cy='45' r='6' fill='%23E8B04B'/%3E%3C/svg%3E">
+<title>Lag din religion – KRLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --night:#161433; --night-2:#201d47; --parchment:#F3E9D2; --parchment-edge:#e4d6b6;
+    --ink:#2a2440; --gold:#E8B04B; --gold-soft:#f0c97a; --teal:#4FB8A8;
+    --line:rgba(243,233,210,0.16);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    background:radial-gradient(1100px 650px at 80% -10%, rgba(124,140,224,0.18), transparent 60%),
+               radial-gradient(800px 560px at 8% 110%, rgba(79,184,168,0.14), transparent 55%), var(--night);
+    color:var(--parchment); min-height:100vh; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:26px 20px 60px}
+  .eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:6px}
+  .crest{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,4.2vw,40px);line-height:1.05;margin:0 0 8px}
+  .crest .g{color:var(--gold)}
+  .lead{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(17px,2.3vw,21px);max-width:600px;margin:0 0 24px}
+
+  .panel{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}
+  label.felt{display:block;font-size:14px;font-weight:700;margin:0 0 6px;color:var(--gold-soft)}
+  input[type=text], textarea{
+    width:100%;background:var(--night);color:var(--parchment);border:1px solid var(--line);
+    border-radius:11px;padding:13px 14px;font:inherit;font-size:16px;margin-bottom:16px;resize:vertical
+  }
+  textarea{min-height:90px}
+  input:focus-visible, textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+
+  .btn{font-family:'Fraunces',serif;font-weight:600;font-size:18px;background:var(--gold);color:var(--night);
+    border:none;border-radius:13px;padding:15px 30px;cursor:pointer;transition:transform .12s,box-shadow .2s;box-shadow:0 6px 0 rgba(0,0,0,0.25)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,0.25)}
+  .btn:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--parchment);border:1px solid var(--line);box-shadow:none}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.liten{font-size:15px;padding:11px 18px;box-shadow:0 4px 0 rgba(0,0,0,0.25)}
+  .rad{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px}
+
+  /* progress */
+  .progress{height:8px;background:var(--night-2);border-radius:5px;overflow:hidden;margin:0 0 8px}
+  .progress .fill{height:100%;background:var(--gold);border-radius:5px;transition:width .35s ease;width:0%}
+  .progress-tekst{font-size:12px;color:rgba(243,233,210,0.55);margin-bottom:18px;letter-spacing:.5px}
+
+  /* question */
+  .q-tittel{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(21px,3vw,27px);line-height:1.2;margin:6px 0 18px}
+  .valg{display:grid;gap:12px;margin-bottom:8px}
+  .valg button{font-family:inherit;text-align:left;background:var(--night-2);border:1.5px solid var(--line);
+    border-radius:13px;padding:16px 18px;font-size:17px;color:var(--parchment);cursor:pointer;
+    transition:border-color .15s,transform .12s,background .15s;display:flex;gap:13px;align-items:center}
+  .valg button:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .valg button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .valg button.valgt{border-color:var(--gold);background:rgba(232,176,75,0.12)}
+  .valg .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex-shrink:0}
+  .valg button.valgt .dot{border-color:var(--gold);background:var(--gold);box-shadow:inset 0 0 0 3px var(--night-2)}
+
+  /* loading */
+  .loading{display:flex;align-items:center;gap:14px;color:var(--gold-soft);font-family:'Fraunces',serif;font-size:18px;padding:24px 2px}
+  .spin{width:24px;height:24px;border:3px solid rgba(232,176,75,0.25);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* situasjon */
+  .situasjon{background:var(--parchment);color:var(--ink);border-radius:16px;padding:22px 24px;margin-bottom:18px;box-shadow:0 14px 40px rgba(0,0,0,0.3)}
+  .situasjon .nr{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9a7b2e;font-weight:700;margin-bottom:6px}
+  .situasjon p{margin:0 0 14px;font-size:17px;color:#352e4d}
+  .situasjon .sp{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:0 0 14px}
+
+  /* resultat */
+  .kort{background:var(--parchment);color:var(--ink);border-radius:18px;padding:28px 30px;box-shadow:0 16px 44px rgba(0,0,0,0.32);position:relative}
+  .kort::after{content:"";position:absolute;inset:7px;border:1px solid rgba(42,36,64,0.12);border-radius:12px;pointer-events:none}
+  .kort h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(24px,3.5vw,32px);margin:0 0 4px;color:var(--ink)}
+  .kort .kjerne{font-size:16px;color:var(--teal);font-weight:700;margin-bottom:18px}
+  .kort .avsnitt{font-size:17px;color:#352e4d;margin:0 0 16px}
+  .kort dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:15px}
+  .kort dt{color:#9a7b2e;font-weight:700}
+  .kort dd{margin:0;color:#352e4d}
+  .kort .valgliste{margin:8px 0 0;padding-left:20px}
+  .kort .valgliste li{font-size:15px;color:#352e4d;margin-bottom:5px}
+  .status{margin-top:14px;font-size:14px;min-height:18px}
+  .status.ok{color:#7fd6c4}
+  .status.feil{color:#e69aa8}
+  .jsonboks{width:100%;min-height:120px;background:var(--night);color:var(--parchment);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;margin-top:12px;display:none}
+
+  .hidden{display:none !important}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- START -->
+  <section id="start">
+    <div class="eyebrow">KRLE · 7. trinn</div>
+    <h1 class="crest">Lag din egen <span class="g">religion</span></h1>
+    <p class="lead">Du skal bygge en religion ut fra det du selv mener er viktig. Svar så ærlig du kan – det finnes ingen riktige eller gale svar.</p>
+    <div class="panel">
+      <label class="felt" for="alias">Kallenavnet ditt</label>
+      <input id="alias" type="text" placeholder="F.eks. Stjerne, Lyn, Bølge …" autocomplete="off">
+      <label class="felt" for="navn">Hva heter religionen din?</label>
+      <input id="navn" type="text" placeholder="Gi den et navn …" autocomplete="off">
+      <div class="status" id="klasseInfo" style="margin-top:4px"></div>
+    </div>
+    <button class="btn" id="begynnBtn">Begynn</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="progress"><div class="fill" id="progFill"></div></div>
+    <div class="progress-tekst" id="progTekst"></div>
+    <div id="qHolder"></div>
+    <div class="rad">
+      <button class="btn ghost liten" id="forrigeBtn">← Forrige</button>
+      <button class="btn liten" id="nesteBtn">Neste →</button>
+    </div>
+  </section>
+
+  <!-- DILEMMA -->
+  <section id="dilemma" class="hidden">
+    <div class="eyebrow">Tenk deg om</div>
+    <h2 class="crest" style="font-size:clamp(22px,3.4vw,32px)">Fem situasjoner</h2>
+    <p class="lead" id="dilemmaLead">La oss teste religionen din i fem situasjoner der valgene koster noe.</p>
+    <div id="dilemmaHolder"></div>
+    <div class="rad" id="dilemmaActions"></div>
+  </section>
+
+  <!-- RESULTAT -->
+  <section id="resultat" class="hidden">
+    <div class="eyebrow">Ferdig</div>
+    <h2 class="crest" style="font-size:clamp(22px,3.4vw,32px)">Min religion</h2>
+    <div class="kort" id="resultKort"></div>
+    <div class="rad">
+      <button class="btn" id="lagreBtn">Lagre religionen min</button>
+      <button class="btn ghost liten" id="kopierBtn">Vis/kopier som tekst</button>
+    </div>
+    <div class="status" id="lagreStatus"></div>
+    <textarea class="jsonboks" id="jsonBoks" readonly></textarea>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   OPPSETT — må være lik simulator.html og index.html.
+   Lim inn din egen firebaseConfig og din Worker-adresse.
+   Se OPPSETT.md.
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDazYM5XDIABscMaDFgJ1IEco0du4JAN4w",
+  authDomain: "krle-sim.firebaseapp.com",
+  projectId: "krle-sim",
+  storageBucket: "krle-sim.firebasestorage.app",
+  messagingSenderId: "1073291328318",
+  appId: "1:1073291328318:web:2fa3d0e862ed8e25d24a6f"
+};
+const API_URL = "https://patient-bird-01de.espenps.workers.dev";
+
+let db = null;
+function initFirebase(){
+  if(db) return db;
+  if(typeof firebase === "undefined" || !FIREBASE_CONFIG.projectId) return null;
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    return db;
+  }catch(e){ return null; }
+}
+
+/* ---------- Spørsmål (strukturelle akser) ---------- */
+const SPORSMAL = [
+  {felt:"gudsbilde", q:"Hva tror religionen din på?", valg:[
+    "Én skaper som ser alt","Mange ånder og krefter i naturen","Ingen guder – bare verden og naturlovene","En kraft som finnes i alt og alle"]},
+  {felt:"etterliv", q:"Hva skjer etter at vi dør?", valg:[
+    "Hver person blir husket etter det de gjorde","Vi blir til jord og vokser igjen","Døden er en slutt – minnet lever videre","Vi begynner et nytt liv på nytt"]},
+  {felt:"lidelse", q:"Hvorfor skjer det vonde ting, tror dere?", valg:[
+    "Det er en prøvelse vi skal lære av","Det skjer tilfeldig – sånn er livet","Det er en følge av noe noen har gjort","Ingen vet helt – men vi hjelper hverandre gjennom det"]},
+  {felt:"moral", q:"Hvor kommer reglene for rett og galt fra?", valg:[
+    "Fra en hellig bok eller skrift","Fra forfedrene og tradisjonen","Fra det vi tenker oss fram til selv","Fra hjertet og samvittigheten"]},
+  {felt:"leveregler", q:"Hva er den viktigste leveregelen?", valg:[
+    "Del med alle, og ta bare det du trenger","Lydighet framfor alt – reglene brytes aldri","Søk sannhet og still spørsmål","Vær snill mot alt som lever"]},
+  {felt:"tilgivelse", q:"Når noen har gjort noe galt, hva er rett?", valg:[
+    "Tilgi og gå videre","Gjøre det godt igjen","Få en rettferdig straff","Stenges ute til de har gjort opp for seg"]},
+  {felt:"autoritet", q:"Hvem bestemmer i religionen din?", valg:[
+    "Én øverste leder som har det siste ordet","De eldste og rådet sammen","Den som har det beste argumentet","Alle er like – ingen bestemmer over andre"]},
+  {felt:"likeverd", q:"Hvem har en stemme hos dere?", valg:[
+    "Alle har en plass og en stemme","Alle er like for det hellige","Alle stemmer teller likt i samtalen","De vise og erfarne leder de andre"]},
+  {felt:"fellesskap", q:"Hva betyr mest hos dere?", valg:[
+    "Fellesskapet – vi hører sammen","Den enkelte – alle er frie","Begge deler, i balanse"]},
+  {felt:"rikdom", q:"Hva mener dere om penger og eiendeler?", valg:[
+    "Rikdom skal deles, ikke samles","Flid belønnes, men gi til dem som har lite","Kunnskap er den ekte rikdommen","Alt er felles – ingen eier noe alene"]},
+  {felt:"endring", q:"Bør religionen forandre seg over tid?", valg:[
+    "Nei, vi holder fast på det gamle","Ja, vi fornyer oss når vi lærer nytt","Vi tar gjerne inn det beste fra andre"]},
+  {felt:"andre", q:"Hva tenker dere om folk som tror noe annet?", valg:[
+    "Alle bør til slutt følge vår vei – vi har sannheten","Alle er velkomne – vi er nysgjerrige på andre","Vi lever helst for oss selv","Vi respekterer alle, men holder på vårt"]},
+  {felt:"fremmede", q:"En fremmed i nød ber om hjelp. Hva gjør dere?", valg:[
+    "Hjelper alltid, uansett hvem det er","Hjelper helst dem som er som oss","Avviser dem – våre egne kommer først"]},
+  {felt:"konflikt", q:"Når dere er sterkt uenige med en annen gruppe?", valg:[
+    "Snakker til vi finner en løsning","Går hver til vårt, i fred","Kjemper for vår sak, koste hva det vil","Presser på til de gir seg"]},
+  {felt:"natur", q:"Hva er forholdet til naturen?", valg:[
+    "Naturen er en slektning vi hører til","Naturen er en gave vi skal ta vare på","Naturen skal forstås og brukes klokt","Naturen er hellig og må vernes"]},
+  {felt:"ritualer", q:"Hvordan samles dere?", valg:[
+    "Faste stunder med bønn eller ord","Store fester på spesielle tider i året","Mest samtale, spørsmål og læring","Stille stunder ute i naturen"]},
+  {felt:"kjerne", q:"Til slutt: hva er det aller viktigste i religionen din?", type:"tekst", plassholder:"Skriv én eller to setninger …"}
+];
+
+/* ---------- Tilstand ---------- */
+let steg = 0;
+const profil = {navn:"", kjerne:"", alias:"", klasseId:""};
+let dilemmaer = [], dilemmasvar = [];
+
+/* prefyll fra lenke ?klasse=ID&navn=ALIAS (læreren lager lenken) */
+(function(){
+  const p = new URLSearchParams(location.search);
+  profil.klasseId = (p.get("klasse") || p.get("k") || "").trim();
+  const navn = p.get("navn") || p.get("alias");
+  if(navn) document.getElementById("alias").value = navn;
+  const info = document.getElementById("klasseInfo");
+  if(profil.klasseId){ info.className="status ok"; info.textContent="Klassen er klar ✓"; }
+  else { info.className="status"; info.textContent="Tips: åpne lenken du fikk av læreren. Du kan fullføre uansett og kopiere religionen til slutt."; }
+})();
+
+function vis(id){
+  ["start","quiz","dilemma","resultat"].forEach(s=>document.getElementById(s).classList.toggle("hidden", s!==id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- Start ---------- */
+document.getElementById("begynnBtn").addEventListener("click",()=>{
+  profil.alias = (document.getElementById("alias").value||"").trim();
+  profil.navn = (document.getElementById("navn").value||"").trim();
+  if(!profil.navn){ document.getElementById("navn").focus(); return; }
+  steg = 0;
+  vis("quiz");
+  renderSporsmal();
+});
+
+/* ---------- Quiz ---------- */
+function renderSporsmal(){
+  const s = SPORSMAL[steg];
+  document.getElementById("progFill").style.width = Math.round((steg/SPORSMAL.length)*100)+"%";
+  document.getElementById("progTekst").textContent = `Spørsmål ${steg+1} av ${SPORSMAL.length}`;
+  const holder = document.getElementById("qHolder");
+  let html = `<h2 class="q-tittel">${s.q}</h2>`;
+  if(s.type==="tekst"){
+    html += `<textarea id="tekstSvar" placeholder="${s.plassholder||""}">${escapeHtml(profil[s.felt]||"")}</textarea>`;
+  } else {
+    html += `<div class="valg">`;
+    s.valg.forEach(v=>{
+      const valgt = profil[s.felt]===v;
+      html += `<button data-val="${escapeHtml(v)}" class="${valgt?"valgt":""}"><span class="dot"></span><span>${escapeHtml(v)}</span></button>`;
+    });
+    html += `</div>`;
+  }
+  holder.innerHTML = html;
+
+  if(s.type!=="tekst"){
+    holder.querySelectorAll(".valg button").forEach(b=>{
+      b.addEventListener("click",()=>{
+        profil[s.felt] = b.dataset.val;
+        holder.querySelectorAll(".valg button").forEach(x=>x.classList.remove("valgt"));
+        b.classList.add("valgt");
+        oppdaterNeste();
+      });
+    });
+  } else {
+    holder.querySelector("#tekstSvar").addEventListener("input",e=>{ profil[s.felt]=e.target.value.trim(); oppdaterNeste(); });
+  }
+  document.getElementById("forrigeBtn").style.visibility = steg===0 ? "hidden":"visible";
+  document.getElementById("nesteBtn").textContent = steg===SPORSMAL.length-1 ? "Bygg religionen →" : "Neste →";
+  oppdaterNeste();
+}
+function oppdaterNeste(){
+  const s = SPORSMAL[steg];
+  const svart = !!(profil[s.felt] && String(profil[s.felt]).trim());
+  document.getElementById("nesteBtn").disabled = !svart;
+}
+document.getElementById("nesteBtn").addEventListener("click",()=>{
+  if(document.getElementById("nesteBtn").disabled) return;
+  if(steg < SPORSMAL.length-1){ steg++; renderSporsmal(); }
+  else { startDilemma(); }
+});
+document.getElementById("forrigeBtn").addEventListener("click",()=>{
+  if(steg>0){ steg--; renderSporsmal(); }
+});
+
+/* ---------- Dilemma (AI – fem situasjoner, én om gangen) ---------- */
+const MAL_DILEMMA = 5;
+const DILEMMA_TEMA = [
+  "penger eller eiendeler – der det å følge religionen koster deg noe du gjerne vil ha",
+  "en venn som bryter en av reglene deres – lojalitet mot vennen eller mot religionen",
+  "urett begått av noen i din egen gruppe – si fra og skape bråk, eller beskytte dine egne",
+  "makt – du kan få mer å si hvis du gir slipp på noe religionen din står for",
+  "press fra flertallet – alle de andre vil noe samvittigheten din sier nei til",
+  "en fremmed i nød – å hjelpe koster gruppen din dyrt"
+];
+let aktivtDilemma = null;
+
+async function startDilemma(){
+  vis("dilemma");
+  dilemmasvar = [];
+  await nesteDilemma();
+}
+async function nesteDilemma(){
+  const i = dilemmasvar.length;
+  document.getElementById("dilemmaLead").textContent = `Situasjon ${i+1} av ${MAL_DILEMMA}`;
+  document.getElementById("dilemmaHolder").innerHTML = `<div class="loading"><div class="spin"></div><span>Lager en situasjon til deg …</span></div>`;
+  document.getElementById("dilemmaActions").innerHTML = "";
+  const tema = DILEMMA_TEMA[i] || "en ny side ved religionen";
+  const tidligere = dilemmasvar.length
+    ? "Tidligere situasjoner og elevens valg:\n" + dilemmasvar.map((d,n)=>`${n+1}. ${d.sporsmal} → valgte: ${d.svar}`).join("\n")
+    : "Ingen tidligere situasjoner ennå.";
+  const sys = `Du lager korte, alderstilpassede dilemmaer for et KRLE-opplegg på 7. trinn (12-åringer) i Norge. Du får en elevs oppdiktede religion. Lag ÉN dagligdags situasjon der religionens verdier settes på ekte prøve – valget skal KOSTE noe uansett hva eleven velger. De tre svaralternativene skal peke i ulik retning og ha ulik pris (f.eks. skuffe en venn, bryte en regel, miste noe man ønsker seg, tape ansikt). Ikke lag tre like snille valg – la eleven kjenne at noe står på spill. Ingen fasit og ingen moralpeker: ikke hint om hvilket valg som er «riktig». Alderstilpasset, aldri grafisk eller skremmende. Skriv bokmål. Svar KUN med gyldig JSON, ingen markdown, ingen tekst utenfor JSON.`;
+  const bruker = `Religionen "${profil.navn}". Verdier:
+gudsbilde=${profil.gudsbilde}; etterliv=${profil.etterliv}; lidelse=${profil.lidelse}; moral=${profil.moral}; leveregler=${profil.leveregler}; tilgivelse=${profil.tilgivelse}; autoritet=${profil.autoritet}; likeverd=${profil.likeverd}; fellesskap=${profil.fellesskap}; rikdom=${profil.rikdom}; endring=${profil.endring}; syn på andre=${profil.andre}; fremmede=${profil.fremmede}; konflikt=${profil.konflikt}; natur=${profil.natur}; ritualer=${profil.ritualer}; viktigst=${profil.kjerne}.
+
+${tidligere}
+
+Lag situasjon nummer ${i+1} av ${MAL_DILEMMA}. La den handle om ${tema}, og gjør den tydelig forskjellig fra de tidligere – grav dypere i en annen verdi. Returner {"situasjon":"2-3 setninger","sporsmal":"...","valg":["...","...","..."]}.`;
+  let d=null, forsok=0, sisteFeil="";
+  while(!d && forsok<2){
+    forsok++;
+    try{ const raw=await kallAI(sys,bruker); const p=trygtJson(raw); if(p && Array.isArray(p.valg) && p.valg.length) d=p; else sisteFeil="Svaret kunne ikke tolkes."; }
+    catch(e){ d=null; sisteFeil=(e&&e.message)||"Ukjent feil."; console.error("AI-feil:", e); }
+  }
+  if(!d){ dilemmaFeil(sisteFeil); return; }
+  aktivtDilemma = d;
+  renderDilemma();
+}
+function renderDilemma(){
+  const d = aktivtDilemma;
+  const i = dilemmasvar.length;
+  const holder = document.getElementById("dilemmaHolder");
+  let html = `<div class="situasjon"><div class="nr">Situasjon ${i+1} av ${MAL_DILEMMA}</div><p>${escapeHtml(d.situasjon||"")}</p><div class="sp">${escapeHtml(d.sporsmal||"")}</div></div><div class="valg">`;
+  (d.valg||[]).forEach(v=>{ html += `<button data-val="${escapeHtml(v)}"><span class="dot"></span><span>${escapeHtml(v)}</span></button>`; });
+  html += `</div>`;
+  holder.innerHTML = html;
+  document.getElementById("dilemmaActions").innerHTML = "";
+  holder.querySelectorAll(".valg button").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      holder.querySelectorAll(".valg button").forEach(x=>x.disabled=true);
+      dilemmasvar.push({sporsmal:d.sporsmal, svar:b.dataset.val});
+      if(dilemmasvar.length >= MAL_DILEMMA){ visResultat(); }
+      else { await nesteDilemma(); }
+    });
+  });
+}
+function dilemmaFeil(detalj){
+  const d = detalj ? `<div style="margin-top:10px;font-size:13px;color:#9a7b2e">Teknisk: ${escapeHtml(detalj)}</div>` : "";
+  document.getElementById("dilemmaHolder").innerHTML = `<div class="situasjon"><p>Vi klarte ikke å lage situasjonene akkurat nå – men du kan gå videre til oppsummeringen.</p>${d}</div>`;
+  const wrap = document.getElementById("dilemmaActions"); wrap.innerHTML="";
+  wrap.appendChild(lagKnapp("Prøv igjen", ()=>nesteDilemma()));
+  wrap.appendChild(lagKnapp("Se min religion →", visResultat));
+}
+
+/* ---------- Resultat ---------- */
+function visResultat(){
+  vis("resultat");
+  const k = document.getElementById("resultKort");
+  const resonnement = dilemmasvar.length
+    ? `<div class="avsnitt" style="margin-top:20px"><strong>Slik tenkte du i situasjonene:</strong></div><ul class="valgliste">${dilemmasvar.map(d=>`<li>${escapeHtml(d.svar)}</li>`).join("")}</ul>`
+    : "";
+  k.innerHTML = `
+    <h2>${escapeHtml(profil.navn)}</h2>
+    <div class="kjerne">${escapeHtml(profil.kjerne||"")}</div>
+    <p class="avsnitt">${escapeHtml(oppsummering())}</p>
+    <dl>
+      <dt>Tror på</dt><dd>${escapeHtml(profil.gudsbilde)}</dd>
+      <dt>Etter døden</dt><dd>${escapeHtml(profil.etterliv)}</dd>
+      <dt>Vonde ting</dt><dd>${escapeHtml(profil.lidelse)}</dd>
+      <dt>Rett og galt</dt><dd>${escapeHtml(profil.moral)}</dd>
+      <dt>Leveregel</dt><dd>${escapeHtml(profil.leveregler)}</dd>
+      <dt>Tilgivelse</dt><dd>${escapeHtml(profil.tilgivelse)}</dd>
+      <dt>Bestemmer</dt><dd>${escapeHtml(profil.autoritet)}</dd>
+      <dt>Stemme</dt><dd>${escapeHtml(profil.likeverd)}</dd>
+      <dt>Viktigst</dt><dd>${escapeHtml(profil.fellesskap)}</dd>
+      <dt>Rikdom</dt><dd>${escapeHtml(profil.rikdom)}</dd>
+      <dt>Forandring</dt><dd>${escapeHtml(profil.endring)}</dd>
+      <dt>Andre</dt><dd>${escapeHtml(profil.andre)}</dd>
+      <dt>Fremmede</dt><dd>${escapeHtml(profil.fremmede)}</dd>
+      <dt>Ved konflikt</dt><dd>${escapeHtml(profil.konflikt)}</dd>
+      <dt>Naturen</dt><dd>${escapeHtml(profil.natur)}</dd>
+      <dt>Samles</dt><dd>${escapeHtml(profil.ritualer)}</dd>
+    </dl>
+    ${resonnement}`;
+  document.getElementById("jsonBoks").value = JSON.stringify([byggProfil()], null, 2);
+}
+function oppsummering(){
+  const lavt = s => (s||"").charAt(0).toLowerCase()+(s||"").slice(1);
+  let t = `${profil.navn} tror på ${lavt(profil.gudsbilde)}. Det aller viktigste er ${lavt(profil.kjerne||"å leve etter sine verdier")}. `;
+  t += `Rett og galt kommer ${lavt(profil.moral)}, og leveregelen er å ${lavt(profil.leveregler)}. `;
+  t += `Møter religionen folk som tror noe annet, ${lavt(profil.andre)}, og når det blir uenighet ${lavt(profil.konflikt)}. `;
+  if(dilemmasvar.length){ t += `Du tok stilling til ${dilemmasvar.length} situasjoner – valgene viser hva religionen din betyr i praksis.`; }
+  return t;
+}
+function byggProfil(){
+  return {
+    navn:profil.navn, kjerne:profil.kjerne, alias:profil.alias,
+    gudsbilde:profil.gudsbilde, etterliv:profil.etterliv, lidelse:profil.lidelse,
+    moral:profil.moral, leveregler:profil.leveregler, tilgivelse:profil.tilgivelse,
+    autoritet:profil.autoritet, likeverd:profil.likeverd, fellesskap:profil.fellesskap,
+    rikdom:profil.rikdom, endring:profil.endring, andre:profil.andre,
+    fremmede:profil.fremmede, konflikt:profil.konflikt, natur:profil.natur, ritualer:profil.ritualer
+  };
+}
+
+document.getElementById("kopierBtn").addEventListener("click",()=>{
+  const b = document.getElementById("jsonBoks");
+  b.style.display = b.style.display==="block" ? "none":"block";
+  if(b.style.display==="block"){ b.select(); try{document.execCommand("copy");}catch(e){} }
+});
+
+document.getElementById("lagreBtn").addEventListener("click", async ()=>{
+  const st = document.getElementById("lagreStatus");
+  if(!profil.klasseId){ st.className="status feil"; st.textContent="Denne siden er ikke koblet til en klasse. Trykk «Vis/kopier som tekst» og lim teksten inn der læreren ber om det."; return; }
+  const d = initFirebase();
+  if(!d){
+    st.className="status feil";
+    st.textContent="Firebase er ikke satt opp ennå. Trykk «Vis/kopier som tekst» og lim teksten inn i simulatoren i stedet.";
+    return;
+  }
+  st.className="status"; st.textContent="Lagrer …";
+  try{
+    await d.collection("klasser").doc(profil.klasseId).collection("religioner").add(Object.assign(byggProfil(), {
+      dilemmasvar: dilemmasvar,
+      opprettet: firebase.firestore.FieldValue.serverTimestamp()
+    }));
+    st.className="status ok";
+    st.textContent="Religionen din er lagret! Du kan lukke siden.";
+    document.getElementById("lagreBtn").disabled = true;
+  }catch(e){
+    st.className="status feil";
+    st.textContent="Klarte ikke å lagre akkurat nå. Prøv igjen, eller bruk «Vis/kopier som tekst».";
+  }
+});
+
+/* ---------- Felles ---------- */
+async function kallAI(system, bruker){
+  const res = await fetch(API_URL,{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-6", max_tokens:1000, system, messages:[{role:"user",content:bruker}]})
+  });
+  const tekst = await res.text();
+  if(!res.ok) throw new Error("HTTP "+res.status+" – "+tekst.slice(0,180));
+  let data;
+  try{ data = JSON.parse(tekst); }catch(e){ throw new Error("Uventet svar fra proxyen: "+tekst.slice(0,160)); }
+  if(data && data.error){ throw new Error((data.error.type||"feil")+": "+(data.error.message||"")); }
+  return (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+}
+function trygtJson(txt){
+  if(!txt) return null;
+  let t = txt.replace(/```json/gi,"").replace(/```/g,"").trim();
+  const a=t.indexOf("{"), b=t.lastIndexOf("}");
+  if(a>-1 && b>-1) t=t.slice(a,b+1);
+  try{ return JSON.parse(t); }catch(e){ return null; }
+}
+function lagKnapp(tekst, fn){ const b=document.createElement("button"); b.className="btn liten"; b.textContent=tekst; b.addEventListener("click",fn); return b; }
+function escapeHtml(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+</script>
+</body>
+</html>

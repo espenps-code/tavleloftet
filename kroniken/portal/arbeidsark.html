@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234FB8A8'/%3E%3Cg fill='%23161433'%3E%3Crect x='12' y='12' width='17' height='17' rx='4'/%3E%3Crect x='35' y='12' width='17' height='17' rx='4' opacity='.35'/%3E%3Crect x='12' y='35' width='17' height='17' rx='4' opacity='.35'/%3E%3Crect x='35' y='35' width='17' height='17' rx='4'/%3E%3C/g%3E%3Cpath d='M16 21l4 4 6-7M39 44l4 4 6-7' fill='none' stroke='%234FB8A8' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Arbeidslogg – Krøniken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --night:#161433; --night-2:#201d47; --night-3:#2b2760; --parchment:#F3E9D2;
+    --gold:#E8B04B; --gold-soft:#f0c97a; --teal:#4FB8A8; --crimson:#C9586B; --peri:#7C8CE0;
+    --line:rgba(243,233,210,0.16); --dim:rgba(243,233,210,0.6);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    background:radial-gradient(1200px 720px at 78% -12%, rgba(124,140,224,0.20), transparent 60%),
+               radial-gradient(900px 620px at 6% 112%, rgba(79,184,168,0.15), transparent 55%), var(--night);
+    background-attachment:fixed;
+    color:var(--parchment); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--gold-soft)}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 22px 70px}
+  .hidden{display:none !important}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0 20px;border-bottom:1px solid var(--line);margin-bottom:26px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .brand .navn{font-family:'Fraunces',serif;font-weight:700;font-size:26px;letter-spacing:.5px}
+  .brand .navn .d{color:var(--gold)}
+  .brand .sub{font-size:13px;color:var(--dim)}
+  .pille{font-size:13px;color:var(--gold-soft);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+  .who{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(243,233,210,0.7)}
+
+  .btn{font-family:'Fraunces',serif;font-weight:600;font-size:16px;background:var(--gold);color:var(--night);
+    border:none;border-radius:12px;padding:11px 20px;cursor:pointer;transition:transform .12s;box-shadow:0 5px 0 rgba(0,0,0,0.25);text-decoration:none;display:inline-block;text-align:center}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,0.25)}
+  .btn:focus-visible,button:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--parchment);border:1px solid var(--line);box-shadow:none}
+  .btn.liten{font-size:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(0,0,0,0.25)}
+  .btn.ghost.liten{box-shadow:none}
+  .btn.fare{background:transparent;border:1px solid rgba(201,88,107,.6);color:#e69aa8;box-shadow:none}
+  .btn.teal{background:var(--teal)}
+
+  .panel{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:0 0 4px}
+  .panel p.hint{font-size:13.5px;color:var(--dim);margin:0 0 14px}
+  input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],select,textarea{
+    background:var(--night);color:var(--parchment);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px;width:100%;color-scheme:dark}
+  textarea{min-height:220px;resize:vertical;line-height:1.6}
+  input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+  label.felt{display:block;font-size:13px;font-weight:700;color:var(--gold-soft);margin:0 0 5px}
+  .rad{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .rad > .f{display:flex;flex-direction:column}
+  .status{margin-top:10px;font-size:14px;min-height:18px}
+  .status.ok{color:#7fd6c4}.status.feil{color:#e69aa8}
+  .tom{font-size:14px;color:var(--dim);padding:6px 0}
+
+  /* Faner */
+  .faner{display:flex;gap:6px;margin-bottom:18px}
+  .fane{background:transparent;border:1px solid var(--line);color:var(--parchment);border-radius:999px;padding:8px 18px;font:inherit;font-weight:700;cursor:pointer}
+  .fane.aktiv{background:var(--gold);color:var(--night);border-color:var(--gold)}
+
+  /* Lister */
+  .liste{display:flex;flex-direction:column;gap:10px}
+  .linje{display:flex;align-items:center;gap:14px;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:13px 16px}
+  .linje.klikk{cursor:pointer;transition:border-color .15s}
+  .linje.klikk:hover{border-color:var(--gold)}
+  .linje.aktiv{border-color:var(--gold);background:rgba(232,176,75,0.08)}
+  .linje .ikon{width:40px;height:40px;border-radius:10px;background:var(--night-3);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--gold-soft);flex-shrink:0;font-size:14px;text-align:center;line-height:1.05}
+  .linje .info{flex:1;min-width:0}
+  .linje .info .k{font-weight:700;font-size:16px}
+  .linje .info .m{font-size:13px;color:var(--dim)}
+  .linje .knapper{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .minibar{height:6px;background:var(--night-3);border-radius:99px;overflow:hidden;margin-top:6px;max-width:260px}
+  .minibar > i{display:block;height:100%;background:var(--teal);border-radius:99px}
+
+  .tilbake{background:none;border:none;color:var(--gold-soft);font:inherit;font-weight:700;cursor:pointer;padding:0;margin-bottom:12px}
+  .ptittel{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(26px,4vw,38px);margin:0;line-height:1.1}
+  .psub{color:var(--dim);margin:4px 0 20px}
+  .to-kol{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:820px){.to-kol{grid-template-columns:1fr}}
+
+  /* Rapport */
+  .tabellboks{overflow:auto;border:1px solid var(--line);border-radius:12px}
+  table.rapport{border-collapse:collapse;width:100%;font-size:14px}
+  table.rapport th,table.rapport td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+  table.rapport th{background:var(--night-3);font-weight:700;font-size:12.5px;position:sticky;top:0}
+  table.rapport th small{display:block;font-weight:400;color:var(--dim);max-width:130px;margin:0 auto;overflow:hidden;text-overflow:ellipsis}
+  table.rapport td:first-child,table.rapport th:first-child{text-align:left;position:sticky;left:0;background:var(--night-2);font-weight:700}
+  table.rapport th:first-child{background:var(--night-3);z-index:1}
+  table.rapport td.c{font-variant-numeric:tabular-nums}
+  td.n100{background:rgba(79,184,168,.35)} td.n50{background:rgba(232,176,75,.22)} td.n1{background:rgba(201,88,107,.22)} td.n0{color:rgba(243,233,210,.45)}
+  table.rapport tr.sum td{font-weight:700;border-top:2px solid var(--gold);background:rgba(232,176,75,.06)}
+  table.rapport td.tot{font-weight:700}
+
+  /* Innlogging */
+  .auth-card{max-width:420px;margin:30px auto;background:var(--night-2);border:1px solid var(--line);border-radius:18px;padding:24px}
+  .auth-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0 0 4px}
+  .auth-card p{font-size:14px;color:var(--dim);margin:0 0 16px}
+  .auth-card input{margin-bottom:10px}
+  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--parchment);color:#2a2440;border:none;border-radius:11px;padding:13px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:14px}
+  .google-btn svg{width:18px;height:18px}
+
+  /* ================= TAVLE ================= */
+  #tavle{position:fixed;inset:0;background:var(--night);display:flex;flex-direction:column;padding:14px 22px 12px;z-index:50;
+    background:radial-gradient(1200px 720px at 85% -20%, rgba(124,140,224,0.18), transparent 60%), var(--night)}
+  .t-topp{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  .t-tit{flex:1;min-width:240px}
+  .t-tema{font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-soft);font-weight:700}
+  .t-tit h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(22px,2.6vw,34px);margin:0;line-height:1.1}
+  .t-sum{min-width:220px}
+  .t-sum .tall{font-family:'Fraunces',serif;font-weight:700;font-size:22px}
+  .t-sum .tall span{color:var(--dim);font-size:15px;font-weight:400}
+  .t-sum .bar{height:10px;background:var(--night-3);border-radius:99px;overflow:hidden;margin-top:4px}
+  .t-sum .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .4s}
+  .t-ktr{display:flex;gap:8px}
+  .t-instr{font-size:15px;color:var(--dim);padding:8px 0 6px}
+  .t-instr b{color:var(--parchment)}
+  .t-grid{flex:1;display:grid;gap:0 28px;min-height:0;overflow:auto}
+  .t-kol{display:flex;flex-direction:column;min-width:0}
+  .t-rad{display:flex;align-items:center;gap:12px;height:var(--rh,64px);border-bottom:1px solid rgba(243,233,210,0.08);padding:3px 0}
+  .t-navn{width:var(--nw,170px);flex-shrink:0;font-weight:700;font-size:var(--fs,20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+  .t-navn .stjerne{color:var(--gold);opacity:0;transform:scale(.4);transition:all .3s}
+  .t-rad.alt .t-navn .stjerne{opacity:1;transform:scale(1)}
+  .t-rad.alt .t-navn{color:var(--gold-soft)}
+  .t-knapper{flex:1;display:flex;gap:7px;height:100%;min-width:0}
+  .ok-knapp{flex:1;min-width:0;max-width:120px;height:100%;border-radius:11px;border:2px solid rgba(243,233,210,0.22);background:var(--night-3);color:var(--parchment);
+    font-family:'Fraunces',serif;font-weight:700;font-size:var(--fs,20px);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+    display:flex;align-items:center;justify-content:center;gap:4px;transition:background .15s,border-color .15s;padding:0 2px;user-select:none}
+  .ok-knapp:hover{border-color:var(--gold-soft)}
+  .ok-knapp.ferdig{background:var(--teal);border-color:var(--teal);color:var(--night)}
+  .ok-knapp.ferdig::before{content:"✓"}
+  .ok-knapp.pop{animation:pop .35s ease}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+  /* Fravær */
+  .t-rad.borte{opacity:.38}
+  .t-rad.borte .ok-knapp{pointer-events:none}
+  .t-navn .borte-merke{display:none;font-size:.6em;font-weight:700;background:var(--crimson);color:#fff;border-radius:6px;padding:2px 7px;letter-spacing:.5px}
+  .t-rad.borte .t-navn .borte-merke{display:inline-block}
+  .t-rad.borte .t-navn .stjerne{display:none}
+  #tavle.fravmodus .t-rad{opacity:1}
+  #tavle.fravmodus .t-navn{cursor:pointer;border:2px dashed var(--gold-soft);border-radius:10px;padding:0 8px;height:80%}
+  #tavle.fravmodus .t-knapper{opacity:.25;pointer-events:none}
+  #tavle.fravmodus .t-instr{color:var(--gold-soft);font-weight:700}
+  #fravBtn.aktiv{background:var(--gold);color:var(--night);border-color:var(--gold)}
+  td.nb{color:#e69aa8;font-style:italic}
+
+  /* Feiring */
+  #konfetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55}
+  .feiring{position:fixed;left:50%;top:44%;z-index:60;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6);
+    background:linear-gradient(160deg,var(--night-3),var(--night-2));border:3px solid var(--gold);border-radius:24px;
+    padding:22px 44px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.55),0 0 0 8px rgba(232,176,75,.12);max-width:90vw}
+  .feiring .ft{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(30px,4.2vw,60px);line-height:1.1;color:var(--parchment)}
+  .feiring .ft b{color:var(--gold)}
+  .feiring .fu{font-size:clamp(15px,1.6vw,22px);color:var(--gold-soft);margin-top:6px;font-weight:700}
+  .feiring.stor{border-color:var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.55),0 0 0 10px rgba(79,184,168,.18)}
+  .feiring.stor .ft{font-size:clamp(36px,5.4vw,78px)}
+  .feiring.vis{animation:feir 1.9s cubic-bezier(.2,.9,.3,1.2) forwards}
+  .feiring.stor.vis{animation-duration:2.8s}
+  @keyframes feir{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(-4deg)}
+    14%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(1deg)}
+    24%{transform:translate(-50%,-50%) scale(1) rotate(0)}
+    80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+    100%{opacity:0;transform:translate(-50%,-62%) scale(.96)}
+  }
+  @media (prefers-reduced-motion: reduce){ .feiring.vis{opacity:1;transform:translate(-50%,-50%)} }
+  .t-feil{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--crimson);color:#fff;padding:10px 18px;border-radius:10px;font-weight:700}
+
+  @media (prefers-reduced-motion: reduce){*{transition-duration:.001ms !important;animation:none !important}}
+
+  /* ===== Elevrapporter: to per A4 ===== */
+  #elevrapporter{display:none}
+  @page{size:A4;margin:9mm}
+  @media print{
+    body.print-elever #hoved, body.print-elever #tavle{display:none !important}
+    body.print-elever #elevrapporter{display:block}
+  }
+  .erk{height:137mm;box-sizing:border-box;padding:7mm 8mm 5mm;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:#1d1a33;
+    display:flex;flex-direction:column;overflow:hidden;break-inside:avoid;page-break-inside:avoid;position:relative;background:#fff}
+  .erk:nth-child(odd):not(:last-child){border-bottom:1.2px dashed #999}
+  .erk:nth-child(odd):not(:last-child)::after{content:"✂";position:absolute;bottom:-9px;left:4mm;font-size:13px;color:#777;background:#fff;padding:0 3px}
+  .erk:nth-child(even){break-after:page;page-break-after:always}
+  .erk:last-child{break-after:auto;page-break-after:auto}
+  .erk-topp{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;border-bottom:2.5px solid #E8B04B;padding-bottom:3mm;margin-bottom:3.5mm}
+  .erk-eyebrow{font-size:8.5pt;letter-spacing:1.8px;text-transform:uppercase;color:#8a6a1f;font-weight:700}
+  .erk-navn{font-family:'Fraunces',serif;font-weight:700;font-size:24pt;line-height:1.05;margin:1mm 0 0}
+  .erk-sub{font-size:9.5pt;color:#555}
+  .erk-sum{text-align:right;min-width:52mm}
+  .erk-pst{font-family:'Fraunces',serif;font-weight:700;font-size:26pt;line-height:1;color:#2a7f72}
+  .erk-tall{font-size:9.5pt;color:#444;margin:1mm 0 1.5mm}
+  .erk-bar{height:3.2mm;background:#ece7da;border-radius:99px;overflow:hidden}
+  .erk-bar i{display:block;height:100%;background:#4FB8A8;border-radius:99px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table.erk-tab{width:100%;border-collapse:collapse;font-size:9.5pt}
+  table.erk-tab th{text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:1px;color:#777;font-weight:700;padding:0 2mm 1.2mm 0;border-bottom:1px solid #ccc}
+  table.erk-tab td{padding:1.3mm 2mm 1.3mm 0;border-bottom:1px solid #eee;vertical-align:middle}
+  table.erk-tab td.d{white-space:nowrap;color:#555;width:16mm}
+  table.erk-tab td.t{max-width:52mm;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  table.erk-tab td.g{white-space:nowrap;text-align:right;font-weight:700;width:18mm}
+  .bokser{display:flex;flex-wrap:wrap;gap:1.2mm}
+  .boks{min-width:5.6mm;height:5.6mm;padding:0 1mm;border:1.2px solid #bbb;border-radius:1.3mm;display:inline-flex;align-items:center;justify-content:center;font-size:7.5pt;color:#999;box-sizing:border-box}
+  .boks.ja{background:#cdeee8;border-color:#4FB8A8;color:#1e5f55;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .erk-borte{font-style:italic;color:#b2465a}
+  .erk-kom{margin-top:auto;padding-top:3mm}
+  .erk-kom .l{font-size:8.5pt;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:1px}
+  .erk-kom .erk-linje{border-bottom:1px solid #bbb;height:7mm}
+  .erk-tom{color:#888;font-style:italic;font-size:10pt}
+
+  /* Utskrift: kun rapporten */
+  @media print{
+    body{background:#fff !important;color:#000}
+    .topbar,.faner,.ikke-print,#tavle{display:none !important}
+    .wrap{padding:0;max-width:none}
+    #periodeVisning > *:not(#rapportPanel):not(.ptittel):not(.psub){display:none !important}
+    .ptittel,.psub{color:#000 !important}
+    .panel{border:none;background:#fff;padding:0}
+    .panel h2{color:#000}
+    .tabellboks{border:none;overflow:visible}
+    table.rapport th,table.rapport td{border:1px solid #999;color:#000;background:#fff !important}
+    table.rapport th small{color:#444}
+    table.rapport td.n100{background:#cdeee8 !important} table.rapport td.n50{background:#f8e7c4 !important} table.rapport td.n1{background:#f6d3d9 !important}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="hoved">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="navn">Krøniken<span class="d">.</span></span>
+      <span class="sub">Arbeidslogg · hvem har gjort hva</span>
+      <a class="pille" href="index.html">← Alle verktøy</a>
+    </div>
+    <div class="who" id="who"></div>
+  </div>
+
+  <!-- ============ INNLOGGING ============ -->
+  <section id="logginn" class="hidden">
+    <div class="auth-card">
+      <h3>Logg inn</h3>
+      <p>Bruk samme konto som på Krøniken-siden.</p>
+      <button class="google-btn" id="googleBtn">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.3 0 20 0 24s1 7.7 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.6 2.1-8.7 2.1-6.4 0-11.8-4.1-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Fortsett med Google
+      </button>
+      <label class="felt" for="epost">E-post</label>
+      <input id="epost" type="email" autocomplete="email">
+      <label class="felt" for="passord">Passord</label>
+      <input id="passord" type="password" autocomplete="current-password">
+      <button class="btn" id="epostBtn" style="width:100%">Logg inn</button>
+      <div class="status" id="authStatus"></div>
+    </div>
+  </section>
+
+  <!-- ============ APP ============ -->
+  <section id="app" class="hidden">
+    <div class="faner" id="faner">
+      <button class="fane aktiv" data-fane="perioder">Perioder og timer</button>
+      <a class="fane" href="grupper.html" style="text-decoration:none">Mine grupper ↗</a>
+    </div>
+
+    <!-- Perioder-liste -->
+    <div id="fanePerioder">
+      <div class="panel">
+        <h2>Ny periode</h2>
+        <p class="hint">En periode er et tema over noen uker, for én gruppe. Etterpå legger du til timene.</p>
+        <div class="rad">
+          <div class="f" style="flex:2;min-width:220px"><label class="felt" for="pTema">Tema</label><input id="pTema" type="text" list="pTemaListe" placeholder="F.eks. Islam – uke 40–44"><datalist id="pTemaListe"></datalist></div>
+          <div class="f" style="flex:1;min-width:160px"><label class="felt" for="pGruppe">Gruppe</label><select id="pGruppe"></select></div>
+          <button class="btn liten" id="nyPeriodeBtn">Lag periode</button>
+        </div>
+        <div class="status" id="periodeStatus"></div>
+      </div>
+      <div class="panel">
+        <h2>Mine perioder</h2>
+        <p class="hint">Trykk på en periode for å se timene og rapporten.</p>
+        <div class="liste" id="periodeliste"></div>
+      </div>
+    </div>
+
+    <!-- Én periode -->
+    <div id="periodeVisning" class="hidden">
+      <button class="tilbake ikke-print" id="tilbakeBtn">← Alle perioder</button>
+      <h1 class="ptittel" id="pvTittel"></h1>
+      <p class="psub" id="pvSub"></p>
+
+      <div class="to-kol ikke-print">
+        <div class="panel">
+          <h2>Timer</h2>
+          <p class="hint">Trykk «Start timen» for å åpne tavla med elevnavn og oppgaveknapper.</p>
+          <div class="liste" id="timeliste"></div>
+        </div>
+        <div class="panel" id="timeSkjema">
+          <h2 id="tsTittel">Ny time</h2>
+          <p class="hint">Hvor mange oppgaver skal gjøres på arket denne timen?</p>
+          <!-- Valgfritt: hent tittel og antall oppgaver fra et oppgaveark i Krøniken (../innhold/). Fritekst virker som før. -->
+          <div class="f" style="margin-bottom:10px"><label class="felt" for="tKr">Hent fra Krøniken-tema (valgfritt)</label>
+            <select id="tKr"><option value="">Skriv selv</option></select>
+            <p class="hint" id="tKrHint" style="margin:6px 0 0"></p></div>
+          <div class="rad" style="margin-bottom:10px">
+            <div class="f" style="width:170px"><label class="felt" for="tDato">Dato</label><input id="tDato" type="date"></div>
+            <div class="f" style="flex:1;min-width:160px"><label class="felt" for="tTittel">Tittel</label><input id="tTittel" type="text" placeholder="F.eks. De fem søylene"></div>
+          </div>
+          <div class="rad">
+            <div class="f" style="width:130px"><label class="felt" for="tAntall">Antall oppgaver</label><input id="tAntall" type="number" min="1" max="20" value="6"></div>
+            <div class="f" style="flex:1;min-width:180px"><label class="felt" for="tNavn">Egne oppgavenavn (valgfritt)</label><input id="tNavn" type="text" placeholder="F.eks. 1a, 1b, 2, 3, Bonus"></div>
+          </div>
+          <p class="hint" style="margin:8px 0 12px">Skriver du egne navn, bestemmer de antallet. Ellers blir det 1, 2, 3 …</p>
+          <div class="rad">
+            <button class="btn liten" id="lagreTimeBtn">Legg til time</button>
+            <button class="btn ghost liten hidden" id="avbrytTimeBtn">Avbryt</button>
+          </div>
+          <div class="status" id="timeStatus"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="rapportPanel">
+        <div class="rad ikke-print" style="justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h2 style="margin:0">Rapport for perioden</h2>
+          <div class="rad">
+            <button class="btn ghost liten" id="printBtn">Skriv ut tabellen</button>
+            <select id="erValg" style="width:auto;padding:8px 10px;font-size:14px" aria-label="Velg elev for elevrapport"></select>
+            <button class="btn ghost liten" id="erBtn">Skriv ut elevrapporter</button>
+            <button class="btn ghost liten" id="csvBtn">Last ned til Excel</button>
+          </div>
+        </div>
+        <p class="hint ikke-print">Viser hvor mange oppgaver hver elev har trykket ferdig, time for time.</p>
+        <div class="tabellboks" id="rapport"></div>
+      </div>
+
+      <div class="rad ikke-print" style="justify-content:flex-end">
+        <button class="btn fare liten" id="slettPeriodeBtn">Slett perioden</button>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<!-- ============ ELEVRAPPORTER (kun utskrift) ============ -->
+<div id="elevrapporter" aria-hidden="true"></div>
+
+<!-- ============ TAVLE (fullskjerm) ============ -->
+<section id="tavle" class="hidden" aria-label="Tavlevisning">
+  <div class="t-topp">
+    <div class="t-tit">
+      <div class="t-tema" id="tvTema"></div>
+      <h1 id="tvTittel"></h1>
+    </div>
+    <div class="t-sum">
+      <div class="tall" id="tvTall"></div>
+      <div class="bar"><i id="tvBar" style="width:0"></i></div>
+    </div>
+    <div class="t-ktr">
+      <button class="btn ghost liten" id="fravBtn" title="For læreren: marker elever som er borte">Fravær</button>
+      <button class="btn ghost liten" id="fullBtn">⛶ Fullskjerm</button>
+      <button class="btn liten" id="avsluttBtn">Avslutt</button>
+    </div>
+  </div>
+  <div class="t-instr" id="tvInstr">Trykk på oppgavene du er <b>ferdig</b> med. Trykket feil? Trykk én gang til for å angre.</div>
+  <div class="t-grid" id="tvGrid"></div>
+  <div class="t-feil hidden" id="tvFeil"></div>
+  <canvas id="konfetti" aria-hidden="true"></canvas>
+  <div class="feiring" id="feiring" role="status" aria-live="polite"><div class="ft" id="feirTekst"></div><div class="fu" id="feirUnder"></div></div>
+</section>
+
+<script>
+/* ============================================================
+   ARBEIDSARK-SPORING — del av Krøniken (samme Firebase: krle-sim)
+   Datastruktur:
+     aa_grupper/{id}                 { eier, navn, elever:[{id,navn}], opprettet }
+     aa_perioder/{id}                { eier, tema, gruppeId, opprettet }
+     aa_perioder/{id}/timer/{tid}    { eier, dato:"YYYY-MM-DD", tittel, oppgaver:["1","2",…],
+                                       ferdig:{ elevId:[oppgaveindekser] }, opprettet }
+   Krever egne Firestore-regler for aa_grupper og aa_perioder.
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDazYM5XDIABscMaDFgJ1IEco0du4JAN4w",
+  authDomain: "krle-sim.firebaseapp.com",
+  projectId: "krle-sim",
+  storageBucket: "krle-sim.firebasestorage.app",
+  messagingSenderId: "1073291328318",
+  appId: "1:1073291328318:web:2fa3d0e862ed8e25d24a6f"
+};
+
+let auth=null, db=null;
+function initFirebase(){
+  if(typeof firebase==="undefined") return false;
+  try{ if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); auth=firebase.auth(); db=firebase.firestore(); return true; }
+  catch(e){ return false; }
+}
+const klar = initFirebase();
+
+let bruker=null, grupper=[], perioder=[], aktivPeriode=null, timer=[];
+let timerUnsub=null, tavleUnsub=null, redigerTimeId=null, redigerGruppeId=null;
+let tavle={ periode:null, gruppe:null, time:null, nokkel:"" };
+
+const $ = id => document.getElementById(id);
+const UKEDAG = ["sø","ma","ti","on","to","fr","lø"];
+function st(id,msg,ok){ const el=$(id); if(!el)return; el.textContent=msg; el.className="status "+(ok===true?"ok":ok===false?"feil":""); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function nyId(){ return Math.random().toString(36).slice(2,10); }
+function idag(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function kortDato(s){ if(!s) return ""; const [y,m,d]=s.split("-").map(Number); return `${d}.${m}.`; }
+function langDato(s){ if(!s) return ""; const [y,m,d]=s.split("-").map(Number); const dt=new Date(y,m-1,d); return `${UKEDAG[dt.getDay()]} ${d}.${m}.`; }
+function feilTekst(e){
+  const c=(e&&e.code)||"";
+  if(c.includes("permission-denied")) return "Databasen sa nei (mangler Firestore-regler for arbeidsark). Se oppsett-instruksjonen.";
+  if(c.includes("unavailable")) return "Ingen kontakt med databasen akkurat nå – sjekk nettet.";
+  return (e&&e.message)||String(e);
+}
+function gruppeFor(p){ return p ? grupper.find(g=>g.id===p.gruppeId) : null; }
+function elever(p){ const g=gruppeFor(p); return g ? g.elever.slice().sort((a,b)=>a.navn.localeCompare(b.navn,"nb")) : []; }
+function erBorte(t, elevId){ return Array.isArray(t.borte) && t.borte.includes(elevId); }
+function antallFerdig(t, elevId){
+  const arr=(t.ferdig&&t.ferdig[elevId])||[];
+  return new Set(arr.filter(i=>i>=0 && i<t.oppgaver.length)).size;
+}
+function sorterTimer(a,b){ return (a.dato||"").localeCompare(b.dato||"") || (a.opprettet||0)-(b.opprettet||0); }
+
+/* ---------- Innlogging ---------- */
+if(klar){
+  auth.onAuthStateChanged(async u=>{
+    bruker=u;
+    $("logginn").classList.toggle("hidden", !!u);
+    $("app").classList.toggle("hidden", !u);
+    const who=$("who");
+    if(u){
+      who.innerHTML=`<span>${esc(u.email||"Innlogget")}</span> <button class="btn ghost liten" id="utBtn">Logg ut</button>`;
+      $("utBtn").addEventListener("click",()=>{ location.hash=""; auth.signOut(); });
+      try{ await Promise.all([lastGrupper(), lastPerioder()]); }
+      catch(e){ st("periodeStatus", feilTekst(e), false); }
+      ruter();
+    } else { who.innerHTML=""; lukkTavle(); }
+  });
+} else {
+  $("logginn").classList.remove("hidden");
+  st("authStatus","Firebase lastet ikke her. Åpne siden på det publiserte nettstedet ditt (GitHub Pages) – ikke i forhåndsvisning.", false);
+}
+$("googleBtn").addEventListener("click",()=>{
+  if(!klar) return;
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>st("authStatus", e.message, false));
+});
+$("epostBtn").addEventListener("click",()=>{
+  if(!klar) return;
+  const e=$("epost").value.trim(), p=$("passord").value;
+  if(!e||!p){ st("authStatus","Fyll inn e-post og passord.", false); return; }
+  auth.signInWithEmailAndPassword(e,p).catch(()=>st("authStatus","Feil e-post eller passord.", false));
+});
+
+/* ---------- Navigasjon (adressen husker hvor du er) ---------- */
+window.addEventListener("hashchange", ruter);
+function gaTil(h){ if(location.hash==="#"+h || (h==="" && !location.hash)) ruter(); else location.hash=h; }
+function ruter(){
+  if(!bruker) return;
+  const [hva,a,b]=(location.hash||"").replace(/^#/,"").split("/");
+  if(hva!=="tavle") lukkTavle();
+  if(hva!=="periode" && hva!=="tavle" && timerUnsub){ timerUnsub(); timerUnsub=null; aktivPeriode=null; }
+  if(hva==="tavle" && a && b){ apneTavle(a,b); return; }
+  if(hva==="periode" && a){ visPeriode(a); return; }
+  if(hva==="grupper"){ location.href="grupper.html"; return; }
+  visFane("perioder");
+}
+document.querySelectorAll(".fane[data-fane]").forEach(f=>f.addEventListener("click",()=>gaTil("")));
+function visFane(navn){
+  $("faner").classList.remove("hidden");
+  $("fanePerioder").classList.remove("hidden");
+  $("periodeVisning").classList.add("hidden");
+  renderPerioder();
+}
+
+/* ---------- Grupper ---------- */
+async function lastGrupper(){
+  const snap=await db.collection("aa_grupper").where("eier","==",bruker.uid).get();
+  grupper=[]; snap.forEach(d=>{ const x=d.data()||{}; grupper.push({id:d.id, navn:x.navn||"Gruppe", elever:Array.isArray(x.elever)?x.elever:[], opprettet:x.opprettet||0}); });
+  grupper.sort((a,b)=>a.navn.localeCompare(b.navn,"nb"));
+  fyllGruppeValg();
+}
+function fyllGruppeValg(){
+  const s=$("pGruppe");
+  s.innerHTML = grupper.length ? grupper.map(g=>`<option value="${g.id}">${esc(g.navn)} (${g.elever.length})</option>`).join("") : `<option value="">Lag en gruppe i «Mine grupper» først</option>`;
+}
+/* Grupper redigeres nå i «Mine grupper» (grupper.html) – felles for alle tre verktøyene. */
+
+/* ---------- Perioder ---------- */
+async function lastPerioder(){
+  const snap=await db.collection("aa_perioder").where("eier","==",bruker.uid).get();
+  perioder=[]; snap.forEach(d=>{ const x=d.data()||{}; perioder.push({id:d.id, tema:x.tema||"Periode", gruppeId:x.gruppeId, opprettet:x.opprettet||0}); });
+  perioder.sort((a,b)=>b.opprettet-a.opprettet);
+}
+function renderPerioder(){
+  const l=$("periodeliste");
+  if(!perioder.length){ l.innerHTML=`<div class="tom">Ingen perioder ennå.${grupper.length?"":' Start med å lage en gruppe i <a href="grupper.html">Mine grupper</a>.'}</div>`; return; }
+  l.innerHTML = perioder.map(p=>{ const g=gruppeFor(p);
+    return `<div class="linje klikk" data-id="${p.id}"><div class="ikon">${esc(g?g.navn.slice(0,3):"?")}</div>
+      <div class="info"><div class="k">${esc(p.tema)}</div><div class="m">${esc(g?g.navn:"(gruppa er slettet)")}</div></div><div>→</div></div>`; }).join("");
+  l.querySelectorAll(".linje").forEach(r=>r.addEventListener("click",()=>gaTil("periode/"+r.dataset.id)));
+}
+$("nyPeriodeBtn").addEventListener("click", async ()=>{
+  const tema=$("pTema").value.trim(), gruppeId=$("pGruppe").value;
+  if(!tema){ st("periodeStatus","Skriv inn et tema.", false); return; }
+  if(!gruppeId){ st("periodeStatus","Lag en gruppe først i «Mine grupper».", false); return; }
+  try{
+    const ref=await db.collection("aa_perioder").add({eier:bruker.uid, tema, gruppeId, opprettet:Date.now()});
+    $("pTema").value=""; await lastPerioder(); gaTil("periode/"+ref.id);
+  }catch(e){ st("periodeStatus", feilTekst(e), false); }
+});
+
+function visPeriode(id){
+  const p=perioder.find(x=>x.id===id);
+  if(!p){ gaTil(""); return; }
+  $("faner").classList.add("hidden");
+  $("fanePerioder").classList.add("hidden");
+  $("periodeVisning").classList.remove("hidden");
+  const g=gruppeFor(p);
+  $("pvTittel").textContent=p.tema;
+  $("pvSub").textContent=(g?g.navn+" · "+g.elever.length+" elever":"Gruppa er slettet");
+  if(!aktivPeriode || aktivPeriode.id!==p.id){
+    aktivPeriode=p; avbrytTimeRedigering();
+    if(timerUnsub) timerUnsub();
+    $("timeliste").innerHTML=`<div class="tom">Henter timer …</div>`;
+    timerUnsub = db.collection("aa_perioder").doc(p.id).collection("timer").where("eier","==",bruker.uid)
+      .onSnapshot(snap=>{
+        timer=[]; snap.forEach(d=>{ const x=d.data()||{}; timer.push({id:d.id, ...x, oppgaver:Array.isArray(x.oppgaver)?x.oppgaver:[]}); });
+        timer.sort(sorterTimer); renderTimer(); renderRapport();
+      }, e=>{ $("timeliste").innerHTML=`<div class="tom">${esc(feilTekst(e))}</div>`; });
+  } else { renderTimer(); renderRapport(); }
+}
+$("tilbakeBtn").addEventListener("click",()=>gaTil(""));
+$("slettPeriodeBtn").addEventListener("click", async ()=>{
+  const p=aktivPeriode; if(!p) return;
+  if(!confirm(`Slette perioden «${p.tema}» med alle timer og all fremdrift? Dette kan ikke angres.`)) return;
+  try{
+    const ref=db.collection("aa_perioder").doc(p.id);
+    const sub=await ref.collection("timer").where("eier","==",bruker.uid).get();
+    const batch=db.batch(); sub.forEach(d=>batch.delete(d.ref)); batch.delete(ref); await batch.commit();
+    if(timerUnsub){ timerUnsub(); timerUnsub=null; } aktivPeriode=null;
+    await lastPerioder(); gaTil("");
+  }catch(e){ alert(feilTekst(e)); }
+});
+
+/* ---------- Timer ---------- */
+function renderTimer(){
+  const l=$("timeliste"), el=elever(aktivPeriode);
+  if(!timer.length){ l.innerHTML=`<div class="tom">Ingen timer ennå. Legg til den første i skjemaet.</div>`; return; }
+  l.innerHTML = timer.map((t,i)=>{
+    const til=el.filter(e=>!erBorte(t,e.id)), borte=el.length-til.length;
+    const tot=til.length*t.oppgaver.length, f=til.reduce((s,e)=>s+antallFerdig(t,e.id),0), pst=tot?Math.round(f/tot*100):0;
+    return `<div class="linje" data-id="${t.id}">
+      <div class="ikon">${esc(langDato(t.dato)).replace(" ","<br>")}</div>
+      <div class="info"><div class="k">${esc(t.tittel||"Time "+(i+1))}</div>
+        <div class="m">${t.oppgaver.length} oppgaver · klassen: ${f}/${tot} (${pst} %)${borte?` · ${borte} borte`:""}</div>
+        <div class="minibar"><i style="width:${pst}%"></i></div></div>
+      <div class="knapper">
+        <button class="btn teal liten" data-a="start">Start timen</button>
+        <button class="btn ghost liten" data-a="rediger" title="Endre">Endre</button>
+        <button class="btn fare liten" data-a="slett" title="Slett">Slett</button>
+      </div></div>`; }).join("");
+  l.querySelectorAll(".linje").forEach(r=>{
+    const t=timer.find(x=>x.id===r.dataset.id);
+    r.querySelector('[data-a="start"]').addEventListener("click",()=>gaTil(`tavle/${aktivPeriode.id}/${t.id}`));
+    r.querySelector('[data-a="rediger"]').addEventListener("click",()=>startTimeRedigering(t));
+    r.querySelector('[data-a="slett"]').addEventListener("click",async ()=>{
+      if(!confirm(`Slette timen «${t.tittel||kortDato(t.dato)}» og fremdriften i den?`)) return;
+      try{ await timeRef(t.id).delete(); }catch(e){ st("timeStatus", feilTekst(e), false); }
+    });
+  });
+}
+function timeRef(tid, pid){ return db.collection("aa_perioder").doc(pid||aktivPeriode.id).collection("timer").doc(tid); }
+function lesOppgaver(){
+  const egne=$("tNavn").value.split(",").map(s=>s.trim()).filter(Boolean);
+  if(egne.length) return egne.slice(0,20);
+  const n=Math.max(1,Math.min(20,parseInt($("tAntall").value)||0));
+  return Array.from({length:n},(_,i)=>String(i+1));
+}
+function erStandard(opp){ return opp.every((o,i)=>o===String(i+1)); }
+function startTimeRedigering(t){
+  redigerTimeId=t.id;
+  $("tsTittel").textContent="Endre time";
+  $("tDato").value=t.dato||idag(); $("tTittel").value=t.tittel||"";
+  $("tAntall").value=t.oppgaver.length; $("tNavn").value=erStandard(t.oppgaver)?"":t.oppgaver.join(", ");
+  $("lagreTimeBtn").textContent="Lagre endringer"; $("avbrytTimeBtn").classList.remove("hidden");
+  st("timeStatus","",null); $("timeSkjema").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function avbrytTimeRedigering(){
+  redigerTimeId=null; $("tsTittel").textContent="Ny time";
+  $("tDato").value=idag(); $("tTittel").value=""; $("tNavn").value="";
+  $("tKr").value=""; $("tKrHint").textContent="";
+  $("lagreTimeBtn").textContent="Legg til time"; $("avbrytTimeBtn").classList.add("hidden");
+}
+$("avbrytTimeBtn").addEventListener("click",()=>{ avbrytTimeRedigering(); st("timeStatus","",null); });
+$("lagreTimeBtn").addEventListener("click", async ()=>{
+  if(!aktivPeriode) return;
+  const dato=$("tDato").value||idag(), tittel=$("tTittel").value.trim(), oppgaver=lesOppgaver();
+  try{
+    if(redigerTimeId){ await timeRef(redigerTimeId).update({dato,tittel,oppgaver}); st("timeStatus","Timen er oppdatert.", true); }
+    else { await db.collection("aa_perioder").doc(aktivPeriode.id).collection("timer").add({eier:bruker.uid, dato, tittel, oppgaver, ferdig:{}, opprettet:Date.now()}); st("timeStatus",`Time lagt til med ${oppgaver.length} oppgaver.`, true); }
+    avbrytTimeRedigering();
+  }catch(e){ st("timeStatus", feilTekst(e), false); }
+});
+
+/* ---------- Rapport ---------- */
+function rapportData(){
+  const el=elever(aktivPeriode);
+  const rader=el.map(e=>{
+    // Borte = teller ikke med, verken som gjort eller ikke gjort
+    const celler=timer.map(t=>erBorte(t,e.id) ? {borte:true, f:0, n:0} : {f:antallFerdig(t,e.id), n:t.oppgaver.length});
+    const f=celler.reduce((s,c)=>s+c.f,0), n=celler.reduce((s,c)=>s+c.n,0);
+    return {navn:e.navn, celler, f, n, pst:n?Math.round(f/n*100):0};
+  });
+  return {el, rader};
+}
+function klasseFor(f,n){ if(!n) return ""; if(f>=n) return "n100"; if(f/n>=.5) return "n50"; if(f>0) return "n1"; return "n0"; }
+function renderRapport(){
+  const boks=$("rapport");
+  const {el, rader}=rapportData();
+  fyllElevValg();
+  if(!timer.length || !el.length){ boks.innerHTML=`<div class="tom" style="padding:14px">Rapporten fylles ut når perioden har timer${el.length?"":" og gruppa har elever"}.</div>`; return; }
+  const hode=`<tr><th>Elev</th>${timer.map((t,i)=>`<th title="${esc(t.tittel)}">${esc(kortDato(t.dato))}<small>${esc(t.tittel||"Time "+(i+1))}</small></th>`).join("")}<th>Totalt</th><th>%</th></tr>`;
+  const kropp=rader.map(r=>`<tr><td>${esc(r.navn)}</td>${r.celler.map(c=>c.borte?`<td class="c nb">borte</td>`:`<td class="c ${klasseFor(c.f,c.n)}">${c.f}/${c.n}</td>`).join("")}<td class="c tot ${klasseFor(r.f,r.n)}">${r.f}/${r.n}</td><td class="c tot">${r.pst} %</td></tr>`).join("");
+  const sumF=timer.map((t,i)=>rader.reduce((s,r)=>s+r.celler[i].f,0)), sumN=timer.map((t,i)=>rader.reduce((s,r)=>s+r.celler[i].n,0));
+  const totF=sumF.reduce((a,b)=>a+b,0), totN=sumN.reduce((a,b)=>a+b,0);
+  const sum=`<tr class="sum"><td>Klassen</td>${sumF.map((f,i)=>`<td class="c">${sumN[i]?Math.round(f/sumN[i]*100):0} %</td>`).join("")}<td class="c">${totF}/${totN}</td><td class="c">${totN?Math.round(totF/totN*100):0} %</td></tr>`;
+  boks.innerHTML=`<table class="rapport"><thead>${hode}</thead><tbody>${kropp}${sum}</tbody></table>`;
+}
+$("printBtn").addEventListener("click",()=>window.print());
+
+/* ---------- Elevrapporter (to per A4) ---------- */
+function fyllElevValg(){
+  const s=$("erValg"), forrige=s.value, el=elever(aktivPeriode);
+  s.innerHTML=`<option value="">Alle elever (${el.length})</option>`+el.map(e=>`<option value="${e.id}">${esc(e.navn)}</option>`).join("");
+  if([...s.options].some(o=>o.value===forrige)) s.value=forrige;
+}
+function lagElevrapporter(kunId){
+  const p=aktivPeriode, g=gruppeFor(p), el=elever(p).filter(e=>!kunId||e.id===kunId);
+  const datoer=timer.map(t=>t.dato).filter(Boolean);
+  const spenn=datoer.length?(datoer[0]===datoer[datoer.length-1]?kortDato(datoer[0]):`${kortDato(datoer[0])}–${kortDato(datoer[datoer.length-1])}`):"";
+  return el.map(e=>{
+    let f=0,n=0,borte=0;
+    const rader=timer.map((t,i)=>{
+      const tit=esc(t.tittel||"Time "+(i+1));
+      if(erBorte(t,e.id)){ borte++; return `<tr><td class="d">${esc(langDato(t.dato))}</td><td class="t">${tit}</td><td><span class="erk-borte">Borte denne timen</span></td><td class="g">–</td></tr>`; }
+      const sett=new Set((t.ferdig&&t.ferdig[e.id])||[]);
+      const ant=antallFerdig(t,e.id); f+=ant; n+=t.oppgaver.length;
+      const bokser=t.oppgaver.map((o,j)=>sett.has(j)?`<span class="boks ja">✓ ${esc(o)}</span>`:`<span class="boks">${esc(o)}</span>`).join("");
+      return `<tr><td class="d">${esc(langDato(t.dato))}</td><td class="t">${tit}</td><td><div class="bokser">${bokser}</div></td><td class="g">${ant} av ${t.oppgaver.length}</td></tr>`;
+    }).join("");
+    const pst=n?Math.round(f/n*100):0;
+    return `<section class="erk">
+      <div class="erk-topp">
+        <div><div class="erk-eyebrow">Arbeidslogg · ${esc(p.tema)}</div>
+          <div class="erk-navn">${esc(e.navn)}</div>
+          <div class="erk-sub">${esc(g?g.navn:"")}${spenn?" · "+spenn:""} · ${timer.length} timer${borte?` · borte ${borte} ${borte===1?"time":"timer"}`:""}</div></div>
+        <div class="erk-sum"><div class="erk-pst">${pst} %</div>
+          <div class="erk-tall">${f} av ${n} oppgaver gjort</div>
+          <div class="erk-bar"><i style="width:${pst}%"></i></div></div>
+      </div>
+      ${timer.length?`<table class="erk-tab"><thead><tr><th>Dato</th><th>Time</th><th>Oppgaver (✓ = gjort)</th><th style="text-align:right">Gjort</th></tr></thead><tbody>${rader}</tbody></table>`:`<div class="erk-tom">Ingen timer i perioden ennå.</div>`}
+      <div class="erk-kom"><div class="l">Kommentar fra lærer</div><div class="erk-linje"></div><div class="erk-linje"></div></div>
+    </section>`;
+  }).join("");
+}
+$("erBtn").addEventListener("click",()=>{
+  if(!aktivPeriode) return;
+  const html=lagElevrapporter($("erValg").value);
+  if(!html) return;
+  $("elevrapporter").innerHTML=html;
+  document.body.classList.add("print-elever");
+  setTimeout(()=>window.print(),50);
+});
+window.addEventListener("afterprint",()=>document.body.classList.remove("print-elever"));
+$("csvBtn").addEventListener("click",()=>{
+  if(!aktivPeriode || !timer.length) return;
+  const {rader}=rapportData();
+  const q=s=>{ s=String(s); return /[;"\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+  const linjer=[];
+  linjer.push([q(aktivPeriode.tema)].join(";"));
+  linjer.push(["Elev", ...timer.map((t,i)=>q(`${kortDato(t.dato)} ${t.tittel||"Time "+(i+1)}`)), "Totalt", "Prosent"].join(";"));
+  // «4 av 6» i stedet for «4/6», ellers gjør Excel det om til en dato
+  // (borte telles ikke med i Totalt/Prosent)
+  rader.forEach(r=>linjer.push([q(r.navn), ...r.celler.map(c=>c.borte?"borte":`${c.f} av ${c.n}`), `${r.f} av ${r.n}`, r.pst].join(";")));
+  const blob=new Blob(["﻿"+linjer.join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download=`Arbeidslogg – ${aktivPeriode.tema.replace(/[\\/:*?"<>|]/g,"-")}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+
+/* ---------- Tavle ---------- */
+function apneTavle(pid, tid){
+  const p=perioder.find(x=>x.id===pid);
+  if(!p){ gaTil(""); return; }
+  if(tavle.periode && tavle.periode.id===pid && tavle.time && tavle.time.id===tid && tavleUnsub) return;
+  lukkTavle(true);
+  tavle={periode:p, gruppe:gruppeFor(p), time:null, nokkel:""};
+  $("tavle").classList.remove("hidden"); $("hoved").classList.add("hidden");
+  $("tvTema").textContent=p.tema; $("tvTittel").textContent="Henter …"; $("tvGrid").innerHTML="";
+  tavleUnsub = timeRef(tid,pid).onSnapshot(d=>{
+    if(!d.exists){ visTavleFeil("Fant ikke timen."); return; }
+    const x=d.data()||{}; tavle.time={id:d.id, ...x, oppgaver:Array.isArray(x.oppgaver)?x.oppgaver:[], ferdig:x.ferdig||{}};
+    renderTavle();
+  }, e=>visTavleFeil(feilTekst(e)));
+}
+function lukkTavle(stille){
+  if(tavleUnsub){ tavleUnsub(); tavleUnsub=null; }
+  settFravModus(false);
+  $("tavle").classList.add("hidden"); $("hoved").classList.remove("hidden");
+  if(document.fullscreenElement && !stille) document.exitFullscreen().catch(()=>{});
+  tavle={periode:null, gruppe:null, time:null, nokkel:""};
+}
+$("avsluttBtn").addEventListener("click",()=>{ const p=tavle.periode; if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); gaTil(p?"periode/"+p.id:""); });
+$("fullBtn").addEventListener("click",()=>{
+  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  else document.documentElement.requestFullscreen().catch(()=>{});
+});
+let feilTimer=null;
+function visTavleFeil(m){ const el=$("tvFeil"); el.textContent=m; el.classList.remove("hidden"); clearTimeout(feilTimer); feilTimer=setTimeout(()=>el.classList.add("hidden"),5000); }
+
+function tavleElever(){ const g=tavle.gruppe; return g ? g.elever.slice().sort((a,b)=>a.navn.localeCompare(b.navn,"nb")) : []; }
+function renderTavle(){
+  const t=tavle.time, el=tavleElever();
+  $("tvTittel").textContent = (t.tittel ? t.tittel+" · " : "") + langDato(t.dato);
+  const nokkel = el.map(e=>e.id+e.navn).join("|")+"#"+t.oppgaver.join("|");
+  tavle.nyBygget = nokkel!==tavle.nokkel;
+  if(tavle.nyBygget){ byggTavle(el,t); tavle.nokkel=nokkel; }
+  oppdaterTavle();
+  tavle.nyBygget=false;
+}
+/* Velger 1, 2 eller 3 kolonner – det som gir størst knapper (32 elever får plass uten å bla) */
+function velgOppsett(n, nOpp){
+  const grid=$("tvGrid");
+  const W=grid.clientWidth||(window.innerWidth-44), H=grid.clientHeight||(window.innerHeight-150);
+  let best=null;
+  for(let kol=1;kol<=3;kol++){
+    const rader=Math.ceil(n/kol), rh=H/rader;
+    const kolW=(W-(kol-1)*28)/kol, nw=Math.max(88,Math.min(220,kolW*0.22));
+    const bw=(kolW-nw-12-(Math.max(1,nOpp)-1)*7)/Math.max(1,nOpp);
+    if(bw<22) continue;                            // altfor smale knapper – hopp over
+    const score=Math.min(rh, bw*0.85, 96);
+    if(!best || score>best.score+3) best={kol,rader,rh,nw,bw,score};
+  }
+  return best || {kol:1,rader:n,rh:H/n,nw:140,bw:50,score:0};
+}
+function byggTavle(el,t){
+  const grid=$("tvGrid");
+  const opps=velgOppsett(el.length, t.oppgaver.length);
+  const kol=opps.kol, perKol=Math.max(1,Math.ceil(el.length/kol));
+  grid.style.gridTemplateColumns=`repeat(${kol},minmax(0,1fr))`;
+  let html="";
+  for(let k=0;k<kol;k++){
+    html+=`<div class="t-kol">`;
+    el.slice(k*perKol,(k+1)*perKol).forEach(e=>{
+      html+=`<div class="t-rad" data-elev="${e.id}"><div class="t-navn" data-elev="${e.id}" title="${esc(e.navn)}"><span>${esc(e.navn)}</span><span class="stjerne">★</span><span class="borte-merke">BORTE</span></div><div class="t-knapper">`+
+        t.oppgaver.map((o,i)=>`<button class="ok-knapp" data-elev="${e.id}" data-i="${i}" aria-pressed="false" aria-label="${esc(e.navn)}, oppgave ${esc(o)}"><span>${esc(o)}</span></button>`).join("")+
+        `</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  grid.innerHTML = el.length ? html : `<div class="tom">Gruppa har ingen elever.</div>`;
+  grid.querySelectorAll(".ok-knapp").forEach(b=>b.addEventListener("click",()=>trykk(b)));
+  grid.querySelectorAll(".t-navn").forEach(nv=>nv.addEventListener("click",()=>trykkNavn(nv.dataset.elev)));
+  const rh=Math.max(34, Math.min(96, Math.floor(opps.rh)));
+  const fs=Math.max(14, Math.min(28, Math.round(Math.min(rh, opps.bw)*0.42)));
+  grid.style.setProperty("--rh", rh+"px"); grid.style.setProperty("--fs", fs+"px"); grid.style.setProperty("--nw", Math.round(opps.nw)+"px");
+}
+
+/* ---------- Feiring: melding med navn + konfetti ---------- */
+const FEIRINGER = [
+  "Knallbra, {navn}! 🎉",
+  "Sånn skal det gjøres, {navn}! 💪",
+  "{navn} er i flytsonen! 🌊",
+  "Wow, {navn}! ⭐",
+  "Heia {navn}! 🚀",
+  "Godt jobba, {navn}! 👏",
+  "{navn} knuser arket! 🔥",
+  "Nydelig innsats, {navn}! ✨",
+  "{navn} – du er en stjerne! 🌟",
+  "Yes, {navn}! Du er på rull! 🎯"
+];
+const UNDERTEKST = ["Én oppgave nærmere målet!", "Stå på videre!", "Nå tar du den neste!", "Det går fremover!"];
+const reduserBevegelse = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+let sisteFeiring=-1, feirTimer=null;
+
+function feir(elevId, idx, knapp){
+  const t=tavle.time, e=tavleElever().find(x=>x.id===elevId); if(!t||!e) return;
+  const sett=new Set((t.ferdig[elevId]||[]).filter(i=>i<t.oppgaver.length)); sett.add(idx);
+  const alleFerdig = sett.size>=t.oppgaver.length;
+  const navn=`<b>${esc(e.navn)}</b>`;
+  let tekst, under;
+  if(alleFerdig){
+    tekst=`ALT ferdig, ${navn}! 🏆`;
+    under="Hele arket – for en innsats!";
+  } else {
+    let n; do{ n=Math.floor(Math.random()*FEIRINGER.length); } while(n===sisteFeiring && FEIRINGER.length>1);
+    sisteFeiring=n;
+    tekst=esc(FEIRINGER[n]).replace("{navn}", navn);
+    const igjen=t.oppgaver.length-sett.size;
+    under = igjen===1 ? "Bare én oppgave igjen!" : UNDERTEKST[Math.floor(Math.random()*UNDERTEKST.length)];
+  }
+  const f=$("feiring");
+  $("feirTekst").innerHTML=tekst; $("feirUnder").textContent=under;
+  f.classList.remove("vis","stor"); void f.offsetWidth;          // start animasjonen på nytt
+  f.classList.toggle("stor", alleFerdig); f.classList.add("vis");
+  clearTimeout(feirTimer); feirTimer=setTimeout(()=>f.classList.remove("vis","stor"), alleFerdig?2900:2000);
+  if(!reduserBevegelse){
+    const r=knapp.getBoundingClientRect();
+    skytKonfetti(r.left+r.width/2, r.top+r.height/2, alleFerdig?160:60);
+    if(alleFerdig){ setTimeout(()=>skytKonfetti(innerWidth*0.2, innerHeight*0.55, 90),180); setTimeout(()=>skytKonfetti(innerWidth*0.8, innerHeight*0.55, 90),320); }
+  }
+}
+
+const konfetti={deler:[], kjorer:false};
+const KFARGER=["#E8B04B","#4FB8A8","#C9586B","#7C8CE0","#F3E9D2","#f0c97a"];
+function skytKonfetti(x,y,antall){
+  const c=$("konfetti"), dpr=window.devicePixelRatio||1;
+  if(c.width!==Math.round(innerWidth*dpr)||c.height!==Math.round(innerHeight*dpr)){ c.width=Math.round(innerWidth*dpr); c.height=Math.round(innerHeight*dpr); }
+  for(let i=0;i<antall;i++){
+    const vinkel=-Math.PI/2+(Math.random()-0.5)*Math.PI*1.1, fart=6+Math.random()*10;
+    konfetti.deler.push({x,y,vx:Math.cos(vinkel)*fart,vy:Math.sin(vinkel)*fart,
+      w:6+Math.random()*7,h:4+Math.random()*5,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.4,
+      farge:KFARGER[Math.floor(Math.random()*KFARGER.length)],liv:0,maks:70+Math.random()*50,rund:Math.random()<0.25});
+  }
+  if(!konfetti.kjorer){ konfetti.kjorer=true; requestAnimationFrame(tegnKonfetti); }
+}
+function tegnKonfetti(){
+  const c=$("konfetti"), ctx=c.getContext("2d"), dpr=window.devicePixelRatio||1;
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,innerWidth,innerHeight);
+  konfetti.deler=konfetti.deler.filter(p=>p.liv<p.maks && p.y<innerHeight+40);
+  konfetti.deler.forEach(p=>{
+    p.liv++; p.vy+=0.32; p.vx*=0.985; p.vy*=0.985; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+    ctx.save(); ctx.globalAlpha=Math.max(0,1-p.liv/p.maks*0.9);
+    ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.farge;
+    if(p.rund){ ctx.beginPath(); ctx.arc(0,0,p.w/2.4,0,6.28); ctx.fill(); }
+    else ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.rot*1.7)));   // "vrir seg" i lufta
+    ctx.restore();
+  });
+  if(konfetti.deler.length) requestAnimationFrame(tegnKonfetti);
+  else { ctx.clearRect(0,0,innerWidth,innerHeight); konfetti.kjorer=false; }
+}
+
+/* ---------- Fravær (læreren trykker «Fravær», så på navnene) ---------- */
+let fravModus=false;
+function settFravModus(på){
+  fravModus=på;
+  $("tavle").classList.toggle("fravmodus", på);
+  $("fravBtn").classList.toggle("aktiv", på);
+  $("fravBtn").textContent = på ? "✓ Ferdig med fravær" : "Fravær";
+  $("tvInstr").innerHTML = på
+    ? "Fravær: trykk på navnet til elever som er <b>borte</b> (trykk igjen for å fjerne). Trykk «Ferdig med fravær» etterpå."
+    : "Trykk på oppgavene du er <b>ferdig</b> med. Trykket feil? Trykk én gang til for å angre.";
+}
+$("fravBtn").addEventListener("click",()=>settFravModus(!fravModus));
+function trykkNavn(elevId){
+  if(!fravModus || !tavle.time) return;
+  const er=erBorte(tavle.time, elevId), FV=firebase.firestore.FieldValue;
+  timeRef(tavle.time.id, tavle.periode.id).update({ borte: er ? FV.arrayRemove(elevId) : FV.arrayUnion(elevId) })
+    .catch(e=>visTavleFeil("Ble ikke lagret: "+feilTekst(e)));
+}
+window.addEventListener("resize",()=>{ if(tavle.time){ tavle.nokkel=""; renderTavle(); } });
+
+function oppdaterTavle(){
+  const t=tavle.time, el=tavleElever();
+  let sum=0, tilstede=0;
+  el.forEach(e=>{
+    const sett=new Set((t.ferdig[e.id]||[]));
+    const rad=document.querySelector(`.t-rad[data-elev="${e.id}"]`); if(!rad) return;
+    let f=0;
+    rad.querySelectorAll(".ok-knapp").forEach(b=>{
+      const i=+b.dataset.i, ja=sett.has(i);
+      if(ja) f++;
+      if(ja && !b.classList.contains("ferdig") && !tavle.nyBygget){ b.classList.add("pop"); setTimeout(()=>b.classList.remove("pop"),400); }
+      b.classList.toggle("ferdig", ja); b.setAttribute("aria-pressed", ja?"true":"false");
+    });
+    const borte=erBorte(t,e.id);
+    rad.classList.toggle("borte", borte);
+    rad.classList.toggle("alt", !borte && t.oppgaver.length>0 && f>=t.oppgaver.length);
+    if(!borte){ sum+=f; tilstede++; }
+  });
+  const tot=tilstede*t.oppgaver.length;
+  $("tvTall").innerHTML=`${sum} <span>av ${tot} oppgaver ferdig</span>`;
+  $("tvBar").style.width=(tot?Math.round(sum/tot*100):0)+"%";
+}
+const sisteTrykk={};
+function trykk(b){
+  const t=tavle.time; if(!t) return;
+  const elevId=b.dataset.elev, i=+b.dataset.i, k=elevId+":"+i, na=Date.now();
+  if(fravModus || erBorte(t, elevId)) return;
+  if(sisteTrykk[k] && na-sisteTrykk[k]<600) return;   // hindrer dobbeltrykk som angrer seg selv
+  sisteTrykk[k]=na;
+  const er=(t.ferdig[elevId]||[]).includes(i);
+  if(!er) feir(elevId, i, b);
+  const FV=firebase.firestore.FieldValue;
+  timeRef(t.id, tavle.periode.id).update({ ["ferdig."+elevId]: er ? FV.arrayRemove(i) : FV.arrayUnion(i) })
+    .catch(e=>visTavleFeil("Ble ikke lagret: "+feilTekst(e)));
+}
+
+/* ---------- Krøniken-temaene: fyller ut tittel og antall oppgaver fra oppgavearket ----------
+   Leser ../innhold/oversikt.js og, når et tema velges, ../innhold/<livssyn>/<tema>.js.
+   Samtalekort (type "kort") telles ikke, for de har ikke nummer på arket. Ingenting lagres ekstra. */
+(function(){
+  const ROT="../innhold/";
+  const last=src=>new Promise((ok,feil)=>{ const el=document.createElement("script"); el.src=src; el.onload=()=>{el.remove();ok();}; el.onerror=()=>{el.remove();feil();}; document.head.appendChild(el); });
+  const valg=$("tKr"), hint=$("tKrHint"); let autoTittel="";
+  last(ROT+"oversikt.js").then(()=>{
+    const K=window.KRONIKEN||{};
+    for(const m of Object.keys(K)){
+      const g=document.createElement("optgroup"); g.label=K[m].navn;
+      (K[m].tema||[]).forEach((t,i)=>{ const o=document.createElement("option"); o.value=m+"/"+t.id; o.textContent=(i+1)+". "+t.tittel; o.dataset.tittel=t.tittel; g.appendChild(o); });
+      valg.appendChild(g);
+      const d=document.createElement("option"); d.value=K[m].navn; $("pTemaListe").appendChild(d);
+    }
+  }).catch(()=>{ valg.disabled=true; hint.textContent="Fant ikke Krøniken-innholdet (mappa «innhold»)."; });
+  valg.addEventListener("change", async ()=>{
+    hint.textContent=""; const id=valg.value; if(!id) return;
+    const tittel=valg.selectedOptions[0].dataset.tittel||"";
+    try{ window.PRES=null; await last(ROT+id+".js"); }catch(e){ hint.textContent="Fant ikke oppgavearket til dette temaet."; return; }
+    const opp=((window.PRES&&window.PRES.oppgaver)||[]).filter(o=>o&&o.type!=="kort"); window.PRES=null;
+    if(!$("tTittel").value.trim() || $("tTittel").value===autoTittel){ $("tTittel").value=tittel; autoTittel=tittel; }
+    if(opp.length){ $("tAntall").value=Math.min(20,opp.length); $("tNavn").value=""; }
+    hint.textContent = opp.length ? "Oppgavearket har "+opp.length+" oppgaver. " : "Dette temaet har ikke oppgaveark. ";
+    if(opp.length){ const a=document.createElement("a"); a.href=ROT+"oppgaver.html?p="+id; a.target="_blank"; a.rel="noopener"; a.textContent="Åpne arket ↗"; hint.appendChild(a); }
+  });
+})();
+</script>
+</body>
+</html>

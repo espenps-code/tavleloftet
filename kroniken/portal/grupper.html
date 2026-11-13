@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23161433'/%3E%3Ctext x='28' y='48' text-anchor='middle' font-family='Georgia%2Cserif' font-weight='700' font-size='44' fill='%23F3E9D2'%3EK%3C/text%3E%3Ccircle cx='50' cy='45' r='6' fill='%23E8B04B'/%3E%3C/svg%3E">
+<title>Mine grupper – Krøniken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --night:#161433; --night-2:#201d47; --night-3:#2b2760; --parchment:#F3E9D2;
+    --gold:#E8B04B; --gold-soft:#f0c97a; --teal:#4FB8A8; --crimson:#C9586B; --peri:#7C8CE0;
+    --line:rgba(243,233,210,0.16); --dim:rgba(243,233,210,0.6);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    background:radial-gradient(1200px 720px at 78% -12%, rgba(124,140,224,0.20), transparent 60%),
+               radial-gradient(900px 620px at 6% 112%, rgba(79,184,168,0.15), transparent 55%), var(--night);
+    background-attachment:fixed; color:var(--parchment); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 22px 70px}
+  .hidden{display:none !important}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0 20px;border-bottom:1px solid var(--line);margin-bottom:26px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .brand .navn{font-family:'Fraunces',serif;font-weight:700;font-size:26px}
+  .brand .navn .d{color:var(--gold)}
+  .brand .sub{font-size:13px;color:var(--dim)}
+  .pille{font-size:13px;color:var(--gold-soft);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+  .who{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(243,233,210,0.7)}
+  .btn{font-family:'Fraunces',serif;font-weight:600;font-size:16px;background:var(--gold);color:var(--night);border:none;border-radius:12px;padding:11px 20px;cursor:pointer;
+    transition:transform .12s;box-shadow:0 5px 0 rgba(0,0,0,0.25);text-decoration:none;display:inline-block;text-align:center}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,0.25)}
+  .btn:focus-visible,button:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--parchment);border:1px solid var(--line);box-shadow:none}
+  .btn.liten{font-size:14px;padding:8px 14px;box-shadow:0 4px 0 rgba(0,0,0,0.25)}
+  .btn.ghost.liten{box-shadow:none}
+  .btn.fare{background:transparent;border:1px solid rgba(201,88,107,.6);color:#e69aa8;box-shadow:none}
+  .panel{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:0 0 4px}
+  .hint{font-size:13.5px;color:var(--dim);margin:0 0 14px}
+  h1.tit{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(28px,4vw,38px);margin:0 0 4px}
+  .lead{color:var(--dim);margin:0 0 22px;max-width:760px}
+  input[type=text],input[type=email],input[type=password],textarea{
+    background:var(--night);color:var(--parchment);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px;width:100%}
+  textarea{min-height:300px;resize:vertical;line-height:1.6}
+  input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+  label.felt{display:block;font-size:13px;font-weight:700;color:var(--gold-soft);margin:0 0 5px}
+  .rad{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .status{margin-top:10px;font-size:14px;min-height:18px}
+  .status.ok{color:#7fd6c4}.status.feil{color:#e69aa8}
+  .tom{font-size:14px;color:var(--dim);padding:6px 0}
+  .to-kol{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}
+  @media (max-width:820px){.to-kol{grid-template-columns:1fr}}
+  .liste{display:flex;flex-direction:column;gap:10px}
+  .linje{display:flex;align-items:center;gap:14px;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:13px 16px;cursor:pointer;transition:border-color .15s}
+  .linje:hover{border-color:var(--gold)}
+  .linje.aktiv{border-color:var(--gold);background:rgba(232,176,75,0.08)}
+  .linje .ikon{width:42px;height:42px;border-radius:10px;background:var(--night-3);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--gold-soft);flex-shrink:0}
+  .linje .info{flex:1;min-width:0}
+  .linje .k{font-weight:700;font-size:16px}
+  .linje .m{font-size:13px;color:var(--dim)}
+  .bruk{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+  .merke{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;border:1px solid var(--c);color:var(--c)}
+  .personvern{display:flex;gap:12px;align-items:flex-start;background:rgba(79,184,168,.08);border:1px solid rgba(79,184,168,.35);border-radius:12px;padding:12px 14px;font-size:13.5px;color:rgba(243,233,210,.85);margin-bottom:18px}
+  .personvern b{color:#7fd6c4}
+  .auth-card{max-width:420px;margin:30px auto;background:var(--night-2);border:1px solid var(--line);border-radius:18px;padding:24px}
+  .auth-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0 0 4px}
+  .auth-card input{margin-bottom:10px}
+  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--parchment);color:#2a2440;border:none;border-radius:11px;padding:13px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:14px}
+  .google-btn svg{width:18px;height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <span class="navn">Krøniken<span class="d">.</span></span>
+      <span class="sub">Mine grupper</span>
+      <a class="pille" href="index.html">← Alle verktøy</a>
+    </div>
+    <div class="who" id="who"></div>
+  </div>
+
+  <section id="logginn" class="hidden">
+    <div class="auth-card">
+      <h3>Logg inn</h3>
+      <p class="hint">Bruk samme konto som i Krøniken.</p>
+      <button class="google-btn" id="googleBtn">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.3 0 20 0 24s1 7.7 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.6 2.1-8.7 2.1-6.4 0-11.8-4.1-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Fortsett med Google
+      </button>
+      <label class="felt" for="epost">E-post</label><input id="epost" type="email" autocomplete="email">
+      <label class="felt" for="passord">Passord</label><input id="passord" type="password" autocomplete="current-password">
+      <button class="btn" id="epostBtn" style="width:100%">Logg inn</button>
+      <div class="status" id="authStatus"></div>
+    </div>
+  </section>
+
+  <section id="app" class="hidden">
+    <h1 class="tit">Mine grupper</h1>
+    <p class="lead">Lag klassen én gang – så kan du bruke den i Arbeidsloggen, Prøveportalen og Religionssimulatoren.</p>
+    <div class="personvern"><span>🔒</span><span><b>Bare du ser navnene.</b> Gruppene lagres privat på kontoen din. Prøver og simulator lagrer bare koder og kallenavn – navnene hentes herfra når du ser på resultatene. Bruk fornavn, eller fornavn + forbokstav hvis to heter det samme.</span></div>
+    <div class="to-kol">
+      <div class="panel">
+        <h2>Grupper</h2>
+        <p class="hint">Trykk på en gruppe for å endre den.</p>
+        <div class="liste" id="gruppeliste"><div class="tom">Henter …</div></div>
+        <div style="margin-top:14px"><button class="btn ghost liten" id="nyGruppeBtn">+ Ny gruppe</button></div>
+      </div>
+      <div class="panel">
+        <h2 id="gsTittel">Ny gruppe</h2>
+        <p class="hint">Ett navn per linje. Retter du et navn der det står, følger elevens resultater og koder med.</p>
+        <label class="felt" for="gNavn">Navn på gruppa</label>
+        <input id="gNavn" type="text" placeholder="F.eks. 7A" style="margin-bottom:12px">
+        <label class="felt" for="gElever">Elever</label>
+        <textarea id="gElever" placeholder="Amina&#10;Jonas&#10;Sara L&#10;Sara M"></textarea>
+        <div class="rad" style="margin-top:12px">
+          <button class="btn liten" id="lagreBtn">Lagre gruppe</button>
+          <span class="hint" id="antallTekst" style="margin:0"></span>
+          <button class="btn fare liten hidden" id="slettBtn" style="margin-left:auto">Slett gruppa</button>
+        </div>
+        <div class="status" id="gStatus"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   MINE GRUPPER – felles for Arbeidslogg, Prøveportal og Simulator
+     aa_grupper/{id} { eier, navn, elever:[{id,navn}], opprettet,
+                       kallenavn:{ klasseId:{ elevId:"Ravn-42" } } }   (kun læreren kan lese)
+   Brukes av: aa_perioder.gruppeId, prover.gruppeId, klasser.gruppeId
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDazYM5XDIABscMaDFgJ1IEco0du4JAN4w",
+  authDomain: "krle-sim.firebaseapp.com",
+  projectId: "krle-sim",
+  storageBucket: "krle-sim.firebasestorage.app",
+  messagingSenderId: "1073291328318",
+  appId: "1:1073291328318:web:2fa3d0e862ed8e25d24a6f"
+};
+let auth=null, db=null;
+try{ if(typeof firebase!=="undefined"){ if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); auth=firebase.auth(); db=firebase.firestore(); } }catch(e){}
+
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function st(id,msg,ok){ const el=$(id); el.textContent=msg; el.className="status "+(ok===true?"ok":ok===false?"feil":""); }
+function nyId(){ return Math.random().toString(36).slice(2,10); }
+function feilTekst(e){ const c=(e&&e.code)||""; if(c.includes("permission-denied")) return "Databasen sa nei – sjekk Firestore-reglene."; return (e&&e.message)||String(e); }
+
+let bruker=null, grupper=[], bruk={}, valgtId=null;
+
+if(auth){
+  auth.onAuthStateChanged(async u=>{
+    bruker=u;
+    $("logginn").classList.toggle("hidden", !!u); $("app").classList.toggle("hidden", !u);
+    if(u){
+      $("who").innerHTML=`<span>${esc(u.email||"Innlogget")}</span> <button class="btn ghost liten" id="utBtn">Logg ut</button>`;
+      $("utBtn").addEventListener("click",()=>auth.signOut());
+      await last();
+      const fraAdresse=new URLSearchParams(location.search).get("g");
+      velg(fraAdresse && grupper.some(g=>g.id===fraAdresse) ? fraAdresse : null);
+    } else $("who").innerHTML="";
+  });
+} else {
+  $("logginn").classList.remove("hidden");
+  st("authStatus","Firebase lastet ikke. Åpne siden på det publiserte nettstedet ditt (GitHub Pages).", false);
+}
+$("googleBtn").addEventListener("click",()=>{ if(auth) auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>st("authStatus",e.message,false)); });
+$("epostBtn").addEventListener("click",()=>{ if(!auth) return; const e=$("epost").value.trim(), p=$("passord").value;
+  if(!e||!p) return st("authStatus","Fyll inn e-post og passord.",false);
+  auth.signInWithEmailAndPassword(e,p).catch(()=>st("authStatus","Feil e-post eller passord.",false)); });
+
+async function last(){
+  const uid=bruker.uid;
+  try{
+    const snap=await db.collection("aa_grupper").where("eier","==",uid).get();
+    grupper=[]; snap.forEach(d=>{ const x=d.data()||{}; grupper.push({id:d.id, navn:x.navn||"Gruppe", elever:Array.isArray(x.elever)?x.elever:[]}); });
+    grupper.sort((a,b)=>a.navn.localeCompare(b.navn,"nb"));
+  }catch(e){ $("gruppeliste").innerHTML=`<div class="tom">${esc(feilTekst(e))}</div>`; return; }
+  // Hvor brukes gruppene? (feiler stille hvis et verktøy ikke er tatt i bruk)
+  bruk={};
+  const tell=(gid,hva)=>{ if(!gid) return; bruk[gid]=bruk[gid]||{logg:0,prove:0,sim:0}; bruk[gid][hva]++; };
+  await Promise.all([
+    db.collection("aa_perioder").where("eier","==",uid).get().then(s=>s.forEach(d=>tell((d.data()||{}).gruppeId,"logg"))).catch(()=>{}),
+    db.collection("prover").where("eier","==",uid).get().then(s=>s.forEach(d=>tell((d.data()||{}).gruppeId,"prove"))).catch(()=>{}),
+    db.collection("klasser").where("eier","==",uid).get().then(s=>s.forEach(d=>tell((d.data()||{}).gruppeId,"sim"))).catch(()=>{})
+  ]);
+  tegnListe();
+}
+function brukMerker(id){
+  const b=bruk[id]; if(!b) return "";
+  const m=[];
+  if(b.logg) m.push(`<span class="merke" style="--c:var(--teal)">Arbeidslogg · ${b.logg}</span>`);
+  if(b.prove) m.push(`<span class="merke" style="--c:var(--crimson)">Prøver · ${b.prove}</span>`);
+  if(b.sim) m.push(`<span class="merke" style="--c:var(--peri)">Simulator · ${b.sim}</span>`);
+  return `<div class="bruk">${m.join("")}</div>`;
+}
+function tegnListe(){
+  $("gruppeliste").innerHTML = grupper.length ? grupper.map(g=>`<div class="linje${g.id===valgtId?" aktiv":""}" data-id="${g.id}" tabindex="0">
+      <div class="ikon">${esc(g.navn.slice(0,3))}</div>
+      <div class="info"><div class="k">${esc(g.navn)}</div><div class="m">${g.elever.length} elever</div>${brukMerker(g.id)}</div><div>→</div></div>`).join("")
+    : `<div class="tom">Ingen grupper ennå. Skriv inn den første til høyre.</div>`;
+  $("gruppeliste").querySelectorAll(".linje").forEach(r=>{ r.addEventListener("click",()=>velg(r.dataset.id)); r.addEventListener("keydown",e=>{ if(e.key==="Enter") velg(r.dataset.id); }); });
+}
+function velg(id){
+  const g=grupper.find(x=>x.id===id); valgtId=g?g.id:null;
+  $("gsTittel").textContent = g ? "Endre gruppe" : "Ny gruppe";
+  $("gNavn").value = g ? g.navn : "";
+  $("gElever").value = g ? g.elever.map(e=>e.navn).join("\n") : "";
+  $("slettBtn").classList.toggle("hidden", !g);
+  st("gStatus","",null); tellLinjer(); tegnListe();
+}
+function linjer(){ return $("gElever").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean); }
+function tellLinjer(){ const n=linjer().length; $("antallTekst").textContent = n ? `${n} elever` : ""; }
+$("gElever").addEventListener("input", tellLinjer);
+$("nyGruppeBtn").addEventListener("click",()=>{ velg(null); $("gNavn").focus(); });
+
+/* Behold elev-ID-ene: samme navn = samme elev. Er et navn rettet på samme plass i lista, regnes det som samme elev. */
+function bevarIder(gamle, nyeNavn){
+  const ledige=gamle.slice();
+  const ut=nyeNavn.map(n=>{ const i=ledige.findIndex(e=>e.navn===n); return i>-1 ? Object.assign({}, ledige.splice(i,1)[0]) : {navn:n, id:null}; });
+  ut.forEach((e,pos)=>{
+    if(e.id) return;
+    const i = gamle[pos] ? ledige.indexOf(gamle[pos]) : -1;
+    e.id = i>-1 ? ledige.splice(i,1)[0].id : nyId();
+  });
+  return ut.map(e=>({id:e.id, navn:e.navn}));
+}
+$("lagreBtn").addEventListener("click", async ()=>{
+  const navn=$("gNavn").value.trim(), l=linjer();
+  if(!navn) return st("gStatus","Gi gruppa et navn.",false);
+  if(!l.length) return st("gStatus","Skriv inn minst én elev.",false);
+  const gammel=grupper.find(g=>g.id===valgtId);
+  const elever=bevarIder(gammel?gammel.elever:[], l);
+  st("gStatus","Lagrer …",null);
+  try{
+    if(gammel) await db.collection("aa_grupper").doc(gammel.id).update({navn, elever});
+    else { const ref=await db.collection("aa_grupper").add({eier:bruker.uid, navn, elever, opprettet:Date.now()}); valgtId=ref.id; }
+    await last(); velg(valgtId);
+    st("gStatus",`Lagret – ${elever.length} elever.`,true);
+  }catch(e){ st("gStatus",feilTekst(e),false); }
+});
+$("slettBtn").addEventListener("click", async ()=>{
+  const g=grupper.find(x=>x.id===valgtId); if(!g) return;
+  const b=bruk[g.id]||{};
+  if(b.logg) return st("gStatus",`Gruppa brukes i ${b.logg} periode(r) i Arbeidsloggen. Slett periodene først.`,false);
+  const advarsel = (b.prove||b.sim) ? `\n\nGruppa er brukt i ${[b.prove?b.prove+" prøve(r)":"", b.sim?b.sim+" simulator-klasse(r)":""].filter(Boolean).join(" og ")}. Der vil navnene forsvinne – bare koder og kallenavn blir igjen.` : "";
+  if(!confirm(`Slette gruppa «${g.navn}»?${advarsel}`)) return;
+  try{ await db.collection("aa_grupper").doc(g.id).delete(); await last(); velg(null); st("gStatus","Gruppa er slettet.",true); }
+  catch(e){ st("gStatus",feilTekst(e),false); }
+});
+</script>
+</body>
+</html>

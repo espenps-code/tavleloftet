@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – elevbok</title>
+<style>
+@font-face{font-family:"Fredoka";font-weight:600;font-display:swap;src:url("felles/fonts/fredoka-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:400;font-display:swap;src:url("felles/fonts/nunito-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:700;font-display:swap;src:url("felles/fonts/nunito-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:800;font-display:swap;src:url("felles/fonts/nunito-latin-800-normal.woff2") format("woff2")}
+/* Elevboka har sin egen lyse leseflate. Fargene --bg, --bg3 og --a hentes fra livssynets tema.css når et kapittel er åpent. */
+:root{--ink:#1b2422;--ark:#fdfaf4;--soft:#f3ebdf;--kant:#d9d2c4;--bg:#162222;--bg3:#2c4a47;--a:#e9a35f;--fs:18px;--pw:500px;--ph:680px;--pd:40px;--fh:570px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--fs)/1.7 "Nunito","Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;margin:0;line-height:1.15}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+#bar{position:sticky;top:0;z-index:5;background:#0c1212;color:#fbf5ea;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:15px}
+#bar b{margin-right:auto}
+#bar button,#bar a{font-weight:800;font-size:15px;padding:8px 14px;border-radius:8px;border:1px solid #47504e;background:#1e2726;color:#fbf5ea;text-decoration:none}
+#bar button[aria-pressed="true"]{background:#fbf5ea;color:#0c1212}
+/* Meny */
+#meny{max-width:1100px;margin:0 auto;padding:36px 20px 70px;color:#fbf5ea}
+#meny h1{font-size:clamp(38px,6vw,62px)}
+#meny>p{color:#b9c6c2;margin:8px 0 10px;max-width:60ch}
+#meny h2{font-size:26px;margin:38px 0 14px;color:#f3d9b8}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.k{background:var(--ark);color:var(--ink);border-radius:18px;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;transition:transform .2s}
+.k:hover,.k:focus-visible{transform:translateY(-4px);outline:3px solid #f3d9b8}
+.k img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#ddd}
+.k span{display:block;padding:12px 16px 16px}
+.k small{display:block;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6a7774}
+.k strong{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;font-size:21px;line-height:1.2}
+/* Kapittel som bok man blar i. Målene --pw (sidebredde), --ph (sidehøyde), --pd (marg) og --fh (teksthøyde) settes av skriptet. */
+#kap{padding:18px 0 70px}
+#oppslag{position:relative;height:var(--ph);margin:0 auto;perspective:2600px;filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+.ark{background:var(--ark);overflow:hidden}
+.side{position:absolute;top:0;width:var(--pw);height:var(--ph);cursor:pointer}
+.side.v{left:0;border-radius:14px 3px 3px 14px}
+.side.h{left:var(--pw);border-radius:3px 14px 14px 3px}
+#oppslag.en .side.v{display:none}#oppslag.en .side.h{left:0;border-radius:14px}
+.side.v::after,.side.h::after{content:"";position:absolute;top:0;bottom:0;width:46px;pointer-events:none}
+.side.v::after{right:0;background:linear-gradient(to right,transparent,rgba(60,40,20,.16))}
+.side.h::after{left:0;background:linear-gradient(to left,transparent,rgba(60,40,20,.16))}
+#oppslag.en .side.h::after{display:none}
+.nr{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;font-weight:700;color:#8a8f88}
+.leaf{position:absolute;top:0;width:var(--pw);height:var(--ph);z-index:3;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.45,.05,.3,1)}
+.leaf.fram{left:var(--pw);transform-origin:left center}.leaf.bak{left:0;transform-origin:right center}
+.flate{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 0 30px rgba(0,0,0,.25)}
+.flate.baks{transform:rotateY(180deg)}
+/* Teksten flyter i spalter som er nøyaktig én bokside brede. Hver synlige side er en kopi som er skjøvet til riktig spalte. */
+.flyt{width:calc(var(--pw) - 2*var(--pd));height:var(--fh);column-width:calc(var(--pw) - 2*var(--pd));column-gap:calc(2*var(--pd));column-fill:auto;line-height:1.6;orphans:2;widows:2}
+.ark .flyt{position:absolute;left:var(--pd);top:var(--pd)}
+#holder{position:absolute;left:0;top:0;width:var(--pw);height:0;overflow:hidden;visibility:hidden}
+.tittelside{height:var(--fh);break-after:column;background:var(--bg3);color:#fff;border-radius:14px;padding:26px 26px 22px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.tittelside .kicker{font-size:.66em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--a);margin:0}
+.tittelside h1{font-size:1.9em}
+.tittelside .ingress{margin:0;font-size:.95em;line-height:1.45;color:#f4efe6}
+.tittelside img{width:52%;max-height:42%;object-fit:cover;aspect-ratio:3/4;border-radius:12px;display:block;margin:8px auto 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.flyt h2{font-size:1.3em;color:var(--bg3);margin:0 0 6px;padding-top:4px;break-after:avoid;clear:both}
+.flyt section{margin:0 0 18px}
+.flyt p{margin:0 0 11px}
+.flyt ul{margin:0 0 11px;padding-left:1.2em}.flyt li{margin:0 0 5px}
+.flyt figure{float:right;width:42%;margin:4px 0 10px 16px;break-inside:avoid}
+.flyt figure img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;display:block}
+.flyt figcaption{font-size:.66em;line-height:1.35;color:#5d6866;margin-top:5px}
+.flyt blockquote{margin:12px 0;padding:10px 14px;border-left:5px solid var(--a);background:var(--soft);border-radius:0 12px 12px 0;font-family:"Fredoka","Trebuchet MS",sans-serif;line-height:1.35;break-inside:avoid}
+.flyt blockquote small{display:block;font:400 .72em/1.4 "Nunito",sans-serif;color:#5d6866;margin-top:6px}
+#blanav{display:flex;justify-content:center;align-items:center;gap:16px;margin:16px auto 0;color:#fbf5ea;font-size:15px;font-weight:700;flex-wrap:wrap}
+#blanav button{font-weight:800;font-size:16px;padding:10px 18px;border-radius:10px;border:0;background:var(--a);color:#1b1408}
+#blanav button:disabled{opacity:.35;cursor:default}
+#blanav button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+body:not(.rull):not(.ferdig) #test{display:none}
+#test{scroll-margin-top:80px}
+.under{max-width:820px;margin:26px auto 0;background:var(--ark);border-radius:22px;padding:6px 36px 32px}
+/* Rullevisning: samme tekst som én lang side. Brukes også ved utskrift. */
+body.rull #bokvis{display:none}
+body.rull #holder{position:static;visibility:visible;height:auto;width:auto;overflow:visible;max-width:820px;margin:8px auto 0;background:var(--ark);border-radius:22px;padding:30px 40px}
+body.rull #master{width:auto;height:auto;column-width:auto;columns:auto}
+body.rull .tittelside{height:auto;margin-bottom:26px}
+body.rull .tittelside img{width:170px;max-height:none}
+.term{font:inherit;font-weight:800;color:var(--bg3);background:none;border:0;border-bottom:2px dotted var(--a);padding:0;cursor:help}
+.term:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+#forkl{position:absolute;z-index:9;max-width:300px;background:#12201f;color:#fbf5ea;padding:12px 14px;border-radius:12px;font-size:16px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#forkl b{display:block;color:var(--a)}
+.boks{background:var(--soft);border-radius:16px;padding:18px 22px;margin:30px 0 0}
+.boks h2{margin:0 0 10px;font-size:1.25em}
+.boks dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px}
+.boks dt{font-weight:800}.boks dd{margin:0}
+.auto{background:#fff6d8;border:1px solid #e6d28a;border-radius:12px;padding:10px 14px;font-size:.8em;margin:18px 0 0}
+/* Sjekk deg selv */
+#test .sp{font-weight:800;margin:0 0 12px}
+#test .alt{display:grid;gap:8px}
+#test .alt button{text-align:left;font-size:1em;font-weight:700;padding:11px 14px;border-radius:10px;border:2px solid var(--kant);background:#fff;color:var(--ink)}
+#test .alt button:hover:not(:disabled){border-color:var(--bg3)}
+#test .alt button.rett{background:#dff3e2;border-color:#3f9a57}
+#test .alt button.feil{background:#fbe1dc;border-color:#c8553d}
+#test .neste{margin-top:14px;font-weight:800;font-size:1em;padding:10px 18px;border-radius:10px;border:0;background:var(--bg3);color:#fff}
+#test .stat{font-size:.8em;color:#5d6866;margin:0 0 6px}
+.blad{display:flex;justify-content:space-between;gap:12px;margin:34px 0 0;flex-wrap:wrap}
+.blad a{flex:1;min-width:220px;text-decoration:none;border:2px solid var(--kant);border-radius:14px;padding:12px 16px;font-weight:800}
+.blad a small{display:block;font-weight:700;color:#5d6866;font-size:.72em;letter-spacing:.08em;text-transform:uppercase}
+.blad a:hover{border-color:var(--bg3)}
+.blad a.h{text-align:right}
+.boks{break-inside:avoid}
+@media (max-width:640px){.under{padding:4px 18px 24px;border-radius:0}body.rull #holder{padding:20px 18px;border-radius:0}}
+@media (prefers-reduced-motion:reduce){.leaf{transition:none}}
+@media print{
+  body{background:#fff}#bar,#bokvis,#test,.blad,#forkl{display:none!important}
+  #holder{position:static;visibility:visible;height:auto;width:auto;overflow:visible}
+  #master{width:auto;height:auto;column-width:auto;columns:auto}
+  .tittelside{height:auto;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tittelside img{width:150px;max-height:none}
+}
+</style>
+<!-- Må stå etter stilene over, slik at livssynets farger vinner over standardfargene. -->
+<link rel="stylesheet" id="tema" href="">
+</head>
+<body>
+<!-- Elevboka. Kapitlene vises som en bok man blar i (piltaster, knapper, trykk på siden eller sveip). Åpne med ?p=buddhismen/tema1-historie for å gå rett til et kapittel. Uten ?p vises innholdslista.
+     Kapittelteksten ligger i en egen fil ved siden av temafila, f.eks. buddhismen/tema1-historie.bok.js, som window.BOK={ingress,deler:[{t,a:[avsnitt],bilde?}],husk:[spørsmål]}.
+     Mangler den, lages siden automatisk fra lysbildene. Lærernotater, fasit og samtalekort vises aldri her.
+     Ingenting lagres om eleven. Bare valgt skriftstørrelse huskes i nettleseren. -->
+<div id="bar"><b>Krøniken · elevbok</b>
+  <a id="tilmeny" href="bok.html" hidden>← Alle kapitler</a>
+  <button id="mindre" aria-label="Mindre skrift">A−</button><button id="storre" aria-label="Større skrift">A+</button>
+  <button id="hoyt" hidden aria-pressed="false">Les høyt</button>
+  <button id="modus" hidden aria-pressed="false">Rullevisning</button>
+</div>
+<div id="meny"><h1>Elevbok</h1><p>Velg et kapittel og bla deg gjennom det. Trykk på ord med prikker under for å få dem forklart. Nederst i hvert kapittel kan du sjekke hva du husker.</p><div id="liste"></div></div>
+<main id="kap" hidden></main>
+<script src="oversikt.js"></script>
+<script>
+(function(){
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const $=id=>document.getElementById(id);
+/* Skriftstørrelse */
+let fs=18,omlegg=null;try{fs=+localStorage.getItem('kroniken-bok-fs')||18;}catch(e){}
+const settFs=n=>{fs=Math.max(16,Math.min(30,n));document.documentElement.style.setProperty('--fs',fs+'px');try{localStorage.setItem('kroniken-bok-fs',fs);}catch(e){}if(omlegg)omlegg();};
+settFs(fs);$('mindre').onclick=()=>settFs(fs-2);$('storre').onclick=()=>settFs(fs+2);
+
+/* Rekkefølgen på kapitlene, hentet fra oversikt.js */
+const rekke=[];
+Object.entries(window.KRONIKEN||{}).forEach(([mappe,l])=>{
+  /* Oversiktskapittel bare der hovedpresentasjonen er en vanlig innholdsfil (hoved.js). Kristendommen har en egen HTML-fil og hoppes over. */
+  if(l.hoved&&/[?&]p=/.test(l.hoved))rekke.push({id:mappe+'/hoved',mappe,ls:l.navn,nr:'Oversikt',tittel:'Kort om '+l.navn.charAt(0).toLowerCase()+l.navn.slice(1),bilde:l.bilde});
+  l.tema.forEach((t,i)=>rekke.push({id:mappe+'/'+t.id,mappe,ls:l.navn,nr:'Kapittel '+(i+1),tittel:t.tittel,bilde:t.bilde}));
+});
+
+/* Meny */
+let forrige='';
+$('liste').innerHTML=rekke.map(k=>{const h=k.ls!==forrige?(forrige?'</div>':'')+`<h2>${esc(k.ls)}</h2><div class="g">`:'';forrige=k.ls;
+  return h+`<a class="k" href="bok.html?p=${k.id}"><img src="${k.mappe}/bilder/${k.bilde}" alt="" loading="lazy"><span><small>${k.nr}</small><strong>${esc(k.tittel)}</strong></span></a>`;}).join('')+'</div>';
+
+const p=new URLSearchParams(location.search).get('p');
+if(!p||!/^[a-z0-9-]+\/[a-z0-9-]+$/.test(p))return;
+const mappe=p.split('/')[0]+'/';
+const s=document.createElement('script');s.src=p+'.js';
+s.onerror=()=>{$('liste').insertAdjacentHTML('afterbegin','<p style="color:#ffb4a2">Fant ikke kapittelet '+esc(p)+'.</p>');};
+/* Kapittelteksten ligger i en egen fil ved siden av temafila: <fil>.bok.js. Finnes den ikke, lages kapittelet av lysbildene. */
+s.onload=()=>{const b=document.createElement('script');b.src=p+'.bok.js';b.onload=vis;b.onerror=vis;document.body.appendChild(b);};
+document.body.appendChild(s);
+
+function vis(){
+  let lukk=()=>{};const P=window.PRES;if(!P)return;const BOK=window.BOK||null;
+  $('tema').href=mappe+'tema.css';$('meny').hidden=true;$('tilmeny').hidden=false;
+  const begrep=(P.begreper||[]).map(([o,f])=>({o,f,n:o.toLowerCase()}));
+  const finn=ord=>{const n=ord.toLowerCase();return begrep.find(b=>b.n===n)||begrep.find(b=>{const k=Math.min(5,b.n.length,n.length);return k>=4&&b.n.slice(0,k)===n.slice(0,k);});};
+  /* [[ord]] eller [[ord|Begrep]] blir til et ord man kan trykke på hvis det finnes i begrepslista. **fet** blir fet. */
+  const fmt=t=>esc(t).replace(/\[\[(.+?)\]\]/g,(m,x)=>{const [vis,nokkel]=x.split('|');const b=finn(nokkel||vis);
+      return b?`<button class="term" data-o="${esc(b.o)}" data-f="${esc(b.f)}">${vis}</button>`:`<b>${vis}</b>`;})
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  const alt={};P.lysbilder.forEach(l=>{if(l.bilde)alt[l.bilde.fil]=l.bilde.alt;});
+  const fig=f=>f&&alt[f]!==undefined?`<figure><img src="${mappe}bilder/${f}" alt="${esc(alt[f])}" loading="lazy"><figcaption>${esc(alt[f])}</figcaption></figure>`:'';
+  const her=rekke.findIndex(k=>k.id===p),meg=rekke[her]||{nr:'',ls:P.livssyn};
+  const tittelbilde=(P.lysbilder.find(l=>l.type==='tittel')||{}).bilde;
+  let ingress='',kropp='';
+  if(BOK){
+    ingress=BOK.ingress||'';
+    kropp=BOK.deler.map(d=>`<section><h2>${fmt(d.t)}</h2>${fig(d.bilde)}${d.a.map(a=>`<p>${fmt(a)}</p>`).join('')}</section>`).join('')
+      +(BOK.husk?`<div class="boks"><h2>Stopp og tenk</h2><ul>${BOK.husk.map(h=>`<li>${fmt(h)}</li>`).join('')}</ul></div>`:'');
+  }else{
+    /* Automatisk utgave fra lysbildene. Samtale-, påstands- og sjekklysbilder hoppes over, og lærernotatene (n) brukes aldri. */
+    ingress=(P.lysbilder.find(l=>l.type==='tittel')||{}).ingress||'';
+    const brukt={};
+    kropp='<p class="auto">Dette kapittelet er satt sammen automatisk av punktene fra presentasjonen. En skrevet tekst kommer senere.</p>'+P.lysbilder.map(l=>{
+      const b=l.bilde&&!brukt[l.bilde.fil]&&l.type!=='tittel'?(brukt[l.bilde.fil]=1,fig(l.bilde.fil)):'';
+      if(l.type==='punkter')return `<section><h2>${fmt(l.tittel)}</h2>${b}<ul>${l.punkter.map(x=>`<li>${fmt(x)}</li>`).join('')}</ul></section>`;
+      if(l.type==='kort'||l.type==='snu')return `<section><h2>${fmt(l.tittel)}</h2><ul>${l.kort.map(c=>`<li><b>${fmt(c.t)}:</b> ${fmt(c.p)}</li>`).join('')}</ul></section>`;
+      if(l.type==='tall')return `<section><h2>${fmt(l.tittel)}</h2><ul>${l.kort.map(c=>`<li><b>${fmt(c.tall)} ${fmt(c.t)}</b> ${fmt(c.p)}</li>`).join('')}</ul></section>`;
+      if(l.type==='tidslinje')return `<section><h2>${fmt(l.tittel)}</h2><ul>${l.punkter.map(x=>`<li><b>${fmt(x.aar)}:</b> ${fmt([].concat(x.tekst).join(' '))}</li>`).join('')}</ul></section>`;
+      if(l.type==='sitat')return `<section><blockquote>«${fmt(l.tekst)}»<small>${fmt(l.kilde||'')}</small></blockquote>${[].concat(l.forklaring||[]).map(f=>`<p>${fmt(f)}</p>`).join('')}</section>`;
+      return '';}).join('');
+  }
+  const ordliste=begrep.length?`<div class="boks"><h2>Viktige ord</h2><dl>${begrep.map(b=>`<dt>${esc(b.o)}</dt><dd>${esc(b.f)}</dd>`).join('')}</dl></div>`:'';
+  const test=(P.quiz||[]).length?`<div class="boks" id="test"><h2>Sjekk deg selv</h2><div id="tb"></div></div>`:'';
+  const f=rekke[her-1],n=rekke[her+1];
+  const blad=`<nav class="blad">${f?`<a href="bok.html?p=${f.id}"><small>← Forrige</small>${esc(f.tittel)}</a>`:'<span></span>'}${n?`<a class="h" href="bok.html?p=${n.id}"><small>Neste →</small>${esc(n.tittel)}</a>`:''}</nav>`;
+  $('kap').innerHTML=`<div id="bokvis"><div id="oppslag"><div class="ark side v"></div><div class="ark side h"></div></div>
+      <div id="blanav"><button id="forr">‹ Forrige side</button><span id="sidetall" aria-live="polite"></span><button id="nest">Neste side ›</button></div></div>
+    <div id="holder"><div id="master" class="flyt"><div class="tittelside"><p class="kicker">${esc(meg.ls||P.livssyn)} · ${esc(meg.nr)}</p><h1>${esc(meg.tittel||P.tittel)}</h1>${ingress?`<p class="ingress">${fmt(ingress)}</p>`:''}${tittelbilde?`<img src="${mappe}bilder/${tittelbilde.fil}" alt="${esc(tittelbilde.alt)}">`:''}</div>
+      <div class="les">${kropp}</div>${ordliste}</div></div>
+    <div class="under">${test}${blad}</div>`;
+  $('kap').hidden=false;document.title='Krøniken – '+P.tittel;
+
+  /* Bla i boka. Teksten ligger i #master og flyter i spalter på én sidebredde. Hver synlige side er en kopi skjøvet til sin spalte. */
+  const master=$('master'),opp=$('oppslag'),sv=opp.querySelector('.side.v'),sh=opp.querySelector('.side.h'),rot=document.documentElement;
+  let PW=500,per=2,antall=1,side=0,laast=false;
+  const fyll=(el,i)=>{el.innerHTML='';if(i<0||i>=antall)return;const k=master.cloneNode(true);k.removeAttribute('id');k.style.transform='translateX('+(-i*PW)+'px)';el.appendChild(k);
+    if(i>0){const t=document.createElement('span');t.className='nr';t.textContent=i+1;el.appendChild(t);}};
+  const tegn=()=>{if(per===2){fyll(sv,side);fyll(sh,side+1);}else fyll(sh,side);
+    $('sidetall').textContent=per===2&&side+1<antall?`Side ${side+1}–${side+2} av ${antall}`:`Side ${side+1} av ${antall}`;
+    /* «Sjekk deg selv» kommer først fram når eleven har bladd til siste side. Da peker knappen videre dit. */
+    const sist=side+per>=antall,harTest=!!$('test');if(sist)document.body.classList.add('ferdig');
+    $('forr').disabled=side===0;$('nest').disabled=sist&&!harTest;$('nest').textContent=sist&&harTest?'Sjekk deg selv ↓':'Neste side ›';};
+  const maal=()=>{if(document.body.classList.contains('rull'))return;
+    per=innerWidth>=900?2:1;const pd=per===2?40:22;
+    PW=per===2?Math.min(560,Math.floor((innerWidth-40)/2)):Math.min(600,innerWidth-16);
+    const PH=Math.max(440,Math.min(800,innerHeight-$('bar').offsetHeight-100));
+    rot.style.setProperty('--pw',PW+'px');rot.style.setProperty('--ph',PH+'px');rot.style.setProperty('--pd',pd+'px');rot.style.setProperty('--fh',(PH-2*pd-22)+'px');
+    opp.style.width=(PW*per)+'px';opp.classList.toggle('en',per===1);
+    antall=Math.max(1,Math.round((master.scrollWidth+2*pd)/PW));
+    side=Math.min(Math.floor(side/per)*per,Math.floor((antall-1)/per)*per);tegn();};
+  const rolig=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const bla=d=>{if(laast||document.body.classList.contains('rull'))return;const ny=side+d*per;if(ny<0||ny>=antall)return;lukk();
+    if(per===1||rolig){side=ny;tegn();return;}
+    laast=true;const leaf=document.createElement('div'),f=document.createElement('div'),b=document.createElement('div');
+    leaf.className='leaf '+(d>0?'fram':'bak');f.className='ark flate';b.className='ark flate baks';
+    if(d>0){fyll(f,side+1);fyll(b,side+2);fyll(sh,side+3);}else{fyll(f,side);fyll(b,side-1);fyll(sv,side-2);}
+    leaf.append(f,b);opp.appendChild(leaf);leaf.getBoundingClientRect();leaf.style.transform='rotateY('+(d>0?-180:180)+'deg)';
+    let gjort=false;const ferdig=()=>{if(gjort)return;gjort=true;side=ny;tegn();leaf.remove();laast=false;};
+    leaf.addEventListener('transitionend',ferdig,{once:true});setTimeout(ferdig,1000);};
+  $('forr').onclick=()=>bla(-1);$('nest').onclick=()=>{if(side+per>=antall&&$('test'))$('test').scrollIntoView({behavior:rolig?'auto':'smooth',block:'start'});else bla(1);};
+  opp.addEventListener('click',e=>{if(e.target.closest('.term')||String(getSelection()))return;const r=opp.getBoundingClientRect();bla(e.clientX>r.left+r.width/2?1:-1);});
+  document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('#test'))return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){bla(1);e.preventDefault();}if(e.key==='ArrowLeft'||e.key==='PageUp'){bla(-1);e.preventDefault();}});
+  let tx=null;opp.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+  opp.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>50)bla(dx<0?1:-1);});
+  /* Rullevisning for den som heller vil lese kapittelet som én lang side */
+  const mk=$('modus');mk.hidden=false;
+  const settModus=r=>{document.body.classList.toggle('rull',r);mk.setAttribute('aria-pressed',r);mk.textContent=r?'Blavisning':'Rullevisning';try{localStorage.setItem('kroniken-bok-rull',r?1:0);}catch(e){}if(!r)maal();};
+  mk.onclick=()=>settModus(!document.body.classList.contains('rull'));
+  let r0=false;try{r0=localStorage.getItem('kroniken-bok-rull')==='1';}catch(e){}
+  omlegg=maal;settModus(r0);addEventListener('resize',maal);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(maal);
+
+  /* Ordforklaring når eleven trykker på et fagord */
+  let boble=null;lukk=()=>{if(boble){boble.remove();boble=null;}};
+  document.addEventListener('click',e=>{const t=e.target.closest('.term');lukk();if(!t)return;
+    boble=document.createElement('div');boble.id='forkl';boble.setAttribute('role','status');boble.innerHTML=`<b>${esc(t.dataset.o)}</b>${esc(t.dataset.f)}`;
+    document.body.appendChild(boble);const r=t.getBoundingClientRect();
+    boble.style.top=(scrollY+r.bottom+8)+'px';boble.style.left=Math.max(10,Math.min(scrollX+r.left,scrollX+innerWidth-boble.offsetWidth-10))+'px';e.stopPropagation();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')lukk();});
+
+  /* Sjekk deg selv: fem tilfeldige spørsmål. Ingenting lagres. */
+  if($('tb')){
+    const bland=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    let sett,i,rette;
+    const start=()=>{sett=bland(P.quiz).slice(0,5);i=0;rette=0;sp();};
+    const sp=()=>{const q=sett[i],alt=bland(q.a.map((t,j)=>({t,r:j===q.r})));
+      $('tb').innerHTML=`<p class="stat">Spørsmål ${i+1} av ${sett.length}</p><p class="sp">${esc(q.q)}</p><div class="alt">${alt.map(a=>`<button data-r="${a.r?1:0}">${esc(a.t)}</button>`).join('')}</div>`;
+      $('tb').querySelectorAll('.alt button').forEach(b=>b.onclick=()=>{
+        const ok=b.dataset.r==='1';if(ok)rette++;
+        $('tb').querySelectorAll('.alt button').forEach(x=>{x.disabled=true;if(x.dataset.r==='1')x.classList.add('rett');});
+        if(!ok)b.classList.add('feil');
+        const k=document.createElement('button');k.className='neste';k.textContent=i+1<sett.length?'Neste spørsmål':'Se resultatet';
+        k.onclick=()=>{i++;if(i<sett.length)sp();else slutt();};$('tb').appendChild(k);k.focus();});};
+    const slutt=()=>{$('tb').innerHTML=`<p class="sp">Du fikk ${rette} av ${sett.length} riktige.</p><p>${rette===sett.length?'Alt riktig. Bra jobbet!':rette>=3?'Godt gjort. Les gjerne over det du var usikker på.':'Les kapittelet en gang til, og prøv igjen.'}</p><button class="neste">Prøv fem nye</button>`;
+      $('tb').querySelector('.neste').onclick=start;};
+    start();
+  }
+
+  /* Les høyt med nettleserens egen stemme. Ingenting sendes noe sted. */
+  if('speechSynthesis' in window){
+    const k=$('hoyt');k.hidden=false;
+    const stopp=()=>{speechSynthesis.cancel();k.setAttribute('aria-pressed','false');k.textContent='Les høyt';};
+    k.onclick=()=>{
+      if(k.getAttribute('aria-pressed')==='true'){stopp();return;}
+      const biter=[...master.querySelectorAll('.tittelside h1,.tittelside .ingress,.les h2,.les p:not(.auto),.les li,.les blockquote')].map(e=>e.textContent).filter(Boolean);
+      const stemme=speechSynthesis.getVoices().find(v=>/^(nb|no)/i.test(v.lang));
+      biter.forEach((t,j)=>{const u=new SpeechSynthesisUtterance(t);u.lang='nb-NO';if(stemme)u.voice=stemme;u.rate=.95;if(j===biter.length-1)u.onend=stopp;speechSynthesis.speak(u);});
+      k.setAttribute('aria-pressed','true');k.textContent='Stopp opplesing';};
+    addEventListener('pagehide',()=>speechSynthesis.cancel());
+  }
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+window.PRES={livssyn:'Menneskerettigheter',nr:3,id:'menneskerettigheter/tema3-religionsfrihet',tittel:'Frihet til å tro',
+lysbilder:[
+{type:'tittel',tittel:'Frihet til å tro',ingress:'Religionsfrihet: retten til å tro, skifte tro og la være',bilde:{fil:'gudshus.webp',alt:'En bygate der en hvit trekirke, en moské med kuppel og minaret, en synagoge og et fargerikt tempel står side om side'},
+ n:['Økt 3 av 4. Kompetansemål: gjøre rede for hva menneskerettighetene innebærer for religionsfrihet.','Lesetekst til økta: «Mannen som gikk og strikket» (om Hans Nielsen Hauge).']},
+{type:'snakk',merke:'Oppstart',sporsmal:'Kan noen bestemme hva et annet menneske skal tro på?',hjelp:'Kan man tvinge noen til å tro? Kan man tvinge noen til å late som? Hva er forskjellen?',sek:60,
+ n:'Inngang til timen. Man kan tvinge noen til å si eller gjøre noe, men ikke til å tro det. Det er et av de eldste argumentene for religionsfrihet.'},
+{type:'snu',kicker:'Artikkel 18',tittel:'Fire friheter i én',kort:[
+ {t:'Å ha',p:'Du kan ha den religionen eller det livssynet du vil.'},
+ {t:'Å skifte',p:'Du kan bytte tro, eller slutte å tro.'},
+ {t:'Å vise',p:'Du kan vise troen din: be, feire høytider, gå i gudshus, bære symboler.'},
+ {t:'Å la være',p:'Du kan la være å ha noen religion, og du kan ikke tvinges til å delta.'}],
+ n:['[[Religionsfrihet]] kalles også tros- og livssynsfrihet, fordi den gjelder like mye for dem som ikke tror.','Retten til å ha og skifte tro kan aldri begrenses. Retten til å vise troen kan begrenses når det er nødvendig for å verne andre.']},
+{type:'punkter',kicker:'Ikke alltid en selvfølge',tittel:'Da Norge hadde én tro',bilde:{fil:'eidsvoll.webp',alt:'En stor, hvit herregård i tre fra rundt 1800 med mange høye vinduer, omgitt av store, gamle trær'},punkter:[
+ 'I flere hundre år måtte alle i Norge tilhøre den lutherske statskirken.',
+ 'Andre kristne kirker var forbudt, og vanlige folk fikk ikke holde religiøse møter uten presten.',
+ 'Grunnloven fra 1814 ga mange friheter, men ikke religionsfrihet.',
+ 'Den sa at jøder og jesuitter ikke hadde adgang til riket.'],
+ n:['Jesuittene er en katolsk munkeorden.','Bildet viser Eidsvollsbygningen, der Grunnloven ble skrevet.','Fortellingen om Henrik Wergeland og jødeparagrafen finnes som lesehistorie under Jødedommen.']},
+{type:'punkter',kicker:'1771–1824',tittel:'Hans Nielsen Hauge',hoyre:true,bilde:{fil:'hauge.webp',alt:'En mann i bondeklær fra rundt 1800 med skreppe på ryggen sett bakfra. Han går langs en landevei forbi gårder med torvtak og strikker mens han går'},punkter:[
+ 'Bondesønnen **Hans Nielsen Hauge** vandret rundt i Norge og talte om kristen tro.',
+ 'Det var forbudt for andre enn prester.',
+ 'Han ble arrestert mange ganger og satt til slutt mange år i fengsel.',
+ 'Loven han brøt, ble fjernet i 1842.'],
+ n:['Loven het konventikkelplakaten og var fra 1741.','Hauge var selv luthersk kristen. Saken viser at religionsfrihet også handler om retten til å tro på sin egen måte innenfor flertallets religion.','Fortellingen finnes som lesetekst: «Mannen som gikk og strikket».']},
+{type:'tidslinje',kicker:'Steg for steg',tittel:'Veien til religionsfrihet i Norge',punkter:[
+ {aar:'1845',tekst:['Andre kristne kirker','blir tillatt']},{aar:'1851',tekst:['Jøder får','komme til Norge']},{aar:'1956',tekst:['Forbudet mot','jesuitter fjernes']},{aar:'1964',tekst:['Religionsfrihet','inn i Grunnloven']},{aar:'2012',tekst:['Slutt på','statskirken']}],
+ n:['Loven fra 1845 kalles dissenterloven. En dissenter var en kristen som sto utenfor statskirken.','Det tok altså 150 år fra Grunnloven ble skrevet til full religionsfrihet sto i den.','I dag sier Grunnloven § 16: «Alle innbyggere i riket har fri religionsutøvelse.»']},
+{type:'punkter',kicker:'Barn og unge',tittel:'Hvem bestemmer hva du skal tro?',bilde:{fil:'dora.webp',alt:'En vidåpen dør i en vegg med lyst, blått lys som strømmer gjennom. En person med en liten veske sett bakfra står på terskelen'},punkter:[
+ 'Foreldre har rett til å oppdra barna sine i sin egen tro eller sitt eget livssyn.',
+ 'Barn har samtidig rett til å tenke selv, og til å bli hørt.',
+ 'Når du fyller **15 år**, kan du selv melde deg inn i eller ut av et tros- eller livssynssamfunn.',
+ 'Ingen, verken foreldre, venner eller ledere, har lov til å tvinge deg med vold eller trusler.'],
+ n:['Alderen 15 år kalles ofte den religiøse myndighetsalderen.','Også før de fyller 15, skal barn få si sin mening, og meningen skal telle mer jo eldre de er.','De aller fleste barn opplever ikke dette som en konflikt. De deler foreldrenes tro eller livssyn, eller finner sin egen vei etter hvert.']},
+{type:'punkter',kicker:'Skolen',tittel:'Religionsfrihet i klasserommet',hoyre:true,bilde:{fil:'klasserom.webp',alt:'Et klasserom sett bakfra der elever med ulikt hår, ulik hudfarge og ulike klær arbeider sammen to og to'},punkter:[
+ 'Skolen skal lære bort **om** religioner og livssyn, ikke forkynne.',
+ 'Alle religioner og livssyn skal presenteres saklig og med respekt.',
+ 'Foreldre kan be om fritak fra aktiviteter som oppleves som å utøve en annen religion.',
+ 'Elever kan få fri på helligdagene i sin egen religion.'],
+ n:['Fritaket gjelder aktiviteter, for eksempel en gudstjeneste, ikke kunnskapen om religionene.','Ingen elever skal måtte fortelle hva de eller familien tror på.']},
+{type:'pastand',kicker:'Stå opp hvis du mener det er sant',tittel:'Sant eller usant?',pastander:[
+ {t:'Religionsfrihet gjelder bare for dem som er religiøse.',sant:false,f:'Den gjelder også retten til ikke å tro.'},
+ {t:'I 1814 hadde alle full religionsfrihet i Norge.',sant:false,f:'Jøder og jesuitter var nektet adgang.'},
+ {t:'Fra du er 15 år, kan du selv velge tros- eller livssynssamfunn.',sant:true,f:'Det kalles den religiøse myndighetsalderen.'},
+ {t:'Religionsfriheten gir rett til å tvinge andre til å tro.',sant:false,f:'Friheten gjelder din egen tro, ikke andres.'}],
+ n:'Elevene reiser seg hvis de mener påstanden er sann. Be én fra hver gruppe begrunne før du trykker.'},
+{type:'punkter',kicker:'Grenser',tittel:'Når friheter møtes',punkter:[
+ 'Religionsfriheten gir deg rett til å leve etter din tro.',
+ 'Den gir deg ikke rett til å skade andre eller ta fra dem rettighetene deres.',
+ 'Norske lover gjelder for alle, uansett tro.',
+ 'Noen ganger må religionsfrihet veies mot andre rettigheter, og da er folk ofte uenige.'],
+ n:['Eksempler på spørsmål der folk er uenige: religiøse plagg i uniformer, omskjæring av gutter, slakt uten bedøving, skolegudstjenester.','Ikke ta stilling for klassen. Vis at dette er spørsmål der gode grunner står mot hverandre.']},
+{type:'snakk',merke:'Dilemma',sporsmal:'Klassen skal på overnattingstur. Én elev må be til faste tider, én spiser ikke svinekjøtt, og én vil ikke være med på aftenbønn. Hvordan lager dere en tur som er god for alle?',hjelp:'Hva kan klassen ordne? Hva må den enkelte ordne selv? Finnes det noe dere ikke kan ta hensyn til?',sek:120,
+ n:'Praktisk problemløsning i grupper. Poenget er at religionsfrihet i hverdagen oftest handler om små tilpasninger og god vilje.'},
+{type:'sjekk'},{type:'begreper'},{type:'utbillett',a:'Religionsfriheten har fire deler: å ha, å skifte, å vise og å la være. Hvilken tror du er viktigst? Begrunn.'}],
+begreper:[['Religionsfrihet','Retten til å tro, skifte tro eller la være.'],['Livssyn','Svar på de store spørsmålene om livet.'],['Statskirke','En kirke som er en del av staten.'],['Dissenter','En kristen som sto utenfor statskirken.'],['Forkynne','Å prøve å få andre til å tro.'],['Fritak','Å slippe å delta i noe.']],
+quiz:[
+{q:'Hva er religionsfrihet?',a:['Retten til å tro, skifte tro eller la være','Retten til fri fra skolen','Retten til å bestemme hva andre skal tro','Retten til å bygge hvor man vil'],r:0},
+{q:'Gjelder religionsfriheten også dem som ikke tror?',a:['Nei','Ja','Bare voksne','Bare i Norge'],r:1},
+{q:'Hvem hadde ikke adgang til Norge etter Grunnloven i 1814?',a:['Svensker og dansker','Bønder og fiskere','Jøder og jesuitter','Samer og kvener'],r:2},
+{q:'Hva gjorde Hans Nielsen Hauge som var forbudt?',a:['Han stjal','Han nektet å betale skatt','Han rømte fra hæren','Han talte om kristen tro uten å være prest'],r:3},
+{q:'Hvilket år fikk jøder lov til å komme til Norge?',a:['1851','1814','1905','1964'],r:0},
+{q:'Hvilket år kom religionsfrihet inn i Grunnloven?',a:['1814','1964','1845','2012'],r:1},
+{q:'Hvor gammel må du være for selv å velge tros- eller livssynssamfunn?',a:['10 år','12 år','15 år','18 år'],r:2},
+{q:'Hva skal skolen gjøre i KRLE-faget?',a:['Forkynne kristendom','Forkynne alle religioner','Unngå å snakke om religion','Lære bort om religioner og livssyn uten å forkynne'],r:3},
+{q:'Hva gir religionsfriheten deg ikke rett til?',a:['Å skade andre','Å be','Å feire høytider','Å skifte tro'],r:0},
+{q:'Hva kan elever få på helligdagene i sin egen religion?',a:['Gaver fra skolen','Fri fra skolen','Bedre karakterer','Ekstra lekser'],r:1}]};
+window.PRES.oppgaver=[
+{type:'koble'},
+{type:'fyll',tekst:'Retten til å tro eller la være kalles {religionsfrihet}. I 1814 hadde ikke {jøder} adgang til Norge. Hans Nielsen {Hauge} ble fengslet for å tale om troen sin. Religionsfrihet kom inn i Grunnloven i {1964}. Fra du er {15} år, kan du selv velge trossamfunn.'},
+{type:'rekkefolge',ledd:['Grunnloven nekter jøder og jesuitter adgang','Andre kristne kirker blir tillatt','Jøder får komme til Norge','Religionsfrihet kommer inn i Grunnloven','Norge har ikke lenger statskirke']},
+{type:'sporsmal',side2:true,linjer:2,sp:[['Hvilke fire friheter består religionsfriheten av?','Å ha en tro, å skifte tro, å vise troen og å la være å tro.'],['Hvorfor ble Hans Nielsen Hauge fengslet?','Han talte om kristen tro og holdt møter, og det var forbudt for andre enn prester.'],['Hva er forskjellen på å lære om en religion og å forkynne?','Å lære om er å få kunnskap. Å forkynne er å prøve å få noen til å tro.']]},
+{type:'fri',side2:true,tittel:'Planlegg turen',tekst:'Klassen skal på overnattingstur. Én elev må be til faste tider, én spiser ikke svinekjøtt, og én vil ikke være med på aftenbønn. Skriv tre ting klassen kan gjøre for at turen skal bli god for alle.',linjer:6},
+{type:'kort',kort:['Kan man tvinge noen til å tro på noe? Hvorfor, eller hvorfor ikke?','Hvorfor tror du det tok så lang tid før Norge fikk full religionsfrihet?','Er det riktig at foreldre bestemmer hvilken tro barna skal oppdras i?','Er 15 år en passe alder for å velge selv? For tidlig? For sent?','Hva er forskjellen på å fortelle om troen sin og å presse noen?','Bør skolen ta hensyn til alle religioner når den planlegger turer og fester?','Hvordan kan man vise respekt for noe man selv ikke tror på?','Hvis to rettigheter krasjer, hvordan bør man finne ut hvilken som skal veie tyngst?']}];

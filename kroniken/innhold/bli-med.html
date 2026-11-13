@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – bli med i quiz</title>
+<link rel="stylesheet" href="felles/quiz.css">
+</head>
+<body>
+<!-- Elevens side. Ingen innlogging og ingen egne navn: eleven får et tilfeldig kallenavn. -->
+<div id="demo" class="demo" hidden>Testmodus</div>
+<div id="app" class="elev"></div>
+<script src="felles/firebase-oppsett.js"></script>
+<script src="felles/quiz-net.js"></script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rand=n=>Math.floor(Math.random()*n);
+const P=new URLSearchParams(location.search);
+$('#demo').hidden=!(P.has('demo')||!window.TAVLELOFTET_FIREBASE);
+const ADJ=['Rask','Lur','Glad','Modig','Rolig','Kvikk','Snill','Sprek','Våken','Blid','Ivrig','Stødig','Kjapp','Klok'];
+const DYR=Object.keys(KQ_DYR);
+const LAG=[{n:'Rød',f:'#e98554'},{n:'Blå',f:'#5fb0d9'},{n:'Gul',f:'#f3d27a'},{n:'Grønn',f:'#8fd0a8'}];
+const minne={get(k){try{return sessionStorage.getItem(k);}catch(e){return this[k]||null;}},set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}this[k]=v;}};
+let net=null,kode='',id='',navn='',V=null,R=null,svart={},t0=0,tikk=null,vistNr=-2,vistFase='';
+
+function midt(html){app.innerHTML=`<div class="midt">${html}</div>`;}
+function kodeside(feil){
+  midt(`<p class="kicker">Krøniken · quiz</p><h1>Skriv koden fra tavla</h1><input id="k" maxlength="4" autocomplete="off" autocapitalize="characters" aria-label="Spillkode"><p class="no" style="min-height:1.4em;font-weight:800">${esc(feil||'')}</p><button class="knapp" id="ok">Videre</button>`);
+  const gaa=()=>koble($('#k').value.toUpperCase().replace(/[^A-Z]/g,''));
+  $('#ok').onclick=gaa;$('#k').onkeydown=e=>{if(e.key==='Enter')gaa();};$('#k').focus();
+}
+async function koble(k){
+  if(k.length!==4)return kodeside('Koden har fire bokstaver.');
+  midt('<p class="muted">Kobler til …</p>');
+  try{net=await KQNet(k);$('#demo').hidden=!net.demo;const v=await net.get('v');if(!v)return kodeside('Fant ikke spillet. Sjekk koden.');}catch(e){return kodeside('Fikk ikke kontakt. Prøv igjen.');}
+  kode=k;id=minne.get('kq-id-'+k);navn=minne.get('kq-navn-'+k);
+  if(id&&navn)return bliMed();
+  id=Array.from({length:10},()=>'abcdefghjkmnpqrstuvwxyz23456789'[rand(31)]).join('');velgNavn();
+}
+async function velgNavn(){
+  const tatt=Object.values(await net.get('s')||{}).map(x=>x.n);
+  const nytt=()=>{let n,i=0;do{n=ADJ[rand(ADJ.length)]+' '+DYR[rand(DYR.length)];}while(tatt.includes(n)&&++i<60);return n;};
+  navn=nytt();
+  midt(`<p class="kicker">Spill ${esc(kode)}</p><h1>Dette er navnet ditt</h1><div class="storbrikke" id="ik">${KQ_IKON(navn)}</div><div class="navn" id="n">${esc(navn)}</div><button class="knapp sek" id="bytt">Gi meg et annet</button><button class="knapp" id="med">Bli med</button><p class="muted" style="font-size:15px;max-width:420px">Alle får et tilfeldig kallenavn, så ingen ekte navn lagres.</p>`);
+  $('#bytt').onclick=()=>{navn=nytt();$('#n').textContent=navn;$('#ik').textContent=KQ_IKON(navn);};$('#med').onclick=bliMed;
+}
+async function bliMed(){
+  minne.set('kq-id-'+kode,id);minne.set('kq-navn-'+kode,navn);
+  await net.set('s/'+id,{n:navn});
+  net.on('r/'+id,r=>{R=r;tegn();});
+  net.on('v',v=>{V=v;tegn();});
+}
+function hode(){const lag=R&&R.lag!=null?LAG[R.lag]:null;return `<div class="linje"><span>${KQ_IKON(navn)} ${esc(navn)}${lag?` · <b style="color:${lag.f}">${lag.n} lag</b>`:''}</span><span>${R&&R.p!=null?R.p+' p':''}</span></div>`;}
+function tegn(){
+  clearInterval(tikk);
+  if(!V){vistNr=-2;return midt('<h1>Spillet er avsluttet</h1><p class="muted">Takk for at du var med!</p><button class="knapp sek" id="ny">Skriv en ny kode</button>'),void($('#ny').onclick=()=>kodeside());}
+  if(V.fase==='lobby')return void(app.innerHTML=hode()+`<div class="midt"><div class="stor ok">Du er med!</div><div class="storbrikke">${KQ_IKON(navn)}</div><div class="navn">${esc(navn)}</div><p class="muted">Se på tavla. Quizen starter snart.</p></div>`);
+  if(V.fase==='sporsmal'){
+    if(svart[V.nr]!=null)return void(app.innerHTML=hode()+`<div class="midt"><div class="stor">Svar sendt</div><p class="muted">Vent på de andre …</p></div>`);
+    if(vistNr!==V.nr||vistFase!=='sporsmal'){t0=Date.now();vistNr=V.nr;}
+    vistFase='sporsmal';
+    app.innerHTML=hode()+`<div class="tid"><i id="ti"></i></div><p class="kicker">Spørsmål ${V.nr+1} av ${V.ant}</p><h2 style="font-size:26px;margin-bottom:14px">${esc(V.q)}</h2><div class="eb">${V.a.map((a,i)=>`<button data-i="${i}" style="--f:${KQ_SVAR[i].f}"><b>${KQ_SVAR[i].t}</b>${esc(a)}</button>`).join('')}</div>`;
+    app.querySelectorAll('.eb button').forEach(b=>b.onclick=()=>{const nr=V.nr;if(svart[nr]!=null)return;svart[nr]=+b.dataset.i;net.set('a/'+nr+'/'+id,{v:svart[nr],t:Date.now()-t0});tegn();});
+    const oppd=()=>{const igjen=1-(Date.now()-t0)/(V.tid*1000);const e=$('#ti');if(e)e.style.width=Math.max(0,igjen*100)+'%';if(igjen<=0){clearInterval(tikk);app.querySelectorAll('.eb button').forEach(b=>b.disabled=true);}};
+    oppd();tikk=setInterval(oppd,200);return;
+  }
+  vistFase=V.fase;
+  if(V.fase==='fasit'){
+    if(!R||R.nr!==V.nr)return void(app.innerHTML=hode()+`<div class="midt"><p class="muted">Riktig svar: <b style="color:var(--cream)">${esc(V.a[V.r])}</b></p><p class="muted">Du blir med fra neste spørsmål.</p></div>`);
+    let ekstra='';const m=V.modus;
+    if(m==='sistemann')ekstra=R.ute?'<p class="muted">Du er ute, men kan fortsatt svare for moro skyld.</p>':`<div class="liv no">${'♥'.repeat(R.liv)}</div>${R.mistet?'<p class="muted">Du mistet ett liv.</p>':''}`;
+    if(m==='stige')ekstra=R.ok?`<p style="font-size:24px;font-weight:800">Du kastet ${R.kast}${R.hopp==='stige'?' og fant en stige!':R.hopp==='sklie'?' og havnet på en sklie.':'.'}</p>${R.maal?'<p style="font-size:24px;font-weight:800">🏆 Du kom i mål! Du får en stjerne og starter på en ny runde.</p>':`<p class="muted">Du står på rute ${R.pos} av 48. Følg med på brettet!</p>`}`:`<p class="muted">Ingen terningkast. Du står på rute ${R.pos}.</p>`;
+    if(m==='erobring')ekstra=(R.ok?`<p style="font-size:24px;font-weight:800">${R.tok?'Du tok en rute fra '+esc(R.tok)+'!':'Du fikk en ny rute!'}</p>`:'')+(R.mistet?`<p class="muted">Du mistet ${R.mistet} ${R.mistet===1?'rute':'ruter'}.</p>`:'')+`<p class="muted">Du har ${R.ruter} ${R.ruter===1?'rute':'ruter'}.</p>`;
+    if(m==='lag'&&R.lag!=null)ekstra=`<p class="muted">${LAG[R.lag].n} lag ligger på ${R.lagPlass}. plass med ${R.lagP} poeng.</p>`;
+    app.innerHTML=hode()+`<div class="midt"><div class="stor ${R.ok?'ok':'no'}">${R.ok?'Riktig!':R.svart?'Feil':'Ikke svart'}</div>${R.ok?`<p style="font-size:26px;font-weight:800;margin:0">+${R.d} poeng</p>`:`<p class="muted" style="margin:0">Riktig svar: <b style="color:var(--cream)">${esc(V.a[V.r])}</b></p>`}${ekstra}${m==='lag'?'':`<p class="muted">Du ligger på ${R.plass}. plass.</p>`}</div>`;return;
+  }
+  if(V.fase==='slutt'){
+    const m=V.modus;let tekst=R?`<div class="stor">${m==='lag'&&R.lagPlass?R.lagPlass:R.plass}. plass</div><p class="muted">${m==='lag'&&R.lag!=null?LAG[R.lag].n+' lag · du fikk '+R.p+' poeng':m==='erobring'?R.ruter+' ruter':m==='stige'?(R.runder?R.runder+(R.runder===1?' stjerne og ':' stjerner og '):'')+'rute '+R.pos:R.p+' poeng'}</p>`:'';
+    midt(`<p class="kicker">Ferdig</p>${tekst}<p class="muted">Takk for at du var med!</p>`);
+  }
+}
+const k=(P.get('k')||'').toUpperCase().replace(/[^A-Z]/g,'');
+k.length===4?koble(k):kodeside();
+})();
+</script>
+</body>
+</html>

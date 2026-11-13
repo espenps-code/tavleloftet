@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23161433'/%3E%3Ctext x='28' y='48' text-anchor='middle' font-family='Georgia%2Cserif' font-weight='700' font-size='44' fill='%23F3E9D2'%3EK%3C/text%3E%3Ccircle cx='50' cy='45' r='6' fill='%23E8B04B'/%3E%3C/svg%3E">
+<title>Krøniken – sivilisasjonssimulator (KRLE)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --night:#161433;
+    --night-2:#201d47;
+    --night-3:#2b2760;
+    --parchment:#F3E9D2;
+    --parchment-edge:#e4d6b6;
+    --ink:#2a2440;
+    --ink-soft:#5b5474;
+    --gold:#E8B04B;
+    --gold-soft:#f0c97a;
+    --civ-1:#4FB8A8;
+    --civ-2:#C9586B;
+    --civ-3:#7C8CE0;
+    --line:rgba(243,233,210,0.16);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 78% -10%, rgba(124,140,224,0.18), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(79,184,168,0.14), transparent 55%),
+      var(--night);
+    color:var(--parchment);
+    min-height:100vh;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 22px 64px}
+
+  /* Header */
+  header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+  .crest{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4.4vw,44px);letter-spacing:0.5px;color:var(--parchment);line-height:1}
+  .crest .glow{color:var(--gold)}
+  .tagline{font-size:14px;color:rgba(243,233,210,0.62);max-width:520px}
+  .eyebrow{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:6px}
+
+  /* Setup */
+  .lead{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(19px,2.4vw,24px);color:var(--parchment);max-width:680px;margin:0 0 26px}
+  .civ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:30px}
+  .civ-card{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+  .civ-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+  .civ-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:0 0 2px;color:var(--parchment)}
+  .civ-kjerne{font-size:13px;color:var(--c);font-weight:700;margin-bottom:12px}
+  .civ-axes{list-style:none;margin:0;padding:0;font-size:13.5px;color:rgba(243,233,210,0.78)}
+  .civ-axes li{padding:3px 0;display:flex;gap:8px}
+  .civ-axes b{color:rgba(243,233,210,0.5);font-weight:400;min-width:96px;flex-shrink:0}
+
+  /* Valgbare kort + import */
+  button.civ-card{appearance:none;width:100%;font:inherit;color:var(--parchment);cursor:pointer;display:block}
+  .civ-card{opacity:0.5;transition:opacity .15s,border-color .15s,transform .12s}
+  .civ-card.valgt{opacity:1;border-color:rgba(243,233,210,0.28)}
+  .civ-card:hover{transform:translateY(-1px)}
+  .civ-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .civ-card h3{padding-right:30px}
+  .velg-merke{position:absolute;top:12px;right:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;background:var(--night);border:1px solid var(--line);color:var(--c)}
+  .civ-card.valgt .velg-merke{background:var(--c);color:var(--night);border-color:var(--c)}
+  .import{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+  .import summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--gold-soft);list-style:none}
+  .import summary::-webkit-details-marker{display:none}
+  .import summary::before{content:"▸ "}
+  .import[open] summary::before{content:"▾ "}
+  #importTxt{width:100%;min-height:120px;margin:10px 0;background:var(--night);color:var(--parchment);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;resize:vertical}
+  .import-rad{display:flex;gap:10px;flex-wrap:wrap}
+  .btn.liten{font-size:14px;padding:10px 16px;box-shadow:0 4px 0 rgba(0,0,0,0.25)}
+  .import-status{margin-top:10px;font-size:13.5px;min-height:18px}
+  .import-status.ok{color:#7fd6c4}
+  .import-status.feil{color:#e69aa8}
+  #valgtTeller{color:var(--gold-soft);font-weight:700}
+  .firebase-rad{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 4px}
+  #klassekode{flex:1;min-width:180px;background:var(--night);color:var(--parchment);border:1px solid var(--line);border-radius:10px;padding:11px 13px;font:inherit;font-size:14px}
+  #klassekode:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+
+  /* Controls */
+  .panel{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:24px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 4px}
+  .panel p.hint{font-size:13.5px;color:rgba(243,233,210,0.6);margin:0 0 16px}
+  .seg{display:inline-flex;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+  .seg button{font-family:inherit;font-size:15px;border:none;background:transparent;color:rgba(243,233,210,0.7);padding:10px 18px;border-radius:9px;cursor:pointer;font-weight:700;transition:background .15s,color .15s}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:var(--night)}
+  .seg button:focus-visible{outline:2px solid var(--gold-soft);outline-offset:2px}
+
+  .btn{font-family:'Fraunces',serif;font-weight:600;font-size:18px;background:var(--gold);color:var(--night);border:none;border-radius:13px;padding:15px 30px;cursor:pointer;transition:transform .12s,box-shadow .2s;box-shadow:0 6px 0 rgba(0,0,0,0.25)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,0.25)}
+  .btn:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--parchment);border:1px solid var(--line);box-shadow:none}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  /* Epoch spine */
+  .spine{display:flex;align-items:center;gap:0;margin:6px 0 30px;flex-wrap:wrap}
+  .node{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;min-width:84px;position:relative}
+  .node .dot{width:34px;height:34px;border-radius:50%;background:var(--night-2);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:rgba(243,233,210,0.5);z-index:2;transition:all .3s}
+  .node .lbl{font-size:11px;text-align:center;color:rgba(243,233,210,0.42);letter-spacing:.3px;max-width:96px;line-height:1.25}
+  .node.done .dot{background:var(--gold-soft);border-color:var(--gold-soft);color:var(--night)}
+  .node.active .dot{background:var(--gold);border-color:var(--gold);color:var(--night);box-shadow:0 0 0 6px rgba(232,176,75,0.18)}
+  .node.active .lbl{color:var(--gold-soft);font-weight:700}
+  .node::after{content:"";position:absolute;top:17px;left:50%;width:100%;height:2px;background:var(--line);z-index:1}
+  .node:last-child::after{display:none}
+  .node.done::after{background:var(--gold-soft)}
+
+  /* Chronicle */
+  .chronicle{background:var(--parchment);color:var(--ink);border-radius:18px;padding:30px 32px;position:relative;box-shadow:0 18px 50px rgba(0,0,0,0.35);border:1px solid var(--parchment-edge)}
+  .chronicle::after{content:"";position:absolute;inset:7px;border:1px solid rgba(42,36,64,0.12);border-radius:12px;pointer-events:none}
+  .ch-epoke{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#9a7b2e;font-weight:700;margin-bottom:6px}
+  .ch-title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:0 0 18px;color:var(--ink)}
+  .ch-body{font-size:clamp(16px,1.9vw,18.5px);color:#352e4d}
+  .ch-body p{margin:0 0 14px}
+  .ch-body p:last-child{margin-bottom:0}
+
+  /* Veiskille */
+  .veiskille{margin-top:24px;border-top:2px dashed rgba(42,36,64,0.18);padding-top:20px}
+  .vs-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9a7b2e;font-weight:700;margin-bottom:8px}
+  .vs-q{font-family:'Fraunces',serif;font-weight:600;font-size:20px;color:var(--ink);margin:0 0 16px}
+  .vs-valg{display:grid;gap:12px}
+  .vs-valg button{font-family:inherit;text-align:left;background:#fff;border:1.5px solid var(--parchment-edge);border-radius:12px;padding:15px 18px;font-size:16.5px;color:var(--ink);cursor:pointer;transition:border-color .15s,transform .12s,background .15s;display:flex;gap:12px;align-items:flex-start}
+  .vs-valg button:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .vs-valg button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .vs-valg .mark{font-family:'Fraunces',serif;font-weight:600;color:var(--gold);font-size:18px;flex-shrink:0}
+
+  /* Snakk sammen */
+  .snakk{margin-top:22px;background:var(--night-2);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:14px;padding:18px 20px}
+  .snakk .tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .snakk p{margin:0;font-size:clamp(16px,1.9vw,18.5px);font-family:'Fraunces',serif;font-weight:400;color:var(--parchment)}
+
+  /* Verdens regnskap (World Dominion) */
+  .regnskap{margin-top:22px;background:var(--night-2);border:2px solid var(--gold);border-radius:16px;padding:20px 22px}
+  .regnskap .tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-bottom:8px}
+  .regnskap h3{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(20px,2.8vw,26px);margin:0 0 14px;color:var(--parchment)}
+  .regnskap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 16px;font-size:15px}
+  .regnskap dt{color:var(--gold-soft);font-weight:700}
+  .regnskap dd{margin:0;color:rgba(243,233,210,0.88)}
+  .modus-info{font-size:13.5px;color:rgba(243,233,210,0.6);margin:12px 0 0}
+  .modus-info b{color:var(--gold-soft)}
+
+  /* Relations strip */
+  .relations{margin:18px 0 0;font-size:14px;color:rgba(243,233,210,0.66);display:flex;gap:8px;align-items:flex-start}
+  .relations b{color:var(--gold-soft);font-weight:700;flex-shrink:0}
+
+  /* Civ chips */
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--night-2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700}
+  .chip .bead{width:11px;height:11px;border-radius:50%;background:var(--c)}
+
+  /* Action row */
+  .actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:26px}
+  .mini-intensity{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(243,233,210,0.6)}
+
+  /* Loading */
+  .loading{display:flex;align-items:center;gap:14px;color:var(--gold-soft);font-family:'Fraunces',serif;font-size:19px;padding:30px 4px}
+  .quill{width:26px;height:26px;border:3px solid rgba(232,176,75,0.25);border-top-color:var(--gold);border-radius:50%;animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .error{background:#3a1f2a;border:1px solid #c9586b;border-radius:12px;padding:16px 18px;color:#f3d3da;font-size:15px;margin-top:16px}
+
+  .hidden{display:none !important}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+  /* Verden: kart + målere */
+  .verden{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin:0 0 24px;align-items:start}
+  .kart-kort,.malere-kort{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .kart-kort h3,.malere-kort h3{font-family:'Fraunces',serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px;color:rgba(243,233,210,0.6)}
+  .kart-svg{width:100%;height:auto;display:block;border-radius:12px;background:radial-gradient(circle at 50% 38%, #241f4d, #181539)}
+  .hex{transition:fill .6s ease, fill-opacity .6s ease;stroke:rgba(243,233,210,0.10);stroke-width:0.4}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:13px}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:rgba(243,233,210,0.8)}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;flex-shrink:0}
+  .malere-grid{display:flex;flex-direction:column;gap:16px}
+  .mc-navn{font-size:13.5px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px;color:var(--parchment)}
+  .mc-navn .bd{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+  .meter{display:grid;grid-template-columns:72px 1fr 28px;align-items:center;gap:9px;margin-bottom:5px}
+  .meter .ml{font-size:11.5px;color:rgba(243,233,210,0.58)}
+  .meter .mt{height:8px;background:var(--night);border-radius:5px;overflow:hidden}
+  .meter .mf{height:100%;border-radius:5px;transition:width .6s ease}
+  .meter .mv{font-size:11px;color:rgba(243,233,210,0.55);text-align:right;font-variant-numeric:tabular-nums}
+
+  .spenning{margin-top:13px}
+  .spenning .row{display:flex;align-items:center;gap:9px}
+  .spenning .lab{letter-spacing:1px;text-transform:uppercase;font-size:11px;color:rgba(243,233,210,0.55);font-weight:700;min-width:62px}
+  .spenning .track{flex:1;height:8px;background:var(--night);border-radius:5px;overflow:hidden}
+  .spenning .fill{height:100%;border-radius:5px;transition:width .6s ease, background .6s ease}
+  .spenning .num{font-size:11px;color:rgba(243,233,210,0.55);min-width:26px;text-align:right;font-variant-numeric:tabular-nums}
+  .spenning .cap{margin-top:7px;font-size:11px;color:rgba(243,233,210,0.42)}
+
+  @media (max-width:760px){
+    .verden{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .node .lbl{display:none}
+    .chronicle{padding:22px 20px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">KRLE · 7. trinn</div>
+      <div class="crest">Krøniken<span class="glow">.</span></div>
+    </div>
+    <div class="tagline">Tre religioner møtes i én verden. Vi følger hvordan verdiene deres former samfunnet – epoke for epoke.</div>
+  </header>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <p class="lead">Velg religionene som skal møtes i verden – eller last inn elevenes egne fra spørreundersøkelsen. Klikk på kortene for å velge 2–5, sett alvorsgrad, og start krøniken.</p>
+
+    <div class="panel">
+      <h2>Religioner på scenen</h2>
+      <p class="hint">Klikk på et kort for å velge eller fjerne det. <span id="valgtTeller"></span></p>
+      <div class="civ-grid" id="civGrid"></div>
+      <div class="firebase-rad">
+        <input id="klassekode" type="text" placeholder="Klasse-ID (åpnes vanligvis fra lærersiden)" autocomplete="off">
+        <button type="button" class="btn liten" id="hentBtn">Hent klasse</button>
+      </div>
+      <div class="import-status" id="fbStatus"></div>
+      <details class="import">
+        <summary>Last inn elevreligioner (lim inn JSON)</summary>
+        <p class="hint" style="margin-top:12px">Lim inn en liste med religionsprofiler fra spørreundersøkelsen. Hver profil trenger minst «navn»; flere akser (gudsbilde, moral, autoritet, andre, rikdom …) gir rikere fortelling.</p>
+        <textarea id="importTxt" placeholder='[ { "navn": "Religionsnavn", "kjerne": "kort kjerneverdi", "gudsbilde": "…", "moral": "…", "autoritet": "…", "andre": "…", "rikdom": "…" } ]'></textarea>
+        <div class="import-rad">
+          <button type="button" class="btn liten" id="importBtn">Importer</button>
+          <button type="button" class="btn ghost liten" id="malBtn">Vis mal</button>
+          <button type="button" class="btn ghost liten" id="testBtn">Bruk testreligionene</button>
+        </div>
+        <div class="import-status" id="importStatus"></div>
+      </details>
+    </div>
+
+    <div class="panel">
+      <h2>Modus</h2>
+      <p class="hint">Velg hva slags verden religionene skal møtes i.</p>
+      <div class="seg" role="group" aria-label="Modus" id="modusSeg">
+        <button data-modus="kronike" aria-pressed="true">Krøniken</button>
+        <button data-modus="dominion" aria-pressed="false">World Dominion</button>
+      </div>
+      <p class="modus-info" id="modusInfo"><b>Krøniken:</b> religionene utvikler seg side om side. Ingen vinner kåres – fokus på refleksjon og avveininger.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Alvorsgrad</h2>
+      <p class="hint">Styrer hvor mye konflikt, kriser og oppsplitting verden tåler. Dere kan endre den underveis.</p>
+      <div class="seg" role="group" aria-label="Alvorsgrad">
+        <button data-alvor="mild" aria-pressed="false">Mild</button>
+        <button data-alvor="realistisk" aria-pressed="true">Realistisk</button>
+        <button data-alvor="dramatisk" aria-pressed="false">Dramatisk</button>
+      </div>
+    </div>
+
+    <button class="btn" id="startBtn">Start krøniken</button>
+  </section>
+
+  <!-- RUN -->
+  <section id="run" class="hidden">
+    <div class="spine" id="spine"></div>
+    <div class="chips" id="chips"></div>
+
+    <div id="verdenPanel" class="verden">
+      <div class="kart-kort">
+        <h3>Verden</h3>
+        <div id="kartHolder"></div>
+        <div class="legend" id="legend"></div>
+        <div class="spenning" id="spenningWrap"></div>
+      </div>
+      <div class="malere-kort">
+        <h3>Samfunnsmålere</h3>
+        <div class="malere-grid" id="malereGrid"></div>
+      </div>
+    </div>
+
+    <div id="stage"></div>
+
+    <div class="actions" id="actionRow"></div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   FIREBASE-OPPSETT
+   Lim inn din egen firebaseConfig her (Firebase-konsollen →
+   Prosjektinnstillinger → "Dine apper"). Databasen er Firestore.
+   Datastruktur:  klasser/{klassekode}/religioner/{autoId}
+   Hver religion-dok = en religionsprofil (navn + akser).
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDazYM5XDIABscMaDFgJ1IEco0du4JAN4w",
+  authDomain: "krle-sim.firebaseapp.com",
+  projectId: "krle-sim",
+  storageBucket: "krle-sim.firebasestorage.app",
+  messagingSenderId: "1073291328318",
+  appId: "1:1073291328318:web:2fa3d0e862ed8e25d24a6f"
+};
+
+let db = null;
+function initFirebase(){
+  if(db) return db;
+  if(typeof firebase === "undefined" || !FIREBASE_CONFIG.projectId) return null;
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    return db;
+  }catch(e){ return null; }
+}
+
+/* ============================================================
+   CLAUDE-API
+   I Claude.ai-artefakten fungerer adressen under direkte.
+   For GitHub Pages: bytt til din Cloudflare Worker-proxy
+   (se OPPSETT.md), f.eks. "https://krle-proxy.dittnavn.workers.dev".
+   ============================================================ */
+const API_URL = "https://patient-bird-01de.espenps.workers.dev";
+async function hentKlasse(kode){
+  const d = initFirebase();
+  if(!d) throw new Error("Firebase er ikke satt opp ennå – lim inn firebaseConfig øverst i fila.");
+  const snap = await d.collection("klasser").doc(kode).collection("religioner").get();
+  const liste = [];
+  snap.forEach(doc=>{ const x = doc.data() || {}; if(!x.id) x.id = doc.id; liste.push(x); });
+  return liste;
+}
+
+/* ---------- Test-religioner (samme datakontrakt som spørreundersøkelsen vil gi) ---------- */
+const TEST_PROFILER = [
+  {
+    id:"sol", navn:"Solfolket", farge:"var(--civ-1)", fargehex:"#4FB8A8",
+    kjerne:"Naturen er hellig, fellesskapet bærer",
+    gudsbilde:"Mange ånder i sol, hav og fjell",
+    moral:"Det forfedrene og årstidene lærer oss",
+    leveregler:"Del med alle, ta bare det du trenger",
+    etterliv:"Vi blir til jord og vokser igjen",
+    ritualer:"Store felles fester ved solverv",
+    autoritet:"Eldste og rådet bestemmer sammen",
+    andre:"Åpne og gjestfrie mot fremmede",
+    rikdom:"Rikdom skal deles, ikke samles",
+    natur:"Naturen er en slektning, ikke en ressurs",
+    likeverd:"Alle har en plass og en stemme"
+  },
+  {
+    id:"veien", navn:"Den Ene Veien", farge:"var(--civ-2)", fargehex:"#C9586B",
+    kjerne:"Én sannhet, én vei, for alle",
+    gudsbilde:"Én skaper som ser alt",
+    moral:"Den hellige boken gir svaret",
+    leveregler:"Følg budene, vær rettferdig og trofast",
+    etterliv:"Hver sjel dømmes etter sine gjerninger",
+    ritualer:"Faste bønner hver dag",
+    autoritet:"Prester som tolker boken",
+    andre:"Andre bør lære den sanne veien",
+    rikdom:"Flid belønnes, men gi til de fattige",
+    natur:"Naturen er en gave vi skal forvalte",
+    likeverd:"Alle er like for skaperen"
+  },
+  {
+    id:"tanken", navn:"Tankens Orden", farge:"var(--civ-3)", fargehex:"#7C8CE0",
+    kjerne:"Fornuft og kunnskap framfor alt",
+    gudsbilde:"Ingen guder – bare naturlovene",
+    moral:"Det vi kan tenke oss fram til er rett",
+    leveregler:"Søk sannhet, skad ingen, still spørsmål",
+    etterliv:"Døden er en slutt; minnet lever videre",
+    ritualer:"Få ritualer, mest samtale og studier",
+    autoritet:"Den som har best argument vinner",
+    andre:"Nysgjerrige, men skeptiske til tro",
+    rikdom:"Kunnskap er den sanne rikdommen",
+    natur:"Naturen er noe vi skal forstå",
+    likeverd:"Alle stemmer teller likt i debatten"
+  }
+];
+
+/* ---------- Epoke-ryggrad ---------- */
+const EPOKER = [
+  {tema:"Grunnleggelse og overlevelse", kort:"Grunnlag", krevVeiskille:false,
+   instr:"De tre samfunnene grunnlegges hver for seg i en ny verden. Vis hvordan kjerneverdiene preger hvordan de overlever de første årene."},
+  {tema:"Vekst, ritualer og ledelse", kort:"Vekst", krevVeiskille:false,
+   instr:"Samfunnene vokser. Vis hvilke institusjoner, ritualer og ledelsesformer som oppstår av verdiene deres."},
+  {tema:"Det første møtet", kort:"Møtet", krevVeiskille:true,
+   instr:"To av samfunnene møtes for første gang. La verdiene deres bryne seg mot hverandre (handel, misjon, nysgjerrighet eller spenning). Avslutt med et veiskille der klassen bestemmer hvordan møtet skal håndteres."},
+  {tema:"Krisen", kort:"Krise", krevVeiskille:true,
+   instr:"En felles krise rammer verden (knapphet, sykdom eller naturhendelse). Vis hvordan hvert samfunn svarer ut fra sine verdier, og still et veiskille om hvordan de møter krisen sammen eller hver for seg."},
+  {tema:"Oppsplitting eller reform", kort:"Reform", krevVeiskille:true,
+   instr:"Indre uenighet vokser i minst ett samfunn – noen vil endre, andre vil bevare. Still et veiskille om reform eller splittelse."},
+  {tema:"Arven", kort:"Arv", krevVeiskille:false,
+   instr:"Generasjoner har gått. Oppsummer hva som ble igjen etter hvert samfunn, og hvilke verdier som preget verden de etterlot seg. Ingen vinner kåres – løft fram avveininger og spor."}
+];
+
+/* ---------- World Dominion: eget epokeløp ---------- */
+const EPOKER_DOMINION = [
+  {tema:"Grunnleggelse og ambisjon", kort:"Ambisjon", krevVeiskille:false,
+   instr:"Samfunnene grunnlegges i en ny verden – men med ett spørsmål hengende over alt: hvem av dem har verdier som kan vinne verden? Vis hva i hver religion som driver den til å vokse (misjonstrang, fellesskap, kunnskap, handel, makt) og hva som kan holde den tilbake."},
+  {tema:"Ekspansjonen", kort:"Ekspansjon", krevVeiskille:true,
+   instr:"Religionene sprer seg og støter i hverandre. Vis HVORDAN hver av dem vinner terreng (misjonærer, handel, vennskap, press, erobring) og hvem som taper. Minst én religion tar et valg som går ut over en annen. Veiskillet: hvordan skal den mest ekspansive spre seg videre? Valgene skal ha reelt ulik moralsk pris."},
+  {tema:"Misjon eller sverd", kort:"Makt", krevVeiskille:true,
+   instr:"Kampen om verden hardner. Noen konverterer av overbevisning, andre av frykt eller fordel. Vis presset mot de svakeste: hvem mister troende, hvem tvinges, hvem kjøpes. Veiskillet skal være et ekte maktvalg – f.eks. tvinge gjennom troen, kjøpe lojalitet, eller vinne hjerter sakte og risikere å tape kappløpet."},
+  {tema:"Motstand og frafall", kort:"Motstand", krevVeiskille:true,
+   instr:"De som taper terreng svarer: motstand, hemmelige samfunn, frafall, mennesker som nekter å gi opp troen sin (aldri grafisk). Vis hva dominans koster den sterkeste innenfra – frykt, hykleri, tomme ritualer – og hva press gjør med de små. Veiskillet: hvordan møter den ledende religionen motstanden – slå ned, tåle i det skjulte, eller gi frihet og risikere å miste grepet?"},
+  {tema:"Hegemoni eller kollaps", kort:"Hegemoni", krevVeiskille:true,
+   instr:"Avgjørelsens epoke: én religion står nær verdensherredømme – eller verden splintres. Vis konsekvensene av klassens valg så langt. Veiskillet er det siste og største: hva slags verden skal den sterkeste bygge – én tro for alle, en tro som hersker over de andre, eller et rike der de beseirede beholder troen sin mot lydighet?"},
+  {tema:"Regnskapet", kort:"Regnskap", krevVeiskille:false,
+   instr:"Gjør opp verdens regnskap. Pek ærlig på hvilken religion som dominerer verden nå – eller slå fast at ingen vant. Men vis prisen like ærlig: hva verden mistet av mangfold, frihet og kunnskap, hvem som bærer sår, og hvilke tros-spor fra taperne som lever videre i det skjulte. Ingen glansbilder – dominans har alltid en pris."}
+];
+function EPO(){ return state.modus==="dominion" ? EPOKER_DOMINION : EPOKER; }
+
+const ALVOR_TEKST = {
+  mild:"Mild tone: konflikt finnes, men dempet. Uenighet løses oftest fredelig, og opptrapping skjer sjelden.",
+  realistisk:"Realistisk tone: rivalisering, kriser, press og splittelse oppstår når verdiene tilsier det – ikke glatt det over. Alderstilpasset, uten grafiske detaljer.",
+  dramatisk:"Dramatisk tone: store omveltninger, åpen konflikt, dominans og splittelse er fullt mulig og får tydelige konsekvenser. Fortsatt alderstilpasset for 12-åringer, aldri grafisk vold."
+};
+
+/* ---------- Verden: farger, startposisjoner og kart ---------- */
+const PALETT = ["#4FB8A8","#C9586B","#7C8CE0","#E0A14F","#7CC57C","#B07CD9","#5AA0D9","#D97C9E"];
+const METER_NAVN = [["samhold","Samhold"],["frihet","Frihet"],["velstand","Velstand"],["toleranse","Toleranse"],["kunnskap","Kunnskap"]];
+
+function slug(s){
+  return (String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")) || "rel";
+}
+function normProfil(p, i){
+  const navn = String(p && (p.navn||p.name) || ("Religion "+(i+1))).trim();
+  return {
+    id: p && p.id ? String(p.id) : slug(navn),
+    navn,
+    kjerne:(p&&(p.kjerne||p.core))||"",
+    gudsbilde:(p&&p.gudsbilde)||"", moral:(p&&p.moral)||"", leveregler:(p&&p.leveregler)||"",
+    etterliv:(p&&p.etterliv)||"", ritualer:(p&&p.ritualer)||"", autoritet:(p&&p.autoritet)||"",
+    andre:(p&&p.andre)||"", rikdom:(p&&p.rikdom)||"", natur:(p&&p.natur)||"", likeverd:(p&&p.likeverd)||""
+  };
+}
+function settPool(liste){
+  const seen={};
+  state.pool = liste.map(normProfil).map(p=>{
+    let id=p.id, n=2; while(seen[id]){ id=p.id+"-"+(n++); } seen[id]=1; p.id=id; return p;
+  });
+  state.valgt = state.pool.slice(0, Math.min(3, state.pool.length)).map(p=>p.id);
+}
+function ringPosisjoner(n){
+  const pts=[], cx=50, cy=50, R = n<=1 ? 0 : 33;
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*(2*Math.PI/n);
+    pts.push({x: Math.round(cx + R*Math.cos(ang)), y: Math.round(cy + R*Math.sin(ang))});
+  }
+  return pts;
+}
+function utledMalere(p){
+  const t = [p.kjerne,p.moral,p.leveregler,p.andre,p.rikdom,p.natur,p.likeverd,p.autoritet,p.gudsbilde,p.ritualer,p.etterliv,p.lidelse,p.tilgivelse,p.fellesskap,p.endring,p.fremmede,p.konflikt].join(" ").toLowerCase();
+  const m={samhold:50,frihet:50,velstand:50,toleranse:50,kunnskap:50};
+  const har=(...ord)=>ord.some(o=>t.includes(o));
+  if(har("del","dele","fellesskap","sammen")){m.samhold+=14; m.toleranse+=6;}
+  if(har("samle","eie","flid","handel","belønnes")){m.velstand+=14; m.samhold-=4;}
+  if(har("sann","misjon","omvend","bør lære","budene")){m.toleranse-=16; m.samhold+=8;}
+  if(har("åpen","gjestfri","nysgjerrig","toleran","mangfold")){m.toleranse+=16;}
+  if(har("fornuft","kunnskap","tenke","sannhet","studier","spørsmål")){m.kunnskap+=18; m.frihet+=8;}
+  if(har("frihet","stemme","likeverd","debatt")){m.frihet+=10;}
+  if(har("regler","lov","prest","autoritet","hierarki","bestemmer")){m.frihet-=8; m.samhold+=6;}
+  if(har("natur","ånder","jord","slektning")){m.toleranse+=4;}
+  Object.keys(m).forEach(k=>m[k]=Math.max(15,Math.min(90,Math.round(m[k]))));
+  return m;
+}
+
+const HEX_R = 8.3;
+let HEXES = [], hexEls = [], kartBygd = false;
+
+function buildHexes(){
+  const hexes=[];
+  const hStep = Math.sqrt(3)*HEX_R;
+  const vStep = 1.5*HEX_R;
+  let row=0;
+  for(let y=HEX_R*0.6; y<=100+HEX_R; y+=vStep){
+    const offset = (row%2) ? hStep/2 : 0;
+    for(let x=offset-hStep/2; x<=100+hStep/2; x+=hStep){
+      hexes.push({x,y});
+    }
+    row++;
+  }
+  return hexes;
+}
+function hexPoints(cx,cy,r){
+  const pts=[];
+  for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-90); pts.push((cx+r*Math.cos(a)).toFixed(2)+","+(cy+r*Math.sin(a)).toFixed(2));}
+  return pts.join(" ");
+}
+function lysne(hex, amt){
+  const n=parseInt(hex.slice(1),16); let r=n>>16,g=(n>>8)&255,b=n&255;
+  r=Math.round(r+(255-r)*amt); g=Math.round(g+(255-g)*amt); b=Math.round(b+(255-b)*amt);
+  return `rgb(${r},${g},${b})`;
+}
+function fargeFor(entry){
+  if(entry.splinterAv && state.farge[entry.splinterAv]) return lysne(state.farge[entry.splinterAv], 0.42);
+  return state.farge[entry.id] || "#b9b3d6";
+}
+function eierAv(hex){
+  let best=null, bestD=Infinity;
+  state.verden.forEach(c=>{
+    const d=Math.hypot(hex.x-c.x, hex.y-c.y);
+    if(d<=c.reach && d<bestD){bestD=d; best=c;}
+  });
+  return best;
+}
+function byggKart(){
+  if(kartBygd) return;
+  HEXES = buildHexes();
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 100 100");
+  svg.setAttribute("class","kart-svg");
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label","Kart over religionenes områder i verden");
+  HEXES.forEach(h=>{
+    const poly=document.createElementNS(ns,"polygon");
+    poly.setAttribute("points", hexPoints(h.x,h.y,HEX_R*0.94));
+    poly.setAttribute("class","hex");
+    poly.setAttribute("fill","#2c2756");
+    poly.setAttribute("fill-opacity","0.5");
+    svg.appendChild(poly);
+    hexEls.push(poly);
+  });
+  document.getElementById("kartHolder").appendChild(svg);
+  kartBygd=true;
+}
+function renderVerden(){
+  const eierTelling = {};
+  let hexerEid = 0;
+  hexEls.forEach((el,i)=>{
+    const h=HEXES[i];
+    const eier=eierAv(h);
+    if(eier){ const rotId = eier.splinterAv || eier.id; eierTelling[rotId]=(eierTelling[rotId]||0)+1; hexerEid++; }
+    let innen=0;
+    state.verden.forEach(c=>{ if(Math.hypot(h.x-c.x,h.y-c.y)<=c.reach) innen++; });
+    if(eier){
+      el.setAttribute("fill", fargeFor(eier));
+      el.setAttribute("fill-opacity","0.85");
+      if(innen>=2){ el.setAttribute("stroke","rgba(240,120,80,0.95)"); el.setAttribute("stroke-width","1.1"); }
+      else { el.setAttribute("stroke","rgba(243,233,210,0.10)"); el.setAttribute("stroke-width","0.4"); }
+    } else {
+      el.setAttribute("fill","#2c2756");
+      el.setAttribute("fill-opacity","0.5");
+      el.setAttribute("stroke","rgba(243,233,210,0.10)");
+      el.setAttribute("stroke-width","0.4");
+    }
+  });
+  const leg=document.getElementById("legend");
+  leg.innerHTML = state.verden.map(c=>{
+    let andel="";
+    if(state.modus==="dominion" && !c.splinterAv && hexerEid>0){
+      andel = ` · ${Math.round(100*(eierTelling[c.id]||0)/hexerEid)}%`;
+    }
+    return `<span><i style="background:${fargeFor(c)}"></i>${escapeHtml(c.navn||c.id)}${c.splinterAv?" (utbrytere)":""}${andel}</span>`;
+  }).join("");
+
+  const sp = Math.max(0,Math.min(100, Math.round(state.spenning||0)));
+  const spFarge = sp<34 ? "#4FB8A8" : (sp<67 ? "#E8B04B" : "#C9586B");
+  document.getElementById("spenningWrap").innerHTML =
+    `<div class="row"><span class="lab">Spenning</span><div class="track"><div class="fill" style="width:${sp}%;background:${spFarge}"></div></div><span class="num">${sp}</span></div>
+     <div class="cap">Oransje kant på kartet = omstridt grenseområde.</div>`;
+
+  const grid=document.getElementById("malereGrid");
+  grid.innerHTML = state.verden.filter(c=>!c.splinterAv).map(c=>{
+    const farge=fargeFor(c);
+    const rader=METER_NAVN.map(([k,navn])=>{
+      const v=Math.max(0,Math.min(100, Math.round((c.malere&&c.malere[k])||0)));
+      return `<div class="meter"><span class="ml">${navn}</span><div class="mt"><div class="mf" style="width:${v}%;background:${farge}"></div></div><span class="mv">${v}</span></div>`;
+    }).join("");
+    return `<div class="mc-civ"><div class="mc-navn"><span class="bd" style="background:${farge}"></span>${escapeHtml(c.navn||c.id)}</div>${rader}</div>`;
+  }).join("");
+}
+
+/* ---------- Tilstand ---------- */
+let state = {
+  epokeIndex:0,
+  modus:"kronike",
+  alvor:"realistisk",
+  kronikk:"Ingenting har skjedd ennå.",
+  relasjoner:"Samfunnene kjenner ikke hverandre ennå.",
+  sisteValg:null,
+  laster:false,
+  ferdig:false,
+  verden:[],
+  spenning:8,
+  pool:[],
+  valgt:[],
+  farge:{},
+  navn:{},
+  poolById:{}
+};
+
+/* ---------- Oppsett-UI ---------- */
+function renderOppsett(){
+  const grid=document.getElementById("civGrid");
+  grid.innerHTML="";
+  const fargeForslag={};
+  state.valgt.forEach((id,i)=>fargeForslag[id]=PALETT[i%PALETT.length]);
+  state.pool.forEach(p=>{
+    const valgt = state.valgt.includes(p.id);
+    const el=document.createElement("button");
+    el.type="button";
+    el.className="civ-card"+(valgt?" valgt":"");
+    el.setAttribute("aria-pressed", valgt?"true":"false");
+    el.style.setProperty("--c", valgt ? fargeForslag[p.id] : "rgba(243,233,210,0.3)");
+    el.innerHTML=`
+      <span class="velg-merke">${valgt?"✓":"+"}</span>
+      <h3>${escapeHtml(p.navn)}</h3>
+      <div class="civ-kjerne">${escapeHtml(p.kjerne||"")}</div>
+      <ul class="civ-axes">
+        <li><b>Gudsbilde</b><span>${escapeHtml(p.gudsbilde||"–")}</span></li>
+        <li><b>Moralkilde</b><span>${escapeHtml(p.moral||"–")}</span></li>
+        <li><b>Autoritet</b><span>${escapeHtml(p.autoritet||"–")}</span></li>
+        <li><b>Andre grupper</b><span>${escapeHtml(p.andre||"–")}</span></li>
+        <li><b>Rikdom</b><span>${escapeHtml(p.rikdom||"–")}</span></li>
+      </ul>`;
+    el.addEventListener("click",()=>vekslaValg(p.id));
+    grid.appendChild(el);
+  });
+  oppdaterTeller();
+}
+function vekslaValg(id){
+  const i=state.valgt.indexOf(id);
+  if(i>-1){ state.valgt.splice(i,1); }
+  else {
+    if(state.valgt.length>=5){ visImportStatus("Du kan ha maks 5 religioner på scenen om gangen.", false); return; }
+    state.valgt.push(id);
+  }
+  renderOppsett();
+}
+function oppdaterTeller(){
+  const n=state.valgt.length;
+  document.getElementById("valgtTeller").textContent = `${n} av maks 5 valgt`+(n<2?" – velg minst 2.":".");
+  document.getElementById("startBtn").disabled = (n<2);
+}
+function visImportStatus(msg, ok){
+  const el=document.getElementById("importStatus");
+  el.textContent=msg;
+  el.className="import-status "+(ok?"ok":"feil");
+}
+
+document.getElementById("importBtn").addEventListener("click",()=>{
+  const raw=document.getElementById("importTxt").value.trim();
+  if(!raw){ visImportStatus("Lim inn en JSON-liste først.", false); return; }
+  let data;
+  try{ data=JSON.parse(raw); }catch(e){ visImportStatus("Kunne ikke lese JSON-en. Sjekk at den er gyldig (hakeparenteser, anførselstegn, komma).", false); return; }
+  if(!Array.isArray(data)) data=[data];
+  data=data.filter(x=>x && (x.navn||x.name));
+  if(!data.length){ visImportStatus("Fant ingen religioner med feltet «navn».", false); return; }
+  if(data.length>12){ data=data.slice(0,12); }
+  settPool(data);
+  renderOppsett();
+  visImportStatus(`Lastet inn ${state.pool.length} religion(er). Velg 2–5 som skal møtes.`, true);
+});
+document.getElementById("malBtn").addEventListener("click",()=>{
+  const mal=[{navn:"Eksempelreligion", kjerne:"Kort kjerneverdi", gudsbilde:"…", moral:"…", leveregler:"…", etterliv:"…", ritualer:"…", autoritet:"…", andre:"…", rikdom:"…", natur:"…", likeverd:"…"}];
+  document.getElementById("importTxt").value = JSON.stringify(mal,null,2);
+  visImportStatus("Mal satt inn. Bytt ut verdiene med elevenes svar (én blokk per religion).", true);
+});
+document.getElementById("testBtn").addEventListener("click",()=>{
+  settPool(TEST_PROFILER);
+  renderOppsett();
+  visImportStatus("Testreligionene er lastet inn.", true);
+});
+
+function fbStatus(msg, ok){
+  const el=document.getElementById("fbStatus");
+  el.textContent=msg;
+  el.className="import-status "+(ok?"ok":"feil");
+}
+document.getElementById("hentBtn").addEventListener("click", async ()=>{
+  const kode=(document.getElementById("klassekode").value||"").trim();
+  if(!kode){ fbStatus("Skriv inn en klassekode.", false); return; }
+  fbStatus("Henter klassen …", true);
+  try{
+    const liste = await hentKlasse(kode);
+    if(!liste.length){ fbStatus(`Fant ingen religioner for «${kode}» ennå.`, false); return; }
+    settPool(liste);
+    renderOppsett();
+    fbStatus(`Hentet ${state.pool.length} religion(er) fra «${kode}». Velg 2–5 som skal møtes.`, true);
+  }catch(e){ fbStatus(e.message, false); }
+});
+
+document.querySelectorAll('.seg button[data-alvor]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.seg button[data-alvor]').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    state.alvor = b.dataset.alvor;
+  });
+});
+
+const MODUS_INFO = {
+  kronike:'<b>Krøniken:</b> religionene utvikler seg side om side. Ingen vinner kåres – fokus på refleksjon og avveininger.',
+  dominion:'<b>World Dominion:</b> religionene kjemper om verden. Verdiene avgjør hvem som vokser og hvem som presses – og til slutt gjøres regnskapet opp: hvem dominerer, og hva kostet det? Veiskillene blir ekte maktvalg. Krever en klasse som tåler tøffere diskusjoner.'
+};
+document.querySelectorAll('#modusSeg button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#modusSeg button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    state.modus = b.dataset.modus;
+    document.getElementById("modusInfo").innerHTML = MODUS_INFO[state.modus];
+  });
+});
+
+document.getElementById("startBtn").addEventListener("click",()=>{
+  if(state.valgt.length<2) return;
+  const staged = state.valgt.map(id=>state.pool.find(p=>p.id===id)).filter(Boolean);
+  const pos = ringPosisjoner(staged.length);
+  state.farge={}; state.navn={}; state.poolById={};
+  state.verden = staged.map((p,i)=>{
+    state.farge[p.id]=PALETT[i%PALETT.length];
+    state.navn[p.id]=p.navn;
+    state.poolById[p.id]=p;
+    return {id:p.id, navn:p.navn, x:pos[i].x, y:pos[i].y, reach:14, splinterAv:null, malere:utledMalere(p)};
+  });
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("run").classList.remove("hidden");
+  byggKart();
+  renderVerden();
+  renderSpine();
+  renderChips();
+  kjorEpoke();
+});
+
+/* Init: start med testreligionene valgt */
+settPool(TEST_PROFILER);
+renderOppsett();
+
+/* Auto-hent klasse + forhåndsvalg via lenke (?klasse=ID&velg=id1,id2) */
+(async function(){
+  const p = new URLSearchParams(location.search);
+  const k = (p.get("klasse")||p.get("k")||"").trim();
+  if(!k) return;
+  document.getElementById("klassekode").value = k;
+  const d = initFirebase();
+  if(!d){ fbStatus("Klasse-ID ligger i lenka, men Firebase er ikke satt opp ennå.", false); return; }
+  fbStatus("Henter klassen …", true);
+  try{
+    const liste = await hentKlasse(k);
+    if(!liste.length){ fbStatus("Fant ingen religioner i denne klassen ennå.", false); return; }
+    settPool(liste);
+    const velg = (p.get("velg")||"").split(",").map(s=>s.trim()).filter(Boolean);
+    if(velg.length){
+      const finnes = velg.filter(id=>state.pool.some(pr=>pr.id===id)).slice(0,5);
+      if(finnes.length>=2) state.valgt = finnes;
+    }
+    renderOppsett();
+    fbStatus(`Hentet ${state.pool.length} religion(er). Velg 2–5 og start.`, true);
+  }catch(e){ fbStatus(e.message, false); }
+})();
+
+/* ---------- Spine & chips ---------- */
+function renderSpine(){
+  const spine = document.getElementById("spine");
+  spine.innerHTML="";
+  EPO().forEach((e,i)=>{
+    const n=document.createElement("div");
+    n.className="node"+(i<state.epokeIndex?" done":"")+(i===state.epokeIndex?" active":"");
+    n.innerHTML=`<div class="dot">${i+1}</div><div class="lbl">${e.kort}</div>`;
+    spine.appendChild(n);
+  });
+}
+function renderChips(){
+  const chips=document.getElementById("chips");
+  chips.innerHTML="";
+  state.verden.filter(c=>!c.splinterAv).forEach(c=>{
+    const el=document.createElement("span");
+    el.className="chip"; el.style.setProperty("--c", fargeFor(c));
+    el.innerHTML=`<span class="bead"></span>${escapeHtml(c.navn||c.id)}`;
+    chips.appendChild(el);
+  });
+}
+
+/* ---------- Motoren ---------- */
+const SYSTEM = `Du er krønikeskriveren i et KRLE-klasseromsspill for 7. trinn (12-åringer) i Norge. Du forteller hvordan flere oppdiktede religioner utvikler seg i én delt verden, epoke for epoke.
+
+Helt sentrale regler:
+- Skriv på norsk bokmål, levende men enkelt nok for 12-åringer.
+- Behandle alle religionene seriøst, nøytralt og med respekt. Ranger dem ALDRI, og kår aldri en "beste" eller "riktig" religion. Vis konsekvenser og avveininger, ikke dommer.
+- Mål: refleksjon og klassediskusjon om hvordan verdier former et samfunn.
+- Alltid alderstilpasset. Beskriv aldri grafisk vold, død eller lidelse i detalj.
+- Knytt utviklingen tydelig til religionenes verdier (gudsbilde, moral, autoritet, syn på andre, rikdom, natur, likeverd).
+- Hold "fortelling" kort: maks ca. 90 ord, gjerne 2 avsnitt skilt med \\n\\n. Hold hele JSON-svaret kompakt så det får plass.
+
+I tillegg til fortellingen skal du føre et "verden"-felt (en liste) som viser religionenes områder og tilstand på et kart. Hver oppføring er KOMPAKT:
+- "id": fast id for hver grunnreligion – bruk de SAMME id-ene som finnes i NÅVÆRENDE VERDEN-TILSTAND, og ta alltid med alle grunnreligionene hver epoke. Ved en schisme legger du til en ekstra oppføring med ny id (forelderens id + "_2").
+- "x" og "y" (0–100): posisjon i verden. Endre GRADVIS mellom epoker (små justeringer, ikke store hopp).
+- "reach" (0–100): hvor stort området er. La det vokse når en religion sprer seg, og la områder nærme seg når religioner møtes.
+- "av": null for grunnreligionene; ved schisme settes den til forelderens id.
+- "s": en liste med fem tall (0–100) i FAST rekkefølge: [samhold, frihet, velstand, toleranse, kunnskap]. De skal speile fortellingen og klassens valg, og vise avveininger – ALDRI en rangering av religionene.
+
+Realisme om konflikt: Når religioner med ulike verdier møtes, oppstår det ofte spenning – ikke bare harmoni. Eksklusive sannhetskrav og misjon, kamp om land og ressurser, og sterke vi/dem-skiller fører realistisk til rivalisering, press om å omvende, allianser, splittelse, dominans eller fordrivelse – men også til handel, sameksistens og sammensmelting (synkretisme). La verdiene og klassens valg avgjøre hva som skjer, og IKKE glatt over konflikt med kunstig harmoni. Konflikt skal få ekte konsekvenser i tallene ("s") og på kartet ("reach"/posisjon). Hold likevel ALL beskrivelse alderstilpasset for 12-åringer: vis at konflikt finnes og hva den koster, men aldri grafisk vold eller lidelse i detalj. Religionene er oppdiktede – behandle dem nøytralt, uten å sikte til ekte trossamfunn.
+
+Sett også et tall "spenning" (0–100) på toppnivå i JSON-en som viser hvor høy spenningen i verden er akkurat nå.
+
+Svar KUN med gyldig JSON. Ikke bruk markdown, kodeblokker eller "...". Ikke skriv noe tekst utenfor JSON-objektet, og pass på at JSON-en er fullstendig og lukket.`;
+
+const SYSTEM_DOMINION = `Du er krønikeskriveren i «World Dominion» – en KRLE-klasseromssimulering for 7. trinn (12-åringer) i Norge. Flere oppdiktede religioner kjemper om innflytelse i én delt verden, og klassen skal se ærlig hvilke verdier som faktisk sprer en religion – og hva dominans koster.
+
+Helt sentrale regler:
+- Skriv norsk bokmål, levende men enkelt nok for 12-åringer.
+- Dette er IKKE en nøytral krønike: du SKAL vise maktkampen ærlig. Religioner med misjonstrang, eksklusive sannhetskrav, sterk autoritet, rikdom eller vilje til press vinner ofte terreng; åpne, små eller innadvendte samfunn presses, mister troende eller tvinges. La verdiene og klassens valg avgjøre hvem som vokser – ikke rettferdighet.
+- Men dominans skal ALLTID ha en synlig pris: tap av frihet, mangfold, kunnskap eller indre ærlighet. Folk som konverterer av frykt tror ikke ekte. Vis vinnerens sår like tydelig som seieren.
+- Veiskillene skal være ubehagelige maktvalg uten et snilt fasitsvar – hvert valg skal koste noe ulikt.
+- Religionene er oppdiktede og skal aldri kunne knyttes til virkelige trossamfunn. Ikke bruk begreper, navn eller symboler fra virkelige religioner, og ikke ord som «hellig krig» eller «korstog».
+- Alderstilpasset: tvang, undertrykkelse og tap skal merkes i KONSEKVENSER (frykt, flukt, forbud, tapte områder, splittede familier) – aldri grafisk vold, tortur eller død i detalj.
+- Hold "fortelling" kort: maks ca. 100 ord, gjerne 2 avsnitt skilt med \\n\\n. Hold hele JSON-svaret kompakt.
+
+I tillegg fører du et "verden"-felt (en liste) som viser religionenes områder og tilstand på et kart. Hver oppføring er KOMPAKT:
+- "id": fast id per grunnreligion – bruk de SAMME id-ene som i NÅVÆRENDE VERDEN-TILSTAND, og ta alltid med alle grunnreligionene hver epoke. Ved schisme: ekstra oppføring med ny id (forelderens id + "_2").
+- "x" og "y" (0–100): posisjon. Endre gradvis mellom epoker.
+- "reach" (0–100): områdets størrelse. I World Dominion skal reach BEVEGE seg tydelig: den som dominerer vokser, den som presses krymper. Ikke hold dem kunstig like.
+- "av": null for grunnreligioner; ved schisme forelderens id.
+- "s": fem tall (0–100) i FAST rekkefølge: [samhold, frihet, velstand, toleranse, kunnskap]. De skal vise avveininger og prisen for valgene – f.eks. kan et dominerende samfunn ha høy velstand og lav frihet.
+
+Sett også "spenning" (0–100) på toppnivå – i World Dominion ligger den naturlig høyere enn i en fredelig verden.
+
+Svar KUN med gyldig JSON. Ikke bruk markdown, kodeblokker eller "...". Ikke skriv noe tekst utenfor JSON-objektet, og pass på at JSON-en er fullstendig og lukket.`;
+
+function byggMelding(){
+  const EP = EPO();
+  const e = EP[state.epokeIndex];
+  const stagedBase = state.verden.filter(c=>!c.splinterAv);
+  const profiltekst = stagedBase.map(c=>{
+    const p = state.poolById[c.id] || {};
+    const felt = [["gudsbilde",p.gudsbilde],["etterliv",p.etterliv],["lidelse",p.lidelse],["moral",p.moral],["leveregler",p.leveregler],["tilgivelse",p.tilgivelse],["autoritet",p.autoritet],["likeverd",p.likeverd],["fellesskap",p.fellesskap],["rikdom",p.rikdom],["endring",p.endring],["syn på andre",p.andre],["fremmede",p.fremmede],["konflikt",p.konflikt],["natur",p.natur],["ritualer",p.ritualer]];
+    const detaljer = felt.filter(f=>f[1]).map(f=>`${f[0]}=${f[1]}`).join("; ");
+    return `- ${p.navn||c.navn} [id: ${c.id}] (${p.kjerne||""}): ${detaljer}.`;
+  }).join("\n");
+  const idListe = stagedBase.map(c=>c.id).join(", ");
+
+  const veiskilleInstr = e.krevVeiskille
+    ? `Denne epoken SKAL ende i et veiskille: fyll "veiskille" med ett spørsmål og 3 valg (id "a","b","c") som leder til ulik utvikling. Valgene skal være reelle dilemmaer uten et åpenbart "riktig" svar.`
+    : `Denne epoken har INGEN veiskille: sett "veiskille" til null.`;
+
+  const valgtekst = state.sisteValg
+    ? `I forrige epoke valgte klassen: "${state.sisteValg}". Bygg videre på den konsekvensen.`
+    : "";
+
+  const erSisteDominion = state.modus==="dominion" && state.epokeIndex===EP.length-1;
+  const regnskapFelt = erSisteDominion ? `,
+  "regnskap": {"dominant":"<id-en til religionen som dominerer verden, eller null hvis ingen vant>","begrunnelse":"1-2 setninger om hvorfor akkurat denne religionens verdier vant fram","pris":"1-2 setninger om hva dominansen kostet verden","spor":"1 setning om hva fra de andre religionene som lever videre i det skjulte"}` : "";
+
+  return `EPOKE ${state.epokeIndex+1} av ${EP.length}: ${e.tema}.
+${e.instr}
+
+RELIGIONENE I VERDEN:
+${profiltekst}
+
+GRUNNRELIGIONENES ID-er (ta med alle disse i "verden" hver epoke): ${idListe}
+
+KRØNIKEN SÅ LANGT (sammendrag): ${state.kronikk}
+FORHOLDET MELLOM DEM NÅ: ${state.relasjoner}
+${valgtekst}
+
+ALVORSGRAD: ${ALVOR_TEKST[state.alvor]}
+
+NÅVÆRENDE VERDEN-TILSTAND (kompakt – oppdater denne videre, ikke nullstill den):
+${verdenKompakt()}
+
+${veiskilleInstr}
+
+Returner JSON med nøyaktig disse feltene (kompakt, fullstendig og lukket). I "verden" tar du med én oppføring per grunnreligion (samme id-er som over), pluss eventuelle utbrytere:
+{
+  "epoke_tittel": "kort, stemningsfull tittel",
+  "fortelling": "selve fortellingen (maks ca. 90 ord, avsnitt skilt med \\n\\n)",
+  "veiskille": null ELLER {"sporsmal":"...","valg":[{"id":"a","tekst":"kort valgtekst"},{"id":"b","tekst":"kort valgtekst"},{"id":"c","tekst":"kort valgtekst"}]},
+  "snakk_sammen": "ett diskusjonsspørsmål til klassen",
+  "kronikk": "kort sammendrag av alt som har skjedd (maks 2 setninger)",
+  "relasjoner": "kort status (1 setning) på forholdet mellom religionene",
+  "spenning": 35,
+  "verden": [{"id":"<en av id-ene over>","x":40,"y":40,"reach":18,"av":null,"s":[70,58,40,80,46]}]${regnskapFelt}
+}`;
+}
+
+function verdenKompakt(){
+  return JSON.stringify(state.verden.map(c=>({
+    id:c.id,
+    x:Math.round(c.x), y:Math.round(c.y), reach:Math.round(c.reach),
+    av:c.splinterAv||null,
+    s:[c.malere.samhold,c.malere.frihet,c.malere.velstand,c.malere.toleranse,c.malere.kunnskap].map(Math.round)
+  })));
+}
+
+async function kjorEpoke(){
+  state.laster = true;
+  renderSpine();
+  visLaster();
+  document.getElementById("actionRow").innerHTML="";
+
+  try{
+    let parsed=null, forsok=0;
+    while(!parsed && forsok<2){
+      forsok++;
+      const res = await fetch(API_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-6",
+          max_tokens:1200,
+          system: state.modus==="dominion" ? SYSTEM_DOMINION : SYSTEM,
+          messages:[{role:"user",content:byggMelding()}]
+        })
+      });
+      const data = await res.json();
+      const raw = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+      parsed = trygtJson(raw);
+    }
+    if(!parsed) throw new Error("Svaret kom ufullstendig tilbake.");
+
+    state.kronikk = parsed.kronikk || state.kronikk;
+    state.relasjoner = parsed.relasjoner || state.relasjoner;
+    if(parsed.spenning!=null && !isNaN(Number(parsed.spenning))) state.spenning = Math.max(0,Math.min(100,Number(parsed.spenning)));
+    oppdaterVerden(parsed.verden);
+    state.laster = false;
+    renderEpoke(parsed);
+    renderVerden();
+  }catch(err){
+    state.laster=false;
+    visFeil(err.message);
+  }
+}
+
+function oppdaterVerden(ny){
+  if(!Array.isArray(ny) || !ny.length) return;
+  const forrige={};
+  state.verden.forEach(c=>forrige[c.id]=c);
+  const num=(v,d)=>{ v=Number(v); return isNaN(v)?d:Math.max(0,Math.min(100,v)); };
+  state.verden = ny.map(c=>{
+    const p=forrige[c.id]||{};
+    const pm=p.malere||{};
+    const av=c.av||c.splinterAv||p.splinterAv||null;
+    const navn = state.navn[c.id] || (av && state.navn[av]) || p.navn || c.id;
+    let m;
+    if(Array.isArray(c.s)){
+      m={samhold:num(c.s[0],pm.samhold!=null?pm.samhold:50),frihet:num(c.s[1],pm.frihet!=null?pm.frihet:50),velstand:num(c.s[2],pm.velstand!=null?pm.velstand:50),toleranse:num(c.s[3],pm.toleranse!=null?pm.toleranse:50),kunnskap:num(c.s[4],pm.kunnskap!=null?pm.kunnskap:50)};
+    } else {
+      const o=c.malere||{};
+      m={samhold:num(o.samhold,pm.samhold!=null?pm.samhold:50),frihet:num(o.frihet,pm.frihet!=null?pm.frihet:50),velstand:num(o.velstand,pm.velstand!=null?pm.velstand:50),toleranse:num(o.toleranse,pm.toleranse!=null?pm.toleranse:50),kunnskap:num(o.kunnskap,pm.kunnskap!=null?pm.kunnskap:50)};
+    }
+    return {
+      id:c.id,
+      navn:navn,
+      x:num(c.x, p.x!=null?p.x:50),
+      y:num(c.y, p.y!=null?p.y:50),
+      reach:Math.max(5, num(c.reach, p.reach!=null?p.reach:15)),
+      splinterAv:av,
+      malere:m
+    };
+  });
+}
+
+function trygtJson(txt){
+  if(!txt) return null;
+  let t = txt.replace(/```json/gi,"").replace(/```/g,"").trim();
+  const start=t.indexOf("{"), slutt=t.lastIndexOf("}");
+  if(start>-1 && slutt>-1) t=t.slice(start,slutt+1);
+  try{ return JSON.parse(t); }catch(e){ return null; }
+}
+
+/* ---------- Rendering ---------- */
+function visLaster(){
+  const meldinger=["Krøniken skrives …","Blekket tørker på pergamentet …","Generasjoner går …","Skriveren samler trådene …"];
+  const m=meldinger[Math.floor(Math.random()*meldinger.length)];
+  document.getElementById("stage").innerHTML=`<div class="loading"><div class="quill"></div><span>${m}</span></div>`;
+}
+
+function visFeil(msg){
+  const stage=document.getElementById("stage");
+  stage.insertAdjacentHTML("beforeend",`<div class="error"><b>Noe stoppet opp.</b> ${msg} <br>Prøv igjen – krøniken er trygt lagret fram til her.</div>`);
+  const row=document.getElementById("actionRow");
+  row.innerHTML="";
+  const retry=knapp("Prøv epoken på nytt",()=>kjorEpoke());
+  row.appendChild(retry);
+}
+
+function renderEpoke(d){
+  const e = EPO()[state.epokeIndex];
+  const stage = document.getElementById("stage");
+  const avsnitt = (d.fortelling||"").split(/\n\n+/).map(p=>`<p>${escapeHtml(p)}</p>`).join("");
+
+  let html = `<div class="chronicle">
+    <div class="ch-epoke">Epoke ${state.epokeIndex+1} · ${e.tema}</div>
+    <h2 class="ch-title">${escapeHtml(d.epoke_tittel||e.tema)}</h2>
+    <div class="ch-body">${avsnitt}</div>`;
+
+  if(d.veiskille && d.veiskille.valg){
+    html += `<div class="veiskille"><div class="vs-label">Veiskille – klassen bestemmer</div>
+      <p class="vs-q">${escapeHtml(d.veiskille.sporsmal||"")}</p><div class="vs-valg">`;
+    d.veiskille.valg.forEach(v=>{
+      html += `<button data-valg="${escapeHtml(v.tekst)}"><span class="mark">${(v.id||"").toUpperCase()}</span><span>${escapeHtml(v.tekst)}</span></button>`;
+    });
+    html += `</div></div>`;
+  }
+  html += `</div>`;
+
+  if(d.regnskap){
+    const r = d.regnskap;
+    const domId = r.dominant && r.dominant!=="null" ? String(r.dominant) : null;
+    const domNavn = domId ? (state.navn[domId] || domId) : null;
+    const domFarge = domId && state.farge[domId] ? state.farge[domId] : "var(--gold)";
+    html += `<div class="regnskap">
+      <div class="tag">⚖ Verdens regnskap</div>
+      <h3>${domNavn ? `<span style="color:${domFarge}">${escapeHtml(domNavn)}</span> dominerer verden` : "Ingen vant verden"}</h3>
+      <dl>
+        ${r.begrunnelse?`<dt>Hvorfor</dt><dd>${escapeHtml(r.begrunnelse)}</dd>`:""}
+        ${r.pris?`<dt>Prisen</dt><dd>${escapeHtml(r.pris)}</dd>`:""}
+        ${r.spor?`<dt>Lever videre</dt><dd>${escapeHtml(r.spor)}</dd>`:""}
+      </dl>
+    </div>`;
+  }
+
+  if(d.snakk_sammen){
+    html += `<div class="snakk"><div class="tag">💬 Snakk sammen</div><p>${escapeHtml(d.snakk_sammen)}</p></div>`;
+  }
+  if(d.relasjoner){
+    html += `<div class="relations"><b>Mellom dem nå:</b><span>${escapeHtml(d.relasjoner)}</span></div>`;
+  }
+
+  stage.innerHTML = html;
+
+  const row = document.getElementById("actionRow");
+  row.innerHTML="";
+
+  const harVeiskille = d.veiskille && d.veiskille.valg;
+  if(harVeiskille){
+    stage.querySelectorAll(".vs-valg button").forEach(b=>{
+      b.addEventListener("click",()=>{
+        state.sisteValg = b.dataset.valg;
+        stage.querySelectorAll(".vs-valg button").forEach(x=>{x.disabled=true; x.style.opacity=.5;});
+        b.style.opacity=1; b.style.borderColor="var(--gold)"; b.style.background="#fff7e6";
+        gaaVidere(row);
+      });
+    });
+    row.appendChild(intensitetMini());
+  } else {
+    gaaVidere(row);
+    row.appendChild(intensitetMini());
+  }
+}
+
+function gaaVidere(row){
+  const erSiste = state.epokeIndex >= EPO().length-1;
+  if(erSiste){
+    const b = knapp("Start på nytt",()=>nullstill());
+    b.classList.add("ghost");
+    const note=document.createElement("span");
+    note.style.cssText="font-family:'Fraunces',serif;font-size:18px;color:var(--gold-soft)";
+    note.textContent = state.modus==="dominion" ? "Regnskapet er gjort opp." : "Krøniken er fullført.";
+    row.prepend(b);
+    row.prepend(note);
+  } else {
+    const b = knapp("Neste epoke →",()=>{
+      state.epokeIndex++;
+      state.sisteValg = state.sisteValg; // bevares til neste byggMelding
+      renderSpine();
+      kjorEpoke();
+    });
+    row.prepend(b);
+  }
+}
+
+function intensitetMini(){
+  const wrap=document.createElement("div");
+  wrap.className="mini-intensity";
+  wrap.innerHTML=`<span>Alvorsgrad:</span>`;
+  const seg=document.createElement("div");
+  seg.className="seg";
+  ["mild","realistisk","dramatisk"].forEach(a=>{
+    const b=document.createElement("button");
+    b.textContent=a.charAt(0).toUpperCase()+a.slice(1);
+    b.setAttribute("aria-pressed", a===state.alvor ? "true":"false");
+    b.style.padding="7px 13px";b.style.fontSize="13px";
+    b.addEventListener("click",()=>{
+      state.alvor=a;
+      seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+    });
+    seg.appendChild(b);
+  });
+  wrap.appendChild(seg);
+  return wrap;
+}
+
+function knapp(tekst,fn){
+  const b=document.createElement("button");
+  b.className="btn";b.textContent=tekst;
+  b.addEventListener("click",fn);
+  return b;
+}
+
+function nullstill(){
+  state.epokeIndex=0;
+  state.kronikk="Ingenting har skjedd ennå.";
+  state.relasjoner="Samfunnene kjenner ikke hverandre ennå.";
+  state.sisteValg=null; state.laster=false; state.ferdig=false;
+  state.verden=[]; state.spenning=8;
+  document.getElementById("run").classList.add("hidden");
+  document.getElementById("setup").classList.remove("hidden");
+  document.getElementById("stage").innerHTML="";
+  document.getElementById("actionRow").innerHTML="";
+  renderOppsett();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>

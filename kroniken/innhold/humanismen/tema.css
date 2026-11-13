@@ -1,0 +1,5 @@
+/* Humanismen – skifergrå, solgul og krem (samme palett som illustrasjonene) */
+:root{
+  --bg:#1b232c; --bg2:#232d38; --bg3:#364452; --card:#28333f; --line:#48596c; --dark:#10151a;
+  --a:#ffd24a; --a2:#ffe9a6; --a-ink:#2b2203;
+}

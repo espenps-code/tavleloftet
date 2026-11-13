@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kristendommen – hovedpresentasjon · Krøniken</title>
+<link rel="stylesheet" href="../felles/stil.css">
+<link rel="stylesheet" href="tema.css">
+<style>
+/* Bare for denne presentasjonen */
+.folk{display:grid;grid-template-columns:repeat(20,1fr);gap:12px;width:860px}
+.folk i{display:block;aspect-ratio:1;border-radius:50%;background:var(--bg3);transition:background .5s,transform .5s}
+.folk i.pa{background:var(--a);transform:scale(1.12)}
+.chip{display:flex;align-items:center;gap:18px;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:14px 34px 14px 14px;font-size:32px;font-weight:700}
+.chip b{flex:none;width:56px;height:56px;border-radius:50%;background:var(--a);color:var(--a-ink);display:grid;place-items:center;font-family:var(--f-head);font-size:30px}
+.tl text{fill:var(--cream)}
+.tl .yr{font-family:var(--f-head);font-weight:700;font-size:34px;fill:var(--a2)}
+.tl .tx{font-size:26px;font-weight:600}
+.tre circle.n{fill:var(--card);stroke:var(--line);stroke-width:4;transition:fill .4s,stroke .4s}
+.tre g.hot:hover circle.n,.tre g.sel circle.n{fill:var(--a);stroke:var(--a2)}
+.tre g.hot{outline:none}
+.tre g.hot:focus-visible circle.n{stroke:var(--cream);stroke-width:7}
+.tre g.hot text{fill:var(--cream);font-family:var(--f-head);font-weight:600;font-size:30px;pointer-events:none;transition:fill .4s}
+.tre g.sel text,.tre g.hot:hover text{fill:var(--a-ink)}
+.ikon{width:150px;height:150px;border-radius:36px;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;margin:0 auto 18px}
+.ikon svg{width:84px;height:84px;fill:none;stroke:var(--a2);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+#hylle rect{transition:opacity .5s,transform .5s,fill .5s;transform-box:fill-box;transform-origin:bottom}
+#hylle rect.av{opacity:0;transform:scaleY(.1)}
+.hbtn{font:800 28px var(--f-body);background:var(--card);color:var(--cream);border:2px solid var(--line);border-radius:18px;padding:16px 26px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:16px;transition:background .3s,border-color .3s}
+.hbtn i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--c)}
+.hbtn:hover,.hbtn.sel{border-color:var(--a);background:var(--bg3)}
+#viser{transform-origin:260px 260px;transition:transform 1.4s cubic-bezier(.3,1.4,.4,1)}
+.sym svg{width:150px;height:150px;fill:none;stroke:var(--a2);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.gren{fill:none;stroke-width:14;stroke-linecap:round}
+.card p.tall{font-family:var(--f-head);font-weight:700;font-size:120px;line-height:1;color:var(--a2);font-variant-numeric:tabular-nums}
+.svar{font:700 36px var(--f-body);min-height:130px;background:var(--card);color:var(--cream);border:2px solid var(--line);border-radius:18px;padding:24px 34px;cursor:pointer;text-align:left;transition:background .3s,border-color .3s,transform .2s}
+.svar:hover:not(:disabled){border-color:var(--a);transform:translateX(6px)}
+.svar.rett{background:#1f4a35;border-color:var(--ok)}
+.svar.feil{background:#4a2520;border-color:var(--no)}
+.svar:disabled{cursor:default}
+.neste{font:800 26px var(--f-body);background:var(--a);color:var(--a-ink);border:0;border-radius:99px;padding:14px 34px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- 1 TITTEL -->
+<section class="slide bare" data-tr="fade" data-title="Tittel">
+  <img class="bgimg kb" style="width:130%;height:130%;top:-22%;inset-inline:0 auto;transform-origin:30% 60%" src="bilder/tittel-kors.webp" alt="Et lysende kors på en høyde under en stor måne">
+  <div class="shade"></div>
+  <div style="position:absolute;left:110px;top:330px;max-width:900px">
+    <p class="kicker a">KRLE · Verdensreligionene</p>
+    <h1 class="a fx-blur" style="--d:.3;font-size:112px">Kristendommen</h1>
+    <p class="lead a" style="--d:.9;margin-top:26px">Verdens største religion – troen på Jesus Kristus</p>
+  </div>
+  <aside class="notes"><p>Hovedpresentasjonen gir oversikten over hele religionen. Temapresentasjonene går dypere i hvert tema etterpå.</p><p>Klikk eller trykk pil høyre for neste steg. Trykk N for å skjule eller vise disse notatene.</p></aside>
+</section>
+
+<!-- 2 HVOR MANGE -->
+<section class="slide" data-tr="zoom" data-title="Hvor mange er kristne?" data-init="folk">
+  <p class="kicker a">Oppstart · Gjett først!</p>
+  <h2 class="a" style="--d:.2">Av 100 mennesker i verden – hvor mange er kristne?</h2>
+  <div class="row" style="flex:1;align-items:center;gap:80px">
+    <div class="folk a fx-fade" style="--d:.5" id="folk" aria-hidden="true"></div>
+    <div class="grow">
+      <div class="s fx-pop" id="folkSvar"><p class="big acc"><span id="folkTall">0</span></p><p style="font-size:36px;font-weight:700;margin-top:6px">av 100 – nesten 3 av 10</p></div>
+      <p class="s" style="margin-top:34px">Det er rundt <b class="acc">2,3 milliarder</b> mennesker. Ingen religion har flere tilhengere.</p>
+    </div>
+  </div>
+  <p class="foot a" style="--d:1">Kilde: Pew Research Center (tall for 2020)</p>
+  <aside class="notes"><p>La elevene gjette et tall og skrive det på en lapp eller vise med fingrene før du klikker.</p><p>Svar: ca. 29 av 100. Kristne er den største gruppen, deretter kommer muslimer (ca. 26 av 100) og mennesker uten religion (ca. 24 av 100).</p></aside>
+</section>
+
+<!-- 3 PLAN -->
+<section class="slide" data-tr="up" data-title="Dette skal vi innom">
+  <p class="kicker a">Dagens reise</p>
+  <h2 class="a" style="--d:.2">Dette skal vi innom</h2>
+  <div style="display:flex;flex-direction:column;gap:20px;align-items:flex-start">
+    <div class="chip s fx-r"><b>1</b>Hvem var Jesus?</div>
+    <div class="chip s fx-r" style="margin-left:70px"><b>2</b>Hva tror kristne på?</div>
+    <div class="chip s fx-r" style="margin-left:140px"><b>3</b>Fem kjennetegn: tekst, ritualer, høytider, symboler og steder</div>
+    <div class="chip s fx-r" style="margin-left:210px"><b>4</b>Én religion, flere retninger</div>
+    <div class="chip s fx-r" style="margin-left:280px"><b>5</b>Kristendommen i Norge og i verden</div>
+  </div>
+  <aside class="notes"><p>De fem kjennetegnene er de samme «brillene» vi bruker på alle religionene og livssynene, slik at de kan sammenlignes.</p></aside>
+</section>
+
+<!-- 4 JESUS -->
+<section class="slide" data-tr="left" data-title="Jesus fra Nasaret">
+  <div class="row" style="flex:1;align-items:center;gap:70px">
+    <div class="plate a fx-blur" style="--d:.2;width:500px;height:640px"><img src="bilder/jesus.webp" alt="Jesus sitter under et tre og forteller til tre tilhørere"></div>
+    <div class="grow">
+      <p class="kicker a">Del 1 · Hvem var Jesus?</p>
+      <h2 class="a" style="--d:.2">Jesus fra Nasaret</h2>
+      <ul class="clean">
+        <li class="s fx-l">Levde for rundt <b>2000 år siden</b> i området som i dag er Israel og Palestina. Han var jøde.</li>
+        <li class="s fx-l">Vandret rundt som lærer, fortalte <span class="term">lignelser</span> og samlet tolv <span class="term">disipler</span>.</li>
+        <li class="s fx-l">Ble korsfestet i Jerusalem. Kristne tror at han <b>sto opp fra de døde</b> den tredje dagen.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes"><p>Historikere er enige om at Jesus har levd, og at han ble korsfestet under den romerske landshøvdingen Pontius Pilatus. Det kristne <em>tror</em>, er at han var Guds sønn og sto opp igjen.</p><p>Lignelse: en kort fortelling med et budskap, for eksempel Den barmhjertige samaritan. Disippel: elev eller etterfølger.</p></aside>
+</section>
+
+<!-- 5 TIDSLINJE -->
+<section class="slide" data-tr="up" data-title="Tidslinje">
+  <p class="kicker a">2000 år på ett minutt</p>
+  <h2 class="a" style="--d:.2;margin-bottom:0">Fra tolv disipler til 2,3 milliarder</h2>
+  <svg class="tl" viewBox="0 0 1380 600" style="width:100%;flex:1">
+    <path class="draw a" style="--len:1300;--d:.4;stroke:var(--a)" d="M40 300 H1340" fill="none" stroke-width="8" stroke-linecap="round"/>
+    <g class="s fx-pop"><circle cx="110" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="110" y="238" text-anchor="middle">Rundt år 1</text><text class="tx" x="110" y="190" text-anchor="middle">Jesus blir født</text></g>
+    <g class="s fx-pop"><circle cx="310" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="310" y="372" text-anchor="middle">Ca. år 30</text><text class="tx" x="310" y="410" text-anchor="middle">Korsfestelsen</text><text class="tx" x="310" y="440" text-anchor="middle">og påsken</text></g>
+    <g class="s fx-pop"><circle cx="510" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="510" y="238" text-anchor="middle">Etterpå</text><text class="tx" x="510" y="160" text-anchor="middle">Disiplene forteller videre.</text><text class="tx" x="510" y="190" text-anchor="middle">De første menighetene</text></g>
+    <g class="s fx-pop"><circle cx="710" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="710" y="372" text-anchor="middle">300-tallet</text><text class="tx" x="710" y="410" text-anchor="middle">Blir Romerrikets</text><text class="tx" x="710" y="440" text-anchor="middle">religion</text></g>
+    <g class="s fx-pop"><circle cx="910" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="910" y="238" text-anchor="middle">1030</text><text class="tx" x="910" y="160" text-anchor="middle">Slaget på Stiklestad.</text><text class="tx" x="910" y="190" text-anchor="middle">Norge blir kristnet</text></g>
+    <g class="s fx-pop"><circle cx="1090" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="1090" y="372" text-anchor="middle">1517</text><text class="tx" x="1090" y="410" text-anchor="middle">Reformasjonen</text><text class="tx" x="1090" y="440" text-anchor="middle">starter</text></g>
+    <g class="s fx-pop"><circle class="pulse" cx="1270" cy="300" r="18" fill="var(--a)"/><circle cx="1270" cy="300" r="18" fill="var(--a2)"/><text class="yr" x="1270" y="238" text-anchor="middle">I dag</text><text class="tx" x="1270" y="160" text-anchor="middle">Kristne i alle</text><text class="tx" x="1270" y="190" text-anchor="middle">verdensdeler</text></g>
+  </svg>
+  <aside class="notes"><p>Tidsregningen vår teller år før og etter Kristi fødsel (f.Kr. og e.Kr.). Det finnes ikke noe år 0, og forskere mener Jesus trolig ble født noen få år tidligere enn munken som regnet det ut, trodde.</p><p>300-tallet: Kristendommen ble tillatt i Romerriket i 313 og ble statsreligion mot slutten av århundret.</p><p>1030: Olav Haraldsson (Olav den hellige) falt på Stiklestad. Kristningen av Norge tok lang tid, men dette regnes som et vendepunkt.</p><p>1517: Martin Luther protesterte mot den katolske kirken. Reformasjonen kom til Norge i 1537.</p></aside>
+</section>
+
+<!-- 6 SNAKK SAMMEN -->
+<section class="slide center" data-tr="iris" data-title="Snakk sammen: fortellinger om Jesus">
+  <p class="pill a">Snakk sammen</p>
+  <h2 class="a" style="--d:.2;margin:30px 0 20px;max-width:1200px">Hvilke fortellinger om Jesus kjenner du fra før?</h2>
+  <p class="lead muted a" style="--d:.5">Tenk på jul, påske eller noe du har hørt eller lest. Finn to sammen med læringsvennen din.</p>
+  <div class="timer a" style="--d:.8;margin-top:50px" data-sec="120"></div>
+  <aside class="notes"><p>Klikk på klokka for å starte to minutter. Samle inn forslag på tavla etterpå: juleevangeliet, Den barmhjertige samaritan, Den bortkomne sønnen, Jesus stiller stormen, brødunderet, påskefortellingen.</p></aside>
+</section>
+
+<!-- 7 TREENIGHETEN -->
+<section class="slide" data-tr="zoom" data-title="Én Gud – treenigheten" data-init="tre">
+  <div class="row" style="flex:1;align-items:center;gap:50px">
+    <svg class="tre a fx-fade nostep" style="--d:.3;width:660px;flex:none" viewBox="0 0 660 620">
+      <path d="M330 120 L120 480 L540 480 Z" fill="none" stroke="var(--line)" stroke-width="6" stroke-dasharray="4 16" stroke-linecap="round"/>
+      <circle cx="330" cy="365" r="78" fill="var(--bg3)"/><text x="330" y="358" text-anchor="middle" font-size="26" font-weight="800" fill="var(--a2)">ÉN</text><text x="330" y="392" text-anchor="middle" font-size="26" font-weight="800" fill="var(--a2)">GUD</text>
+      <g class="hot" data-k="far" tabindex="0" role="button"><circle class="n" cx="330" cy="120" r="100"/><text x="330" y="130" text-anchor="middle">Faderen</text></g>
+      <g class="hot" data-k="sonn" tabindex="0" role="button"><circle class="n" cx="120" cy="480" r="100"/><text x="120" y="490" text-anchor="middle">Sønnen</text></g>
+      <g class="hot" data-k="and" tabindex="0" role="button"><circle class="n" cx="540" cy="480" r="100"/><text x="540" y="472" text-anchor="middle">Den hellige</text><text x="540" y="506" text-anchor="middle">ånd</text></g>
+    </svg>
+    <div class="grow">
+      <p class="kicker a">Del 2 · Hva tror kristne på?</p>
+      <h2 class="a" style="--d:.2">Én Gud – på tre måter</h2>
+      <div class="card a nostep" style="--d:.5;min-height:250px" aria-live="polite"><h3 id="treT">Trykk på en sirkel</h3><p id="treP">Kristne tror på én Gud, som de møter på tre måter. Det kalles <span class="term">treenigheten</span>.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><p>Trykk på sirklene (eller la en elev gjøre det). Treenigheten er vanskelig også for voksne. Et vanlig bilde: vann kan være is, væske og damp, men er fortsatt vann. Bildet er ikke perfekt, men hjelper.</p><p>Viktig: Kristendommen er monoteistisk – én Gud, ikke tre guder.</p></aside>
+</section>
+
+<!-- 8 KJERNEN -->
+<section class="slide" data-tr="left" data-title="Kjernen i troen">
+  <p class="kicker a">Hva tror kristne på?</p>
+  <h2 class="a" style="--d:.2">Fire ting som er kjernen i troen</h2>
+  <div class="grid2" style="flex:1;align-content:center">
+    <div class="card s fx-up"><h3>Én Gud</h3><p>Gud har skapt verden og bryr seg om menneskene.</p></div>
+    <div class="card s fx-up"><h3>Jesus er Guds sønn</h3><p>Gud ble menneske i Jesus. Derfor kalles han <span class="term">Kristus</span>.</p></div>
+    <div class="card s fx-up"><h3>Tilgivelse og frelse</h3><p>Ingen er feilfrie, men alle kan bli tilgitt. Å bli reddet av Gud kalles <span class="term">frelse</span>.</p></div>
+    <div class="card s fx-up"><h3>Nestekjærlighet</h3><p>Troen skal vises i handling: å bry seg om andre, også dem man ikke kjenner.</p></div>
+  </div>
+  <aside class="notes"><p>Kristus er en tittel, ikke et etternavn. Det betyr «den salvede» og er det greske ordet for Messias.</p><p>Vær tydelig på språket: «kristne tror at …». Vi beskriver hva religionen lærer, ikke hva som er sant.</p></aside>
+</section>
+
+<!-- 9 KJÆRLIGHETSBUDET -->
+<section class="slide center" data-tr="iris" data-title="Det dobbelte kjærlighetsbudet">
+  <p class="kicker a">Det viktigste budet, ifølge Jesus</p>
+  <p class="a fx-blur" style="--d:.4;font-family:var(--f-head);font-weight:600;font-size:74px;line-height:1.2;max-width:1300px">«Du skal elske Gud av hele ditt hjerte – <span class="acc">og din neste som deg selv.</span>»</p>
+  <p class="lead muted s" style="margin-top:44px">«Din neste» er menneskene rundt deg – også dem du ikke kjenner eller ikke liker.</p>
+  <p class="s" style="margin-top:22px;font-size:30px">Dette kalles <span class="term">det dobbelte kjærlighetsbudet</span>.</p>
+  <aside class="notes"><p>Fritt gjengitt etter Matteus 22,37–39. Spør: Hvorfor heter det «dobbelt»? (To deler: elske Gud og elske nesten.)</p><p>Kobling: Den gylne regel («Alt dere vil at andre skal gjøre mot dere …») finnes i lignende form i mange religioner og livssyn.</p></aside>
+</section>
+
+<!-- 10 FEM KJENNETEGN -->
+<section class="slide center" data-tr="curtain" data-title="De fem kjennetegnene">
+  <p class="kicker a">Del 3</p>
+  <h2 class="a" style="--d:.2">Fem kjennetegn</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:34px;width:1300px;margin-top:20px">
+    <div class="a fx-pop" style="--d:.5"><div class="ikon"><svg viewBox="0 0 100 100"><path d="M50 26 C38 16 22 16 12 20 V80 C22 76 38 76 50 86 C62 76 78 76 88 80 V20 C78 16 62 16 50 26 Z M50 26 V86"/></svg></div><h3>Hellig tekst</h3></div>
+    <div class="a fx-pop" style="--d:.7"><div class="ikon"><svg viewBox="0 0 100 100"><path d="M50 12 C50 12 22 46 22 62 A28 28 0 0 0 78 62 C78 46 50 12 50 12 Z"/></svg></div><h3>Ritualer</h3></div>
+    <div class="a fx-pop" style="--d:.9"><div class="ikon"><svg viewBox="0 0 100 100"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z"/></svg></div><h3>Høytider</h3></div>
+    <div class="a fx-pop" style="--d:1.1"><div class="ikon"><svg viewBox="0 0 100 100"><path d="M50 10 V90 M26 34 H74"/></svg></div><h3>Symboler</h3></div>
+    <div class="a fx-pop" style="--d:1.3"><div class="ikon"><svg viewBox="0 0 100 100"><path d="M50 8 V22 M43 15 H57 M50 22 L70 44 V88 H30 V44 Z M44 88 V70 A6 6 0 0 1 56 70 V88"/></svg></div><h3>Hellige steder</h3></div>
+  </div>
+  <aside class="notes"><p>De samme fem kjennetegnene brukes på alle religionene. Elevene kan lage en tabell i boka med fem rader og fylle ut underveis.</p></aside>
+</section>
+
+<!-- 11 BIBELEN -->
+<section class="slide" data-tr="up" data-title="Hellig tekst: Bibelen" data-init="hylle">
+  <p class="kicker a">Kjennetegn 1 av 5 · Hellig tekst</p>
+  <h2 class="a" style="--d:.2;margin-bottom:10px">Bibelen – et helt bibliotek</h2>
+  <svg id="hylle" viewBox="0 0 1380 400" style="width:100%;height:400px" aria-hidden="true"></svg>
+  <div class="grid3" style="margin-top:14px">
+    <div class="card s fx-up" data-h="gt"><h3>Det gamle testamentet</h3><p><b>39 bøker.</b> Skapelsen, Moses, kongene og profetene. Deles med jødedommen.</p></div>
+    <div class="card s fx-up" data-h="nt"><h3>Det nye testamentet</h3><p><b>27 bøker.</b> Om Jesus og de første kristne.</p></div>
+    <div class="card s fx-up" data-h="ev"><h3>De fire evangeliene</h3><p>Matteus, Markus, Lukas og Johannes forteller om livet til Jesus.</p></div>
+  </div>
+  <aside class="notes"><p>Ordet bibel betyr «bøker». 39 + 27 = 66 bøker i protestantiske bibler. Katolske og ortodokse bibler har noen flere bøker i Det gamle testamentet.</p><p>Evangelium betyr «godt budskap». Bibelen er oversatt til flere språk enn noen annen bok.</p></aside>
+</section>
+
+<!-- 12 RITUALER -->
+<section class="slide" data-tr="left" data-title="Ritualer">
+  <div class="row" style="flex:1;align-items:center;gap:60px">
+    <div class="plate a fx-blur" style="--d:.2;--rot:2deg;width:420px;height:540px"><img src="bilder/daap.webp" alt="Illustrasjon av dåp"></div>
+    <div class="grow">
+      <p class="kicker a">Kjennetegn 2 av 5 · Ritualer</p>
+      <h2 class="a" style="--d:.2">Fra livets start til slutt</h2>
+      <div class="grid2 a" style="--d:.5;gap:22px">
+        <div class="flip" style="height:215px"><div class="in"><div class="fr"><h3 style="font-size:44px">Dåp</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:26px">Vann helles over hodet. Den som døpes, blir en del av kirken.</p></div></div></div>
+        <div class="flip" style="height:215px"><div class="in"><div class="fr"><h3 style="font-size:44px">Nattverd</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:26px">Menigheten deler brød og vin, slik Jesus gjorde med disiplene sin siste kveld.</p></div></div></div>
+        <div class="flip" style="height:215px"><div class="in"><div class="fr"><h3 style="font-size:44px">Konfirmasjon</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:26px">Ungdom lærer mer om troen og bekrefter dåpen, ofte når de er 14–15 år.</p></div></div></div>
+        <div class="flip" style="height:215px"><div class="in"><div class="fr"><h3 style="font-size:44px">Bønn</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:26px">Å snakke med Gud, alene eller sammen. Den mest kjente bønnen er Fadervår.</p></div></div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><p>La elevene gjette hva hvert ord betyr før du snur kortet.</p><p>Dåp og nattverd kalles sakramenter (hellige handlinger). Den norske kirke har to sakramenter, den katolske kirken har sju. I noen kirker døpes man som voksen i stedet for som barn.</p><p>Bryllup og begravelse er også viktige ritualer i kirken.</p></aside>
+</section>
+
+<!-- 13 HØYTIDER -->
+<section class="slide" data-tr="zoom" data-title="Høytider" data-init="aar">
+  <p class="kicker a">Kjennetegn 3 av 5 · Høytider</p>
+  <h2 class="a" style="--d:.2;margin-bottom:10px">Kirkeåret følger fortellingen om Jesus</h2>
+  <div class="row nostep" style="flex:1;align-items:center;gap:60px">
+    <svg class="a fx-fade" style="--d:.4;width:560px;flex:none" viewBox="-20 -20 560 560">
+      <circle cx="260" cy="260" r="200" fill="none" stroke="var(--bg3)" stroke-width="40"/>
+      <g id="buer"></g><g id="mnd"></g>
+      <g id="viser"><path d="M260 260 L260 96" stroke="var(--cream)" stroke-width="8" stroke-linecap="round"/><circle cx="260" cy="96" r="12" fill="var(--cream)"/></g>
+      <circle cx="260" cy="260" r="20" fill="var(--a)"/>
+    </svg>
+    <div class="grow">
+      <div style="display:flex;gap:16px;margin-bottom:22px">
+        <button class="hbtn" data-h="jul" style="--c:#e98554"><i></i>Jul</button>
+        <button class="hbtn" data-h="paske" style="--c:#f3d27a"><i></i>Påske</button>
+        <button class="hbtn" data-h="pinse" style="--c:#8fd0c0"><i></i>Pinse</button>
+      </div>
+      <div class="card" style="min-height:300px" aria-live="polite"><h3 id="hT">Velg en høytid</h3><p id="hP">Trykk på knappene og se hvor på året høytiden ligger.</p><p id="hN" class="muted" style="font-size:24px;margin-top:16px"></p></div>
+    </div>
+  </div>
+  <aside class="notes"><p>Jul har fast dato. Påske flytter seg: første søndag etter første fullmåne etter vårjevndøgn (mellom 22. mars og 25. april). Pinse er 50 dager etter påske.</p><p>Påsken er den viktigste høytiden i kristendommen, selv om jula er den største feiringen i Norge.</p></aside>
+</section>
+
+<!-- 14 SYMBOLER -->
+<section class="slide" data-tr="curtain" data-title="Symboler">
+  <p class="kicker a">Kjennetegn 4 av 5 · Symboler</p>
+  <h2 class="a" style="--d:.2">Hva betyr tegnene?</h2>
+  <div class="a sym" style="--d:.5;display:grid;grid-template-columns:repeat(4,1fr);gap:26px;flex:1;align-items:center">
+    <div class="flip" style="height:440px"><div class="in"><div class="fr"><svg viewBox="0 0 100 100"><path d="M50 8 V92 M24 34 H76"/></svg><h3 style="margin-top:20px">Korset</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:28px">Det viktigste symbolet. Jesus døde på et kors, og kristne tror at han sto opp igjen.</p></div></div></div>
+    <div class="flip" style="height:440px"><div class="in"><div class="fr"><svg viewBox="0 0 100 100"><path d="M92 72 C70 36 34 12 8 50 C34 88 70 64 92 28"/></svg><h3 style="margin-top:20px">Fisken</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:28px">Et hemmelig tegn for de første kristne da de ble forfulgt i Romerriket.</p></div></div></div>
+    <div class="flip" style="height:440px"><div class="in"><div class="fr"><svg viewBox="0 0 100 100"><path d="M10 52 C24 50 34 44 40 34 C44 22 56 16 64 24 L78 22 L68 32 C70 52 56 70 36 72 L20 86 L24 70 C16 66 12 60 10 52 Z M40 34 C34 24 22 18 12 20 C14 32 22 42 34 46"/></svg><h3 style="margin-top:20px">Duen</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:28px">Står for Den hellige ånd og for fred.</p></div></div></div>
+    <div class="flip" style="height:440px"><div class="in"><div class="fr"><svg viewBox="0 0 100 100"><path d="M38 44 H62 V88 H38 Z M50 44 V36 M50 30 C42 24 46 14 50 8 C54 14 58 24 50 30 Z"/></svg><h3 style="margin-top:20px">Lyset</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:28px">Jesus kalles «verdens lys». Derfor tennes lys i kirken, i advent og ved dåp.</p></div></div></div>
+  </div>
+  <aside class="notes"><p>Et symbol betyr mer enn det ser ut som. La elevene foreslå betydningen før du snur.</p><p>Fisken: Det greske ordet for fisk, ICHTHYS, er forbokstavene i «Jesus Kristus, Guds Sønn, Frelser». Duen med olivengrein kommer fra fortellingen om Noah.</p><p>Spør: Hvor har dere sett korset? (Flagget, kirker, smykker, gravsteder.)</p></aside>
+</section>
+
+<!-- 15 STEDER -->
+<section class="slide" data-tr="left" data-title="Hellige steder">
+  <div class="row" style="flex:1;align-items:center;gap:70px">
+    <div class="grow">
+      <p class="kicker a">Kjennetegn 5 av 5 · Hellige steder</p>
+      <h2 class="a" style="--d:.2">Fra kirken i bygda til Jerusalem</h2>
+      <ul class="clean">
+        <li class="s fx-r"><span class="term">Kirken:</span> Guds hus og stedet der menigheten samles.</li>
+        <li class="s fx-r"><span class="term">Betlehem og Jerusalem:</span> byene der Jesus ifølge Bibelen ble født, døde og sto opp.</li>
+        <li class="s fx-r"><span class="term">Nidarosdomen:</span> Norges nasjonalhelligdom i Trondheim, bygd over graven til Olav den hellige.</li>
+        <li class="s fx-r"><span class="term">Roma og Vatikanet:</span> sentrum for den katolske kirken, der paven bor.</li>
+      </ul>
+    </div>
+    <div class="plate a fx-blur" style="--d:.3;--rot:2deg;width:470px;height:600px"><img src="bilder/hellige-steder.webp" alt="Mennesker går mot en stor kirke med spir"></div>
+  </div>
+  <aside class="notes"><p>En pilegrim er en som reiser til et hellig sted. Pilegrimsleden til Nidaros (Trondheim) brukes fortsatt.</p><p>Spør: Hvilken kirke ligger nærmest skolen vår? Hvor gammel er den?</p></aside>
+</section>
+
+<!-- 16 SNAKK SAMMEN 2 -->
+<section class="slide center" data-tr="iris" data-title="Snakk sammen: spor der du bor">
+  <p class="pill a">Snakk sammen</p>
+  <h2 class="a" style="--d:.2;margin:30px 0 20px;max-width:1250px">Hvilke spor av kristendommen ser du der du bor?</h2>
+  <p class="lead muted a" style="--d:.5">Tenk på bygninger, navn, fridager, flagg og musikk. Finn tre eksempler sammen.</p>
+  <div class="timer a" style="--d:.8;margin-top:50px" data-sec="120"></div>
+  <aside class="notes"><p>Eksempler: kirker og kirkegårder, korset i flagget, søndag som fridag, juleferie, påskeferie og pinse, navn som Kristian, Maria, Johannes og Peter, salmer og julesanger.</p></aside>
+</section>
+
+<!-- 17 RETNINGER -->
+<section class="slide" data-tr="up" data-title="Tre store retninger">
+  <p class="kicker a">Del 4 · Én religion, flere retninger</p>
+  <h2 class="a" style="--d:.2;margin-bottom:0">Kirken deler seg</h2>
+  <svg viewBox="0 0 1380 330" style="width:100%;height:330px">
+    <path class="gren draw a" style="--len:520;--d:.4;stroke:var(--cream)" d="M40 165 H540"/>
+    <text class="a" style="--d:.6" x="60" y="130" font-size="28" font-weight="800" fill="var(--cream)">Den første kirken</text>
+    <g class="s fx-fade"><circle cx="540" cy="165" r="16" fill="var(--cream)"/><text x="540" y="225" text-anchor="middle" font-size="30" font-weight="800" fill="var(--a2)">1054</text></g>
+    <path class="gren draw s" data-with style="--len:900;stroke:#f3d27a" d="M540 165 C640 165 660 60 780 60 H1340"/>
+    <path class="gren draw s" data-with style="--len:500;stroke:#e98554" d="M540 165 C640 165 660 250 780 250 H960"/>
+    <g class="s fx-fade"><circle cx="960" cy="250" r="16" fill="var(--cream)"/><text x="960" y="312" text-anchor="middle" font-size="30" font-weight="800" fill="var(--a2)">1517</text></g>
+    <path class="gren draw s" data-with style="--len:420;stroke:#e98554" d="M960 250 H1340"/>
+    <path class="gren draw s" data-with style="--len:460;stroke:#8fd0c0" d="M960 250 C1030 250 1040 165 1120 165 H1340"/>
+  </svg>
+  <div class="grid3" style="margin-top:6px">
+    <div class="card s fx-up" style="border-color:#f3d27a"><h3 style="color:#f3d27a">De ortodokse kirkene</h3><p>Størst i Øst-Europa. Kjent for <span class="term">ikoner</span>, hellige bilder.</p></div>
+    <div class="card s fx-up" style="border-color:#e98554"><h3 style="color:#f6b890">Den katolske kirken</h3><p>Størst i verden. Ledes av <span class="term">paven</span> i Roma.</p></div>
+    <div class="card s fx-up" style="border-color:#8fd0c0"><h3 style="color:#8fd0c0">De protestantiske kirkene</h3><p>Størst i Norge. Den norske kirke er <span class="term">luthersk</span>.</p></div>
+  </div>
+  <aside class="notes"><p>1054: Kirken delte seg i en østlig (ortodoks) og en vestlig (katolsk) del. 1517: Martin Luther startet reformasjonen, og de protestantiske kirkene brøt med paven.</p><p>Alle tre retningene tror på Jesus og bruker Bibelen. Ingen retning er mer «ekte» enn de andre. I Norge finnes også blant annet pinsemenigheter, baptister og metodister, som er protestantiske.</p></aside>
+</section>
+
+<!-- 18 NORGE OG VERDEN -->
+<section class="slide" data-tr="zoom" data-title="Norge og verden" data-init="tall">
+  <p class="kicker a">Del 5 · Kristendommen i Norge og i verden</p>
+  <h2 class="a" style="--d:.2">Tre tall å huske</h2>
+  <div class="grid3" style="flex:1;align-content:center">
+    <div class="card s fx-up" data-tall="2.3" data-des="1"><p class="tall">0</p><h3 style="margin-top:14px">milliarder</h3><p>kristne i verden. Flest bor i Afrika, Europa og Latin-Amerika.</p></div>
+    <div class="card s fx-up" data-tall="1030"><p class="tall">0</p><h3 style="margin-top:14px">Stiklestad</h3><p>Olav den hellige faller, og Norge blir etter hvert et kristent land.</p></div>
+    <div class="card s fx-up" data-tall="6" data-suff=" av 10"><p class="tall">0</p><h3 style="margin-top:14px">i Norge</h3><p>er medlem av Den norske kirke. Tallet synker litt hvert år.</p></div>
+  </div>
+  <p class="foot a" style="--d:1">Kilder: Pew Research Center (2020) og Statistisk sentralbyrå (2025)</p>
+  <aside class="notes"><p>Verden: ca. 2,3 milliarder kristne. Kristendommen vokser mest i Afrika sør for Sahara, som nå har flere kristne enn Europa.</p><p>Norge: ca. 61 % av befolkningen var medlem av Den norske kirke i 2025 (SSB). I 1994 var det 85 %. Mange feirer høytidene uten å gå ofte i kirken.</p></aside>
+</section>
+
+<!-- 19 SJEKK -->
+<section class="slide" data-tr="curtain" data-title="Sjekk: hva husker du?" data-init="sjekk">
+  <p class="kicker a">Sjekk deg selv</p>
+  <h2 class="a" style="--d:.2" id="sjQ">Hva husker du?</h2>
+  <div class="a nostep" style="--d:.4;display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px" id="sjA"></div>
+  <div class="nostep" style="margin-top:28px;display:flex;align-items:center;gap:26px;min-height:64px"><button class="neste" id="sjN" hidden>Neste spørsmål</button><p id="sjF" style="font-size:28px" aria-live="polite"></p></div>
+  <aside class="notes"><p>Fem raske spørsmål i plenum. La klassen stemme med håndsopprekking eller ved å vise antall fingre (1–4) før du trykker på svaret.</p><p>Den fullstendige quizen med 20 spørsmål kjøres i quizverktøyet.</p></aside>
+</section>
+
+<!-- 20 BEGREPER -->
+<section class="slide" data-tr="up" data-title="Begreper">
+  <p class="kicker a">Skriv ned i boka</p>
+  <h2 class="a" style="--d:.2">Begreper å ta med</h2>
+  <div class="grid3 a" style="--d:.4;gap:26px;flex:1;align-content:center">
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Kristus</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">Tittel som betyr «den salvede», det samme som Messias.</p></div></div></div>
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Treenigheten</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">Én Gud som Fader, Sønn og Den hellige ånd.</p></div></div></div>
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Evangelium</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">«Godt budskap». De fire fortellingene om Jesus.</p></div></div></div>
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Sakrament</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">Hellig handling, som dåp og nattverd.</p></div></div></div>
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Frelse</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">Å bli reddet og tilgitt av Gud.</p></div></div></div>
+    <div class="flip" style="height:270px"><div class="in"><div class="fr"><h3 style="font-size:46px">Menighet</h3><span class="hint">Trykk for å snu</span></div><div class="bk"><p style="font-size:31px">De kristne som hører til i samme kirke.</p></div></div></div>
+  </div>
+  <aside class="notes"><p>Elevene skriver begrepet og forklarer det med egne ord før kortet snus. De samme begrepene kommer igjen i oppgavesettet og i quizen.</p></aside>
+</section>
+
+<!-- 21 SLUTT -->
+<section class="slide center" data-tr="fade" data-title="Ut-billett">
+  <p class="pill a">Før du går</p>
+  <h2 class="a" style="--d:.2;margin:30px 0 40px">Ut-billett</h2>
+  <div class="grid2" style="width:1200px;text-align:left">
+    <div class="card s fx-up"><div class="q"><b>1</b><p>Én ting du lærte om kristendommen i dag.</p></div></div>
+    <div class="card s fx-up"><div class="q"><b>2</b><p>Én ting du lurer på eller vil vite mer om.</p></div></div>
+  </div>
+  <aside class="notes"><p>Elevene skriver på en lapp eller i boka og leverer på vei ut. Bruk spørsmålene de lurer på som inngang til temapresentasjonene.</p></aside>
+</section>
+
+</div></div>
+<script>
+/* Interaktive lysbilder. SLIDE_INIT kjøres hver gang lysbildet vises. */
+(function(){
+const I=window.SLIDE_INIT=window.SLIDE_INIT||{};
+const NS='http://www.w3.org/2000/svg';
+const tell=(el,til,ms,fmt)=>{const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-p,3);el.textContent=fmt(til*e);if(p<1)requestAnimationFrame(f);})(t0);};
+
+/* 2 – 100 prikker, 29 er kristne */
+const folk=document.getElementById('folk');
+for(let i=0;i<100;i++)folk.appendChild(document.createElement('i'));
+const rekke=[...Array(100).keys()].sort((a,b)=>((a*37+11)%100)-((b*37+11)%100)).slice(0,29);
+function folkVis(naa){const d=folk.children;rekke.forEach((n,k)=>setTimeout(()=>d[n].classList.add('pa'),naa?0:k*45));
+  const t=document.getElementById('folkTall');naa?t.textContent='29':tell(t,29,1400,v=>Math.round(v));}
+I.folk=(el,o)=>{[...folk.children].forEach(d=>d.classList.remove('pa'));document.getElementById('folkTall').textContent='0';if(o.full)folkVis(true);};
+folk.closest('.slide').addEventListener('step',e=>{if(e.detail.id==='folkSvar')folkVis(false);});
+
+/* 7 – treenigheten */
+const TRE={far:['Faderen','Gud som har skapt verden og alt som lever. Kristne kaller Gud «far» fordi de tror at Gud bryr seg om dem som en god forelder.'],
+  sonn:['Sønnen','Jesus Kristus. Kristne tror at Gud ble menneske i Jesus og levde blant menneskene.'],
+  and:['Den hellige ånd','Guds kraft som kristne tror er til stede i verden i dag, og som gir tro, trøst og mot.']};
+const treG=[...document.querySelectorAll('.tre g.hot')];
+function treVelg(g){treG.forEach(x=>x.classList.toggle('sel',x===g));const v=TRE[g.dataset.k];document.getElementById('treT').textContent=v[0];document.getElementById('treP').textContent=v[1];}
+treG.forEach(g=>{g.addEventListener('click',e=>{e.stopPropagation();treVelg(g);});g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();treVelg(g);}});});
+I.tre=()=>{treG.forEach(x=>x.classList.remove('sel'));document.getElementById('treT').textContent='Trykk på en sirkel';
+  document.getElementById('treP').innerHTML='Kristne tror på én Gud, som de møter på tre måter. Det kalles <span class="term">treenigheten</span>.';};
+
+/* 11 – bokhylla: 39 + 27 bøker */
+const hy=document.getElementById('hylle');const farger=['#e98554','#f6b890','#c9603a','#f3d27a','#8fd0c0','#fbf5ea','#a9543a'];
+let x=30;const boker=[];
+for(let i=0;i<66;i++){if(i===39)x+=44;const w=14+((i*7)%5)*2.4,h=170+((i*53)%9)*16;const r=document.createElementNS(NS,'rect');
+  r.setAttribute('x',x.toFixed(1));r.setAttribute('y',340-h);r.setAttribute('width',w.toFixed(1));r.setAttribute('height',h);r.setAttribute('rx',4);
+  r.dataset.f=farger[(i*3)%farger.length];r.dataset.g=i<39?'gt':(i<43?'ev':'nt');hy.appendChild(r);boker.push(r);x+=w+3.6;}
+const brett=document.createElementNS(NS,'rect');brett.setAttribute('x',14);brett.setAttribute('y',340);brett.setAttribute('width',1352);brett.setAttribute('height',16);brett.setAttribute('rx',8);brett.setAttribute('fill','#3a5753');hy.appendChild(brett);
+[['GT',30,39],['NT',0,27]].forEach((m,k)=>{const t=document.createElementNS(NS,'text');const a=boker[k?39:0],b=boker[k?65:38];
+  t.setAttribute('x',(+a.getAttribute('x')+ +b.getAttribute('x')+ +b.getAttribute('width'))/2);t.setAttribute('y',392);t.setAttribute('text-anchor','middle');t.setAttribute('font-size',26);t.setAttribute('font-weight',800);t.setAttribute('fill','#adc0ba');
+  t.textContent=k?'Det nye testamentet · 27':'Det gamle testamentet · 39';t.dataset.g=k?'nt':'gt';t.style.transition='opacity .6s';hy.appendChild(t);});
+function hylle(steg){boker.forEach((r,i)=>{const g=r.dataset.g,nt=g!=='gt';const synlig=steg>=1&&(!nt||steg>=2);
+  r.style.transitionDelay=(steg===1&&!nt?i*18:steg===2&&nt?(i-39)*22:0)+'ms';r.classList.toggle('av',!synlig);
+  r.setAttribute('fill',steg>=3&&g!=='ev'?'#2a4441':(steg>=3?'#f3d27a':r.dataset.f));});
+  hy.querySelectorAll('text').forEach(t=>t.style.opacity=(t.dataset.g==='gt'?steg>=1:steg>=2)?1:0);}
+I.hylle=(el,o)=>hylle(o.full?3:0);
+hy.closest('.slide').addEventListener('step',e=>{const h=e.detail.dataset.h;if(h)hylle({gt:1,nt:2,ev:3}[h]);});
+
+/* 13 – kirkeåret */
+const MND=['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+const pol=(d,r)=>{const a=(d/365*360-90)*Math.PI/180;return[260+r*Math.cos(a),260+r*Math.sin(a)];};
+const mg=document.getElementById('mnd');MND.forEach((m,i)=>{const[px,py]=pol(i*30.4+15,250);const t=document.createElementNS(NS,'text');t.setAttribute('x',px);t.setAttribute('y',py+8);t.setAttribute('text-anchor','middle');t.setAttribute('font-size',22);t.setAttribute('font-weight',700);t.setAttribute('fill','#adc0ba');t.textContent=m;mg.appendChild(t);
+  const[ax,ay]=pol(i*30.4,180),[bx,by]=pol(i*30.4,220);const l=document.createElementNS(NS,'path');l.setAttribute('d',`M${ax} ${ay}L${bx} ${by}`);l.setAttribute('stroke','#162222');l.setAttribute('stroke-width',3);mg.appendChild(l);});
+const HT={jul:{fra:334,til:371,c:'#e98554',t:'Jul',p:'Kristne feirer at Jesus ble født i Betlehem. Advent er ventetiden de fire søndagene før jul.',n:'Fast dato: julaften 24. desember og første juledag 25. desember.'},
+  paske:{fra:81,til:115,c:'#f3d27a',t:'Påske',p:'Den viktigste høytiden. Jesus dør på korset langfredag og står opp første påskedag.',n:'Flytter seg fra år til år, mellom 22. mars og 25. april.'},
+  pinse:{fra:130,til:164,c:'#8fd0c0',t:'Pinse',p:'Den hellige ånd kommer til disiplene, og de begynner å fortelle om Jesus. Pinsen kalles kirkens fødselsdag.',n:'Alltid 50 dager etter påske.'}};
+const bg=document.getElementById('buer');const buer={};
+Object.entries(HT).forEach(([k,h])=>{const[ax,ay]=pol(h.fra,200),[bx,by]=pol(h.til,200);const p=document.createElementNS(NS,'path');
+  p.setAttribute('d',`M${ax} ${ay}A200 200 0 0 1 ${bx} ${by}`);p.setAttribute('fill','none');p.setAttribute('stroke',h.c);p.setAttribute('stroke-width',40);p.style.transition='opacity .5s';p.style.opacity=.3;bg.appendChild(p);buer[k]=p;});
+const hb=[...document.querySelectorAll('.hbtn')];let viserGrad=0;
+function hVelg(k){const h=HT[k];hb.forEach(b=>b.classList.toggle('sel',b.dataset.h===k));Object.entries(buer).forEach(([n,p])=>p.style.opacity=n===k?1:.3);
+  let g=((h.fra+h.til)/2/365*360)%360;while(g<viserGrad)g+=360;viserGrad=g;document.getElementById('viser').style.transform=`rotate(${g}deg)`;
+  document.getElementById('hT').textContent=h.t;document.getElementById('hP').textContent=h.p;document.getElementById('hN').textContent=h.n;}
+hb.forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();hVelg(b.dataset.h);}));
+I.aar=()=>{hb.forEach(b=>b.classList.remove('sel'));Object.values(buer).forEach(p=>p.style.opacity=.3);
+  document.getElementById('hT').textContent='Velg en høytid';document.getElementById('hP').textContent='Trykk på knappene og se hvor på året høytiden ligger.';document.getElementById('hN').textContent='';};
+
+/* 18 – tall som teller opp */
+const tallKort=[...document.querySelectorAll('[data-tall]')];
+const tallFmt=(k,v)=>(k.dataset.des?v.toFixed(1).replace('.',','):Math.round(v))+(k.dataset.suff||'');
+I.tall=(el,o)=>tallKort.forEach(k=>k.querySelector('.tall').textContent=tallFmt(k,o.full?+k.dataset.tall:0));
+tallKort[0].closest('.slide').addEventListener('step',e=>{const k=e.detail;if(k.dataset.tall)tell(k.querySelector('.tall'),+k.dataset.tall,1300,v=>tallFmt(k,v));});
+
+/* 19 – sjekk deg selv */
+const SP=[['Hva heter den hellige teksten i kristendommen?',['Koranen','Bibelen','Toraen','Vedaene'],1],
+  ['Hvilken høytid er den viktigste i kristendommen?',['Jul','Pinse','Påske','Advent'],2],
+  ['Hva betyr treenigheten?',['At det finnes tre guder','At Bibelen har tre deler','At det er tre store høytider','Én Gud som Fader, Sønn og Den hellige ånd'],3],
+  ['Hva kalles de nærmeste elevene og vennene til Jesus?',['Disipler','Profeter','Pilegrimer','Prester'],0],
+  ['Hvilken retning hører Den norske kirke til?',['Den katolske','Den ortodokse','Den protestantiske','Ingen av dem'],2]];
+let sjI=0,sjR=0;const sjQ=document.getElementById('sjQ'),sjA=document.getElementById('sjA'),sjN=document.getElementById('sjN'),sjF=document.getElementById('sjF');
+function sjVis(){if(sjI>=SP.length){sjQ.textContent=`Ferdig! ${sjR} av ${SP.length} riktige`;sjA.innerHTML='';sjF.textContent='';sjN.textContent='Start på nytt';sjN.hidden=false;return;}
+  const[q,sv,r]=SP[sjI];sjQ.textContent=q;sjF.textContent=`Spørsmål ${sjI+1} av ${SP.length}`;sjN.hidden=true;sjN.textContent=sjI===SP.length-1?'Se resultatet':'Neste spørsmål';sjA.innerHTML='';
+  sv.forEach((s,i)=>{const b=document.createElement('button');b.className='svar';b.textContent=s;b.onclick=e=>{e.stopPropagation();
+    [...sjA.children].forEach((x,j)=>{x.disabled=true;if(j===r)x.classList.add('rett');});
+    if(i===r){sjR++;sjF.textContent='Riktig!';}else{b.classList.add('feil');sjF.textContent='Ikke helt. Riktig svar er markert med grønt.';}sjN.hidden=false;};sjA.appendChild(b);});}
+sjN.onclick=e=>{e.stopPropagation();if(sjI>=SP.length){sjI=0;sjR=0;}else sjI++;sjVis();};
+I.sjekk=()=>{sjI=0;sjR=0;sjVis();};
+})();
+</script>
+<script src="../felles/motor.js"></script>
+</body>
+</html>

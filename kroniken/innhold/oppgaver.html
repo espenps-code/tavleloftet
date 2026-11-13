@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – oppgavesett</title>
+<style>
+@font-face{font-family:"Fredoka";font-weight:600;src:url("felles/fonts/fredoka-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:400;src:url("felles/fonts/nunito-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:700;src:url("felles/fonts/nunito-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:800;src:url("felles/fonts/nunito-latin-800-normal.woff2") format("woff2")}
+:root{--ink:#1b2a29;--a:#c9603a;--soft:#f6ece2;--line:#b9c4c1}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e5df;color:var(--ink);font:400 12.5pt/1.45 "Nunito","Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;margin:0}
+#verktoy{position:sticky;top:0;z-index:5;background:#1b2a29;color:#fff;padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:15px}
+#verktoy select,#verktoy button{font:700 15px "Nunito",sans-serif;padding:8px 14px;border-radius:8px;border:0}
+#verktoy button{background:var(--a);color:#fff;cursor:pointer}
+#verktoy label{display:flex;gap:6px;align-items:center}
+.ark{background:#fff;width:210mm;min-height:297mm;margin:16px auto;padding:14mm 16mm;box-shadow:0 4px 20px rgba(0,0,0,.15);position:relative}
+.topp{display:flex;gap:14px;align-items:flex-start;border-bottom:3px solid var(--a);padding-bottom:8px;margin-bottom:10px}
+.topp .t{flex:1}
+.topp small{color:var(--a);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:9pt}
+.topp h1{font-size:23pt;line-height:1.1}
+.topp img{width:24mm;height:32mm;object-fit:cover;border-radius:3mm;border:1px solid var(--line)}
+.navn{display:flex;gap:10mm;font-size:11pt;margin-bottom:6px}.navn span{flex:1;border-bottom:1px solid var(--ink);padding-bottom:1px}.navn span:last-child{flex:.5}
+.opg{margin-top:11px;break-inside:avoid}
+.opg h2{font-size:14pt;display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.opg h2 b{flex:none;width:8mm;height:8mm;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:12pt}
+.opg h2 i{font-style:normal;font-size:9pt;font-family:"Nunito";font-weight:800;color:var(--a);border:1.5px solid var(--a);border-radius:99px;padding:1px 8px;margin-left:auto}
+.opg p{margin:0 0 5px}
+.linje{border-bottom:1px solid var(--line);height:8.5mm}
+.koble{display:grid;grid-template-columns:1fr 22mm 1.6fr;row-gap:5px;align-items:center}
+.koble .v{border:1.5px solid var(--ink);border-radius:6px;padding:3px 10px;font-weight:800;position:relative}
+.koble .h{border:1.5px solid var(--line);border-radius:6px;padding:3px 10px;font-size:11.5pt;position:relative}
+.koble .v::after,.koble .h::before{content:"";position:absolute;top:50%;width:7px;height:7px;border-radius:50%;background:var(--ink);transform:translateY(-50%)}
+.koble .v::after{right:-11px}.koble .h::before{left:-11px}
+.koble .f{text-align:center;font-weight:800;color:var(--a)}
+.bank{display:flex;flex-wrap:wrap;gap:6px;background:var(--soft);border-radius:8px;padding:6px 10px;margin-bottom:6px}.bank span{font-weight:800;border:1px dashed var(--a);border-radius:6px;padding:0 8px;background:#fff}
+.fyll{line-height:2}.fyll u{display:inline-block;min-width:32mm;border-bottom:1.5px solid var(--ink);text-decoration:none;text-align:center;font-weight:800;color:var(--a)}
+table.su{width:100%;border-collapse:collapse}table.su td{padding:3px 4px;border-bottom:1px solid var(--line)}table.su td.b{width:16mm;text-align:center;font-weight:800;font-size:10pt}
+.rute{display:inline-block;width:5.5mm;height:5.5mm;border:1.5px solid var(--ink);border-radius:3px;vertical-align:middle;text-align:center;line-height:5mm;font-weight:800;color:var(--a)}
+.rek div{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.boks{border:1.5px dashed var(--line);border-radius:8px}
+.fasit h2{font-size:13pt;margin:10px 0 3px;color:var(--a)}.fasit p,.fasit li{font-size:11.5pt;margin:0 0 2px}.fasit ol,.fasit ul{margin:0;padding-left:20px}
+.kortark{display:grid;grid-template-columns:1fr 1fr;margin-top:8px}
+.kortark div{border:1.5px dashed #8a9794;height:51mm;padding:5mm 7mm;display:flex;flex-direction:column;justify-content:center;text-align:center;font-size:13.5pt;font-weight:700;line-height:1.35;break-inside:avoid}
+.kortark div small{display:block;font-size:8.5pt;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin-bottom:3mm}
+.bunn{position:absolute;left:16mm;right:16mm;bottom:8mm;font-size:8.5pt;color:#7a8785;display:flex;justify-content:space-between}
+@page{size:A4;margin:0}
+@media print{body{background:#fff}#verktoy{display:none}.ark{margin:0;box-shadow:none;break-after:page}.ark:last-child{break-after:auto}body:not(.medfasit) .fasit{display:none}}
+body:not(.medfasit) .fasit{display:none}
+</style>
+</head>
+<body>
+<div id="verktoy">
+  <b>Krøniken · oppgavesett</b>
+  <select id="velg" aria-label="Velg oppgavesett"></select>
+  <label><input type="checkbox" id="fasit"> Vis fasit (lærer)</label>
+  <button id="skriv">Skriv ut</button>
+  <span>Tips: skriv ut tosidig.</span>
+</div>
+<div id="ark"></div>
+<script src="oversikt.js"></script>
+<script>
+(function(){
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+const linjer=n=>Array(n).fill('<div class="linje"></div>').join('');
+const BOKST='ABCDEFGH';
+/* Fast "tilfeldig" rekkefølge, lik på alle utskrifter */
+const rot=(l,k)=>l.map((x,i)=>[((i+1)*k)%(l.length+1),x,i]).sort((a,b)=>a[0]-b[0]);
+const O={
+ koble:(o,P)=>{const h=rot(P.begreper,4);return{elev:`<p>Trekk strek fra ordet til riktig forklaring.</p><div class="koble">${P.begreper.map((b,i)=>`<div class="v">${esc(b[0])}</div><div></div><div class="h">${esc(h[i][1][1])}</div>`).join('')}</div>`,
+   fasit:`<ul>${P.begreper.map(b=>`<li><b>${esc(b[0])}:</b> ${esc(b[1])}</li>`).join('')}</ul>`};},
+ fyll:o=>{const ord=[...o.tekst.matchAll(/\{(.+?)\}/g)].map(m=>m[1]);const bank=[...ord].sort((a,b)=>a.localeCompare(b,'nb'));
+   return{elev:`<p>Fyll inn ordene som mangler.</p><div class="bank">${bank.map(x=>`<span>${esc(x)}</span>`).join('')}</div><p class="fyll">${esc(o.tekst).replace(/\{(.+?)\}/g,'<u>&nbsp;</u>')}</p>`,
+   fasit:`<p class="fyll" style="line-height:1.6">${esc(o.tekst).replace(/\{(.+?)\}/g,'<u style="min-width:0;padding:0 4px">$1</u>')}</p>`};},
+ santusant:o=>({elev:`<p>Sett kryss.</p><table class="su"><tr><td></td><td class="b">Sant</td><td class="b">Usant</td></tr>${o.p.map(x=>`<tr><td>${fmt(x[0])}</td><td class="b"><span class="rute"></span></td><td class="b"><span class="rute"></span></td></tr>`).join('')}</table>`,
+   fasit:`<ol>${o.p.map(x=>`<li>${x[1]?'Sant':'Usant'}${x[2]?' – '+esc(x[2]):''}</li>`).join('')}</ol>`}),
+ rekkefolge:o=>{const r=rot(o.ledd,3);return{elev:`<p>${fmt(o.intro||'Hva skjedde først? Skriv tallene 1 til '+o.ledd.length+' i rutene.')}</p><div class="rek">${r.map(x=>`<div><span class="rute"></span>${fmt(x[1])}</div>`).join('')}</div>`,
+   fasit:`<ol>${o.ledd.map(x=>`<li>${fmt(x)}</li>`).join('')}</ol>`};},
+ sporsmal:o=>({elev:o.sp.map((s,i)=>`<p><b>${BOKST[i].toLowerCase()})</b> ${fmt(s[0])}</p>${linjer(o.linjer||2)}`).join(''),
+   fasit:`<ul>${o.sp.map((s,i)=>`<li><b>${BOKST[i].toLowerCase()})</b> ${fmt(s[1])}</li>`).join('')}</ul>`}),
+ fri:o=>({elev:`<p>${fmt(o.tekst)}</p>${o.boks?`<div class="boks" style="height:${o.boks}mm"></div>`:linjer(o.linjer||5)}`,fasit:`<p>${fmt(o.fasit||'Egne svar. Se etter at eleven begrunner.')}</p>`})
+};
+const TIT={koble:'Koble ord og forklaring',fyll:'Fyll inn',santusant:'Sant eller usant?',rekkefolge:'Sett i riktig rekkefølge',sporsmal:'Svar på spørsmålene',fri:'Tenk og skriv'};
+function vis(id){
+  const s=document.createElement('script');s.src=id+'.js';s.onload=()=>{const P=window.PRES,mappe=id.split('/')[0]+'/';
+    const kortsett=P.oppgaver.filter(o=>o.type==='kort');
+    const deler=P.oppgaver.filter(o=>o.type!=='kort').map((o,i)=>({o,i,r:O[o.type](o,P)}));
+    const bilde=(P.lysbilder.find(x=>x.bilde)||{}).bilde;
+    const topp=(u)=>`<div class="topp"><div class="t"><small>${esc(P.livssyn)} · Tema ${P.nr} · ${u}</small><h1>${esc(P.tittel)}</h1></div>${bilde?`<img src="${mappe}bilder/${bilde.fil}" alt="">`:''}</div>`;
+    const opg=d=>`<div class="opg"><h2><b>${d.i+1}</b>${esc(d.o.tittel||TIT[d.o.type])}${d.o.utfordring?'<i>Utfordring</i>':''}</h2>${d.r.elev}</div>`;
+    const side1=deler.filter(d=>!d.o.side2),side2=deler.filter(d=>d.o.side2);
+    document.getElementById('ark').innerHTML=
+     `<section class="ark">${topp('Oppgaver')}<div class="navn"><span>Navn:</span><span>Dato:</span></div>${side1.map(opg).join('')}<div class="bunn"><span>Krøniken · Tavleloftet</span><span>Side 1</span></div></section>`+
+     (side2.length?`<section class="ark">${side2.map(opg).join('')}<div class="bunn"><span>Krøniken · Tavleloftet · ${esc(P.tittel)}</span><span>Side 2</span></div></section>`:'')+
+     kortsett.map(k=>`<section class="ark">${topp(esc(k.tittel||'Samtalekort'))}<p style="margin:0">${fmt(k.intro||'Klipp ut kortene. Trekk ett kort om gangen, les det høyt og snakk sammen i gruppa. Det finnes ikke ett riktig svar.')}</p><div class="kortark">${k.kort.map((t,i)=>`<div><small>${esc(k.merke||'Kort')} ${i+1}</small>${fmt(t)}</div>`).join('')}</div><div class="bunn"><span>Krøniken · Tavleloftet · ${esc(P.tittel)}</span><span>Samtalekort</span></div></section>`).join('')+
+     `<section class="ark fasit">${topp('Fasit for lærer')}${deler.map(d=>`<h2>${d.i+1}. ${esc(d.o.tittel||TIT[d.o.type])}</h2>${d.r.fasit}`).join('')}</section>`;
+    document.title='Oppgaver – '+P.tittel;};
+  document.body.appendChild(s);
+}
+const velg=document.getElementById('velg');
+Object.entries(KRONIKEN).forEach(([m,l])=>l.tema.forEach((t,i)=>velg.insertAdjacentHTML('beforeend',`<option value="${m}/${t.id}">${l.navn} · Tema ${i+1}: ${t.tittel}</option>`)));
+velg.onchange=()=>vis(velg.value);
+document.getElementById('fasit').onchange=e=>document.body.classList.toggle('medfasit',e.target.checked);
+document.getElementById('skriv').onclick=()=>{try{window.print()}catch(e){}};
+const p=new URLSearchParams(location.search).get('p');if(p&&[...velg.options].some(o=>o.value===p))velg.value=p;
+vis(velg.value);
+})();
+</script>
+</body>
+</html>

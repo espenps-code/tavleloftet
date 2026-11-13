@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – øveark</title>
+<style>
+@font-face{font-family:"Fredoka";font-weight:600;font-display:swap;src:url("felles/fonts/fredoka-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:400;font-display:swap;src:url("felles/fonts/nunito-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:700;font-display:swap;src:url("felles/fonts/nunito-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Nunito";font-weight:800;font-display:swap;src:url("felles/fonts/nunito-latin-800-normal.woff2") format("woff2")}
+:root{--ink:#1b2422;--a:#c9603a;--soft:#f4ede2;--line:#c9d1ce;--bg:#162222}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "Nunito","Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;margin:0;line-height:1.15}
+button,select,input{font:inherit}
+#bar{position:sticky;top:0;z-index:5;background:#0c1212;color:#fbf5ea;padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}
+#bar b{margin-right:auto;font-size:15px}
+#bar label{display:flex;gap:6px;align-items:center;font-weight:700}
+#bar select{padding:6px 8px;border-radius:8px;border:1px solid #47504e;background:#1e2726;color:#fbf5ea}
+#bar button{font-weight:800;padding:9px 16px;border-radius:8px;border:0;background:#e9a35f;color:#1b1408;cursor:pointer}
+#bar a{color:#fbf5ea;font-weight:700}
+#valg:not([hidden]){display:contents}
+/* Velg temaer (vises når siden åpnes uten ?t=) */
+#velg{max-width:980px;margin:0 auto;padding:30px 20px 70px;color:#fbf5ea}
+#velg h1{font-size:40px}#velg>p{color:#b9c6c2;max-width:62ch}
+#velg h2{font-size:21px;color:#f3d9b8;margin:26px 0 10px}
+#velg .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+#velg .g label{display:flex;gap:8px;align-items:flex-start;background:#1e2a29;border:1px solid #34423f;border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700;font-size:14px}
+#velg .g input{margin-top:3px;accent-color:#e9a35f}
+#velg .lag{margin-top:26px;font-weight:800;font-size:17px;padding:12px 22px;border-radius:10px;border:0;background:#e9a35f;color:#1b1408;cursor:pointer}
+/* Arket */
+#ark{max-width:210mm;margin:22px auto 70px;background:#fff;padding:14mm 15mm;border-radius:6px;box-shadow:0 16px 50px rgba(0,0,0,.35)}
+.hode{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:10px}
+.hode h1{font-size:27px}.hode small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin-bottom:3px}
+.navn{font-size:13px;white-space:nowrap}.navn i{display:inline-block;width:52mm;border-bottom:1px solid var(--ink);margin-left:6px}
+.slik{background:var(--soft);border-radius:10px;padding:9px 14px;font-size:13.5px;margin-bottom:6px}
+.slik b{font-weight:800}
+.tema{margin-top:18px}
+.tema>h2{font-size:20px;background:var(--ink);color:#fff;padding:7px 12px;border-radius:8px;break-after:avoid}
+.tema>h2 small{font:800 11px/1 "Nunito",sans-serif;letter-spacing:.1em;text-transform:uppercase;opacity:.8;display:block;margin-bottom:3px}
+.tema h3{font-size:15px;margin:12px 0 5px;color:var(--a);break-after:avoid}
+.ord{display:grid;grid-template-columns:max-content 1fr;gap:3px 14px;margin:0;font-size:13.5px}
+.ord dt{font-weight:800}.ord dd{margin:0}
+.les{font-size:13px;margin:8px 0 0;color:#47524f}
+ol.sp{margin:0;padding-left:1.5em}
+ol.sp li{margin:0 0 9px;break-inside:avoid;font-weight:700;font-size:14px}
+ol.sp .linje{border-bottom:1px solid #9aa5a2;height:7.5mm}
+ol.sp .alt{display:grid;grid-template-columns:1fr 1fr;gap:1px 18px;font-weight:400;margin-top:2px;font-size:13.5px}
+ol.sp .alt span::before{content:"☐ ";font-size:15px}
+.fasit{break-before:page;margin-top:26px;border-top:3px solid var(--ink);padding-top:10px}
+.fasit h2{font-size:20px;margin-bottom:6px}
+.fasit h3{font-size:14px;margin:10px 0 3px;color:var(--a)}
+.fasit ol{margin:0;padding-left:1.5em;columns:2;column-gap:24px;font-size:12.5px}
+.fasit li{break-inside:avoid;margin-bottom:2px}
+.fot{margin-top:16px;font-size:11px;color:#6a7774;text-align:right}
+@page{size:A4;margin:12mm 13mm}
+@media print{
+  body{background:#fff}#bar,#velg{display:none!important}
+  #ark{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0}
+  .tema>h2,.slik{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<!-- Øveark til utskrift. Åpnes med ?t=buddhismen/tema1-historie,buddhismen/tema2-laeren (ett eller flere temaer, skilt med komma)
+     og gjerne &tittel=Navn på prøven. Uten ?t= vises en liste der læreren krysser av temaer.
+     Spørsmålene og ordene hentes fra temafilene (quiz og begreper). Ingenting lagres. -->
+<div id="bar"><b>Krøniken · øveark</b>
+  <span id="valg" hidden>
+    <label>Spørsmål per tema <select id="ant"><option value="5">5</option><option value="10" selected>10</option><option value="99">Alle</option></select></label>
+    <label><input type="checkbox" id="alt"> Svaralternativer</label>
+    <label><input type="checkbox" id="ord" checked> Viktige ord</label>
+    <label><input type="checkbox" id="fas"> Fasit bakerst</label>
+    <a href="oveark.html">Velg andre temaer</a>
+    <button id="skriv">Skriv ut</button>
+  </span>
+</div>
+<div id="velg" hidden><h1>Øveark</h1><p>Kryss av temaene elevene skal øve på. Arket får viktige ord og øvespørsmål fra hvert tema, og kan skrives ut.</p><div id="liste"></div><button class="lag" id="lag">Lag øveark</button></div>
+<main id="ark" hidden></main>
+<script src="oversikt.js"></script>
+<script>
+(function(){
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const $=id=>document.getElementById(id);
+const K=window.KRONIKEN||{},Q=new URLSearchParams(location.search);
+const ider=(Q.get('t')||'').split(',').map(s=>s.trim()).filter(s=>/^[a-z0-9-]+\/[a-z0-9-]+$/.test(s));
+const tittel=(Q.get('tittel')||'').slice(0,90);
+
+if(!ider.length){
+  /* Ingen temaer valgt: vis avkrysningsliste */
+  $('velg').hidden=false;
+  $('liste').innerHTML=Object.entries(K).map(([m,l])=>`<h2>${esc(l.navn)}</h2><div class="g">${l.tema.map((t,i)=>`<label><input type="checkbox" value="${m}/${t.id}"><span>${i+1}. ${esc(t.tittel)}</span></label>`).join('')}</div>`).join('');
+  $('lag').onclick=()=>{const v=[...document.querySelectorAll('#liste input:checked')].map(i=>i.value);if(!v.length){alert('Kryss av minst ett tema.');return;}location.href='oveark.html?t='+v.join(',');};
+  return;
+}
+
+const last=src=>new Promise((ok,feil)=>{const s=document.createElement('script');s.src=src;s.onload=()=>{s.remove();ok();};s.onerror=()=>{s.remove();feil();};document.head.appendChild(s);});
+const temaer=[];
+(async()=>{
+  for(const id of ider){
+    const [m,f]=id.split('/'),L=K[m];if(!L)continue;
+    const nr=L.tema.findIndex(t=>t.id===f),meta=L.tema[nr];if(!meta)continue;
+    try{window.PRES=null;await last(id+'.js');}catch(e){continue;}
+    const P=window.PRES||{};
+    const sp=(P.quiz||[]).filter(q=>q&&q.q&&Array.isArray(q.a)&&q.a[q.r]!=null);
+    if(sp.length)temaer.push({id,livssyn:L.navn,nr:nr+1,tittel:meta.tittel,ord:P.begreper||[],sp});
+  }
+  window.PRES=null;
+  if(!temaer.length){$('velg').hidden=false;$('liste').innerHTML='<p style="color:#ffb4a2">Fant ingen av temaene. Velg på nytt.</p>';$('lag').hidden=true;return;}
+  $('valg').hidden=false;$('ark').hidden=false;
+  if(temaer.length<=2)$('ant').value='99';
+  ['ant','alt','ord','fas'].forEach(i=>$(i).onchange=tegn);$('skriv').onclick=()=>print();
+  tegn();
+})();
+
+/* Plukker n spørsmål jevnt fordelt utover temaets liste, så arket dekker hele temaet */
+function plukk(sp,n){if(n>=sp.length)return sp;const ut=[];for(let i=0;i<n;i++)ut.push(sp[Math.floor(i*sp.length/n)]);return ut;}
+
+function tegn(){
+  const n=+$('ant').value,medAlt=$('alt').checked,medOrd=$('ord').checked,medFasit=$('fas').checked;
+  const ettLivssyn=new Set(temaer.map(t=>t.livssyn)).size===1;
+  const overskrift=tittel||(ettLivssyn?temaer[0].livssyn:'KRLE');
+  let fasit='';
+  const deler=temaer.map(t=>{
+    const sp=plukk(t.sp,n);
+    fasit+=`<h3>${esc(t.livssyn)}: ${esc(t.tittel)}</h3><ol>${sp.map(q=>`<li>${esc(q.a[q.r])}</li>`).join('')}</ol>`;
+    return `<section class="tema"><h2><small>${esc(t.livssyn)} · tema ${t.nr}</small>${esc(t.tittel)}</h2>
+      ${medOrd&&t.ord.length?`<h3>Viktige ord</h3><dl class="ord">${t.ord.map(([o,f])=>`<dt>${esc(o)}</dt><dd>${esc(f)}</dd>`).join('')}</dl>`:''}
+      <h3>Øv på disse spørsmålene</h3>
+      <ol class="sp">${sp.map(q=>`<li>${esc(q.q)}${medAlt?`<div class="alt">${q.a.map(a=>`<span>${esc(a)}</span>`).join('')}</div>`:'<div class="linje"></div>'}</li>`).join('')}</ol>
+      <p class="les">Vil du lese mer? Se kapittelet «${esc(t.tittel)}» i elevboka.</p></section>`;}).join('');
+  $('ark').innerHTML=`<div class="hode"><div><small>Øveark</small><h1>${esc(overskrift)}</h1></div><div class="navn">Navn:<i></i></div></div>
+    <div class="slik"><b>Slik øver du:</b> Les de viktige ordene. Dekk til forklaringen og prøv å si den med egne ord. Svar så på spørsmålene${medAlt?'':' uten å se i boka'}. Sjekk svarene etterpå, og øv en gang til på dem du bommet på.</div>
+    ${deler}${medFasit?`<section class="fasit"><h2>Fasit</h2>${fasit}</section>`:''}
+    <p class="fot">Krøniken · øveark</p>`;
+  document.title='Øveark – '+overskrift;
+}
+})();
+</script>
+</body>
+</html>

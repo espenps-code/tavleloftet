@@ -10,6 +10,10 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 - `elev/` – felles elevinnlogging: eleven skriver koden og sendes til riktig verden (`dinoparken/`, `lyslaget/`)
 - `voksen.html` – bare for Espen: lager elevkode og voksenkode, og skriver ut innloggingslapp
 - `rapport.html` – framgangsrapporten kjøperen åpner med voksenkoden (se `maler/laererrapport/LES-MEG.md`)
+- `kroniken/` – Krøniken, KRLE-verktøyet. Mappa er en kopi av `innhold/`, `portal/` og `religionsprove/` fra
+  `Tavleloftet\Krøniken` i Dropbox (uten LES-MEG-filene). Kilden er Dropbox-mappa: endringer gjøres der og kopieres hit.
+  `kroniken/index.html` sender videre til `kroniken/portal/index.html`. Elevboka: `kroniken/innhold/bok.html`.
+  Krøniken bruker Firebase-prosjektet krle-sim og henter Firebase og skrifttyper (portal og prøveportal) fra Google.
 - `personvern.html` – midlertidig side til foretaket er registrert
 - `css/tavleloftet.css` – utseendet (farger, skrift, knapper) for alle sidene
 - `js/tavleloftet.js` – karusellen og den lille bevegelsen i toppbildet

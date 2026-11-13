@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – presentasjoner</title>
+<link rel="stylesheet" href="felles/stil.css">
+<link rel="stylesheet" id="tema" href="">
+</head>
+<body>
+<!-- Åpne med ?p=kristendommen/tema1-historie for å gå rett til en presentasjon. Uten ?p vises menyen. -->
+<div id="meny"><main>
+  <p class="kicker">Krøniken · KRLE</p>
+  <h1>Presentasjoner</h1>
+  <p class="l">Bla med pilene eller sveip. Trykk på et kort for å åpne presentasjonen.</p>
+  <div id="liste"></div>
+  <p class="l" style="font-size:15px;margin-top:30px">I en presentasjon: piltaster eller klikk for neste steg · F fullskjerm · N lærernotater · O oversikt · B svart skjerm</p>
+</main></div>
+<div id="viewport" hidden><div id="stage"></div></div>
+<script src="oversikt.js"></script>
+<script src="felles/bygg.js"></script>
+<script>
+(function(){
+const last=src=>new Promise((ok,feil)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>feil(new Error('Fant ikke '+src));document.body.appendChild(s);});
+async function apne(id){
+  const mappe=id.split('/')[0]+'/';
+  try{await last(id+'.js');}catch(e){document.getElementById('liste').insertAdjacentHTML('afterbegin','<p style="color:var(--no)">'+e.message+'</p>');return;}
+  PRES.mappe=mappe;document.getElementById('tema').href=mappe+'tema.css';
+  document.getElementById('meny').hidden=true;document.getElementById('viewport').hidden=false;
+  KRONIKEN_BYGG(document.getElementById('stage'));
+  await last('felles/motor.js');
+}
+const liste=document.getElementById('liste');
+Object.entries(KRONIKEN).forEach(([mappe,l])=>{
+  const b=f=>`${mappe}/bilder/${f}`;
+  const kort=(l.hoved?[`<a class="kk hoved" href="${mappe}/${l.hoved}"><img src="${b(l.bilde)}" alt=""><span class="tx"><b>Hovedpresentasjon</b><strong>${l.navn}</strong><small>Oversikt over hele ${l.type||'religionen'}</small></span></a>`]:[])
+    .concat(l.tema.map((t,i)=>`<button class="kk" data-p="${mappe}/${t.id}"><img src="${b(t.bilde)}" alt=""><span class="tx"><b>Tema ${i+1}</b><strong>${t.tittel}</strong><small>${t.om}</small></span></button>`));
+  const v=l.verktoy||{};
+  liste.insertAdjacentHTML('beforeend',`<section class="ls-blokk"><div class="ls-topp"><h2 class="ls">${l.navn}</h2><div class="piler"><button class="pil" data-d="-1" aria-label="Forrige">‹</button><button class="pil" data-d="1" aria-label="Neste">›</button></div></div>
+    <div class="karusell" tabindex="0" aria-label="Presentasjoner om ${l.navn}">${kort.join('')}</div><div class="prikker">${kort.map((_,i)=>`<i data-i="${i}"></i>`).join('')}</div>
+    <div class="verktoy">
+      <a class="vk" href="oppgaver.html"><i class="vb"><img src="${b(v.oppgaver)}" alt=""></i><span><strong>Oppgavesett</strong><small>To sider til utskrift per tema, med fasit</small></span></a>
+      <a class="vk" href="historier.html"><i class="vb"><img src="${b(v.historier)}" alt=""></i><span><strong>Lesehistorier</strong><small>Fortellinger med ordforklaringer og spørsmål</small></span></a>
+      <a class="vk" href="quiz.html"><i class="vb"><img src="${b(v.quiz)}" alt=""></i><span><strong>Quiz</strong><small>Klassequiz med fem spillmoduser</small></span></a>
+      <a class="vk" href="bok.html?p=${mappe}/${l.hoved&&/[?&]p=/.test(l.hoved)?'hoved':l.tema[0].id}"><i class="vb"><img src="${b(l.bilde)}" alt=""></i><span><strong>Elevbok</strong><small>Lesebok for elevene, med kapitler man blar i</small></span></a>
+    </div></section>`);
+});
+/* Karusell: kortet nærmest midten er «aktivt» og vises størst */
+document.querySelectorAll('.ls-blokk').forEach(blokk=>{
+  const k=blokk.querySelector('.karusell'),kort=[...k.children],prikker=[...blokk.querySelectorAll('.prikker i')];
+  const midt=()=>{const m=k.scrollLeft+k.clientWidth/2;let best=0,d=1e9;kort.forEach((c,i)=>{const a=Math.abs(c.offsetLeft+c.offsetWidth/2-m);if(a<d){d=a;best=i;}});return best;};
+  const merk=()=>{const a=midt();kort.forEach((c,i)=>c.classList.toggle('aktiv',i===a));prikker.forEach((p,i)=>p.classList.toggle('pa',i===a));};
+  const til=i=>{const c=kort[Math.max(0,Math.min(kort.length-1,i))];k.scrollTo({left:c.offsetLeft+c.offsetWidth/2-k.clientWidth/2,behavior:'smooth'});};
+  let venter=0;k.addEventListener('scroll',()=>{cancelAnimationFrame(venter);venter=requestAnimationFrame(merk);});
+  blokk.querySelectorAll('.pil').forEach(b=>b.onclick=()=>til(midt()+ +b.dataset.d));
+  prikker.forEach(p=>p.onclick=()=>til(+p.dataset.i));
+  k.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();til(midt()+1);}if(e.key==='ArrowLeft'){e.preventDefault();til(midt()-1);}});
+  addEventListener('resize',merk);requestAnimationFrame(()=>{k.scrollLeft=0;merk();});
+});
+liste.addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(b)apne(b.dataset.p);});
+const p=new URLSearchParams(location.search).get('p');if(p&&/^[a-z0-9-]+\/[a-z0-9-]+$/.test(p))apne(p);
+})();
+</script>
+</body>
+</html>
