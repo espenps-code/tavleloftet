@@ -3,6 +3,7 @@
 (function(){
   var K=window.KRONIKEN||{},Q=new URLSearchParams(location.search),m='';
   ['p','t','ls'].forEach(function(n){var v=(Q.get(n)||'').split(',')[0].split('/')[0];if(!m&&K[v])m=v;});
+  var h=(location.hash||'').slice(1);if(!m&&K[h])m=h;
   if(!m){var sti=location.pathname.split('/');var mp=sti[sti.length-2];if(K[mp])m=mp;}
   try{if(!m){var s=sessionStorage.getItem('kroniken-tema');if(K[s])m=s;}}catch(e){}
   var rot=(document.currentScript&&document.currentScript.src||'').replace(/felles\/tilbake\.js.*$/,'');

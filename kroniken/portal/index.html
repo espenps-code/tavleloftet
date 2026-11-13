@@ -57,6 +57,38 @@
   .trygg svg{width:34px;height:34px;color:var(--teal);flex:none}
   .trygg h3{font-family:'Fraunces',serif;margin:0 0 4px;font-size:18px}
   .trygg p{margin:0;font-size:14.5px;color:rgba(243,233,210,0.8)}
+
+  /* Dybde: korn, trykte skygger og bilder som ligger oppå hverandre */
+  body{background-attachment:fixed}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.09;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .wrap{position:relative;z-index:1}
+  :root{--dyp:#0b0a1c}
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;margin-bottom:10px}
+  h1{text-shadow:0 3px 0 var(--dyp)}
+  .vifte{position:relative;height:330px}
+  .vifte img{position:absolute;width:56%;aspect-ratio:3/4;object-fit:cover;border:7px solid var(--parchment);border-radius:10px;box-shadow:0 9px 0 rgba(0,0,0,.4),0 24px 44px rgba(0,0,0,.5);background:var(--night-3)}
+  .vifte img:nth-child(1){left:0;top:34px;transform:rotate(-9deg)}
+  .vifte img:nth-child(2){left:22%;top:6px;transform:rotate(-1deg);z-index:1}
+  .vifte img:nth-child(3){left:44%;top:40px;transform:rotate(8deg);z-index:2}
+  .tall li{box-shadow:0 3px 0 var(--dyp)}
+  h2{display:flex;align-items:center;gap:12px}
+  h2::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 3px 0 var(--dyp);flex:none}
+  .temaer{gap:30px 24px}
+  .tk{overflow:visible;background:linear-gradient(165deg,var(--night-3),var(--night-2) 60%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 9px 0 var(--dyp),0 22px 36px rgba(0,0,0,.35)}
+  .tk img{width:calc(100% - 28px);margin:-14px 14px 0;border:6px solid var(--parchment);border-radius:9px;box-shadow:0 6px 0 rgba(0,0,0,.35),0 14px 24px rgba(0,0,0,.4);transform:rotate(-1.4deg);transition:transform .2s}
+  .tk:nth-child(even) img{transform:rotate(1.2deg)}
+  .tk:hover{transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 14px 0 var(--dyp),0 30px 44px rgba(0,0,0,.45)}
+  .tk:hover img{transform:rotate(0) scale(1.03)}
+  .tk:active{transform:translateY(3px);box-shadow:0 4px 0 var(--dyp)}
+  .tk .gaa{align-self:flex-start;background:var(--gold);color:var(--night);border-radius:10px;padding:7px 13px;box-shadow:0 4px 0 var(--dyp);margin-top:10px}
+  .verktoy{background:linear-gradient(165deg,var(--night-3),var(--night-2) 60%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 0 var(--dyp),0 20px 32px rgba(0,0,0,.32)}
+  .verktoy:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 0 var(--dyp),0 28px 40px rgba(0,0,0,.42)}
+  .verktoy:active{transform:translateY(3px);box-shadow:0 3px 0 var(--dyp)}
+  .v-ikon{box-shadow:0 4px 0 var(--dyp)}
+  .topplenke{background:var(--night-2);box-shadow:0 3px 0 var(--dyp);font-weight:700}
+  .trygg{box-shadow:0 7px 0 var(--dyp)}
+  @media (max-width:820px){.hero{grid-template-columns:1fr}.vifte{height:230px;max-width:340px;margin:0 auto}.vifte img{width:48%}}
+  html,body{overflow-x:clip}
   @media (max-width:900px){.temaer,.verktoyliste{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:600px){.temaer,.verktoyliste{grid-template-columns:1fr}}
   @media (prefers-reduced-motion:reduce){*{transition-duration:.001ms !important}}
@@ -69,10 +101,12 @@
     <a class="topplenke" href="#verktoy">Verktøy for læreren ↓</a>
   </div>
 
+  <div class="hero"><div>
   <div class="eyebrow">Ferdig undervisningsopplegg · KRLE</div>
   <h1>Seks religioner og livssyn. <span class="g">Tre temamoduler.</span></h1>
   <p class="ingress">Velg et tema, så finner du alt som hører til på ett sted: presentasjoner til tavla, oppgaveark til utskrift, lesehistorier, elevbok og quiz. Innholdet kan brukes rett i timen, uten innlogging.</p>
   <ul class="tall" id="tall"></ul>
+  </div><div class="vifte" id="vifte" aria-hidden="true"></div></div>
 
   <h2 id="temaer">Velg tema</h2>
   <p class="sub">Ett kort per religion, livssyn eller modul. Inne på temaet ligger alle delene samlet.</p>
@@ -133,6 +167,7 @@
   const liste=Object.entries(K);
   const ant=liste.reduce((n,[,l])=>n+l.tema.length,0);
   document.getElementById('tall').innerHTML=[[liste.length,'temaer og moduler'],[ant,'presentasjoner med oppgaveark'],['960','quizspørsmål'],['59','kapitler i elevboka']].map(([a,b])=>`<li><b>${a}</b> ${b}</li>`).join('');
+  document.getElementById('vifte').innerHTML=['hinduismen','jodedommen','buddhismen'].filter(m=>K[m]).map(m=>`<img src="../innhold/${m}/bilder/${K[m].bilde}" alt="">`).join('');
   const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
   document.getElementById('temaliste').innerHTML=liste.map(([m,l])=>`<a class="tk" href="../innhold/tema.html?l=${m}"><img src="../innhold/${m}/bilder/${l.bilde}" alt="" loading="lazy"><span class="tx"><small>${ord[l.type]||'Tema'}</small><strong>${esc(l.navn)}</strong><p>${l.tema.length} deler: ${esc(l.tema.slice(0,3).map(t=>t.tittel).join(' · '))} …</p><span class="gaa">Åpne temaet →</span></span></a>`).join('');
 })();

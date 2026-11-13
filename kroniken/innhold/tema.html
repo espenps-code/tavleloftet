@@ -6,48 +6,68 @@
 <title>Krøniken – tema</title>
 <link rel="stylesheet" href="felles/kr-fonter.css">
 <style>
-  :root{--night:#161433;--night-2:#201d47;--night-3:#2b2760;--parchment:#F3E9D2;--gold:#E8B04B;--gold-soft:#f0c97a;--teal:#4FB8A8;--crimson:#C9586B;--peri:#7C8CE0;--line:rgba(243,233,210,0.16)}
+  :root{--bg:#161433;--bg2:#201d47;--bg3:#2b2760;--card:#201d47;--line:#3a3670;--dark:#0c0b1f;--a:#E8B04B;--a2:#f0c97a;--a-ink:#161433;--krem:#F3E9D2}
   *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:var(--night);color:var(--parchment);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
-  a{color:var(--gold-soft)}
-  .wrap{max-width:1080px;margin:0 auto;padding:18px 22px 70px}
+  body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--krem);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(900px 520px at 85% -8%,color-mix(in srgb,var(--a) 22%,transparent),transparent 65%),radial-gradient(800px 600px at -5% 105%,var(--bg3),transparent 60%),var(--bg);background-attachment:fixed}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.09;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+  a{color:var(--a2)}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:18px 22px 80px}
   .topp{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-  .tilbake{font-size:15px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 15px}
-  .tilbake:hover{border-color:var(--gold)}
-  .bytt{background:var(--night-2);color:var(--parchment);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:15px}
-  .hode{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);min-height:240px;display:flex;align-items:flex-end}
-  .hode img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%}
-  .hode::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,20,51,.1) 20%,rgba(22,20,51,.92))}
-  .hode div{position:relative;z-index:1;padding:22px 26px}
-  .hode small{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);font-weight:700}
-  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(32px,5vw,50px);line-height:1.05;margin:4px 0 0}
-  h2{font-family:'Fraunces',serif;font-weight:700;font-size:24px;margin:36px 0 4px}
-  .sub{color:rgba(243,233,210,0.7);margin:0 0 16px;font-size:15px}
-  .hele{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
-  .stor{display:flex;flex-direction:column;gap:4px;background:var(--night-2);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:16px 18px;text-decoration:none;color:var(--parchment);transition:transform .12s,border-color .12s}
-  .stor:hover{transform:translateY(-2px);border-color:var(--c)}
-  .stor strong{font-family:'Fraunces',serif;font-size:19px}
-  .stor span{font-size:14px;color:rgba(243,233,210,0.72)}
-  .del{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-  .del img{width:150px;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--night-3);display:block}
-  .del small{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);font-weight:700}
-  .del h3{font-family:'Fraunces',serif;font-size:22px;margin:0 0 2px;line-height:1.15}
-  .del p{margin:0 0 10px;font-size:14.5px;color:rgba(243,233,210,0.72)}
-  .knapper{display:flex;gap:8px;flex-wrap:wrap}
-  .kn{display:inline-flex;align-items:center;min-height:42px;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;padding:8px 14px;border:1px solid var(--line);color:var(--parchment);background:rgba(22,20,51,.6)}
-  .kn:hover{border-color:var(--gold);background:rgba(232,176,75,.1)}
-  .kn.hoved{background:var(--gold);color:var(--night);border-color:var(--gold)}
-  .kn.hoved:hover{filter:brightness(1.06);background:var(--gold)}
-  a:focus-visible,select:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
-  .hist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-  .hk{display:flex;gap:12px;align-items:center;background:var(--night-2);border:1px solid var(--line);border-radius:14px;padding:10px;text-decoration:none;color:var(--parchment)}
-  .hk:hover{border-color:var(--gold)}
-  .hk img{width:64px;height:64px;object-fit:cover;border-radius:9px;flex:none;background:var(--night-3)}
+  .tilbake{font-size:15px;font-weight:700;text-decoration:none;color:var(--krem);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;box-shadow:0 3px 0 var(--dark)}
+  .tilbake:hover{border-color:var(--a)}
+  .bytt{background:var(--card);color:var(--krem);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font:inherit;font-size:15px;box-shadow:0 3px 0 var(--dark)}
+  /* Hode: bildet ligger som et trykk oppå en farget plate */
+  .hode{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;background:linear-gradient(135deg,var(--bg3),var(--card) 70%);border:1px solid var(--line);border-radius:26px;padding:34px 36px;box-shadow:0 12px 0 var(--dark),0 30px 60px rgba(0,0,0,.45);overflow:visible;margin:8px 0 22px}
+  .hode small{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--a2);font-weight:700}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(36px,5.6vw,60px);line-height:1.02;margin:6px 0 12px;text-shadow:0 3px 0 var(--dark)}
+  .hode p{margin:0;font-size:17px;color:color-mix(in srgb,var(--krem) 85%,transparent);max-width:44ch}
+  .hode .merker{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .hode .merker span{font-size:13.5px;font-weight:700;background:var(--dark);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+  .hode .merker b{color:var(--a)}
+  .hode .merker span:empty{display:none}
+  .hode figure{margin:-54px 0 -54px;position:relative;transform:rotate(2.2deg)}
+  .hode figure img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border:8px solid var(--krem);border-radius:10px;box-shadow:0 10px 0 rgba(0,0,0,.35),0 26px 50px rgba(0,0,0,.5)}
+  .hode figure::before{content:"";position:absolute;inset:0;transform:rotate(-5deg) translate(-14px,10px);background:var(--a);border-radius:10px;z-index:-1;box-shadow:0 8px 0 rgba(0,0,0,.3)}
+  h2{font-family:'Fraunces',serif;font-weight:700;font-size:26px;margin:46px 0 4px;display:flex;align-items:center;gap:12px}
+  h2::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--a);box-shadow:0 3px 0 var(--dark);flex:none}
+  .sub{color:color-mix(in srgb,var(--krem) 72%,transparent);margin:0 0 18px;font-size:15px}
+  /* Fliser med «trykt» skygge */
+  .hele{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+  .stor{position:relative;display:flex;flex-direction:column;gap:4px;background:linear-gradient(160deg,var(--bg3),var(--card));border:1px solid var(--line);border-radius:16px;padding:18px 18px 18px 22px;text-decoration:none;color:var(--krem);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 7px 0 var(--dark),0 16px 26px rgba(0,0,0,.3);transition:transform .14s,box-shadow .14s;overflow:hidden}
+  .stor::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c,var(--a))}
+  .stor:hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 11px 0 var(--dark),0 24px 34px rgba(0,0,0,.4)}
+  .stor:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 3px 0 var(--dark)}
+  .stor strong{font-family:'Fraunces',serif;font-size:19px;line-height:1.2}
+  .stor span{font-size:14px;color:color-mix(in srgb,var(--krem) 72%,transparent)}
+  /* Delene */
+  .del{position:relative;display:grid;grid-template-columns:190px 1fr;gap:26px;align-items:center;background:linear-gradient(160deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:20px;padding:18px 22px 18px 18px;margin:0 0 34px 18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 0 var(--dark),0 20px 34px rgba(0,0,0,.32)}
+  .del .bilde{position:relative;transform:rotate(-2deg);margin:-16px 0 -16px -34px}
+  .del:nth-of-type(even) .bilde{transform:rotate(1.6deg)}
+  .del .bilde img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border:6px solid var(--krem);border-radius:8px;box-shadow:0 7px 0 rgba(0,0,0,.35),0 16px 26px rgba(0,0,0,.4);background:var(--bg3)}
+  .del .nr{position:absolute;left:-12px;top:-12px;width:42px;height:42px;border-radius:50%;background:var(--a);color:var(--a-ink);font-family:'Fraunces',serif;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 var(--dark);z-index:2;transform:rotate(2deg)}
+  .del small{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--a2);font-weight:700}
+  .del h3{font-family:'Fraunces',serif;font-size:25px;margin:2px 0 12px;line-height:1.12}
+  .del.start{background:linear-gradient(135deg,color-mix(in srgb,var(--a) 26%,var(--bg3)),var(--card) 75%);border-color:color-mix(in srgb,var(--a) 55%,var(--line))}
+  .del.start h3{font-size:29px}
+  .del.start p{margin:-6px 0 12px;font-size:15px;color:color-mix(in srgb,var(--krem) 80%,transparent)}
+  .knapper{display:flex;gap:10px;flex-wrap:wrap}
+  .kn{display:inline-flex;align-items:center;min-height:44px;font-size:15px;font-weight:700;text-decoration:none;border-radius:11px;padding:8px 15px;border:1px solid var(--line);color:var(--krem);background:var(--bg3);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 0 var(--dark);transition:transform .1s,box-shadow .1s}
+  .kn:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 0 var(--dark);border-color:var(--a)}
+  .kn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--dark)}
+  .kn.hoved{background:var(--a);color:var(--a-ink);border-color:var(--a)}
+  a:focus-visible,select:focus-visible{outline:3px solid var(--krem);outline-offset:3px}
+  .hist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .hk{display:flex;gap:12px;align-items:center;background:linear-gradient(160deg,var(--bg3),var(--card));border:1px solid var(--line);border-radius:14px;padding:10px;text-decoration:none;color:var(--krem);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 5px 0 var(--dark);transition:transform .12s}
+  .hk:hover{transform:translateY(-3px);border-color:var(--a)}
+  .hk img{width:66px;height:66px;object-fit:cover;border-radius:8px;border:3px solid var(--krem);flex:none;background:var(--bg3);transform:rotate(-2deg)}
   .hk strong{font-family:'Fraunces',serif;font-size:16.5px;line-height:1.2}
-  .velg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:20px}
-  @media (max-width:620px){.del{grid-template-columns:1fr}.del img{width:100%;aspect-ratio:16/9}}
+  .velg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;margin-top:20px}
+  @media (max-width:760px){.hode{grid-template-columns:1fr;padding:24px}.hode figure{margin:0 0 6px;order:-1}}
+  @media (max-width:620px){.del{grid-template-columns:1fr;margin-left:0;gap:14px}.del .bilde{margin:-26px 0 0 0;max-width:260px}}
   @media (prefers-reduced-motion:reduce){*{transition-duration:.001ms !important}}
 </style>
+<link rel="stylesheet" id="temafarger" href="">
 </head>
 <body>
 <!-- Én side per tema: tema.html?l=kristendommen. Samler alt som hører til temaet. Leser oversikt.js. -->
@@ -67,32 +87,38 @@ const m=new URLSearchParams(location.search).get('l'),l=K[m];
 bytt.innerHTML=(l?'':'<option value="">Velg tema …</option>')+Object.entries(K).map(([k,x])=>`<option value="${k}"${k===m?' selected':''}>${esc(x.navn)}</option>`).join('');
 bytt.onchange=()=>{if(bytt.value)location.href='tema.html?l='+bytt.value;};
 if(!l){
-  inn.innerHTML='<h1>Velg tema</h1><div class="velg">'+Object.entries(K).map(([k,x])=>`<a class="stor" style="--c:var(--gold)" href="tema.html?l=${k}"><strong>${esc(x.navn)}</strong><span>${x.tema.length} deler</span></a>`).join('')+'</div>';
+  inn.innerHTML='<h1>Velg tema</h1><div class="velg">'+Object.entries(K).map(([k,x])=>`<a class="stor" href="tema.html?l=${k}"><strong>${esc(x.navn)}</strong><span>${x.tema.length} deler</span></a>`).join('')+'</div>';
   return;
 }
 document.title='Krøniken – '+l.navn;
+document.getElementById('temafarger').href=m+'/tema.css';
 try{sessionStorage.setItem('kroniken-tema',m);}catch(e){}
 const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
 const b=f=>`${m}/bilder/${f}`;
 const hovedIBok=l.hoved&&/[?&]p=/.test(l.hoved);
 const alle=l.tema.map(t=>m+'/'+t.id).join(',');
+const lite=l.navn.charAt(0).toLowerCase()+l.navn.slice(1);
 const hele=[
-  l.hoved?['gold',`${m}/${l.hoved}`,'Hovedpresentasjon',`Oversikt over hele ${l.type||'temaet'}`]:null,
-  ['gold',`bok.html?p=${m}/${hovedIBok?'hoved':l.tema[0].id}`,'Elevbok','Les fra første kapittel'],
-  ['peri',`quiz.html?ls=${m}`,'Klassequiz','Velg deler og spillmodus'],
-  ['teal',`oveark.html?t=${alle}&tittel=${encodeURIComponent(l.navn)}`,'Øveark for hele temaet','Viktige ord og øvespørsmål'],
-  ['crimson','../religionsprove/index.html?tema='+m,'Lag prøve','Temaet er valgt · krever innlogging']
-].filter(Boolean);
-inn.innerHTML=`<div class="hode"><img src="${b(l.bilde)}" alt=""><div><small>${ord[l.type]||'Tema'}</small><h1>${esc(l.navn)}</h1></div></div>
-<h2>Hele temaet</h2><p class="sub">Det som gjelder alle delene samlet.</p>
-<div class="hele">${hele.map(([c,h,t,s])=>`<a class="stor" style="--c:var(--${c})" href="${h}"><strong>${t}</strong><span>${s}</span></a>`).join('')}</div>
-<h2>Del for del</h2><p class="sub">Hver del har en presentasjon til tavla, et oppgaveark, et kapittel i elevboka og et øveark.</p>
-${l.tema.map((t,i)=>{const p=m+'/'+t.id;return `<section class="del"><img src="${b(t.bilde)}" alt="" loading="lazy"><div><small>Del ${i+1} · ${esc(t.om)}</small><h3>${esc(t.tittel)}</h3>
+  ['var(--a)','bok.html#'+m,'Elevbok','Hele boka om '+lite],
+  ['#7C8CE0',`quiz.html?ls=${m}`,'Klassequiz','Velg deler og spillmodus'],
+  ['#4FB8A8',`oveark.html?t=${alle}&tittel=${encodeURIComponent(l.navn)}`,'Øveark','Viktige ord og øvespørsmål'],
+  ['#C9586B','../religionsprove/index.html?tema='+m,'Lag prøve','Temaet er valgt · krever innlogging']
+];
+const antH=l.tema.length;
+/* Hovedpresentasjonen står først i rekka, som en oversikt før delene */
+const start=l.hoved?`<section class="del start"><div class="bilde"><img src="${b(l.bilde)}" alt=""></div><div><small>Start her · oversikt</small><h3>Kort om ${esc(lite)}</h3><p>Hovedpresentasjonen gir oversikten over hele ${l.type||'temaet'} før dere går i dybden.</p>
+<div class="knapper"><a class="kn hoved" href="${m}/${l.hoved}">Hovedpresentasjon</a>${hovedIBok?`<a class="kn" href="bok.html?p=${m}/hoved">Elevbok</a>`:''}</div></div></section>`:'';
+inn.innerHTML=`<div class="hode"><div><small>${ord[l.type]||'Tema'}</small><h1>${esc(l.navn)}</h1><p>Alt til ${esc(lite)} på ett sted: presentasjoner, oppgaveark, elevbok, quiz og lesehistorier.</p><div class="merker"><span><b>${antH}</b> deler</span><span id="antHist"></span></div></div><figure><img src="${b(l.bilde)}" alt=""></figure></div>
+<h2>Del for del</h2><p class="sub">Hver del har en presentasjon til tavla, et oppgaveark, et kapittel i elevboka, en quiz og et øveark.</p>
+${start}${l.tema.map((t,i)=>{const p=m+'/'+t.id;return `<section class="del"><div class="bilde"><span class="nr">${i+1}</span><img src="${b(t.bilde)}" alt="" loading="lazy"></div><div><small>${esc(t.om)}</small><h3>${esc(t.tittel)}</h3>
 <div class="knapper" aria-label="${esc(t.tittel)}"><a class="kn hoved" href="presentasjon.html?p=${p}">Presentasjon</a><a class="kn" href="oppgaver.html?p=${p}">Oppgaveark</a><a class="kn" href="bok.html?p=${p}">Elevbok</a><a class="kn" href="quiz.html?ls=${m}&t=${t.id}">Quiz</a><a class="kn" href="oveark.html?t=${p}">Øveark</a></div></div></section>`;}).join('')}
+<h2>Hele temaet</h2><p class="sub">Det som går på tvers av delene.</p>
+<div class="hele">${hele.map(([c,h,t,s])=>`<a class="stor" style="--c:${c}" href="${h}"><strong>${t}</strong><span>${s}</span></a>`).join('')}</div>
 <div id="hist"></div>`;
 /* Lesehistoriene til temaet */
 const s=document.createElement('script');s.src=m+'/historier.js';
 s.onload=()=>{const H=window.HISTORIER;if(!H||!H.historier||!H.historier.length)return;
+  document.getElementById('antHist').innerHTML='<b>'+H.historier.length+'</b> lesehistorier';
   document.getElementById('hist').innerHTML=`<h2>Lesehistorier</h2><p class="sub">Fortellinger for lesetrening, med ordforklaringer og spørsmål. Les på skjerm eller skriv ut.</p><div class="hist">${H.historier.map(h=>`<a class="hk" href="historier.html#${h.id}">${h.bilde?`<img src="${b(h.bilde)}" alt="" loading="lazy">`:''}<strong>${esc(h.tittel)}</strong></a>`).join('')}</div>`;};
 document.body.appendChild(s);
 })();
