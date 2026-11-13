@@ -157,8 +157,8 @@ settFs(fs);$('mindre').onclick=()=>settFs(fs-2);$('storre').onclick=()=>settFs(f
 /* Rekkefølgen på kapitlene, hentet fra oversikt.js */
 const rekke=[];
 Object.entries(window.KRONIKEN||{}).forEach(([mappe,l])=>{
-  /* Oversiktskapittel bare der hovedpresentasjonen er en vanlig innholdsfil (hoved.js). Kristendommen har en egen HTML-fil og hoppes over. */
-  if(l.hoved&&/[?&]p=/.test(l.hoved))rekke.push({id:mappe+'/hoved',mappe,ls:l.navn,nr:'Oversikt',tittel:'Kort om '+l.navn.charAt(0).toLowerCase()+l.navn.slice(1),bilde:l.bilde});
+  /* Oversiktskapittel der det finnes en hoved.js. Kristendommen har hovedpresentasjonen i en egen HTML-fil, men en hoved.js bare for boka (bokhoved i oversikt.js). */
+  if(l.hoved&&(l.bokhoved||/[?&]p=/.test(l.hoved)))rekke.push({id:mappe+'/hoved',mappe,ls:l.navn,nr:'Oversikt',tittel:'Kort om '+l.navn.charAt(0).toLowerCase()+l.navn.slice(1),bilde:l.bilde});
   l.tema.forEach((t,i)=>rekke.push({id:mappe+'/'+t.id,mappe,ls:l.navn,nr:'Kapittel '+(i+1),tittel:t.tittel,bilde:t.bilde}));
 });
 

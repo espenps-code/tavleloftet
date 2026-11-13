@@ -1,6 +1,6 @@
 /* Krøniken – oversikt over alt innhold. Menyen, quizen og prøveportalen leser denne. */
 window.KRONIKEN={
-  kristendommen:{navn:'Kristendommen',type:'religionen',hoved:'hovedpresentasjon.html',bilde:'tittel-kors.webp',
+  kristendommen:{navn:'Kristendommen',type:'religionen',hoved:'hovedpresentasjon.html',bokhoved:true,bilde:'tittel-kors.webp',
     verktoy:{oppgaver:'skriftruller.webp',historier:'sonnen.webp',quiz:'stormen.webp'},tema:[
     {id:'tema1-historie',tittel:'Fra Jesus til i dag',om:'Opprinnelse og historie',bilde:'vandring.webp'},
     {id:'tema2-bibelen',tittel:'Bibelen og fortellingene',om:'Hellige tekster og fortellinger',bilde:'bibelen.webp'},

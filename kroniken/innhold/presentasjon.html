@@ -43,7 +43,7 @@ Object.entries(KRONIKEN).forEach(([mappe,l])=>{
       <a class="vk" href="oppgaver.html"><i class="vb"><img src="${b(v.oppgaver)}" alt=""></i><span><strong>Oppgavesett</strong><small>To sider til utskrift per tema, med fasit</small></span></a>
       <a class="vk" href="historier.html"><i class="vb"><img src="${b(v.historier)}" alt=""></i><span><strong>Lesehistorier</strong><small>Fortellinger med ordforklaringer og spørsmål</small></span></a>
       <a class="vk" href="quiz.html"><i class="vb"><img src="${b(v.quiz)}" alt=""></i><span><strong>Quiz</strong><small>Klassequiz med fem spillmoduser</small></span></a>
-      <a class="vk" href="bok.html?p=${mappe}/${l.hoved&&/[?&]p=/.test(l.hoved)?'hoved':l.tema[0].id}"><i class="vb"><img src="${b(l.bilde)}" alt=""></i><span><strong>Elevbok</strong><small>Lesebok for elevene, med kapitler man blar i</small></span></a>
+      <a class="vk" href="bok.html?p=${mappe}/${l.hoved&&(l.bokhoved||/[?&]p=/.test(l.hoved))?'hoved':l.tema[0].id}"><i class="vb"><img src="${b(l.bilde)}" alt=""></i><span><strong>Elevbok</strong><small>Lesebok for elevene, med kapitler man blar i</small></span></a>
     </div></section>`);
 });
 /* Karusell: kortet nærmest midten er «aktivt» og vises størst */
