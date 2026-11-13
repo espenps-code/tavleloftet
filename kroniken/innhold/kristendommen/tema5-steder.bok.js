@@ -6,7 +6,7 @@ deler:[
  'Døpefonten er karet med vann som brukes til dåp. Orgelet er det store instrumentet med piper som brukes til salmene. Den store delen av rommet, der menigheten sitter, kalles kirkeskipet.',
  'I tårnet henger klokkene. De ringer før gudstjenesten og ved høytider, bryllup og gravferd.']},
 {t:'Kirker i Norge',bilde:'stavkirke.webp',a:[
- 'En [[stavkirke]] er en trekirke fra middelalderen, bygd med stående stolper. Det ble bygd rundt tusen stavkirker i Norge, og 28 står igjen.',
+ 'En [[stavkirke]] er en trekirke fra middelalderen, bygd med stående stolper. Det ble trolig bygd over tusen stavkirker i Norge, og 28 står igjen.',
  'Nidarosdomen i Trondheim er Norges nasjonalhelligdom. Den er bygd over graven til Olav den hellige. En kirke der en biskop har sin plass, kalles en [[domkirke]] eller katedral.',
  'Den norske kirke har over 1600 kirker.']},
 {t:'Jerusalem og Betlehem',bilde:'jerusalem.webp',a:[

@@ -16,7 +16,7 @@ lysbilder:[
 {type:'punkter',kicker:'Sakrament',tittel:'Nattverden',hoyre:true,bilde:{fil:'nattverd.webp',alt:'En kalk, brød og oblater på et bord med to lys'},punkter:[
  'Menigheten deler **brød og vin**, slik Jesus gjorde med disiplene skjærtorsdag.',
  'Brødet er ofte en tynn kjeks som kalles [[oblat]].',
- 'Kristne tror at Jesus er til stede i måltidet på en spesiell måte.',
+ 'Mange kristne tror at Jesus er til stede i måltidet på en spesiell måte.',
  'Nattverden viser også fellesskap: Alle får det samme.'],
  n:'De ulike kirkene forklarer nattverden forskjellig. Katolikker tror at brødet og vinen blir Jesu kropp og blod. Mange protestanter ser på måltidet mest som et minne.'},
 {type:'snu',kicker:'Søndag klokka 11',tittel:'Hva skjer i en gudstjeneste?',kol:3,kort:[

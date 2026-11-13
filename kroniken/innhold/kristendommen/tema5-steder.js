@@ -13,7 +13,7 @@ lysbilder:[
  {t:'Tårnet og klokkene',p:'Klokkene ringer før gudstjenesten og ved høytider, bryllup og gravferd.'}],
  n:['Delen lengst framme, der alteret står, kalles koret.','Mange gamle kirker er bygd slik at alteret står mot øst, der sola står opp. Det er et bilde på oppstandelsen.']},
 {type:'punkter',kicker:'Norge',tittel:'Kirker i Norge',bilde:{fil:'stavkirke.webp',alt:'En stavkirke med dragehoder i en fjelldal'},punkter:[
- '[[Stavkirker]] er trekirker fra middelalderen. Det ble bygd rundt tusen, og 28 står igjen.',
+ '[[Stavkirker]] er trekirker fra middelalderen. Det ble trolig bygd over tusen, og 28 står igjen.',
  '**Nidarosdomen** i Trondheim er Norges nasjonalhelligdom, bygd over graven til Olav den hellige.',
  'Den norske kirke har over 1600 kirker. Nesten alle bygder og byer har en.'],
  n:['Urnes stavkirke i Luster står på UNESCOs verdensarvliste. Borgund og Heddal er andre kjente stavkirker.','En domkirke eller katedral er kirken der en biskop har sin plass.']},
@@ -33,7 +33,7 @@ lysbilder:[
  'I dag går mange pilegrimsleden for å få ro, tenke eller oppleve natur og historie.'],
  n:'Pilegrimsleden fra Oslo til Trondheim er rundt 640 km. Ikke alle som går, er kristne.'},
 {type:'pastand',kicker:'Hva tror du?',tittel:'Sant eller usant?',pastander:[
- {t:'Det finnes nesten tusen stavkirker i Norge i dag.',sant:false,f:'Det ble bygd rundt tusen, men bare 28 står igjen.'},
+ {t:'Det finnes nesten tusen stavkirker i Norge i dag.',sant:false,f:'Det ble trolig bygd over tusen, men bare 28 står igjen.'},
  {t:'Vatikanstaten er verdens minste land.',sant:true,f:'Det ligger inne i byen Roma.'},
  {t:'Jerusalem er hellig for tre religioner.',sant:true,f:'Jødedommen, kristendommen og islam.'},
  {t:'Kristne må dra på pilegrimsreise én gang i livet.',sant:false,f:'Det er frivillig. I islam er pilegrimsreisen en plikt for dem som kan.'}],

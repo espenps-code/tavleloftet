@@ -6,7 +6,7 @@ deler:[
  'En [[fadder]] er en voksen som lover å være der for barnet. Noen kirker døper ikke spedbarn. Der blir man døpt når man selv kan velge.']},
 {t:'Nattverden',bilde:'nattverd.webp',a:[
  'I nattverden deler menigheten brød og vin, slik Jesus gjorde med disiplene skjærtorsdag. Brødet er ofte en tynn kjeks som kalles oblat.',
- 'Kristne tror at Jesus er til stede i måltidet på en spesiell måte. Nattverden viser også fellesskap: Alle får det samme. I Den norske kirke er dåp og nattverd de to hellige handlingene som kalles [[sakrament]].']},
+ 'Mange kristne tror at Jesus er til stede i måltidet på en spesiell måte. Nattverden viser også fellesskap: Alle får det samme. I Den norske kirke er dåp og nattverd de to hellige handlingene som kalles [[sakrament]].']},
 {t:'Gudstjenesten',bilde:'kirkerom.webp',a:[
  'En gudstjeneste følger en fast rekkefølge, som kalles [[liturgi]]. Kirkeklokkene kaller folk til kirken. Menigheten synger salmer, ofte til orgel. Det leses høyt fra Bibelen, og presten forklarer en av tekstene.',
  'Så ber menigheten sammen og deler brød og vin. Til slutt kommer [[velsignelsen|Velsignelse]]. Da ber presten om at Gud skal være med alle på veien hjem.']},
