@@ -51,7 +51,12 @@ function oppsett(){
   </div></div>
   <div class="bunn"><button class="knapp" id="lag">Lag spill</button><span class="muted" id="feil"></span></div>`;
   const tema=()=>{$('#tema').innerHTML=KRONIKEN[$('#ls').value].tema.map((t,i)=>`<label><input type="checkbox" value="${t.id}"${i===0?' checked':''}><span><b>Tema ${i+1}: ${esc(t.tittel)}</b><small>${esc(t.om)}</small></span></label>`).join('');};
-  $('#ls').onchange=tema;tema();
+  $('#ls').onchange=tema;
+  /* ?ls=islam&t=tema2-koranen velger livssyn og del på forhånd (brukes fra temasidene) */
+  const Qp=new URLSearchParams(location.search),qls=Qp.get('ls'),qt=Qp.get('t');
+  if(qls&&KRONIKEN[qls])$('#ls').value=qls;
+  tema();
+  if(qt&&[...document.querySelectorAll('#tema input')].some(i=>i.value===qt))document.querySelectorAll('#tema input').forEach(i=>i.checked=i.value===qt);
   $('#modus').onchange=()=>{$('#lagvalg').hidden=document.querySelector('[name=modus]:checked').value!=='lag';};
   $('#lag').onclick=async()=>{
     const ls=$('#ls').value,ids=[...document.querySelectorAll('#tema input:checked')].map(x=>x.value);

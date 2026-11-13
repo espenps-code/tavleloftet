@@ -83,7 +83,7 @@
     <div class="brand">
       <span class="navn">Krøniken<span class="d">.</span></span>
       <span class="sub">Mine grupper</span>
-      <a class="pille" href="index.html">← Alle verktøy</a>
+      <a class="pille" href="index.html#verktoy">← Krøniken</a>
     </div>
     <div class="who" id="who"></div>
   </div>
@@ -105,8 +105,8 @@
 
   <section id="app" class="hidden">
     <h1 class="tit">Mine grupper</h1>
-    <p class="lead">Lag klassen én gang – så kan du bruke den i Arbeidsloggen, Prøveportalen og Religionssimulatoren.</p>
-    <div class="personvern"><span>🔒</span><span><b>Bare du ser navnene.</b> Gruppene lagres privat på kontoen din. Prøver og simulator lagrer bare koder og kallenavn – navnene hentes herfra når du ser på resultatene. Bruk fornavn, eller fornavn + forbokstav hvis to heter det samme.</span></div>
+    <p class="lead">Lag klassen én gang – så kan du bruke den i Arbeidsloggen og Prøveportalen.</p>
+    <div class="personvern"><span>🔒</span><span><b>Bare du ser navnene.</b> Gruppene lagres privat på kontoen din. Prøvene lagrer bare koder og kallenavn – navnene hentes herfra når du ser på resultatene. Bruk fornavn, eller fornavn + forbokstav hvis to heter det samme.</span></div>
     <div class="to-kol">
       <div class="panel">
         <h2>Grupper</h2>
@@ -134,7 +134,7 @@
 
 <script>
 /* ============================================================
-   MINE GRUPPER – felles for Arbeidslogg, Prøveportal og Simulator
+   MINE GRUPPER – felles for Arbeidslogg og Prøveportal
      aa_grupper/{id} { eier, navn, elever:[{id,navn}], opprettet,
                        kallenavn:{ klasseId:{ elevId:"Ravn-42" } } }   (kun læreren kan lese)
    Brukes av: aa_perioder.gruppeId, prover.gruppeId, klasser.gruppeId
@@ -201,7 +201,6 @@ function brukMerker(id){
   const m=[];
   if(b.logg) m.push(`<span class="merke" style="--c:var(--teal)">Arbeidslogg · ${b.logg}</span>`);
   if(b.prove) m.push(`<span class="merke" style="--c:var(--crimson)">Prøver · ${b.prove}</span>`);
-  if(b.sim) m.push(`<span class="merke" style="--c:var(--peri)">Simulator · ${b.sim}</span>`);
   return `<div class="bruk">${m.join("")}</div>`;
 }
 function tegnListe(){
@@ -253,7 +252,7 @@ $("slettBtn").addEventListener("click", async ()=>{
   const g=grupper.find(x=>x.id===valgtId); if(!g) return;
   const b=bruk[g.id]||{};
   if(b.logg) return st("gStatus",`Gruppa brukes i ${b.logg} periode(r) i Arbeidsloggen. Slett periodene først.`,false);
-  const advarsel = (b.prove||b.sim) ? `\n\nGruppa er brukt i ${[b.prove?b.prove+" prøve(r)":"", b.sim?b.sim+" simulator-klasse(r)":""].filter(Boolean).join(" og ")}. Der vil navnene forsvinne – bare koder og kallenavn blir igjen.` : "";
+  const advarsel = (b.prove||b.sim) ? `\n\nGruppa er brukt i ${[b.prove?b.prove+" prøve(r)":"", b.sim?b.sim+" annen klasse(r)":""].filter(Boolean).join(" og ")}. Der vil navnene forsvinne – bare koder og kallenavn blir igjen.` : "";
   if(!confirm(`Slette gruppa «${g.navn}»?${advarsel}`)) return;
   try{ await db.collection("aa_grupper").doc(g.id).delete(); await last(); velg(null); st("gStatus","Gruppa er slettet.",true); }
   catch(e){ st("gStatus",feilTekst(e),false); }

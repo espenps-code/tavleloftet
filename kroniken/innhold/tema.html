@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – tema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--night:#161433;--night-2:#201d47;--night-3:#2b2760;--parchment:#F3E9D2;--gold:#E8B04B;--gold-soft:#f0c97a;--teal:#4FB8A8;--crimson:#C9586B;--peri:#7C8CE0;--line:rgba(243,233,210,0.16)}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:var(--night);color:var(--parchment);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold-soft)}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 22px 70px}
+  .topp{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .tilbake{font-size:15px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 15px}
+  .tilbake:hover{border-color:var(--gold)}
+  .bytt{background:var(--night-2);color:var(--parchment);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:15px}
+  .hode{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);min-height:240px;display:flex;align-items:flex-end}
+  .hode img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%}
+  .hode::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,20,51,.1) 20%,rgba(22,20,51,.92))}
+  .hode div{position:relative;z-index:1;padding:22px 26px}
+  .hode small{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-soft);font-weight:700}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(32px,5vw,50px);line-height:1.05;margin:4px 0 0}
+  h2{font-family:'Fraunces',serif;font-weight:700;font-size:24px;margin:36px 0 4px}
+  .sub{color:rgba(243,233,210,0.7);margin:0 0 16px;font-size:15px}
+  .hele{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+  .stor{display:flex;flex-direction:column;gap:4px;background:var(--night-2);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:16px 18px;text-decoration:none;color:var(--parchment);transition:transform .12s,border-color .12s}
+  .stor:hover{transform:translateY(-2px);border-color:var(--c)}
+  .stor strong{font-family:'Fraunces',serif;font-size:19px}
+  .stor span{font-size:14px;color:rgba(243,233,210,0.72)}
+  .del{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+  .del img{width:150px;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--night-3);display:block}
+  .del small{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-soft);font-weight:700}
+  .del h3{font-family:'Fraunces',serif;font-size:22px;margin:0 0 2px;line-height:1.15}
+  .del p{margin:0 0 10px;font-size:14.5px;color:rgba(243,233,210,0.72)}
+  .knapper{display:flex;gap:8px;flex-wrap:wrap}
+  .kn{display:inline-flex;align-items:center;min-height:42px;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;padding:8px 14px;border:1px solid var(--line);color:var(--parchment);background:rgba(22,20,51,.6)}
+  .kn:hover{border-color:var(--gold);background:rgba(232,176,75,.1)}
+  .kn.hoved{background:var(--gold);color:var(--night);border-color:var(--gold)}
+  .kn.hoved:hover{filter:brightness(1.06);background:var(--gold)}
+  a:focus-visible,select:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
+  .hist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .hk{display:flex;gap:12px;align-items:center;background:var(--night-2);border:1px solid var(--line);border-radius:14px;padding:10px;text-decoration:none;color:var(--parchment)}
+  .hk:hover{border-color:var(--gold)}
+  .hk img{width:64px;height:64px;object-fit:cover;border-radius:9px;flex:none;background:var(--night-3)}
+  .hk strong{font-family:'Fraunces',serif;font-size:16.5px;line-height:1.2}
+  .velg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:20px}
+  @media (max-width:620px){.del{grid-template-columns:1fr}.del img{width:100%;aspect-ratio:16/9}}
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.001ms !important}}
+</style>
+</head>
+<body>
+<!-- Én side per tema: tema.html?l=kristendommen. Samler alt som hører til temaet. Leser oversikt.js. -->
+<div class="wrap">
+  <div class="topp">
+    <a class="tilbake" href="../portal/index.html">← Alle temaer</a>
+    <select class="bytt" id="bytt" aria-label="Bytt tema"></select>
+  </div>
+  <main id="inn"></main>
+</div>
+<script src="oversikt.js"></script>
+<script>
+(function(){
+const K=window.KRONIKEN||{},esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const inn=document.getElementById('inn'),bytt=document.getElementById('bytt');
+const m=new URLSearchParams(location.search).get('l'),l=K[m];
+bytt.innerHTML=(l?'':'<option value="">Velg tema …</option>')+Object.entries(K).map(([k,x])=>`<option value="${k}"${k===m?' selected':''}>${esc(x.navn)}</option>`).join('');
+bytt.onchange=()=>{if(bytt.value)location.href='tema.html?l='+bytt.value;};
+if(!l){
+  inn.innerHTML='<h1>Velg tema</h1><div class="velg">'+Object.entries(K).map(([k,x])=>`<a class="stor" style="--c:var(--gold)" href="tema.html?l=${k}"><strong>${esc(x.navn)}</strong><span>${x.tema.length} deler</span></a>`).join('')+'</div>';
+  return;
+}
+document.title='Krøniken – '+l.navn;
+const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
+const b=f=>`${m}/bilder/${f}`;
+const hovedIBok=l.hoved&&/[?&]p=/.test(l.hoved);
+const alle=l.tema.map(t=>m+'/'+t.id).join(',');
+const hele=[
+  l.hoved?['gold',`${m}/${l.hoved}`,'Hovedpresentasjon',`Oversikt over hele ${l.type||'temaet'}`]:null,
+  ['gold',`bok.html?p=${m}/${hovedIBok?'hoved':l.tema[0].id}`,'Elevbok','Les fra første kapittel'],
+  ['peri',`quiz.html?ls=${m}`,'Klassequiz','Velg deler og spillmodus'],
+  ['teal',`oveark.html?t=${alle}&tittel=${encodeURIComponent(l.navn)}`,'Øveark for hele temaet','Viktige ord og øvespørsmål'],
+  ['crimson','../religionsprove/index.html','Lag prøve','Prøveportalen · krever innlogging']
+].filter(Boolean);
+inn.innerHTML=`<div class="hode"><img src="${b(l.bilde)}" alt=""><div><small>${ord[l.type]||'Tema'}</small><h1>${esc(l.navn)}</h1></div></div>
+<h2>Hele temaet</h2><p class="sub">Det som gjelder alle delene samlet.</p>
+<div class="hele">${hele.map(([c,h,t,s])=>`<a class="stor" style="--c:var(--${c})" href="${h}"><strong>${t}</strong><span>${s}</span></a>`).join('')}</div>
+<h2>Del for del</h2><p class="sub">Hver del har en presentasjon til tavla, et oppgaveark, et kapittel i elevboka og et øveark.</p>
+${l.tema.map((t,i)=>{const p=m+'/'+t.id;return `<section class="del"><img src="${b(t.bilde)}" alt="" loading="lazy"><div><small>Del ${i+1} · ${esc(t.om)}</small><h3>${esc(t.tittel)}</h3>
+<div class="knapper" aria-label="${esc(t.tittel)}"><a class="kn hoved" href="presentasjon.html?p=${p}">Presentasjon</a><a class="kn" href="oppgaver.html?p=${p}">Oppgaveark</a><a class="kn" href="bok.html?p=${p}">Elevbok</a><a class="kn" href="quiz.html?ls=${m}&t=${t.id}">Quiz</a><a class="kn" href="oveark.html?t=${p}">Øveark</a></div></div></section>`;}).join('')}
+<div id="hist"></div>`;
+/* Lesehistoriene til temaet */
+const s=document.createElement('script');s.src=m+'/historier.js';
+s.onload=()=>{const H=window.HISTORIER;if(!H||!H.historier||!H.historier.length)return;
+  document.getElementById('hist').innerHTML=`<h2>Lesehistorier</h2><p class="sub">Fortellinger for lesetrening, med ordforklaringer og spørsmål. Les på skjerm eller skriv ut.</p><div class="hist">${H.historier.map(h=>`<a class="hk" href="historier.html#${h.id}">${h.bilde?`<img src="${b(h.bilde)}" alt="" loading="lazy">`:''}<strong>${esc(h.tittel)}</strong></a>`).join('')}</div>`;};
+document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>
