@@ -18,9 +18,13 @@
       </a>
     <nav class="nav" aria-label="Hovedmeny">
       <a href="index.html">Forside</a>
+      <a href="index.html#prosjekter">Prosjekter</a>
       <a href="spill.html">Spill</a>
       <a href="skreddersydd.html" aria-current="page">Skreddersydd</a>
-      <a href="#logg-inn">Logg inn i din verden</a>
+      <span class="snart-lenke">Lærerverktøy <small>Kommer</small></span>
+      <span class="snart-lenke">Til utskrift <small>Kommer</small></span>
+      <a href="index.html#slik">Slik er det laget</a>
+      <a href="elev/">Elevinnlogging</a>
       <a class="btn btn-amber btn-liten" href="https://myntland.no">Myntland</a>
     </nav>
   </div>
@@ -33,7 +37,7 @@
       <p class="eyebrow">Skreddersydd læring</p>
       <h1>En verden for én elev</h1>
       <p class="stor">Noen elever trenger mer enn en vanlig oppgavebok. Jeg lager en egen læringsverden bygget rundt det eleven elsker, med oppgaver som treffer akkurat det eleven skal øve på.</p>
-      <div class="knapperad"><a class="btn btn-amber" href="#kontakt">Fortell om eleven</a><a class="btn btn-ghost" href="#slik-fungerer">Slik fungerer det</a></div>
+      <div class="knapperad"><a class="btn btn-amber" href="#slik-fungerer">Slik fungerer det</a><a class="btn btn-ghost" href="#logg-inn">Har du allerede en kode?</a></div>
     </div>
     <div class="sidetopp-bilde"><img src="img/dinoparken.webp" alt="Skjermbilde fra Dinoparken: en 3D-park med innhegninger til salgs, mynter og meny for dinobibliotek, quiz og tidslinje"></div>
   </div>
@@ -50,7 +54,7 @@
       <div class="mork-kort"><span class="nr">1</span><h3>Fortell om eleven</h3><p>Hva elsker eleven, og hva skal øves på? Det er alt jeg trenger – ingen navn, ingen diagnoser.</p></div>
       <div class="mork-kort"><span class="nr b">2</span><h3>Du får en skisse</h3><p>Jeg foreslår tema, belønningssystem og oppgavetyper. Du sier ja, nei eller «litt mer av dette».</p></div>
       <div class="mork-kort"><span class="nr c">3</span><h3>Eleven tester</h3><p>Eleven prøver verdenen i noen uker. Jeg justerer vanskegrad og oppgaver etter hvordan det går.</p></div>
-      <div class="mork-kort"><span class="nr d">4</span><h3>Egen kode inn</h3><p>Verdenen bor her på Tavleloftet. Eleven logger inn med en egen kode – på iPad, PC eller hjemme.</p></div>
+      <div class="mork-kort"><span class="nr d">4</span><h3>Egen kode inn</h3><p>Verdenen bor her på Tavleloftet. Eleven logger inn med en egen kode – på iPad, PC eller hjemme – og framgangen følger koden, ikke enheten.</p></div>
     </div>
     <div class="brikker mork" style="align-items:center;gap:12px">
       <strong style="color:var(--lys);margin-right:6px">Eksempler på hva som kan øves:</strong><span>Klokka</span><span>Penger og veksling</span><span>Tiervenner</span><span>Lyder i ord</span><span>Lesing</span><span>Gangetabellen</span><span>Skriving</span>
@@ -92,7 +96,7 @@
       </div>
     </div>
     <div class="vilkar-linje">
-      <span><strong>Alltid med:</strong> første skoleår og én justeringsrunde.</span>
+      <span><strong>Alltid med:</strong> første skoleår, én justeringsrunde og framgangsrapport til den voksne.</span>
       <span><strong>Fra år to:</strong> 990 kr i året per verden for drift og små justeringer.</span>
       <span><strong style="color:var(--rav)">Pilotpris:</strong> 30 % rabatt for de tre første skolene.</span>
       <span><strong>Begrenset kapasitet:</strong> Jeg er lærer på dagtid og tar bare noen få nye verdener per halvår.</span>
@@ -102,18 +106,18 @@
 
 <section class="seksjon lys-seksjon" id="logg-inn" aria-labelledby="logg-tittel">
   <div class="wrap to-kol" style="align-items:flex-start;gap:48px">
-    <form class="innlogging" data-kodeskjema>
+    <div class="innlogging">
       <h2 id="logg-tittel">Logg inn i din verden</h2>
-      <p style="margin:0;font-size:17px;line-height:1.55;color:var(--dempet)">Skriv inn koden du har fått fra læreren din.</p>
-      <label for="verdenskode" style="font-weight:800;font-size:16px">Verdenskode</label>
-      <input class="code-input" id="verdenskode" name="kode" type="text" autocomplete="off" placeholder="F.eks. DINO-42">
-      <button class="btn btn-teal" type="submit" style="align-self:flex-start">Gå inn</button>
-      <p class="status" role="status" hidden></p>
-    </form>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:var(--dempet)">Har du fått en elevkode? Den ser omtrent slik ut: <strong>ABC-234</strong>. Skriv den inn på elevsiden, så åpner portalen seg til riktig verden.</p>
+      <a class="btn btn-teal" href="elev/" style="align-self:flex-start">Til elevinnloggingen</a>
+      <h3 style="margin:10px 0 0;font-size:22px">For deg som er voksen</h3>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:var(--dempet)">Med hver verden følger en voksenkode. Den åpner en framgangsrapport som viser hvilke mål eleven har nådd og når, hva eleven er på vei mot, og hva som trenger mer øving. Rapporten kan skrives ut eller lagres som PDF.</p>
+      <div class="knapperad" style="margin-top:0"><a class="btn btn-amber" href="rapport.html">Åpne rapporten</a><a href="rapport.html?demo" style="align-self:center;font-weight:800;color:var(--gronn)">Se et eksempel</a></div>
+    </div>
     <div id="kontakt">
       <p class="eyebrow gronn">Personvern først</p>
-      <h2 style="font-size:clamp(32px,4vw,46px);line-height:1.08">Jeg trenger aldri å vite hvem eleven er</h2>
-      <p class="stor" style="font-size:18px">For å lage en god verden holder det å vite hva eleven liker og hva som skal øves på. Ikke navn, ikke diagnose, ikke sakkyndig vurdering. Eleven logger inn med en kode, og fremgangen knyttes bare til den koden.</p>
+      <h2 style="font-size:clamp(32px,4vw,46px);line-height:1.08">Ingen navn, bare en kode</h2>
+      <p class="stor" style="font-size:18px">For å lage en god verden trenger jeg bare å vite hva eleven liker og hva som skal øves på. Jeg ber ikke om navn, diagnose eller sakkyndig vurdering. Eleven logger inn med en kode, og framgangen knyttes bare til den.</p>
       <div class="info-mint"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Skal skolen bruke verdenen, får dere en databehandleravtale.</p></div>
       <div class="knapperad" style="margin-top:4px"><span class="kommer">Fortell om eleven · kommer snart</span></div>
     </div>
@@ -127,6 +131,8 @@
     <div>Laget av en lærer, for lærere og elever.</div>
     <nav aria-label="Bunnmeny">
       <span class="snart-lenke">Om Tavleloftet <small>Kommer</small></span>
+      <a href="elev/">Elevinnlogging</a>
+      <a href="rapport.html">Framgangsrapport</a>
       <a href="personvern.html">Personvern</a>
       <span class="snart-lenke">Kontakt <small>Kommer</small></span>
     </nav>

@@ -50,7 +50,7 @@ h1,h2,h3,.disp{font-family:var(--display);text-wrap:balance}
 .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--lys)}
 .logo span{font-family:var(--display);font-weight:700;font-size:28px}
 .logo:hover{color:var(--lys)}
-.nav{display:flex;flex-wrap:wrap;align-items:center;gap:22px;font-size:17px}
+.nav{display:flex;flex-wrap:wrap;align-items:center;gap:2px 18px;font-size:16px}
 .nav a{color:var(--lys);text-decoration:none;font-weight:700;padding:12px 4px;border-bottom:3px solid transparent}
 .nav a:hover,.nav a[aria-current="page"]{color:var(--rav);border-bottom-color:var(--rav)}
 .nav a.btn{border-bottom:none;padding:0 20px;color:var(--blekk)}
@@ -202,5 +202,15 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 .pakkegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px;align-items:stretch}
 .pakke-merke{align-self:flex-start;background:var(--rav);color:var(--blekk);font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px}
 .brikker.mork strong{font-weight:800}
+
+/* Skreddersydd-seksjonen på forsiden */
+.skredder{background:var(--tavle);padding-top:88px;padding-bottom:40px}
+.skredder-kort{background:var(--kort);border-radius:36px;padding:clamp(28px,4.5vw,56px);display:flex;flex-wrap:wrap;align-items:center;gap:40px;box-shadow:0 0 0 3px var(--rav),0 30px 60px rgba(0,0,0,.4)}
+.skredder-tekst{flex:999 1 420px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.skredder-tekst h2{margin:0;font-size:clamp(38px,4.6vw,60px);line-height:1.04;font-weight:700;color:var(--papir)}
+.skredder-tekst p.stor{margin:0;font-size:19px;line-height:1.6;color:#DCE4E0}
+.skredder-bilder{flex:1 1 360px;min-width:0;display:grid;gap:16px}
+.skredder-bilder img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:20px;box-shadow:0 14px 28px rgba(0,0,0,.4)}
+.innlogging h3{font-family:var(--display)}
 
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

@@ -6,7 +6,8 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 ## Hva er hva
 - `index.html` – forsiden
 - `spill.html` – spillrommet (lenker til spillene i `spill/`)
-- `skreddersydd.html` – skreddersydde verdener (bestilling og klassekode er bare skisser ennå)
+- `skreddersydd.html` – skreddersydde verdener (lenker til elevinnloggingen og rapporten; bestillingsskjemaet er ikke laget ennå)
+- `elev/` – felles elevinnlogging: eleven skriver koden og sendes til riktig verden (`dinoparken/`, `lyslaget/`)
 - `voksen.html` – bare for Espen: lager elevkode og voksenkode, og skriver ut innloggingslapp
 - `rapport.html` – framgangsrapporten kjøperen åpner med voksenkoden (se `maler/laererrapport/LES-MEG.md`)
 - `personvern.html` – midlertidig side til foretaket er registrert
@@ -21,4 +22,5 @@ Dobbeltklikk `index.html`, så åpnes den i nettleseren.
 - Fjern den gule «Testversjon»-stripa øverst på hver side
 - Bytt «Kontakt: [kommer]» med e-postadresse
 - Legg inn personvernerklæringen når ENK-en er registrert
-- Bestillingsskjema og klassekode-innlogging må kobles til noe ekte
+- Bestillingsskjemaet («Fortell om eleven») må lages
+- Menyen og bunnteksten er like på index, spill, skreddersydd og personvern – endres de ett sted, må de endres på alle fire

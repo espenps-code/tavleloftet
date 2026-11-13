@@ -55,12 +55,4 @@
     hero.addEventListener('mouseleave', function () { lag.style.transform = ''; });
   }
 
-  // Skisse av innlogging på skreddersydd-siden – sender ingenting noe sted
-  var skjema = document.querySelector('[data-kodeskjema]');
-  if (skjema) skjema.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var s = skjema.querySelector('.status');
-    s.hidden = false;
-    s.textContent = 'Dette er en skisse – innloggingen kobles til når verdenene flytter hit.';
-  });
 })();
