@@ -1,0 +1,7 @@
+/* Krøniken – skrifter for forside, temasider og lærerverktøy. Ligger lokalt, så ingenting hentes fra Google. Lisens: SIL Open Font License. */
+@font-face{font-family:"Fraunces";font-weight:400;font-style:normal;font-display:swap;src:url("fonts/fraunces-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Fraunces";font-weight:500;font-style:normal;font-display:swap;src:url("fonts/fraunces-latin-500-normal.woff2") format("woff2")}
+@font-face{font-family:"Fraunces";font-weight:600;font-style:normal;font-display:swap;src:url("fonts/fraunces-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"Fraunces";font-weight:700;font-style:normal;font-display:swap;src:url("fonts/fraunces-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:400;font-style:normal;font-display:swap;src:url("fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:700;font-style:normal;font-display:swap;src:url("fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2")}

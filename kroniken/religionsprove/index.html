@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C9586B'/%3E%3Crect x='17' y='12' width='30' height='42' rx='5' fill='none' stroke='%23fff' stroke-width='5'/%3E%3Crect x='25' y='8' width='14' height='8' rx='3' fill='%23fff'/%3E%3Cpath d='M24 33l6 6 11-12' fill='none' stroke='%23fff' stroke-width='5.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <title>Religionsprøven – lærerportal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../innhold/felles/kr-fonter.css">
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
@@ -684,6 +682,19 @@ async function lastProver(velgId){
   if(velgId) velgProve(velgId);
   else if(!aktivId && prover.length) velgProve(prover[0].id);
   else if(!prover.length){ if(spKilde()==="kroniken") krStart(); $("nyPanel").classList.remove("hidden"); }
+  brukForvalg();
+}
+/* ?tema=islam (fra temasidene i Krøniken): åpner «Ny prøve» med alle delene i temaet krysset av */
+const FORVALG=(new URLSearchParams(location.search).get("tema")||"").replace(/[^a-z0-9-]/g,"");
+async function brukForvalg(){
+  if(!FORVALG||brukForvalg.gjort) return; brukForvalg.gjort=true;
+  await krStart();
+  const inn=[...$("krValg").querySelectorAll("input")].filter(i=>i.value.startsWith(FORVALG+"/"));
+  if(!inn.length) return;
+  inn.forEach(i=>{ i.checked=true; const l=i.closest("label"); if(l) l.classList.add("pa"); });
+  const L=(window.KRONIKEN||{})[FORVALG]; if(L) $("nyTittel").value="7. trinn – "+L.navn;
+  $("nyPanel").classList.remove("hidden"); oppdaterNyHint();
+  $("nyPanel").scrollIntoView({block:"start"});
 }
 function tegnListe(){
   $("proveliste").innerHTML = prover.length ? prover.map(p=>`
