@@ -113,29 +113,54 @@ const SPILL={
   },
   taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Eleven velger selv modul når tårnet sikres. Feil svar river stillaset. Bare sikrede etasjer teller.',feed:'Dette skjer',
     ikon:`<rect x="22" y="44" width="24" height="12" rx="2" fill="#8fd0a8"/><rect x="24" y="31" width="20" height="12" rx="2" fill="#5fb0d9"/><rect x="26" y="18" width="16" height="12" rx="2" fill="#f3d27a"/><path d="M34 6v11M34 7l9 3-9 3" stroke="#e98554" stroke-width="3" fill="#e98554" stroke-linejoin="round"/>`,
-    start(G){G.rek.forEach(id=>{G.spillere[id].p0=0;G.spillere[id].u0=0;});},
-    tegn(G){return `<div class="by" id="by"></div><p class="muted" style="margin:8px 0 0;font-size:15px">Stillaset er usikrede etasjer. De kan rase.</p>`;},
-    oppdater(G){
-      const by=$('#by'),linjer=[];if(!by)return linjer;
-      /* Alle tårnene tegnes i samme målestokk. Når det høyeste tårnet vokser, zoomer vi ut. */
+    async start(G){
+      G.rek.forEach(id=>{G.spillere[id].p0=0;G.spillere[id].u0=0;});
+      /* 3D-byen lastes bare når Tårnet spilles. Klarer ikke nettleseren 3D, brukes den flate visningen. */
+      if(!window.THREE)await last('felles/three.min.js');
+      if(!window.KBy)await last('felles/by3d.js');
+      G.tre=!G.flat&&!!(window.KBy&&KBy.kan());
+    },
+    tegn(G){
+      const bytt=window.KBy&&KBy.kan()?`<button type="button" class="lenke" id="visbytt">${G.tre?'Vis tårnene på rekke':'Vis 3D-byen'}</button>`:'';
+      return (G.tre?`<div class="by3d" id="by3d"></div>`:`<div class="by" id="by"></div>`)+`<p class="muted" style="margin:8px 0 0;font-size:15px">Stillaset er usikrede etasjer. De kan rase. ${bytt}</p>`;},
+    rydd(G){if(G.by){G.by.stopp();G.by=null;}G.byLager=null;},
+    bytt(G){this.rydd(G);G.flat=!G.flat;G.tre=!G.flat&&KBy.kan();$('#flate').innerHTML=this.tegn(G);this.oppdater(G,[],true);},
+    oppdater(G,nye,stille){
+      const linjer=[],ras=[],S=this;
+      const liste=G.rek.map(id=>{const s=G.spillere[id],x=G.F[id]||{};
+        if(s.p0==null){s.p0=0;s.u0=0;}
+        if(!stille){
+          if(s.p>s.p0&&s.p-s.p0>=4){linjer.push(hend(s,`sikret ${s.p-s.p0} etasjer`,'h-stige'));tone(440,880,.25,.05);}
+          else if(s.u===0&&s.u0>=2&&s.p===s.p0){if(s.u0>=4)linjer.push(hend(s,`mistet ${s.u0} usikrede etasjer`,'h-ras'));ras.push(id);tone(300,90,.4,.06);}
+          s.p0=s.p;s.u0=s.u;}
+        return{id,navn:s.n,farge:KQ_FARGE(s.i),stil:s.st||0,etasjer:(String(x.et||'').replace(/[^vbu]/g,'')+'v'.repeat(s.p)).slice(0,s.p),usikret:s.u,p:s.p};});
+      if(G.tre){
+        const boks=$('#by3d');if(!boks)return linjer;
+        if(G.by&&G.by.boks!==boks)S.rydd(G);   /* siden er tegnet på nytt (resultatsiden): lag byen på nytt der */
+        if(!G.by){if(G.byLager&&G.byLagerBoks!==boks)G.byLager=null;if(!G.byLager){G.byLagerBoks=boks;const lager=G.byLager=KBy.lag(boks,{antall:G.rek.length,frø:G.byFrø||(G.byFrø=1+rand(9000))}).then(by=>{
+            if(G.byLager!==lager||!boks.isConnected){by.stopp();if(G.byLager===lager)G.byLager=null;return;}
+            by.boks=boks;G.by=by;G.byLager=null;S.oppdater(G,[],true);}).catch(()=>{G.byLager=null;G.flat=true;G.tre=false;const f=$('#flate');if(f){f.innerHTML=S.tegn(G);S.oppdater(G,[],true);}});}
+          return linjer;}
+        G.by.oppdater(liste);ras.forEach(id=>G.by.ras(id));
+        return linjer;
+      }
+      const by=$('#by');if(!by)return linjer;
+      /* Flat visning: alle tårnene på rekke i samme målestokk. Når det høyeste tårnet vokser, zoomer vi ut. */
       const n=Math.max(1,G.rek.length),maks=Math.max(8,...G.rek.map(id=>G.spillere[id].p+G.spillere[id].u)),a=KTaarn.BILDE_ASP;
       const W=by.clientWidth-12,H=by.clientHeight-34-26,gap=Math.max(3,Math.min(10,W*.005));
       const w=Math.max(8,Math.min(120,(W-gap*(n-1))/n,H/(maks*a+.55)));
       by.style.setProperty('--w',w.toFixed(1)+'px');
-      G.rek.forEach(id=>{const s=G.spillere[id],x=G.F[id]||{};let el=by.querySelector(`[data-id="${id}"]`);
-        if(!el){by.insertAdjacentHTML('beforeend',`<div class="hus" data-id="${id}"><span class="tall"></span><div class="t"></div><span class="fot">${KQ_IKON(s.n)}</span></div>`);el=by.lastElementChild;}
-        const et=(String(x.et||'').replace(/[^vbu]/g,'')+'v'.repeat(s.p)).slice(0,s.p),sig=(s.st||0)+'|'+et+'|'+s.u+'|'+(G.fase==='slutt');
-        if(el.dataset.sig!==sig){el.dataset.sig=sig;el.querySelector('.t').innerHTML=KTaarn.tegn(s.st||0,et,s.u,true);el.querySelector('.tall').textContent=s.p+s.u||'';}
-        if(s.p0==null){s.p0=0;s.u0=0;}
-        if(s.p>s.p0&&s.p-s.p0>=4){linjer.push(hend(s,`sikret ${s.p-s.p0} etasjer`,'h-stige'));tone(440,880,.25,.05);}
-        else if(s.u===0&&s.u0>=4&&s.p===s.p0){linjer.push(hend(s,`mistet ${s.u0} usikrede etasjer`,'h-ras'));el.classList.remove('ras');void el.offsetWidth;el.classList.add('ras');tone(300,90,.4,.06);}
-        s.p0=s.p;s.u0=s.u;});
+      liste.forEach(s=>{let el=by.querySelector(`[data-id="${s.id}"]`);
+        if(!el){by.insertAdjacentHTML('beforeend',`<div class="hus" data-id="${s.id}"><span class="tall"></span><div class="t"></div><span class="fot">${KQ_IKON(s.navn)}</span></div>`);el=by.lastElementChild;}
+        const sig=s.stil+'|'+s.etasjer+'|'+s.usikret;
+        if(el.dataset.sig!==sig){el.dataset.sig=sig;el.querySelector('.t').innerHTML=KTaarn.tegn(s.stil,s.etasjer,s.usikret,true);el.querySelector('.tall').textContent=s.p+s.usikret||'';}
+        if(ras.includes(s.id)){el.classList.remove('ras');void el.offsetWidth;el.classList.add('ras');}});
       return linjer;
     },
     status(G){return{n:Math.max(0,...G.rek.map(id=>G.spillere[id].p))};},
     teller(G){return `${Math.max(0,...G.rek.map(id=>G.spillere[id].p))} <small>etasjer i det høyeste sikrede tårnet</small>`;},
     verdi:s=>s.p+(s.p===1?' etasje':' etasjer'),
-    gjenskap(G){G.rek.forEach(id=>G.spillere[id].u=0);this.oppdater(G,[]);},
+    gjenskap(G){G.rek.forEach(id=>G.spillere[id].u=0);this.oppdater(G,[],true);},
     slutt(G){const sum=G.rek.reduce((a,id)=>a+G.spillere[id].p,0);return{tittel:'Tida er ute',tekst:'Bare de sikrede etasjene teller.',tall:[[sum,'sikrede etasjer til sammen']]};}
   },
   hjul:{n:'Lykkehjulet',poeng:true,om:'Riktig svar gir et spinn på hjulet: poeng, dobling eller ingenting. Her kan alle vinne.',feed:'Dette skjer',
@@ -318,11 +343,12 @@ async function slutt(){
    <div class="bunn"><button class="knapp" id="igjen">Spill en gang til</button><button class="knapp sek" id="ny">Nytt oppsett</button><span class="muted">Spillet slettes fra nettet når du velger «Nytt oppsett» eller «Avslutt».</span><button class="knapp sek" id="avbryt" style="margin-left:auto">Avslutt</button></div>`;
   /* Spillflata slik den ble (mosaikken, kortveggen, tårnene). Lykkehjulet viser bare pallen. */
   if(G.spill!=='hjul'){$('#flate').innerHTML=S.tegn(G);if(S.gjenskap)S.gjenskap(G);}
-  $('#igjen').onclick=async()=>{G.fase='lobby';G.runde++;await net.update('',{f:null,m:null,v:vFelt()});lobby();};
+  $('#igjen').onclick=async()=>{if(S.rydd)S.rydd(G);G.fase='lobby';G.runde++;await net.update('',{f:null,m:null,v:vFelt()});lobby();};
   $('#ny').onclick=avslutt;$('#avbryt').onclick=avslutt;
 }
-async function avslutt(){clearInterval(tikk);if(G&&G.fv)G.fv();if(net)await net.remove('');G=null;oppsett();}
+async function avslutt(){clearInterval(tikk);if(G&&G.fv)G.fv();if(G&&SPILL[G.spill].rydd)SPILL[G.spill].rydd(G);if(net)await net.remove('');G=null;oppsett();}
 window.addEventListener('beforeunload',e=>{if(G&&G.fase==='spill'){e.preventDefault();e.returnValue='';}});
+app.addEventListener('click',e=>{if(e.target&&e.target.id==='visbytt'&&G&&SPILL[G.spill].bytt)SPILL[G.spill].bytt(G);});
 window.KS_TEST=()=>G;
 oppsett();
 })();

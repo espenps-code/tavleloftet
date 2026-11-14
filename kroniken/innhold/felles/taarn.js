@@ -24,5 +24,5 @@ function tegn(stil,etasjer,usikret,medTak){
     h+=`<i class="et" style="background-image:url('${rot}stein-${i===0?'bunn':'etasje'}.webp')">${i===0?'':m==='b'?BALKONG:m==='u'?KLOKKE:''}</i>`;}
   return `<div class="trn" style="--tf:${s.f}">${h}</div>`;
 }
-window.KTaarn={STILER,MODULER,tegn,BILDE_ASP:288/516};
+window.KTaarn={STILER,MODULER,tegn,BILDE_ASP:288/516,SVG:{b:BALKONG,u:KLOKKE},rot};   /* SVG og rot brukes av 3D-byen (by3d.js) */
 })();

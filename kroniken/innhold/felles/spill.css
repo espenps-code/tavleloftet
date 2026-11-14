@@ -82,6 +82,7 @@
 .trn .tak{display:block;width:112%;margin:0 -6% -1px;aspect-ratio:172/84;position:relative;z-index:1}
 .trn .stillas{display:block;aspect-ratio:516/288;box-sizing:border-box;border:2px solid #d9a441;border-bottom-width:1px;opacity:.85;
   background:linear-gradient(to top right,transparent calc(50% - 1px),#d9a441 calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),linear-gradient(to top left,transparent calc(50% - 1px),#d9a441 calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),rgba(217,164,65,.08)}
+.by3d{height:min(70vh,680px);border-radius:14px;background:radial-gradient(ellipse at 50% 30%,#2c4a47,#162222 75%);overflow:hidden}
 .by{display:flex;align-items:flex-end;justify-content:center;gap:clamp(3px,.5vw,10px);height:min(66vh,620px);padding:0 6px 34px;border-bottom:6px solid var(--line);position:relative}
 .hus{flex:none;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
 .hus .tall{text-align:center;font-family:"Fredoka";font-weight:700;font-size:clamp(11px,1.1vw,18px);color:var(--cream);min-height:1.3em}
@@ -97,7 +98,7 @@
 .sr .sb i{display:block;height:100%;min-width:4px;border-radius:10px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
 .sr em{font-style:normal;font-family:"Fredoka";color:var(--a2);min-width:70px;text-align:right}
 .spillflate .pall{margin:10px 0 18px}.spillflate .pall div{min-width:170px}
-.spillflate .pall .p1{height:210px}.spillflate .pall .p2{height:175px}.spillflate .pall .p3{height:150px}
+.spillflate .pall .p1{height:225px}.spillflate .pall .p2{height:195px}.spillflate .pall .p3{height:170px}
 
 /* ---- Eleven: kort, tårn og hjul ---- */
 .kortlag{position:fixed;inset:0;z-index:50;background:rgba(13,22,22,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px;animation:inn .25s both}
