@@ -22,6 +22,7 @@
 <script src="felles/tilbake.js"></script>
 <script src="felles/firebase-oppsett.js"></script>
 <script src="felles/quiz-net.js"></script>
+<script src="felles/taarn.js"></script>
 <script>
 (function(){
 'use strict';
@@ -110,16 +111,21 @@ const SPILL={
     gjenskap(G){this.oppdater(G,[]);},
     slutt(G){const ulike=Object.keys(G.funn).filter(i=>G.funn[i]>0).length;return{tittel:'Tida er ute',tekst:`Klassen samlet ${G.kortSum} kort og fant ${ulike} av ${G.kort.length} ulike fagord.`,tall:[[G.kortSum,'kort samlet'],[ulike+' av '+G.kort.length,'ulike fagord']]};}
   },
-  taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Feil svar river alt som ikke er sikret. Bare sikrede etasjer teller til slutt.',feed:'Dette skjer',
+  taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Eleven velger selv modul når tårnet sikres. Feil svar river stillaset. Bare sikrede etasjer teller.',feed:'Dette skjer',
     ikon:`<rect x="22" y="44" width="24" height="12" rx="2" fill="#8fd0a8"/><rect x="24" y="31" width="20" height="12" rx="2" fill="#5fb0d9"/><rect x="26" y="18" width="16" height="12" rx="2" fill="#f3d27a"/><path d="M34 6v11M34 7l9 3-9 3" stroke="#e98554" stroke-width="3" fill="#e98554" stroke-linejoin="round"/>`,
     start(G){G.rek.forEach(id=>{G.spillere[id].p0=0;G.spillere[id].u0=0;});},
-    tegn(G){return `<div class="by" id="by"></div><p class="muted" style="margin:8px 0 0;font-size:15px">Hel farge er sikret. Stripete etasjer kan rase.</p>`;},
+    tegn(G){return `<div class="by" id="by"></div><p class="muted" style="margin:8px 0 0;font-size:15px">Stillaset er usikrede etasjer. De kan rase.</p>`;},
     oppdater(G){
       const by=$('#by'),linjer=[];if(!by)return linjer;
-      const maks=Math.max(12,...G.rek.map(id=>G.spillere[id].p+G.spillere[id].u));
-      G.rek.forEach(id=>{const s=G.spillere[id];let el=by.querySelector(`[data-id="${id}"]`);
-        if(!el){by.insertAdjacentHTML('beforeend',`<div class="hus" data-id="${id}" style="--f:${KQ_FARGE(s.i)}"><span class="tall"></span><i class="us"></i><i class="si"></i><span class="fot">${KQ_IKON(s.n)}</span></div>`);el=by.lastElementChild;}
-        el.querySelector('.si').style.height=(s.p/maks*100).toFixed(2)+'%';el.querySelector('.us').style.height=(s.u/maks*100).toFixed(2)+'%';el.querySelector('.tall').textContent=s.p+s.u||'';
+      /* Alle tårnene tegnes i samme målestokk. Når det høyeste tårnet vokser, zoomer vi ut. */
+      const n=Math.max(1,G.rek.length),maks=Math.max(8,...G.rek.map(id=>G.spillere[id].p+G.spillere[id].u)),a=KTaarn.BILDE_ASP;
+      const W=by.clientWidth-12,H=by.clientHeight-34-26,gap=Math.max(3,Math.min(10,W*.005));
+      const w=Math.max(8,Math.min(120,(W-gap*(n-1))/n,H/(maks*a+.55)));
+      by.style.setProperty('--w',w.toFixed(1)+'px');
+      G.rek.forEach(id=>{const s=G.spillere[id],x=G.F[id]||{};let el=by.querySelector(`[data-id="${id}"]`);
+        if(!el){by.insertAdjacentHTML('beforeend',`<div class="hus" data-id="${id}"><span class="tall"></span><div class="t"></div><span class="fot">${KQ_IKON(s.n)}</span></div>`);el=by.lastElementChild;}
+        const et=(String(x.et||'').replace(/[^vbu]/g,'')+'v'.repeat(s.p)).slice(0,s.p),sig=(s.st||0)+'|'+et+'|'+s.u+'|'+(G.fase==='slutt');
+        if(el.dataset.sig!==sig){el.dataset.sig=sig;el.querySelector('.t').innerHTML=KTaarn.tegn(s.st||0,et,s.u,true);el.querySelector('.tall').textContent=s.p+s.u||'';}
         if(s.p0==null){s.p0=0;s.u0=0;}
         if(s.p>s.p0&&s.p-s.p0>=4){linjer.push(hend(s,`sikret ${s.p-s.p0} etasjer`,'h-stige'));tone(440,880,.25,.05);}
         else if(s.u===0&&s.u0>=4&&s.p===s.p0){linjer.push(hend(s,`mistet ${s.u0} usikrede etasjer`,'h-ras'));el.classList.remove('ras');void el.offsetWidth;el.classList.add('ras');tone(300,90,.4,.06);}
@@ -221,7 +227,7 @@ async function start(o){
   G=Object.assign(o,{kode,fase:'lobby',runde:1,spillere:{},rek:[],F:{}});
   await net.remove('');
   await net.set('v',vFelt());
-  net.on('s',s=>{Object.entries(s||{}).forEach(([id,x])=>{if(!G||G.spillere[id])return;G.spillere[id]={n:String(x.n||'?').slice(0,24),i:G.rek.length,r:0,p:0,u:0};G.rek.push(id);});if(G&&G.fase==='lobby')lobby();else if(G&&G.fase==='spill'){const e=$('#antmed');if(e)e.textContent=G.rek.length;}});
+  net.on('s',s=>{Object.entries(s||{}).forEach(([id,x])=>{if(!G)return;if(G.spillere[id]){G.spillere[id].st=Math.max(0,Math.min(3,+x.st||0));return;}G.spillere[id]={n:String(x.n||'?').slice(0,24),i:G.rek.length,r:0,p:0,u:0,st:Math.max(0,Math.min(3,+x.st||0))};G.rek.push(id);});if(G&&G.fase==='lobby')lobby();else if(G&&G.fase==='spill'){const e=$('#antmed');if(e)e.textContent=G.rek.length;}});
   lobby();
 }
 /* type:'fri' forteller bli-med.html at dette er et øvespill, så eleven sendes til spill-med.html. */

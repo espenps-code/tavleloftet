@@ -16,6 +16,7 @@
 <script src="oversikt.js"></script>
 <script src="felles/firebase-oppsett.js"></script>
 <script src="felles/quiz-net.js"></script>
+<script src="felles/taarn.js"></script>
 <script>
 (function(){
 'use strict';
@@ -33,7 +34,8 @@ const mmss=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%6
 const VENT=3;   /* sekunder eleven må se på fasiten etter feil svar. Gjør at det ikke lønner seg å gjette vilt. */
 let net=null,kode='',id='',navn='',V=null,M=null,tikk=null;
 let pool=null,kort=[],poolNokkel='',ko=[],naa=null,laast=false,runde=0,slutter=0,opptatt=false;
-const NYSTAT=()=>({r:0,f:0,q:{},p:0,u:0,rekke:0,a:{},sp:0});
+const NYSTAT=()=>({r:0,f:0,q:{},p:0,u:0,rekke:0,a:{},sp:0,et:''});
+let stil=0;   /* steinsorten i Tårnet. Velges i ventetida før start */
 let stat=NYSTAT();
 
 /* ================= Spillene (elevens del) =================
@@ -76,11 +78,16 @@ const SPILL={
   taarn:{n:'Tårnet',
     mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
     linje:plassLinje,
-    topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div><button class="knapp" id="sikre"${stat.u?'':' disabled'}>🔒 Sikre ${stat.u||''} ${stat.u===1?'etasje':'etasjer'}</button><span class="muted">Neste riktige svar gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div>`,
-    bind(){const k=$('#sikre');if(k)k.onclick=()=>{if(!stat.u||laast)return;stat.p+=stat.u;stat.u=0;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:0});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();};},
+    /* Eleven sikrer ved å velge modul. Alle de usikrede etasjene blir av den typen. */
+    topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div>
+      <div class="sikre"><span>Sikre med</span>${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,'v'+k,0,false).replace(/<i class="et"[^>]*bunn[^>]*>.*?<\/i>/,'')}${m.n}</button>`).join('')}</div>
+      <span class="neste-gir">Neste riktige gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div><div class="mitttaarn" style="--w:${Math.max(24,Math.min(110,(innerHeight-120)/((stat.p+stat.u)*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,stat.et,stat.u,true)}</div>`,
+    bind(){document.querySelectorAll('.sikre button').forEach(k=>k.onclick=()=>{if(!stat.u||laast)return;stat.et+=k.dataset.m.repeat(stat.u);stat.p+=stat.u;stat.u=0;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:0,et:stat.et});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();});},
     riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Sikre, eller bygg videre?`;},
-    feil(opp){const tapt=stat.u;stat.u=0;stat.rekke=0;opp.u=0;return tapt?`Tårnet raste. Du mistet ${tapt} ${tapt===1?'usikret etasje':'usikrede etasjer'}.`:'';},
-    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} sikrede etasjer${s.u?`. ${s.u} usikrede teller ikke.`:''}</p>`},
+    feil(opp){const tapt=stat.u;stat.u=0;stat.rekke=0;opp.u=0;return tapt?`Stillaset raste. Du mistet ${tapt} ${tapt===1?'usikret etasje':'usikrede etasjer'}.`:'';},
+    lobby:()=>`<p class="muted" style="margin:0">Velg stein til tårnet ditt:</p><div class="stilvalg">${KTaarn.STILER.map((x,i)=>`<button data-s="${i}"${i===stil?' class="valgt"':''}>${KTaarn.tegn(i,'vvu',0,true)}${x.n}</button>`).join('')}</div>`,
+    lobbyBind(){document.querySelectorAll('.stilvalg button').forEach(k=>k.onclick=()=>{stil=+k.dataset.s;minne.set('kq-st-'+kode,String(stil));net.update('s/'+id,{st:stil});document.querySelectorAll('.stilvalg button').forEach(x=>x.classList.toggle('valgt',x===k));});},
+    slutt:(s,m)=>plassSlutt(m)+`<div class="slutttaarn" style="--w:${Math.max(20,Math.min(120,innerHeight*.44/(s.p*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,s.et,0,true)}</div><p class="muted" style="font-size:22px;margin:0">${s.p} sikrede etasjer${s.u?`. ${s.u} usikrede teller ikke.`:''}</p>`},
   hjul:{n:'Lykkehjulet',
     mitt:s=>s.p+' poeng',
     linje:plassLinje,
@@ -130,9 +137,10 @@ async function velgNavn(){
 }
 async function bliMed(){
   minne.set('kq-id-'+kode,id);minne.set('kq-navn-'+kode,navn);
-  await net.set('s/'+id,{n:navn});
+  const lagretStil=minne.get('kq-st-'+kode);stil=lagretStil!=null?+lagretStil:rand(KTaarn.STILER.length);minne.set('kq-st-'+kode,String(stil));
+  await net.set('s/'+id,{n:navn,st:stil});
   /* Lastes siden på nytt midt i spillet, hentes det eleven allerede har gjort. */
-  try{const f=await net.get('f/'+id);if(f){stat=Object.assign(NYSTAT(),{r:+f.r||0,f:+f.f||0,q:f.q||{},p:+f.p||0,u:+f.u||0,sp:+(f.sp&&f.sp.c)||0});Object.entries(f.a||{}).forEach(([i,k])=>stat.a[i]={c:+k.c||0,e:+k.e||0});}}catch(e){}
+  try{const f=await net.get('f/'+id);if(f){stat=Object.assign(NYSTAT(),{r:+f.r||0,f:+f.f||0,q:f.q||{},p:+f.p||0,u:+f.u||0,sp:+(f.sp&&f.sp.c)||0,et:String(f.et||'')});Object.entries(f.a||{}).forEach(([i,k])=>stat.a[i]={c:+k.c||0,e:+k.e||0});}}catch(e){}
   net.on('m',m=>{M=m;if(m&&m.igjen!=null)slutter=Date.now()+m.igjen*1000;if(V&&V.fase==='slutt')fase();else felles();});
   net.on('v',v=>{V=v;if(v&&v.igjen!=null)slutter=Date.now()+v.igjen*1000;fase();});
 }
@@ -143,7 +151,7 @@ async function fase(){
   clearInterval(tikk);
   if(!V){pool=null;return midt('<h1>Spillet er avsluttet</h1><p class="muted">Takk for at du var med!</p><button class="knapp sek" id="ny">Skriv en ny kode</button>'),void($('#ny').onclick=()=>{location.replace('bli-med.html'+(DEMO?'?demo=1':''));});}
   if(V.runde!==runde){if(runde)stat=NYSTAT();runde=V.runde;ko=[];naa=null;laast=false;opptatt=false;}
-  if(V.fase==='lobby')return void(app.innerHTML=hode()+`<div class="midt"><div class="stor ok">Du er med!</div><div class="storbrikke">${KQ_IKON(navn)}</div><div class="navn">${esc(navn)}</div><p class="muted">Se på tavla. Spillet starter snart.</p></div>`);
+  if(V.fase==='lobby'){const S=SPILL[V.spill];app.innerHTML=hode()+`<div class="midt"><div class="stor ok">Du er med!</div><div class="storbrikke">${KQ_IKON(navn)}</div><div class="navn">${esc(navn)}</div>${S&&S.lobby?S.lobby():''}<p class="muted">Se på tavla. Spillet starter snart.</p></div>`;if(S&&S.lobbyBind)S.lobbyBind();return;}
   if(V.fase==='slutt'){
     const S=SPILL[V.spill],alle=stat.r+stat.f;opptatt=false;
     return midt(`<p class="kicker">Ferdig</p>${S&&S.linje===plassLinje?'':`<div class="stor">${esc(V.res&&V.res.tittel||'Tida er ute')}</div>`}${S?S.slutt(stat,M):''}${alle?`<p class="muted" style="margin:0">Du svarte riktig på ${stat.r} av ${alle} spørsmål.</p>`:''}<p class="muted">Se på tavla!</p>`);
