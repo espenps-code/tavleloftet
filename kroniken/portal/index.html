@@ -85,6 +85,7 @@
   .topplenke{background:var(--night-2);box-shadow:0 3px 0 var(--dyp);font-weight:700}
   .trygg{box-shadow:0 7px 0 var(--dyp)}
   @media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}.mos{--rader:10!important;margin-top:8px}}
+  @property --a{syntax:'<number>';inherits:false;initial-value:0}
   html,body{overflow-x:clip}
   @media (max-width:900px){.temaer,.verktoyliste{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:600px){.temaer,.verktoyliste{grid-template-columns:1fr}}
@@ -100,7 +101,9 @@
   .hero{align-items:start}
   .mos{--u:clamp(26px,3.1vw,38px);--rader:10;display:grid;grid-template-columns:repeat(27,var(--u));grid-template-rows:repeat(18,var(--u));height:calc(var(--rader)*var(--u));overflow-y:clip}
   body.ute .mos{--rader:18}
-  .mos .rute{position:relative;margin:0;overflow:hidden;border:2px solid var(--night);border-radius:7px;background:var(--night-3);transform:translateY(var(--y,0)) scale(var(--s,1));transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s;will-change:transform}
+  .mos .rute{position:relative;margin:0;overflow:hidden;border:2px solid var(--night);border-radius:7px;background:var(--night-3);transform:translateY(var(--y,0)) scale(var(--s,1));transition:transform 1.1s cubic-bezier(.4,0,.2,1),--a 1.4s ease,box-shadow .9s ease,border-color .6s ease;transition-delay:var(--vent,0s);animation:vind 4.6s ease-in-out infinite;animation-delay:var(--fd,0s);animation-play-state:paused;will-change:transform}
+  .mos.liv .rute{animation-play-state:running}
+  @keyframes vind{0%,100%{rotate:calc(var(--a)*-1deg);translate:calc(var(--a)*-1.5px) 0}50%{rotate:calc(var(--a)*1deg);translate:calc(var(--a)*1.5px) calc(var(--a)*-3px)}}
   .mos .tallrute{display:flex;flex-direction:column;justify-content:center;padding:0 9%;color:#1c1836;line-height:1.05}
   .mos .tallrute b{font-family:'Fraunces',serif;font-weight:700;font-size:calc(var(--u)*.92)}
   .mos .tallrute span{font-size:calc(var(--u)*.3);font-weight:700;margin-top:4px}
@@ -108,7 +111,7 @@
   .mos .rute.ill img{object-position:center;transform:scale(1.16)}
   .mos .rute.bred img{transform:scale(1.5)}
   .mos .rute.opp{z-index:5;border-color:var(--parchment);box-shadow:0 8px 0 rgba(0,0,0,.35),0 26px 44px rgba(0,0,0,.6)}
-  @media (prefers-reduced-motion:reduce){.mos .rute{transition:none}}
+  @media (prefers-reduced-motion:reduce){.mos .rute{transition:none;animation:none}}
   dialog#innDialog{border:none;padding:0;background:transparent;color:inherit;width:min(440px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;border-radius:18px}
   dialog#innDialog::backdrop{background:rgba(8,7,22,.72);backdrop-filter:blur(3px)}
   .inn-kort{position:relative}
@@ -311,15 +314,20 @@
       k+=w; });
     rad+=h; });
   const mos=document.getElementById('mos'); mos.innerHTML=html;
-  const alle=[...mos.children], null_=()=>alle.forEach(e=>{e.style.removeProperty('--s');e.style.removeProperty('--y');e.classList.remove('opp')});
+  const alle=[...mos.children], sett=(e,k,v)=>e.style.setProperty(k,v);
+  alle.forEach((e,i)=>sett(e,'--fd',(-(i*1.37%4.6)).toFixed(2)+'s'));
+  const null_=()=>{ mos.classList.remove('liv'); alle.forEach(e=>{ ['--s','--y','--a','--vent'].forEach(k=>e.style.removeProperty(k)); e.classList.remove('opp'); }); };
   if(matchMedia('(hover:hover)').matches){
-    mos.addEventListener('pointermove',ev=>{ const paa=ev.target.closest('.rute'); if(!paa){ null_(); return; }
-      const m=mos.getBoundingClientRect(), midt=e=>[(e.offsetLeft+e.offsetWidth/2)/m.width,(e.offsetTop+e.offsetHeight/2)/m.width], [px,py]=midt(paa);
-      alle.forEach(e=>{ if(e===paa){ e.style.setProperty('--s','1.22'); e.style.setProperty('--y','-6px'); e.classList.add('opp'); return; }
-        const [x,y]=midt(e), d=Math.min(1,Math.hypot(x-px,y-py)/.62);
-        e.style.setProperty('--s',(.92+.08*d).toFixed(3)); e.style.setProperty('--y','0px'); e.classList.remove('opp'); }); });
-    mos.addEventListener('pointerleave',null_);
+    let sist=null;
+    mos.addEventListener('pointermove',ev=>{ const paa=ev.target.closest('.rute'); if(paa===sist) return; sist=paa; if(!paa){ null_(); return; }
+      mos.classList.add('liv');
+      const m=mos.getBoundingClientRect(), midt=e=>[(e.offsetLeft+e.offsetWidth/2)/m.height,(e.offsetTop+e.offsetHeight/2)/m.height], [px,py]=midt(paa);
+      alle.forEach(e=>{ if(e===paa){ sett(e,'--s','1.15'); sett(e,'--y','-5px'); sett(e,'--a','1.7'); sett(e,'--vent','0s'); e.classList.add('opp'); return; }
+        const [x,y]=midt(e), d=Math.min(1,Math.hypot(x-px,y-py)/.7);
+        sett(e,'--s',(.94+.06*d).toFixed(3)); sett(e,'--y','0px'); sett(e,'--a',(1.1*(1-d)).toFixed(2)); sett(e,'--vent',(d*.22).toFixed(2)+'s'); e.classList.remove('opp'); }); });
+    mos.addEventListener('pointerleave',()=>{ sist=null; null_(); });
   }
+
   const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
   document.getElementById('temaliste').innerHTML=liste.map(([m,l])=>`<a class="tk" href="../innhold/tema.html?l=${m}"><img src="../innhold/${m}/bilder/${l.bilde}" alt="" loading="lazy"><span class="tx"><small>${ord[l.type]||'Tema'}</small><strong>${esc(l.navn)}</strong><p>${l.tema.length} deler: ${esc(l.tema.slice(0,3).map(t=>t.tittel).join(' · '))} …</p><span class="gaa">Åpne temaet →</span></span></a>`).join('');
 })();
