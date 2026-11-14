@@ -21,7 +21,7 @@ button{font-family:inherit}
 
 /* Scenen er alltid 1600×900 og skaleres til vinduet */
 #viewport{position:fixed;inset:0;display:grid;place-items:center}
-#stage{position:relative;width:1600px;height:900px;flex:none;transform-origin:center;overflow:hidden;background:var(--bg);box-shadow:0 0 80px rgba(0,0,0,.6)}
+#stage{position:absolute;left:50%;top:50%;margin:-450px 0 0 -800px;width:1600px;height:900px;flex:none;transform-origin:center;overflow:hidden;background:var(--bg);box-shadow:0 0 80px rgba(0,0,0,.6)}
 #stage::before{content:"";position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(900px 600px at 85% 10%,color-mix(in srgb,var(--a) 13%,transparent),transparent 70%),radial-gradient(800px 600px at 5% 100%,color-mix(in srgb,var(--bg3) 70%,transparent),transparent 70%)}
 

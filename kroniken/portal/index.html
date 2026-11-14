@@ -65,13 +65,8 @@
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.09;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
   .wrap{position:relative;z-index:1}
   :root{--dyp:#0b0a1c}
-  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;margin-bottom:10px}
+  .hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:30px;align-items:center;margin-bottom:10px}
   h1{text-shadow:0 3px 0 var(--dyp)}
-  .vifte{position:relative;height:330px}
-  .vifte img{position:absolute;width:56%;aspect-ratio:3/4;object-fit:cover;border:7px solid var(--parchment);border-radius:10px;box-shadow:0 9px 0 rgba(0,0,0,.4),0 24px 44px rgba(0,0,0,.5);background:var(--night-3)}
-  .vifte img:nth-child(1){left:0;top:34px;transform:rotate(-9deg)}
-  .vifte img:nth-child(2){left:22%;top:6px;transform:rotate(-1deg);z-index:1}
-  .vifte img:nth-child(3){left:44%;top:40px;transform:rotate(8deg);z-index:2}
   .tall li{box-shadow:0 3px 0 var(--dyp)}
   h2{display:flex;align-items:center;gap:12px}
   h2::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 3px 0 var(--dyp);flex:none}
@@ -89,7 +84,7 @@
   .v-ikon{box-shadow:0 4px 0 var(--dyp)}
   .topplenke{background:var(--night-2);box-shadow:0 3px 0 var(--dyp);font-weight:700}
   .trygg{box-shadow:0 7px 0 var(--dyp)}
-  @media (max-width:820px){.hero{grid-template-columns:1fr}.vifte{height:230px;max-width:340px;margin:0 auto}.vifte img{width:48%}}
+  @media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}.mos{--rader:10!important;margin-top:8px}}
   html,body{overflow-x:clip}
   @media (max-width:900px){.temaer,.verktoyliste{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:600px){.temaer,.verktoyliste{grid-template-columns:1fr}}
@@ -99,9 +94,31 @@
   #who{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(243,233,210,0.75);flex-wrap:wrap}
   #who button{font:inherit;font-size:14px;font-weight:700;color:var(--parchment);background:var(--night-2);border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer}
   #who button:hover{border-color:var(--gold)}
-  .inn{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:64px}
-  @media(max-width:820px){.inn{grid-template-columns:1fr}}
-  .inn-kort{background:var(--night-2);border:1px solid var(--line);border-radius:18px;padding:24px}
+  body.ute .hero{gap:44px;margin-top:6px}
+  /* Mosaikk: illustrasjoner og ekte skjermbilder. Ruta under pekeren løfter seg, de nærmeste viker litt. */
+  html,body{overflow-x:clip}
+  .hero{align-items:start}
+  .mos{--u:clamp(26px,3.1vw,38px);--rader:10;display:grid;grid-template-columns:repeat(27,var(--u));grid-template-rows:repeat(18,var(--u));height:calc(var(--rader)*var(--u));overflow-y:clip}
+  body.ute .mos{--rader:18}
+  .mos .rute{position:relative;margin:0;overflow:hidden;border:2px solid var(--night);border-radius:7px;background:var(--night-3);transform:translateY(var(--y,0)) scale(var(--s,1));transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s;will-change:transform}
+  .mos .tallrute{display:flex;flex-direction:column;justify-content:center;padding:0 9%;color:#1c1836;line-height:1.05}
+  .mos .tallrute b{font-family:'Fraunces',serif;font-weight:700;font-size:calc(var(--u)*.92)}
+  .mos .tallrute span{font-size:calc(var(--u)*.3);font-weight:700;margin-top:4px}
+  .mos .rute img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
+  .mos .rute.ill img{object-position:center;transform:scale(1.16)}
+  .mos .rute.bred img{transform:scale(1.5)}
+  .mos .rute.opp{z-index:5;border-color:var(--parchment);box-shadow:0 8px 0 rgba(0,0,0,.35),0 26px 44px rgba(0,0,0,.6)}
+  @media (prefers-reduced-motion:reduce){.mos .rute{transition:none}}
+  dialog#innDialog{border:none;padding:0;background:transparent;color:inherit;width:min(440px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;border-radius:18px}
+  dialog#innDialog::backdrop{background:rgba(8,7,22,.72);backdrop-filter:blur(3px)}
+  .inn-kort{position:relative}
+  .lukk{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--night);color:var(--parchment);font-size:22px;line-height:1;cursor:pointer}
+  .lukk:hover{border-color:var(--gold)}
+  .inn-cta{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 24px}
+  .inn-cta .inn-knapp{width:auto;margin:0;padding:13px 30px;box-shadow:0 4px 0 var(--dyp)}
+  .inn-sek{font:inherit;font-weight:700;font-size:16px;color:var(--parchment);background:var(--night-2);border:1px solid var(--line);border-radius:11px;padding:13px 22px;cursor:pointer;box-shadow:0 4px 0 var(--dyp)}
+  .inn-sek:hover{border-color:var(--gold)}
+  .inn-kort{background:var(--night-2);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 7px 0 var(--dyp)}
   .inn-kort h2{font-family:'Fraunces',serif;font-size:24px;margin:0 0 4px}
   .inn-kort .hint{margin:0 0 16px;font-size:14.5px;color:rgba(243,233,210,0.75)}
   .inn-kort label{display:block;font-size:13px;font-weight:700;color:var(--gold-soft);margin:12px 0 5px}
@@ -115,9 +132,11 @@
   .inn-lenker button{font:inherit;font-size:14px;color:var(--gold-soft);background:none;border:none;padding:4px 0;cursor:pointer;text-decoration:underline}
   .inn-status{min-height:20px;margin-top:10px;font-size:14.5px}
   .inn-status.ok{color:#7fd6c4}.inn-status.feil{color:#f0a3b0}
-  .inn-om h3{font-family:'Fraunces',serif;font-size:19px;margin:0 0 8px}
-  .inn-om ul{margin:0 0 16px;padding-left:20px;line-height:1.6;color:rgba(243,233,210,0.85)}
-  .inn-om .elev{background:rgba(232,176,75,.10);border:1px solid rgba(232,176,75,.4);border-radius:14px;padding:14px 16px;font-size:14.5px}
+  .inn-om{margin-top:26px}
+  .inn-om ul{margin:0 0 20px;padding:0;list-style:none;display:grid;gap:9px;color:rgba(243,233,210,0.9);font-size:16px}
+  .inn-om li{padding-left:28px;position:relative}
+  .inn-om li::before{content:"";position:absolute;left:2px;top:.42em;width:13px;height:7px;border-left:2.5px solid var(--teal);border-bottom:2.5px solid var(--teal);transform:rotate(-45deg)}
+  .inn-om .elev{margin:0;background:rgba(232,176,75,.10);border:1px solid rgba(232,176,75,.4);border-radius:14px;padding:13px 16px;font-size:14.5px;max-width:520px}
 </style>
 </head>
 <body>
@@ -129,42 +148,22 @@
 
   <div class="hero"><div>
   <div class="eyebrow">Ferdig undervisningsopplegg · KRLE</div>
-  <h1>Seks religioner og livssyn. <span class="g">Tre temamoduler.</span></h1>
+  <h1>Alt til KRLE-timen. <span class="g">Samlet på ett sted.</span></h1>
   <p class="ingress">Velg et tema, så finner du alt som hører til på ett sted: presentasjoner til tavla, oppgaveark til utskrift, lesehistorier, elevbok og quiz. Innholdet kan brukes rett i timen.</p>
-  <ul class="tall" id="tall"></ul>
-  </div><div class="vifte" id="vifte" aria-hidden="true"></div></div>
-
-  <div id="logginn" hidden>
-  <div class="inn">
-    <div class="inn-kort">
-      <h2>Logg inn</h2>
-      <p class="hint">Krøniken er for lærere. Logg inn for å finne innholdet. Det er gratis å lage konto.</p>
-      <button class="google-btn" id="googleBtn" type="button">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.3 0 20 0 24s1 7.7 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.6 2.1-8.7 2.1-6.4 0-11.8-4.1-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-        Fortsett med Google
-      </button>
-      <p class="eller">eller med e-post</p>
-      <form id="epostSkjema">
-        <label for="epost">E-post</label><input id="epost" type="email" autocomplete="email" required>
-        <label for="passord">Passord</label><input id="passord" type="password" autocomplete="current-password" required minlength="6">
-        <button class="inn-knapp" id="epostBtn" type="submit">Logg inn</button>
-      </form>
-      <div class="inn-lenker"><button type="button" id="nyBtn">Lag ny konto</button><button type="button" id="glemtBtn">Glemt passordet?</button></div>
-      <div class="inn-status" id="authStatus" role="status"></div>
-    </div>
-    <div class="inn-om">
-      <h3>Dette finner du når du er inne</h3>
-      <ul>
-        <li>Presentasjoner til tavla, med lærernotater</li>
-        <li>Oppgaveark og øveark til utskrift</li>
-        <li>Elevbok, lesehistorier og klassequiz</li>
-        <li>Lærerveiledning og forslag til årsplaner</li>
-        <li>Prøver, arbeidslogg og grupper</li>
-      </ul>
-      <div class="elev"><strong>Er du elev?</strong> Du trenger ikke logge inn. Bruk lenken eller QR-koden du har fått av læreren din.</div>
-    </div>
+  
+  <div class="inn-om" id="innom" hidden>
+    <div class="inn-cta"><button type="button" class="inn-knapp" id="aapneInn">Logg inn</button><button type="button" class="inn-sek" id="aapneNy">Lag gratis konto</button></div>
+    <ul>
+      <li>Presentasjoner til tavla, med lærernotater</li>
+      <li>Oppgaveark og øveark til utskrift</li>
+      <li>Elevbok, lesehistorier og klassequiz</li>
+      <li>Lærerveiledning og forslag til årsplaner</li>
+      <li>Prøver, arbeidslogg og grupper</li>
+    </ul>
+    <p class="elev"><strong>Er du elev?</strong> Du trenger ikke logge inn. Bruk lenken eller QR-koden du har fått av læreren din.</p>
   </div>
-  </div>
+  </div><div class="hoyre"><div class="mos" id="mos"></div>
+  </div></div>
 
   <div id="innhold" hidden>
   <h2 id="temaer">Velg tema</h2>
@@ -221,12 +220,32 @@
     <p>Elevene trenger ingen konto. Læreren logger inn med Google eller e-post, og det eneste som lagres om læreren, er e-postadressen. Presentasjoner, oppgaver, historier og elevbok lagrer ingenting om elevene. I prøvene bruker elevene koder, og navnene ligger bare privat hos læreren.</p></div>
   </div>
 </div>
+<dialog id="innDialog" aria-labelledby="innTittel">
+    <div class="inn-kort" id="logginn">
+      <button type="button" class="lukk" id="lukkInn" aria-label="Lukk">×</button>
+      <h2 id="innTittel">Logg inn</h2>
+      <p class="hint">Krøniken er for lærere. Logg inn for å finne innholdet. Det er gratis å lage konto.</p>
+      <button class="google-btn" id="googleBtn" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-17z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.3 0 20 0 24s1 7.7 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.4 0 11.9-2.1 15.8-5.8l-7.1-5.5c-2 1.3-4.6 2.1-8.7 2.1-6.4 0-11.8-4.1-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Fortsett med Google
+      </button>
+      <p class="eller">eller med e-post</p>
+      <form id="epostSkjema">
+        <label for="epost">E-post</label><input id="epost" type="email" autocomplete="email" required>
+        <label for="passord">Passord</label><input id="passord" type="password" autocomplete="current-password" required minlength="6">
+        <button class="inn-knapp" id="epostBtn" type="submit">Logg inn</button>
+      </form>
+      <div class="inn-lenker"><button type="button" id="nyBtn">Lag ny konto</button><button type="button" id="glemtBtn">Glemt passordet?</button></div>
+      <div class="inn-status" id="authStatus" role="status"></div>
+    </div>
+</dialog>
 <script src="../innhold/oversikt.js"></script>
 <script>
 /* Innlogging på forsiden. Samme Firebase-prosjekt og samme kontoer som prøver, arbeidslogg og grupper. */
 (function(){
   const $=id=>document.getElementById(id), esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  const vis=inne=>{ $('innhold').hidden=!inne; $('logginn').hidden=inne; };
+  const dlg=$('innDialog');
+  const vis=inne=>{ $('innhold').hidden=!inne; $('innom').hidden=inne; document.body.classList.toggle('ute',!inne); if(inne&&dlg.open) dlg.close(); };
   const st=(t,ok)=>{ const e=$('authStatus'); e.textContent=t||''; e.className='inn-status '+(ok?'ok':'feil'); };
   const merke=på=>{ try{ på?localStorage.setItem('kr_inn','1'):localStorage.removeItem('kr_inn'); }catch(e){} };
   let auth=null;
@@ -242,16 +261,23 @@
     if(u){ merke(true); const n=neste(); if(n){ location.replace(n); return; }
       vis(true); $('who').innerHTML='<span>'+esc(u.email||'Innlogget')+'</span> <a class="topplenke" href="#verktoy">Verktøy ↓</a> <button type="button" id="utBtn">Logg ut</button>';
       $('utBtn').addEventListener('click',()=>{ merke(false); auth.signOut(); });
-    }else{ merke(false); vis(false); $('who').innerHTML=''; }
+    }else{ merke(false); vis(false); $('who').innerHTML='<button type="button" id="toppInn">Logg inn</button>'; $('toppInn').addEventListener('click',()=>aapne(false));
+      if(new URLSearchParams(location.search).get('neste')) setTimeout(()=>{ if(!dlg.open) aapne(false); },0); }
   });
   const feil=e=>({'auth/invalid-credential':'Feil e-post eller passord.','auth/wrong-password':'Feil e-post eller passord.','auth/user-not-found':'Fant ingen konto med den e-postadressen.','auth/email-already-in-use':'Det finnes allerede en konto med den e-postadressen. Prøv å logge inn.','auth/weak-password':'Passordet må ha minst seks tegn.','auth/invalid-email':'E-postadressen ser ikke riktig ut.','auth/popup-closed-by-user':'Innloggingsvinduet ble lukket før du var ferdig.','auth/popup-blocked':'Nettleseren stoppet innloggingsvinduet. Tillat sprettoppvinduer og prøv igjen.','auth/too-many-requests':'For mange forsøk. Vent litt og prøv igjen.','auth/network-request-failed':'Fikk ikke kontakt med nettet. Prøv igjen.'})[e&&e.code]||'Noe gikk galt. Prøv igjen.';
   $('googleBtn').addEventListener('click',()=>{ st(''); auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>st(feil(e))); });
   $('epostSkjema').addEventListener('submit',ev=>{ ev.preventDefault(); st('');
     const e=$('epost').value.trim(), p=$('passord').value;
     (nyKonto?auth.createUserWithEmailAndPassword(e,p):auth.signInWithEmailAndPassword(e,p)).catch(x=>st(feil(x))); });
-  $('nyBtn').addEventListener('click',()=>{ nyKonto=!nyKonto; st('');
-    $('epostBtn').textContent=nyKonto?'Lag konto':'Logg inn'; $('nyBtn').textContent=nyKonto?'Jeg har allerede konto':'Lag ny konto';
-    $('passord').autocomplete=nyKonto?'new-password':'current-password'; });
+  const modus=ny=>{ nyKonto=ny; st('');
+    $('innTittel').textContent=ny?'Lag konto':'Logg inn'; $('epostBtn').textContent=ny?'Lag konto':'Logg inn'; $('nyBtn').textContent=ny?'Jeg har allerede konto':'Lag ny konto';
+    $('passord').autocomplete=ny?'new-password':'current-password'; };
+  function aapne(ny){ modus(ny); if(!dlg.open) dlg.showModal(); }
+  $('nyBtn').addEventListener('click',()=>modus(!nyKonto));
+  $('aapneInn').addEventListener('click',()=>aapne(false));
+  $('aapneNy').addEventListener('click',()=>aapne(true));
+  $('lukkInn').addEventListener('click',()=>dlg.close());
+  dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
   $('glemtBtn').addEventListener('click',()=>{ const e=$('epost').value.trim();
     if(!e) return st('Skriv e-postadressen din i feltet over først.');
     auth.sendPasswordResetEmail(e).then(()=>st('Vi har sendt en e-post med lenke til å lage nytt passord.',true)).catch(x=>st(feil(x))); });
@@ -262,8 +288,38 @@
   const K=window.KRONIKEN||{},esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   const liste=Object.entries(K);
   const ant=liste.reduce((n,[,l])=>n+l.tema.length,0);
-  document.getElementById('tall').innerHTML=[[liste.length,'temaer og moduler'],[ant,'presentasjoner med oppgaveark'],['1560','quizspørsmål'],['90','kapitler i elevboka']].map(([a,b])=>`<li><b>${a}</b> ${b}</li>`).join('');
-  document.getElementById('vifte').innerHTML=['hinduismen','jodedommen','buddhismen'].filter(m=>K[m]).map(m=>`<img src="../innhold/${m}/bilder/${K[m].bilde}" alt="">`).join('');
+  /* Mosaikk i bånd. Hvert bånd fylles fra et innrykk og ut forbi høyre skjermkant, så venstre kant blir trappet.
+     s = skjermbilde, i = illustrasjon (neste i rekka), t = tallrute. Tallet er bredden i ruter. */
+  const skjerm={pres:['skjerm-pres','Skjermbilde av et lysbilde om stavkirker'],pres2:['skjerm-pres2','Skjermbilde av åpningslysbildet om påskeuka'],bok:['skjerm-bok','Skjermbilde av et oppslag i elevboka'],tema:['skjerm-tema','Skjermbilde av temasiden for islam'],quiz:['skjerm-quiz','Skjermbilde av oppsettet til klassequizen'],ark:['skjerm-ark','Skjermbilde av et øveark til utskrift']};
+  const tallene=[[liste.length,'temaer og moduler','var(--gold)'],[ant,'presentasjoner med oppgaveark','var(--teal)'],['1560','quizspørsmål','#e58a98'],['90','kapitler i elevboka','#a9b4f0']];
+  /* Illustrasjoner med mørk eller mettet bakgrunn, flettet på tvers av temaene. De lyse er valgt bort. */
+  const ill=['bibelfortellinger/bilder/stjernehimmel.webp', 'kirkebygg/bilder/portal.webp', 'filosofi/bilder/tittel-stjerner.webp', 'hinduismen/bilder/tittel-lotus.webp', 'paske/bilder/prosesjon.webp', 'humanismen/bilder/tittel-stjerner.webp', 'menneskerettigheter/bilder/tittel-hender.webp', 'kristennorge/bilder/konfirmant.webp', 'jul/bilder/koret.webp', 'islam/bilder/tittel-halvmane.webp', 'livssporsmal/bilder/jordoppgang.webp', 'jodedommen/bilder/tittel-menora.webp', 'buddhismen/bilder/tittel-buddha.webp', 'kristendommen/bilder/katolsk.webp', 'bibelfortellinger/bilder/skapelsen.webp', 'kirkebygg/bilder/staver.webp', 'hinduismen/bilder/lampeveien.webp', 'humanismen/bilder/stiftelsen.webp', 'kristennorge/bilder/skolestue.webp', 'jul/bilder/julenatt.webp', 'livssporsmal/bilder/tittel-speil.webp', 'kristendommen/bilder/ortodoks.webp', 'bibelfortellinger/bilder/lampen.webp', 'kirkebygg/bilder/vestfront.webp', 'hinduismen/bilder/tempel-inne.webp', 'humanismen/bilder/alexandria.webp', 'kristennorge/bilder/kirkedor.webp', 'jul/bilder/julebord.webp', 'kristendommen/bilder/mangfold.webp', 'bibelfortellinger/bilder/korn.webp', 'kirkebygg/bilder/glassmaleri.webp', 'kristennorge/bilder/tinget.webp', 'jul/bilder/gjeterne.webp'].map(f=>'../innhold/'+f);
+  let ii=0, ti=0;
+  const baand=[
+    [3,2,['t3','s:pres:5','s:bok:4','i4','s:tema:4','i4','s:quiz:5']],
+    [4,0,['i3','i3','i3','s:ark:3','i3','i3','i3','i3','i3']],
+    [3,1,['t3','s:pres2:5','t3','s:quiz:4','i4','s:tema:4','i4']],
+    [4,3,['t3','i3','i3','i3','i3','i3','i3','i3']],
+    [4,1,['i3','i3','s:ark:3','i3','i3','i3','i3','i3','i3']]
+  ];
+  let rad=1, html='';
+  baand.forEach(([h,inn,rekke])=>{ let k=inn+1;
+    rekke.forEach(r=>{ const w=+r.slice(-1), st=`style="grid-column:${k}/span ${w};grid-row:${rad}/span ${h}`;
+      if(r[0]==='t'){ const [n,tx,f]=tallene[ti++%tallene.length]; html+=`<figure class="rute tallrute" ${st};background:${f}"><b>${n}</b><span>${tx}</span></figure>`; }
+      else if(r[0]==='s'){ const [fil,alt]=skjerm[r.split(':')[1]]; html+=`<figure class="rute" ${st}"><img src="bilder/${fil}.webp" alt="${alt}"></figure>`; }
+      else html+=`<figure class="rute ill${w>3?' bred':''}" ${st}"><img src="${ill[ii++%ill.length]}" alt="" loading="lazy"></figure>`;
+      k+=w; });
+    rad+=h; });
+  const mos=document.getElementById('mos'); mos.innerHTML=html;
+  const alle=[...mos.children], null_=()=>alle.forEach(e=>{e.style.removeProperty('--s');e.style.removeProperty('--y');e.classList.remove('opp')});
+  if(matchMedia('(hover:hover)').matches){
+    mos.addEventListener('pointermove',ev=>{ const paa=ev.target.closest('.rute'); if(!paa){ null_(); return; }
+      const m=mos.getBoundingClientRect(), midt=e=>[(e.offsetLeft+e.offsetWidth/2)/m.width,(e.offsetTop+e.offsetHeight/2)/m.width], [px,py]=midt(paa);
+      alle.forEach(e=>{ if(e===paa){ e.style.setProperty('--s','1.22'); e.style.setProperty('--y','-6px'); e.classList.add('opp'); return; }
+        const [x,y]=midt(e), d=Math.min(1,Math.hypot(x-px,y-py)/.62);
+        e.style.setProperty('--s',(.92+.08*d).toFixed(3)); e.style.setProperty('--y','0px'); e.classList.remove('opp'); }); });
+    mos.addEventListener('pointerleave',null_);
+  }
   const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
   document.getElementById('temaliste').innerHTML=liste.map(([m,l])=>`<a class="tk" href="../innhold/tema.html?l=${m}"><img src="../innhold/${m}/bilder/${l.bilde}" alt="" loading="lazy"><span class="tx"><small>${ord[l.type]||'Tema'}</small><strong>${esc(l.navn)}</strong><p>${l.tema.length} deler: ${esc(l.tema.slice(0,3).map(t=>t.tittel).join(' · '))} …</p><span class="gaa">Åpne temaet →</span></span></a>`).join('');
 })();
