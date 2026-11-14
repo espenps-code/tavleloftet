@@ -99,9 +99,9 @@
   /* Mosaikk: illustrasjoner og ekte skjermbilder. Ruta under pekeren løfter seg, de nærmeste viker litt. */
   html,body{overflow-x:clip}
   .hero{align-items:start}
-  .mos{--u:clamp(26px,3.1vw,38px);--rader:10;display:grid;grid-template-columns:repeat(27,var(--u));grid-template-rows:repeat(18,var(--u));height:calc(var(--rader)*var(--u));overflow-y:clip}
+  .mos{position:relative;--u:clamp(26px,3.1vw,38px);--rader:10;display:grid;grid-template-columns:repeat(27,var(--u));grid-template-rows:repeat(18,var(--u));height:calc(var(--rader)*var(--u));overflow-y:clip}
   body.ute .mos{--rader:18}
-  .mos .rute{position:relative;margin:0;overflow:hidden;border:2px solid var(--night);border-radius:7px;background:var(--night-3);transform:translateY(var(--y,0)) scale(var(--s,1));transition:transform 1.1s cubic-bezier(.4,0,.2,1),--a 1.4s ease,box-shadow .9s ease,border-color .6s ease;transition-delay:var(--vent,0s);animation:vind 4.6s ease-in-out infinite;animation-delay:var(--fd,0s);animation-play-state:paused;will-change:transform}
+  .mos .rute{position:relative;margin:0;overflow:hidden;border:2px solid var(--night);border-radius:7px;background:var(--night-3);transform:translateY(var(--y,0)) scale(var(--s,1));transition:box-shadow .8s ease,border-color .8s ease;animation:vind 5.2s ease-in-out infinite;animation-delay:var(--fd,0s);animation-play-state:paused;will-change:transform}
   .mos.liv .rute{animation-play-state:running}
   @keyframes vind{0%,100%{rotate:calc(var(--a)*-1deg);translate:calc(var(--a)*-1.5px) 0}50%{rotate:calc(var(--a)*1deg);translate:calc(var(--a)*1.5px) calc(var(--a)*-3px)}}
   .mos .tallrute{display:flex;flex-direction:column;justify-content:center;padding:0 9%;color:#1c1836;line-height:1.05}
@@ -314,18 +314,27 @@
       k+=w; });
     rad+=h; });
   const mos=document.getElementById('mos'); mos.innerHTML=html;
-  const alle=[...mos.children], sett=(e,k,v)=>e.style.setProperty(k,v);
-  alle.forEach((e,i)=>sett(e,'--fd',(-(i*1.37%4.6)).toFixed(2)+'s'));
-  const null_=()=>{ mos.classList.remove('liv'); alle.forEach(e=>{ ['--s','--y','--a','--vent'].forEach(k=>e.style.removeProperty(k)); e.classList.remove('opp'); }); };
-  if(matchMedia('(hover:hover)').matches){
-    let sist=null;
-    mos.addEventListener('pointermove',ev=>{ const paa=ev.target.closest('.rute'); if(paa===sist) return; sist=paa; if(!paa){ null_(); return; }
-      mos.classList.add('liv');
-      const m=mos.getBoundingClientRect(), midt=e=>[(e.offsetLeft+e.offsetWidth/2)/m.height,(e.offsetTop+e.offsetHeight/2)/m.height], [px,py]=midt(paa);
-      alle.forEach(e=>{ if(e===paa){ sett(e,'--s','1.15'); sett(e,'--y','-5px'); sett(e,'--a','1.7'); sett(e,'--vent','0s'); e.classList.add('opp'); return; }
-        const [x,y]=midt(e), d=Math.min(1,Math.hypot(x-px,y-py)/.7);
-        sett(e,'--s',(.94+.06*d).toFixed(3)); sett(e,'--y','0px'); sett(e,'--a',(1.1*(1-d)).toFixed(2)); sett(e,'--vent',(d*.22).toFixed(2)+'s'); e.classList.remove('opp'); }); });
-    mos.addEventListener('pointerleave',()=>{ sist=null; null_(); });
+  /* Bevegelsen styres av avstanden til pekeren, ikke av hvilken rute den er over. Hver rute glir mykt mot målet sitt
+     i hver bildeoppdatering, så det blir ingen rykk når pekeren går fra rute til rute eller over en søm. */
+  const alle=[...mos.children].map((e,i)=>{ e.style.setProperty('--fd',(-(i*1.37%5.2)).toFixed(2)+'s'); return {e,s:1,y:0,a:0,ms:1,my:0,ma:0}; });
+  if(matchMedia('(hover:hover)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+    let peker=null, gaar=false, topp=null;
+    const maal=()=>{ const H=mos.offsetHeight, sig=.15;
+      let best=null, bg=0;
+      alle.forEach(r=>{ if(!peker){ r.ms=1; r.my=0; r.ma=0; return; }
+        const dx=(r.e.offsetLeft+r.e.offsetWidth/2-peker[0])/H, dy=(r.e.offsetTop+r.e.offsetHeight/2-peker[1])/H, d2=dx*dx+dy*dy;
+        const g=Math.exp(-d2/(2*sig*sig)), ring=Math.exp(-d2/(2*sig*sig*6))-g;
+        r.ms=1+.17*g-.05*ring; r.my=-7*g; r.ma=1.5*g+.7*ring; if(g>bg){ bg=g; best=r; } });
+      const ny=bg>.45?best:null; if(ny!==topp){ if(topp) topp.e.classList.remove('opp'); if(ny) ny.e.classList.add('opp'); topp=ny; } };
+    const steg=()=>{ let ro=true; const k=.05;
+      alle.forEach(r=>{ r.s+=(r.ms-r.s)*k; r.y+=(r.my-r.y)*k; r.a+=(r.ma-r.a)*k;
+        if(Math.abs(r.ms-r.s)>.0006||Math.abs(r.ma-r.a)>.004) ro=false;
+        r.e.style.setProperty('--s',r.s.toFixed(4)); r.e.style.setProperty('--y',r.y.toFixed(2)+'px'); r.e.style.setProperty('--a',r.a.toFixed(3)); });
+      if(ro && !peker){ gaar=false; mos.classList.remove('liv'); alle.forEach(r=>['--s','--y','--a'].forEach(n=>r.e.style.removeProperty(n))); return; }
+      requestAnimationFrame(steg); };
+    const start=()=>{ if(!gaar){ gaar=true; mos.classList.add('liv'); requestAnimationFrame(steg); } };
+    mos.addEventListener('pointermove',ev=>{ const m=mos.getBoundingClientRect(); peker=[ev.clientX-m.left,ev.clientY-m.top]; maal(); start(); });
+    mos.addEventListener('pointerleave',()=>{ peker=null; maal(); start(); });
   }
 
   const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
