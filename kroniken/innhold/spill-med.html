@@ -78,12 +78,33 @@ const SPILL={
   taarn:{n:'Tårnet',
     mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
     linje:plassLinje,
-    /* Eleven sikrer én etasje om gangen ved å trykke på en modul. Etasjene stables i den rekkefølgen eleven velger. */
+    /* Eleven bygger så lenge hen vil uten å sikre. «Sikre» åpner en velger der eleven fyller etasjene nedenfra,
+       én modul per etasje. Hver etasje er sikret i det den er valgt. */
     topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div>
-      <div class="sikre"><span>Sikre én<br>etasje</span>${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,'v'+k,0,false).replace(/<i class="et"[^>]*bunn[^>]*>.*?<\/i>/,'')}${m.n}</button>`).join('')}</div>
+      <button class="knapp" id="sikre"${stat.u?'':' disabled'}>🔒 Sikre ${stat.u||''} ${stat.u===1?'etasje':'etasjer'}</button>
       <span class="neste-gir">Neste riktige gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div><div class="mitttaarn" style="--w:${Math.max(24,Math.min(110,(innerHeight-120)/((stat.p+stat.u)*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,stat.et,stat.u,true)}</div>`,
-    bind(){document.querySelectorAll('.sikre button').forEach(k=>k.onclick=()=>{if(!stat.u||laast)return;stat.et+=k.dataset.m;stat.p++;stat.u--;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:stat.u,et:stat.et});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();});},
-    riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Velg moduler for å sikre, eller bygg videre.`;},
+    bind(){const k=$('#sikre');if(k)k.onclick=()=>{if(stat.u&&!laast&&!opptatt)this.velger();};},
+    velger(){
+      opptatt=true;const alle=stat.u;let nr=0;
+      const lag=document.createElement('div');lag.className='kortlag velger';app.appendChild(lag);
+      const lukk=()=>{if(!lag.isConnected)return;lag.remove();opptatt=false;if(!V||V.fase!=='spill')return;oppfrisk();if(naa&&naa.valgt!=null&&naa.valgt===naa.r&&!laast)neste();};
+      const tegnVelger=()=>{
+        if(!lag.isConnected)return;
+        /* utsnitt: én etasje under (om den finnes), det som er valgt til nå, og stillaset som står igjen */
+        const under=stat.p-nr>0,utsnitt=(under?stat.et.slice(stat.p-nr-1):stat.et),w=Math.max(60,Math.min(230,innerHeight*.42/((alle+(under?1:0))*KTaarn.BILDE_ASP)));
+        lag.innerHTML=`<p class="hjultxt">${stat.u?`Velg etasje ${nr+1} av ${alle}`:'Sikret!'}</p><p class="muted" style="margin:-12px 0 0">${stat.u?'Du fyller opp nedenfra.':''}</p>
+          <div class="utsnitt" style="--w:${w.toFixed(0)}px">${KTaarn.tegn(stil,utsnitt,stat.u,false,under)}</div>
+          <div class="modulvalg">${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,k,0,false,true)}${m.n}</button>`).join('')}</div>
+          ${stat.u&&nr?`<button class="knapp sek" id="vstopp">Stopp her. ${stat.u} ${stat.u===1?'etasje står':'etasjer står'} usikret</button>`:stat.u?'<button class="knapp sek" id="vstopp">Avbryt</button>':''}`;
+        lag.querySelectorAll('.modulvalg button').forEach(b=>b.onclick=()=>{if(!stat.u||laast)return;
+          stat.et+=b.dataset.m;stat.p++;stat.u--;stat.rekke=0;nr++;net.update('f/'+id,{p:stat.p,u:stat.u,et:stat.et});
+          try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}
+          tegnVelger();if(!stat.u)setTimeout(lukk,650);});
+        const st=$('#vstopp');if(st)st.onclick=lukk;
+      };
+      tegnVelger();
+    },
+    riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Sikre, eller bygg videre?`;},
     feil(opp){const tapt=stat.u;stat.u=0;stat.rekke=0;opp.u=0;return tapt?`Stillaset raste. Du mistet ${tapt} ${tapt===1?'usikret etasje':'usikrede etasjer'}.`:'';},
     lobby:()=>`<p class="muted" style="margin:0">Velg stein til tårnet ditt:</p><div class="stilvalg">${KTaarn.STILER.map((x,i)=>`<button data-s="${i}"${i===stil?' class="valgt"':''}>${KTaarn.tegn(i,'vvu',0,true)}${x.n}</button>`).join('')}</div>`,
     lobbyBind(){document.querySelectorAll('.stilvalg button').forEach(k=>k.onclick=()=>{stil=+k.dataset.s;minne.set('kq-st-'+kode,String(stil));net.update('s/'+id,{st:stil});document.querySelectorAll('.stilvalg button').forEach(x=>x.classList.toggle('valgt',x===k));});},

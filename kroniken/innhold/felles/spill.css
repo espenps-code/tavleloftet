@@ -117,11 +117,16 @@
 .minitaarn b{display:block;font-family:"Fredoka";font-size:26px;line-height:1.1;color:var(--ok)}
 .minitaarn small{color:var(--muted);font-weight:800;font-size:13px}
 .minitaarn.us{border-style:dashed}.minitaarn.us b{color:var(--a2)}
-.sikre{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:5px 8px 5px 12px}
-.sikre>span{font-weight:800;color:var(--muted);font-size:14px;line-height:1.15}
-.sikre button{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--bg3);color:var(--cream);border:2px solid var(--a);border-radius:10px;padding:4px 6px;font-weight:800;font-size:13px;--w:74px}
-.sikre button:disabled{opacity:.35;border-color:var(--line);cursor:default}
-.sikre button:not(:disabled):active{transform:scale(.95)}
+.sikrerad .knapp{font-size:18px;padding:12px 22px}
+/* Velgeren: eleven fyller etasjene nedenfra */
+.velger{gap:16px}
+.utsnitt{display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.utsnitt .stillas:has(+ .et),.utsnitt .trn>.stillas:last-child{border-color:var(--cream);border-width:4px;background:rgba(251,245,234,.16);animation:blink 1s ease-in-out infinite;opacity:1}
+@keyframes blink{50%{background:rgba(251,245,234,.34)}}
+.modulvalg{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.modulvalg button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);color:var(--cream);border:3px solid var(--a);border-radius:16px;padding:10px 10px 8px;font-weight:800;font-size:18px;--w:min(150px,24vw)}
+.modulvalg button:disabled{opacity:.4;border-color:var(--line)}
+.modulvalg button:not(:disabled):active{transform:scale(.95)}
 .neste-gir{color:var(--muted);font-size:15px}
 /* Elevens eget tårn: i margen på brede skjermer, og på sluttsiden */
 .mitttaarn{position:fixed;right:max(10px,calc((100vw - 720px)/2 - 150px));bottom:14px;display:none;flex-direction:column;justify-content:flex-end;align-items:center;max-height:calc(100vh - 80px);overflow:hidden;--w:110px;pointer-events:none}
