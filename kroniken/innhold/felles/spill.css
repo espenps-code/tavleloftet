@@ -140,3 +140,25 @@
 .hjulboks .pil{position:absolute;left:50%;top:-22px;transform:translateX(-50%);width:0;height:0;border:18px solid transparent;border-top:34px solid var(--a);z-index:2;filter:drop-shadow(0 3px 2px rgba(0,0,0,.4))}
 .hjultxt{font-family:"Fredoka";font-weight:700;font-size:30px;margin:0;text-align:center;min-height:1.3em}
 @media(prefers-reduced-motion:reduce){.kort,.kortlag{animation:none}.hjulboks svg{transition-duration:.3s}}
+
+/* ---- Samleren: grupper av kort ---- */
+.kgrupper{display:flex;flex-direction:column;gap:10px}
+.kgr{display:grid;grid-template-columns:170px minmax(0,1fr);gap:10px;align-items:stretch}
+.kgr h3{font-size:17px;line-height:1.2;color:var(--gf);border-left:6px solid var(--gf);padding:4px 0 4px 10px;align-self:center;overflow-wrap:anywhere}
+.kgr h3 small{display:block;font-family:"Nunito";font-weight:800;font-size:13px;color:var(--muted);margin-top:3px}
+.kgr .kv.funnet{border-left:5px solid var(--gf)}
+.kgrupper.mange{gap:7px}.kgrupper.mange .kortvegg{gap:7px}.kgrupper.mange .kv{min-height:54px;padding:7px 9px}.kgrupper.mange .kv b{font-size:clamp(12px,1vw,15px)}.kgrupper.mange .kv small{display:none!important}
+.bakrad{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.bak{width:min(190px,28vw);aspect-ratio:3/4;border-radius:20px;border:6px solid var(--gf);color:var(--cream);font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;text-align:center;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 10px,transparent 10px 20px),linear-gradient(160deg,#2a4441,#1c2d2c);box-shadow:0 12px 30px rgba(0,0,0,.45);animation:kortinn .45s cubic-bezier(.2,1.4,.4,1) both}
+.bak:nth-child(2){animation-delay:.08s}.bak:nth-child(3){animation-delay:.16s}
+.bak:active{transform:scale(.96)}
+.bak .gn{font-family:"Fredoka";font-size:clamp(16px,2.6vw,22px);line-height:1.15;color:var(--gf);overflow-wrap:anywhere}
+.bak .gp{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.bak .gp i{width:16px;height:22px;border-radius:4px;border:2px solid var(--gf);opacity:.55}
+.bak .gp i.p{background:var(--gf);opacity:1}
+.bak .gt{font-size:15px;color:var(--muted)}
+.sluttgr{display:flex;flex-direction:column;gap:10px;max-width:680px}
+.sluttgr>div{border-left:5px solid var(--gf);padding-left:10px;text-align:left}
+.sluttgr b{color:var(--gf);font-family:"Fredoka";font-size:17px}
+.sluttgr .album{justify-content:flex-start;margin-top:4px}

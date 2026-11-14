@@ -17,6 +17,7 @@
 <script src="felles/firebase-oppsett.js"></script>
 <script src="felles/quiz-net.js"></script>
 <script src="felles/taarn.js"></script>
+<script src="felles/samler.js"></script>
 <script>
 (function(){
 'use strict';
@@ -33,7 +34,7 @@ const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=
 const mmss=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 const VENT=3;   /* sekunder eleven må se på fasiten etter feil svar. Gjør at det ikke lønner seg å gjette vilt. */
 let net=null,kode='',id='',navn='',V=null,M=null,tikk=null;
-let pool=null,kort=[],poolNokkel='',ko=[],naa=null,laast=false,runde=0,slutter=0,opptatt=false;
+let pool=null,kort=[],grupper=[],gAv=[],poolNokkel='',ko=[],naa=null,laast=false,runde=0,slutter=0,opptatt=false;
 const NYSTAT=()=>({r:0,f:0,q:{},p:0,u:0,rekke:0,a:{},sp:0,et:''});
 let stil=0;   /* steinsorten i Tårnet. Velges i ventetida før start */
 let stat=NYSTAT();
@@ -46,7 +47,7 @@ let stat=NYSTAT();
    feil(opp)         – kalles ved feil svar. Kan gi en ekstra tekst
    topp()            – valgfri HTML mellom statuslinjene og spørsmålet (Tårnet: sikre-knappen)
    slutt(stat,M)     – oppsummering når spillet er over */
-const UTG=[{n:'bronse',p:1,f:'#c98a5a'},{n:'sølv',p:3,f:'#cfd8dc'},{n:'gull',p:6,f:'#f3d27a'}];   /* samme tall som i spill.html */
+const UTG=KSamler.UTG;   /* utgavene av kortene i Samleren (felles/samler.js) */
 const HJUL=[{t:'10',v:10},{t:'30',v:30},{t:'50',v:50},{t:'20',v:20},{t:'100',v:100},{t:'0',v:0},{t:'40',v:40},{t:'×2',x2:1}];
 const HF=['#e98554','#5fb0d9','#f3d27a','#8fd0a8','#e98554','#5fb0d9','#8fd0a8','#fbf5ea'];
 const plassLinje=m=>{const pl=m&&m.pl&&m.pl[id];return `<span>${pl?`Du ligger på <b style="color:var(--cream)">${pl}. plass</b> av ${m.ant}`:'Svar riktig for å komme på lista'}</span>`;};
@@ -60,21 +61,40 @@ const SPILL={
   samler:{n:'Samleren',
     mitt:s=>s.p+' poeng · '+Object.keys(s.a).length+' av '+kort.length+' kort',
     linje:plassLinje,
+    harGruppe:g=>g.k.filter(i=>stat.a[i]).length,
     riktig(opp,ferdig){
-      /* Hvilket kort og hvilken utgave er tilfeldig hver gang. Samme fagord kan komme i bronse én gang og gull neste. */
+      /* Eleven får tre kort med baksiden opp. Baksiden viser hvilken gruppe kortet hører til og hvor mange eleven har i den.
+         Fagordet og utgaven (bronse, sølv, gull) er skjult til kortet er valgt. Strategien ligger i hvilken gruppe man går for. */
       if(!kort.length){stat.p++;opp.p=stat.p;return 'Riktig! +1 poeng';}
-      const i=rand(kort.length),t=Math.random(),e=t<.6?0:t<.9?1:2,foer=stat.a[i],ny=!foer;
-      const k=stat.a[i]={c:(foer?foer.c:0)+1,e:Math.max(foer?foer.e:0,e)};
-      let p=UTG[e].p,full=false;
-      if(ny&&Object.keys(stat.a).length===kort.length){p+=10;full=true;}
-      stat.p+=p;opp.p=stat.p;opp['a/'+i]=k;opp.sk={i,e,c:stat.r,full:full||null};
+      /* Helst tre kort fra tre ulike grupper, så det er noe å velge mellom. Er det færre grupper, fylles det opp med andre kort. */
+      const trukket=stokk(grupper).slice(0,3).map(g=>g.k[rand(g.k.length)]);
+      stokk(kort.map((_,i)=>i)).forEach(i=>{if(trukket.length<3&&!trukket.includes(i))trukket.push(i);});
+      const S=this,valg=stokk(trukket).map(i=>{const t=Math.random();return{i,e:t<.6?0:t<.9?1:2};});
       opptatt=true;
       const lag=document.createElement('div');lag.className='kortlag';
-      lag.innerHTML=`<div class="kort e${e}" style="--kf:${UTG[e].f}"><span class="utg">${UTG[e].n}${ny?' · nytt kort!':''}</span><h3>${esc(kort[i][0])}</h3><p>${esc(kort[i][1])}</p><b>+${p} poeng</b>${full?'<em>Albumet er fullt: 10 ekstra poeng!</em>':''}</div><button class="knapp" id="kvidere">Videre</button>`;
-      app.appendChild(lag);$('#kvidere').onclick=()=>{lag.remove();opptatt=false;ferdig();};
+      lag.innerHTML=`<p class="hjultxt">Riktig! Velg et kort.</p><div class="bakrad">${valg.map((v,n)=>{const g=grupper[gAv[v.i]],har=S.harGruppe(g);
+        return `<button class="bak" data-n="${n}" style="--gf:${g.f}"><span class="gn">${esc(g.n)}</span><span class="gp">${g.k.map(i=>`<i${stat.a[i]?' class="p"':''}></i>`).join('')}</span><span class="gt">Du har ${har} av ${g.k.length}</span></button>`;}).join('')}</div><p class="muted" style="margin:0;text-align:center;max-width:520px">Hele gruppa gir ${KSamler.GRUPPEBONUS} ekstra poeng.</p>`;
+      app.appendChild(lag);
+      lag.querySelectorAll('.bak').forEach(b=>b.onclick=()=>{
+        if(!lag.isConnected||lag.dataset.valgt)return;lag.dataset.valgt=1;
+        const v=valg[+b.dataset.n],i=v.i,e=v.e,foer=stat.a[i],ny=!foer,gi=gAv[i],g=grupper[gi];
+        const k=stat.a[i]={c:(foer?foer.c:0)+1,e:Math.max(foer?foer.e:0,e)};
+        let p=UTG[e].p,gruppe=false,full=false;
+        if(ny&&g.k.every(x=>stat.a[x])){p+=KSamler.GRUPPEBONUS;gruppe=true;}
+        if(ny&&Object.keys(stat.a).length===kort.length){p+=KSamler.ALBUMBONUS;full=true;}
+        stat.p+=p;stat.sk=(stat.sk||0)+1;
+        const o={p:stat.p,sk:{i,e,c:stat.sk,g:gruppe?gi:null,full:full||null}};o['a/'+i]=k;net.update('f/'+id,o);
+        try{navigator.vibrate&&navigator.vibrate(gruppe?[30,40,80]:30);}catch(e){}
+        const andre=valg.filter(x=>x!==v).map(x=>`<span style="--kf:${UTG[x.e].f}">${esc(kort[x.i][0])}</span>`).join('');
+        lag.innerHTML=`<div class="kort e${e}" style="--kf:${UTG[e].f}"><span class="utg">${UTG[e].n}${ny?' · nytt kort!':''}</span><h3>${esc(kort[i][0])}</h3><p>${esc(kort[i][1])}</p><b>+${p} poeng</b>
+          <em style="color:#5a4030">${esc(g.n)}: ${S.harGruppe(g)} av ${g.k.length}</em>${gruppe?`<em>Hele gruppa! ${KSamler.GRUPPEBONUS} ekstra poeng.</em>`:''}${full?`<em>Albumet er fullt! ${KSamler.ALBUMBONUS} ekstra poeng.</em>`:''}</div>
+          ${andre?`<p class="muted" style="margin:0">De to andre var:</p><div class="album">${andre}</div>`:''}<button class="knapp" id="kvidere">Videre</button>`;
+        const e2=$('#mitt');if(e2)e2.textContent=S.mitt(stat);
+        $('#kvidere').onclick=()=>{lag.remove();opptatt=false;ferdig();};});
       return 'Riktig!';
     },
-    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} poeng · ${Object.keys(s.a).length} av ${kort.length} kort</p><div class="album">${Object.entries(s.a).map(([i,k])=>kort[i]?`<span style="--kf:${UTG[k.e].f}">${esc(kort[i][0])}</span>`:'').join('')}</div>`},
+    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} poeng · ${Object.keys(s.a).length} av ${kort.length} kort</p>
+      <div class="sluttgr">${grupper.map(g=>{const har=g.k.filter(i=>s.a[i]);return `<div style="--gf:${g.f}"><b>${esc(g.n)} ${har.length===g.k.length?'✓':har.length+' av '+g.k.length}</b><div class="album">${har.map(i=>`<span style="--kf:${UTG[s.a[i].e].f}">${esc(kort[i][0])}</span>`).join('')}</div></div>`;}).join('')}</div>`},
   taarn:{n:'Tårnet',
     mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
     linje:plassLinje,
@@ -161,7 +181,7 @@ async function bliMed(){
   const lagretStil=minne.get('kq-st-'+kode);stil=lagretStil!=null?+lagretStil:rand(KTaarn.STILER.length);minne.set('kq-st-'+kode,String(stil));
   await net.set('s/'+id,{n:navn,st:stil});
   /* Lastes siden på nytt midt i spillet, hentes det eleven allerede har gjort. */
-  try{const f=await net.get('f/'+id);if(f){stat=Object.assign(NYSTAT(),{r:+f.r||0,f:+f.f||0,q:f.q||{},p:+f.p||0,u:+f.u||0,sp:+(f.sp&&f.sp.c)||0,et:String(f.et||'')});Object.entries(f.a||{}).forEach(([i,k])=>stat.a[i]={c:+k.c||0,e:+k.e||0});}}catch(e){}
+  try{const f=await net.get('f/'+id);if(f){stat=Object.assign(NYSTAT(),{r:+f.r||0,f:+f.f||0,q:f.q||{},p:+f.p||0,u:+f.u||0,sp:+(f.sp&&f.sp.c)||0,sk:+(f.sk&&f.sk.c)||0,et:String(f.et||'')});Object.entries(f.a||{}).forEach(([i,k])=>stat.a[i]={c:+k.c||0,e:+k.e||0});}}catch(e){}
   net.on('m',m=>{M=m;if(m&&m.igjen!=null)slutter=Date.now()+m.igjen*1000;if(V&&V.fase==='slutt')fase();else felles();});
   net.on('v',v=>{V=v;if(v&&v.igjen!=null)slutter=Date.now()+v.igjen*1000;fase();});
 }
@@ -181,9 +201,10 @@ async function fase(){
     const nokkel=V.ls+'|'+(V.ids||[]).join(',');
     if(!pool||poolNokkel!==nokkel){
       midt('<p class="muted">Henter spørsmålene …</p>');
-      let alle=[],k=[];for(const t of (V.ids||[])){window.PRES=null;await last(V.ls+'/'+t+'.js');if(window.PRES){if(PRES.quiz)alle=alle.concat(PRES.quiz);if(PRES.begreper)PRES.begreper.forEach(b=>{if(!k.some(x=>x[0]===b[0]))k.push(b);});}}   /* samme regel som i spill.html */
+      let alle=[];const lister=[];for(const t of (V.ids||[])){window.PRES=null;await last(V.ls+'/'+t+'.js');lister.push(window.PRES&&PRES.begreper||[]);if(window.PRES&&PRES.quiz)alle=alle.concat(PRES.quiz);}
       if(!alle.length)return midt('<h1>Fant ikke spørsmålene</h1><p class="muted">Si fra til læreren.</p>');
-      pool=alle;kort=k;poolNokkel=nokkel;
+      const sm=KSamler.bygg(V.ls,V.ids||[],lister);kort=sm.kort;grupper=sm.grupper;gAv=sm.gAv;   /* samme kort og grupper som på tavla */
+      pool=alle;poolNokkel=nokkel;
       if(!V||V.fase!=='spill')return fase();
     }
     if(!SPILL[V.spill])return midt('<h1>Dette spillet er nytt</h1><p class="muted">Last siden på nytt for å bli med.</p>');
