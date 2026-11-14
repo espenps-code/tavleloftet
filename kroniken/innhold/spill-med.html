@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – øvespill</title>
+<link rel="stylesheet" href="felles/quiz.css">
+<link rel="stylesheet" href="felles/spill.css">
+</head>
+<body>
+<!-- Elevens side i øvespillene. Eleven svarer i sitt eget tempo til tida er ute.
+     Ingen innlogging og ingen egne navn: eleven får et tilfeldig kallenavn (samme som i klassequizen).
+     Eleven kommer vanligvis hit fra bli-med.html, som sender videre når koden hører til et øvespill. -->
+<div id="demo" class="demo" hidden>Testmodus</div>
+<div id="app" class="elev"></div>
+<script src="oversikt.js"></script>
+<script src="felles/firebase-oppsett.js"></script>
+<script src="felles/quiz-net.js"></script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rand=n=>Math.floor(Math.random()*n);
+const stokk=l=>l.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const P=new URLSearchParams(location.search),DEMO=P.has('demo')||!window.TAVLELOFTET_FIREBASE;
+$('#demo').hidden=!DEMO;
+const ADJ=['Rask','Lur','Glad','Modig','Rolig','Kvikk','Snill','Sprek','Våken','Blid','Ivrig','Stødig','Kjapp','Klok'];
+const DYR=Object.keys(KQ_DYR);
+const minne={get(k){try{return sessionStorage.getItem(k);}catch(e){return this[k]||null;}},set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}this[k]=v;}};
+const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ok;document.body.appendChild(s);});
+const mmss=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+const VENT=3;   /* sekunder eleven må se på fasiten etter feil svar. Gjør at det ikke lønner seg å gjette vilt. */
+let net=null,kode='',id='',navn='',V=null,M=null,tikk=null;
+let pool=null,kort=[],poolNokkel='',ko=[],naa=null,laast=false,runde=0,slutter=0,opptatt=false;
+const NYSTAT=()=>({r:0,f:0,q:{},p:0,u:0,rekke:0,a:{},sp:0});
+let stat=NYSTAT();
+
+/* ================= Spillene (elevens del) =================
+   mitt(stat)        – eleven sin egen teller øverst til høyre
+   linje(M)          – raden under klokka (felles framdrift eller plassering)
+   riktig(opp,ferdig)– kalles ved riktig svar. Legg det som skal lagres i opp. Gir tilbake teksten eleven ser.
+                       Spill som viser noe eget (kort, hjul) setter opptatt=true og kaller ferdig() når eleven kan gå videre
+   feil(opp)         – kalles ved feil svar. Kan gi en ekstra tekst
+   topp()            – valgfri HTML mellom statuslinjene og spørsmålet (Tårnet: sikre-knappen)
+   slutt(stat,M)     – oppsummering når spillet er over */
+const UTG=[{n:'bronse',p:1,f:'#c98a5a'},{n:'sølv',p:3,f:'#cfd8dc'},{n:'gull',p:6,f:'#f3d27a'}];   /* samme tall som i spill.html */
+const HJUL=[{t:'10',v:10},{t:'30',v:30},{t:'50',v:50},{t:'20',v:20},{t:'100',v:100},{t:'0',v:0},{t:'40',v:40},{t:'×2',x2:1}];
+const HF=['#e98554','#5fb0d9','#f3d27a','#8fd0a8','#e98554','#5fb0d9','#8fd0a8','#fbf5ea'];
+const plassLinje=m=>{const pl=m&&m.pl&&m.pl[id];return `<span>${pl?`Du ligger på <b style="color:var(--cream)">${pl}. plass</b> av ${m.ant}`:'Svar riktig for å komme på lista'}</span>`;};
+const plassSlutt=m=>{const pl=m&&m.pl&&m.pl[id];return pl?`<div class="stor">${pl}. plass</div>`:'';};
+const SPILL={
+  mosaikk:{n:'Mosaikken',
+    mitt:s=>s.r+(s.r===1?' brikke':' brikker'),
+    linje:m=>`<span>Klassen</span><div class="fremdrift"><i style="width:${m&&m.maal?Math.min(100,m.n/m.maal*100).toFixed(1):0}%"></i></div><b>${m&&m.maal?m.n+' av '+m.maal:''}</b>`,
+    riktig:()=>'<span class="brikkefall"></span> Riktig! Du la en brikke.',
+    slutt:(s,m)=>`<p class="muted" style="font-size:22px;margin:0">Du la <b style="color:var(--cream)">${s.r}</b> av klassens ${m?m.n:s.r} brikker.</p>`},
+  samler:{n:'Samleren',
+    mitt:s=>s.p+' poeng · '+Object.keys(s.a).length+' av '+kort.length+' kort',
+    linje:plassLinje,
+    riktig(opp,ferdig){
+      /* Hvilket kort og hvilken utgave er tilfeldig hver gang. Samme fagord kan komme i bronse én gang og gull neste. */
+      if(!kort.length){stat.p++;opp.p=stat.p;return 'Riktig! +1 poeng';}
+      const i=rand(kort.length),t=Math.random(),e=t<.6?0:t<.9?1:2,foer=stat.a[i],ny=!foer;
+      const k=stat.a[i]={c:(foer?foer.c:0)+1,e:Math.max(foer?foer.e:0,e)};
+      let p=UTG[e].p,full=false;
+      if(ny&&Object.keys(stat.a).length===kort.length){p+=10;full=true;}
+      stat.p+=p;opp.p=stat.p;opp['a/'+i]=k;opp.sk={i,e,c:stat.r,full:full||null};
+      opptatt=true;
+      const lag=document.createElement('div');lag.className='kortlag';
+      lag.innerHTML=`<div class="kort e${e}" style="--kf:${UTG[e].f}"><span class="utg">${UTG[e].n}${ny?' · nytt kort!':''}</span><h3>${esc(kort[i][0])}</h3><p>${esc(kort[i][1])}</p><b>+${p} poeng</b>${full?'<em>Albumet er fullt: 10 ekstra poeng!</em>':''}</div><button class="knapp" id="kvidere">Videre</button>`;
+      app.appendChild(lag);$('#kvidere').onclick=()=>{lag.remove();opptatt=false;ferdig();};
+      return 'Riktig!';
+    },
+    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} poeng · ${Object.keys(s.a).length} av ${kort.length} kort</p><div class="album">${Object.entries(s.a).map(([i,k])=>kort[i]?`<span style="--kf:${UTG[k.e].f}">${esc(kort[i][0])}</span>`:'').join('')}</div>`},
+  taarn:{n:'Tårnet',
+    mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
+    linje:plassLinje,
+    topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div><button class="knapp" id="sikre"${stat.u?'':' disabled'}>🔒 Sikre ${stat.u||''} ${stat.u===1?'etasje':'etasjer'}</button><span class="muted">Neste riktige svar gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div>`,
+    bind(){const k=$('#sikre');if(k)k.onclick=()=>{if(!stat.u||laast)return;stat.p+=stat.u;stat.u=0;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:0});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();};},
+    riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Sikre, eller bygg videre?`;},
+    feil(opp){const tapt=stat.u;stat.u=0;stat.rekke=0;opp.u=0;return tapt?`Tårnet raste. Du mistet ${tapt} ${tapt===1?'usikret etasje':'usikrede etasjer'}.`:'';},
+    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} sikrede etasjer${s.u?`. ${s.u} usikrede teller ikke.`:''}</p>`},
+  hjul:{n:'Lykkehjulet',
+    mitt:s=>s.p+' poeng',
+    linje:plassLinje,
+    riktig(opp,ferdig){
+      /* Hjulet har åtte like store felt. Poengene lagres først når hjulet har stanset. */
+      const i=rand(HJUL.length),felt=HJUL[i],v=felt.x2?Math.max(20,Math.min(300,stat.p)):felt.v;
+      opptatt=true;
+      const lag=document.createElement('div');lag.className='kortlag';
+      const seg=HJUL.map((h,k)=>{const a0=(k*45-90)*Math.PI/180,a1=((k+1)*45-90)*Math.PI/180,am=((k+.5)*45-90)*Math.PI/180;
+        return `<path d="M0 0L${(100*Math.cos(a0)).toFixed(2)} ${(100*Math.sin(a0)).toFixed(2)}A100 100 0 0 1 ${(100*Math.cos(a1)).toFixed(2)} ${(100*Math.sin(a1)).toFixed(2)}Z" fill="${HF[k]}" stroke="#16211f" stroke-width="2"/><text x="${(66*Math.cos(am)).toFixed(2)}" y="${(66*Math.sin(am)).toFixed(2)}" transform="rotate(${(k+.5)*45} ${(66*Math.cos(am)).toFixed(2)} ${(66*Math.sin(am)).toFixed(2)})" text-anchor="middle" dominant-baseline="central" font-family="Fredoka" font-weight="700" font-size="24" fill="#16211f">${h.t}</text>`;}).join('');
+      lag.innerHTML=`<div class="hjulboks"><div class="pil"></div><svg id="hjul" viewBox="-104 -104 208 208" role="img" aria-label="Lykkehjul">${seg}<circle r="13" fill="#16211f" stroke="#fbf5ea" stroke-width="3"/></svg></div><p class="hjultxt" id="hjultxt">Riktig! Trykk på hjulet.</p><button class="knapp" id="spinn">Spinn!</button>`;
+      app.appendChild(lag);
+      let startet=false;
+      const spinn=()=>{if(startet)return;startet=true;const kn=$('#spinn');if(kn)kn.remove();$('#hjultxt').textContent='Hjulet spinner …';
+        $('#hjul').style.transform=`rotate(${360*5-(i+.5)*45}deg)`;try{navigator.vibrate&&navigator.vibrate(40);}catch(e){}
+        setTimeout(()=>{if(!lag.isConnected)return;stat.p+=v;stat.sp++;net.update('f/'+id,{p:stat.p,sp:{v,t:felt.x2?'x2':'p',c:stat.sp}});
+          const t=$('#hjultxt');t.className='hjultxt '+(v?'ok':'no');t.textContent=felt.x2?`Dobling! +${v} poeng`:v?`+${v} poeng`:'Ingenting denne gangen';
+          const e=$('#mitt');if(e)e.textContent=this.mitt(stat);try{navigator.vibrate&&navigator.vibrate([30,40,60]);}catch(e){}
+          setTimeout(()=>{lag.remove();opptatt=false;ferdig();},1300);},2700);};
+      $('#spinn').onclick=spinn;$('#hjul').onclick=spinn;setTimeout(()=>{if(lag.isConnected)spinn();},5000);
+      return 'Riktig!';
+    },
+    slutt:(s,m)=>plassSlutt(m)+`<p class="muted" style="font-size:22px;margin:0">${s.p} poeng på ${s.sp} spinn</p>`}
+};
+
+function midt(html){app.innerHTML=`<div class="midt">${html}</div>`;}
+function kodeside(feil){
+  midt(`<p class="kicker">Krøniken · øvespill</p><h1>Skriv koden fra tavla</h1><input id="k" maxlength="4" autocomplete="off" autocapitalize="characters" aria-label="Spillkode"><p class="no" style="min-height:1.4em;font-weight:800">${esc(feil||'')}</p><button class="knapp" id="ok">Videre</button>`);
+  const gaa=()=>koble($('#k').value.toUpperCase().replace(/[^A-Z]/g,''));
+  $('#ok').onclick=gaa;$('#k').onkeydown=e=>{if(e.key==='Enter')gaa();};$('#k').focus();
+}
+async function koble(k){
+  if(k.length!==4)return kodeside('Koden har fire bokstaver.');
+  midt('<p class="muted">Kobler til …</p>');
+  let v;try{net=await KQNet(k);$('#demo').hidden=!net.demo;v=await net.get('v');if(!v)return kodeside('Fant ikke spillet. Sjekk koden.');}catch(e){return kodeside('Fikk ikke kontakt. Prøv igjen.');}
+  if(v.type!=='fri'){location.replace('bli-med.html?'+(DEMO?'demo=1&':'')+'k='+k);return;}   /* koden hører til en klassequiz */
+  kode=k;id=minne.get('kq-id-'+k);navn=minne.get('kq-navn-'+k);
+  if(id&&navn)return bliMed();
+  id=Array.from({length:10},()=>'abcdefghjkmnpqrstuvwxyz23456789'[rand(31)]).join('');velgNavn();
+}
+async function velgNavn(){
+  const tatt=Object.values(await net.get('s')||{}).map(x=>x.n);
+  const nytt=()=>{let n,i=0;do{n=ADJ[rand(ADJ.length)]+' '+DYR[rand(DYR.length)];}while(tatt.includes(n)&&++i<60);return n;};
+  navn=nytt();
+  midt(`<p class="kicker">Spill ${esc(kode)}</p><h1>Dette er navnet ditt</h1><div class="storbrikke" id="ik">${KQ_IKON(navn)}</div><div class="navn" id="n">${esc(navn)}</div><button class="knapp sek" id="bytt">Gi meg et annet</button><button class="knapp" id="med">Bli med</button><p class="muted" style="font-size:15px;max-width:420px">Alle får et tilfeldig kallenavn, så ingen ekte navn lagres.</p>`);
+  $('#bytt').onclick=()=>{navn=nytt();$('#n').textContent=navn;$('#ik').textContent=KQ_IKON(navn);};$('#med').onclick=bliMed;
+}
+async function bliMed(){
+  minne.set('kq-id-'+kode,id);minne.set('kq-navn-'+kode,navn);
+  await net.set('s/'+id,{n:navn});
+  /* Lastes siden på nytt midt i spillet, hentes det eleven allerede har gjort. */
+  try{const f=await net.get('f/'+id);if(f){stat=Object.assign(NYSTAT(),{r:+f.r||0,f:+f.f||0,q:f.q||{},p:+f.p||0,u:+f.u||0,sp:+(f.sp&&f.sp.c)||0});Object.entries(f.a||{}).forEach(([i,k])=>stat.a[i]={c:+k.c||0,e:+k.e||0});}}catch(e){}
+  net.on('m',m=>{M=m;if(m&&m.igjen!=null)slutter=Date.now()+m.igjen*1000;if(V&&V.fase==='slutt')fase();else felles();});
+  net.on('v',v=>{V=v;if(v&&v.igjen!=null)slutter=Date.now()+v.igjen*1000;fase();});
+}
+function hode(){const S=V&&SPILL[V.spill];return `<div class="linje"><span>${KQ_IKON(navn)} ${esc(navn)}</span><span id="mitt">${S&&V.fase!=='lobby'?S.mitt(stat):''}</span></div>`;}
+
+/* ---------- Fasene ---------- */
+async function fase(){
+  clearInterval(tikk);
+  if(!V){pool=null;return midt('<h1>Spillet er avsluttet</h1><p class="muted">Takk for at du var med!</p><button class="knapp sek" id="ny">Skriv en ny kode</button>'),void($('#ny').onclick=()=>{location.replace('bli-med.html'+(DEMO?'?demo=1':''));});}
+  if(V.runde!==runde){if(runde)stat=NYSTAT();runde=V.runde;ko=[];naa=null;laast=false;opptatt=false;}
+  if(V.fase==='lobby')return void(app.innerHTML=hode()+`<div class="midt"><div class="stor ok">Du er med!</div><div class="storbrikke">${KQ_IKON(navn)}</div><div class="navn">${esc(navn)}</div><p class="muted">Se på tavla. Spillet starter snart.</p></div>`);
+  if(V.fase==='slutt'){
+    const S=SPILL[V.spill],alle=stat.r+stat.f;opptatt=false;
+    return midt(`<p class="kicker">Ferdig</p>${S&&S.linje===plassLinje?'':`<div class="stor">${esc(V.res&&V.res.tittel||'Tida er ute')}</div>`}${S?S.slutt(stat,M):''}${alle?`<p class="muted" style="margin:0">Du svarte riktig på ${stat.r} av ${alle} spørsmål.</p>`:''}<p class="muted">Se på tavla!</p>`);
+  }
+  if(V.fase==='spill'){
+    const nokkel=V.ls+'|'+(V.ids||[]).join(',');
+    if(!pool||poolNokkel!==nokkel){
+      midt('<p class="muted">Henter spørsmålene …</p>');
+      let alle=[],k=[];for(const t of (V.ids||[])){window.PRES=null;await last(V.ls+'/'+t+'.js');if(window.PRES){if(PRES.quiz)alle=alle.concat(PRES.quiz);if(PRES.begreper)PRES.begreper.forEach(b=>{if(!k.some(x=>x[0]===b[0]))k.push(b);});}}   /* samme regel som i spill.html */
+      if(!alle.length)return midt('<h1>Fant ikke spørsmålene</h1><p class="muted">Si fra til læreren.</p>');
+      pool=alle;kort=k;poolNokkel=nokkel;
+      if(!V||V.fase!=='spill')return fase();
+    }
+    if(!SPILL[V.spill])return midt('<h1>Dette spillet er nytt</h1><p class="muted">Last siden på nytt for å bli med.</p>');
+    tikk=setInterval(klokke,250);
+    if(opptatt)return;
+    if(!naa)neste();else tegn();
+  }
+}
+function klokke(){
+  const igjen=(slutter-Date.now())/1000,e=$('#ti'),t=$('#tidtxt');
+  if(e&&V)e.style.width=Math.max(0,Math.min(100,igjen/V.tid*100))+'%';
+  if(t)t.textContent=mmss(igjen);
+  if(igjen>1&&laast){laast=false;if(!opptatt)tegn();return;}   /* tavla sier at det er tid igjen likevel */
+  /* Tavla bestemmer når det er slutt. Går klokka her ut først, låses knappene mens vi venter på tavla. */
+  if(igjen<=0&&!laast){laast=true;app.querySelectorAll('.eb button').forEach(b=>b.disabled=true);const m=$('#meld');if(m){m.className='melding';m.textContent='Tida er ute!';}}
+}
+function felles(){const S=V&&SPILL[V.spill],e=$('#linje');if(e&&S)e.innerHTML=S.linje(M);}
+/* Tegner bare det som endrer seg (teller og eventuell topp), uten å røre spørsmålet. */
+function oppfrisk(){const S=SPILL[V.spill],e=$('#mitt'),t=$('#topp');if(e)e.textContent=S.mitt(stat);if(t&&S.topp){t.innerHTML=S.topp();S.bind&&S.bind();}}
+
+/* ---------- Spørsmålene ---------- */
+function neste(){
+  /* Køen er alle spørsmålene i tilfeldig rekkefølge. Når den er tom, stokkes de på nytt.
+     Et spørsmål eleven svarte feil på, settes inn igjen noen plasser fram. */
+  if(!V||V.fase!=='spill')return;
+  if(!ko.length){ko=stokk(pool.map((_,i)=>i));if(naa&&ko.length>1&&ko[0]===naa.nr)ko.push(ko.shift());}
+  const nr=ko.shift(),q=pool[nr],a=stokk(q.a.map((t,k)=>[t,k===q.r]));
+  naa={nr,q:q.q,a:a.map(x=>x[0]),r:a.findIndex(x=>x[1]),valgt:null,tekst:''};
+  tegn();
+}
+function tegn(){
+  if(!V||V.fase!=='spill'||!naa)return;const S=SPILL[V.spill];
+  app.innerHTML=hode()+`<div class="estat"><span id="tidtxt"></span><div class="tid" style="flex:1;margin:0"><i id="ti"></i></div></div>
+   <div class="estat" id="linje"></div><div id="topp"></div>
+   <h2 style="font-size:26px;margin:18px 0 14px">${esc(naa.q)}</h2>
+   <div class="eb">${naa.a.map((a,i)=>`<button data-i="${i}" style="--f:${KQ_SVAR[i].f}"><b>${KQ_SVAR[i].t}</b>${esc(a)}</button>`).join('')}</div>
+   <div class="melding" id="meld" aria-live="polite"></div>`;
+  app.querySelectorAll('.eb button').forEach(b=>b.onclick=()=>svar(+b.dataset.i));
+  klokke();felles();oppfrisk();
+  if(naa.valgt!=null)visFasit(false);
+}
+function svar(i){
+  if(laast||opptatt||naa.valgt!=null||!V||V.fase!=='spill')return;
+  const S=SPILL[V.spill],denne=naa;
+  naa.valgt=i;const ok=i===naa.r,q=stat.q[naa.nr]=stat.q[naa.nr]||{r:0,f:0};
+  if(ok){stat.r++;q.r=(+q.r||0)+1;}else{stat.f++;q.f=(+q.f||0)+1;ko.splice(Math.min(ko.length,3+rand(3)),0,naa.nr);}
+  const opp={r:stat.r,f:stat.f};opp['q/'+naa.nr+'/'+(ok?'r':'f')]=ok?q.r:q.f;
+  try{navigator.vibrate&&navigator.vibrate(ok?30:[40,60,40]);}catch(e){}
+  naa.tekst=ok?S.riktig(opp,()=>{if(naa===denne&&!laast)neste();}):(S.feil?S.feil(opp):'');
+  net.update('f/'+id,opp);
+  visFasit(true);
+}
+function visFasit(ny){
+  const ok=naa.valgt===naa.r,m=$('#meld');
+  app.querySelectorAll('.eb button').forEach(b=>{const i=+b.dataset.i;b.disabled=true;b.classList.add(i===naa.r?'rett':(i===naa.valgt?'valgt':'bom'));});
+  oppfrisk();
+  if(ok){m.className='melding ok';m.innerHTML=naa.tekst||'Riktig!';
+    if(opptatt)return;   /* kortet eller hjulet sier selv fra når eleven kan gå videre */
+    const denne=naa;setTimeout(()=>{if(naa===denne&&V&&V.fase==='spill'&&!laast&&!opptatt)neste();},ny?(V.spill==='taarn'?1700:1100):300);}
+  else{m.className='melding no';m.innerHTML=`<span>${naa.tekst||'Se på det riktige svaret.'}</span><button class="knapp" id="videre" disabled style="--v:${VENT}s">Neste<i></i></button>`;
+    const denne=naa;setTimeout(()=>{const k=$('#videre');if(k&&naa===denne){k.disabled=false;k.querySelector('i').remove();k.onclick=()=>{if(!laast)neste();};}},VENT*1000);}
+}
+const k=(P.get('k')||'').toUpperCase().replace(/[^A-Z]/g,'');
+k.length===4?koble(k):kodeside();
+})();
+</script>
+</body>
+</html>

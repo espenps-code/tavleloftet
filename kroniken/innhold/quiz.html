@@ -53,6 +53,7 @@ function oppsett(){
   const livssyn=Object.entries(KRONIKEN);
   const rad=(navn,liste,valgt,etter)=>liste.map((n,i)=>`<label><input type="radio" name="${navn}" value="${n}"${i===valgt?' checked':''}>${n}${etter}</label>`).join('');
   app.innerHTML=`<p class="kicker">Krøniken · quiz</p><h1>Sett opp en quiz</h1>
+  <p class="muted" style="margin:8px 0 0;max-width:900px">Her tar klassen ett spørsmål om gangen. Vil du heller la elevene svare i sitt eget tempo i noen minutter? <a href="spill.html" style="color:var(--a2);font-weight:800">Gå til øvespillene</a>.</p>
   <section class="steg">
     <div class="stegh"><span class="nr">1</span><h2>Hva skal quizen handle om?</h2><select id="ls" aria-label="Livssyn">${livssyn.map(([k,l])=>`<option value="${k}">${esc(l.navn)}</option>`).join('')}</select><button type="button" class="lenke" id="alle">Velg alle</button></div>
     <div class="temag" id="tema"></div>

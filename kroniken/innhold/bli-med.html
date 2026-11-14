@@ -48,7 +48,8 @@ function kodeside(feil){
 async function koble(k){
   if(k.length!==4)return kodeside('Koden har fire bokstaver.');
   midt('<p class="muted">Kobler til …</p>');
-  try{net=await KQNet(k);$('#demo').hidden=!net.demo;const v=await net.get('v');if(!v)return kodeside('Fant ikke spillet. Sjekk koden.');}catch(e){return kodeside('Fikk ikke kontakt. Prøv igjen.');}
+  let v0;try{net=await KQNet(k);$('#demo').hidden=!net.demo;v0=await net.get('v');if(!v0)return kodeside('Fant ikke spillet. Sjekk koden.');}catch(e){return kodeside('Fikk ikke kontakt. Prøv igjen.');}
+  if(v0.type==='fri'){location.replace('spill-med.html?'+(P.has('demo')?'demo=1&':'')+'k='+k);return;}   /* koden hører til et øvespill (spill.html) */
   kode=k;id=minne.get('kq-id-'+k);navn=minne.get('kq-navn-'+k);
   if(id&&navn)return bliMed();
   id=Array.from({length:10},()=>'abcdefghjkmnpqrstuvwxyz23456789'[rand(31)]).join('');velgNavn();

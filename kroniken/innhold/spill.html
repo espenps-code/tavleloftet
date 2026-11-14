@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<script src="felles/vakt.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – øvespill (tavle)</title>
+<link rel="stylesheet" href="felles/quiz.css">
+<link rel="stylesheet" href="felles/spill.css">
+</head>
+<body>
+<!-- Lærerens side for øvespillene. Vises på tavla.
+     Forskjellen fra quiz.html: her svarer hver elev i sitt eget tempo til tida er ute.
+     Elevene blir med på bli-med.html med koden (de sendes videre til spill-med.html).
+     spill.html?demo=1 kjører i testmodus: åpne bli-med.html?demo=1 i andre faner på samme maskin.
+
+     Fire spill: Mosaikken (samarbeid), Samleren, Tårnet og Lykkehjulet (poeng og plassering).
+     Nytt spill: lag en ny oppføring i SPILL lenger ned, og en tilsvarende i spill-med.html. Alt annet er felles. -->
+<div id="demo" class="demo" hidden>Testmodus: spillet går bare mellom faner på denne maskinen. Åpne bli-med.html?demo=1 i en ny fane.</div>
+<div id="app" class="tavle"></div>
+<script src="oversikt.js"></script>
+<script src="felles/tilbake.js"></script>
+<script src="felles/firebase-oppsett.js"></script>
+<script src="felles/quiz-net.js"></script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rand=n=>Math.floor(Math.random()*n);
+const stokk=l=>l.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const DEMO=new URLSearchParams(location.search).has('demo')||!window.TAVLELOFTET_FIREBASE;
+$('#demo').hidden=!DEMO;
+const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ok;document.body.appendChild(s);});
+const mmss=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+let net=null,G=null,tikk=null,lyd=null,lydPaa=true;
+function tone(f0,f1,dur,vol=.05){if(!lydPaa)return;try{lyd=lyd||new (window.AudioContext||window.webkitAudioContext)();const t=lyd.currentTime,o=lyd.createOscillator(),g=lyd.createGain();o.type='triangle';o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(lyd.destination);o.start(t);o.stop(t+dur+.05);}catch(e){}}
+
+/* ================= Spillene =================
+   Hvert spill har:
+     n, om, ikon      – navn, forklaring og tegning i oppsettet
+     nivaa            – valgfritt ekstra valg i oppsettet [{v,n}]
+     poeng            – true for spill med poeng og plassering (ikke samarbeid)
+     start(G)         – gjør klart før start (kan være async)
+     tegn(G)          – HTML for venstre del av tavla
+     oppdater(G,nye)  – kalles hver gang elevene har svart. nye = [{id,ant}] med nye riktige svar.
+                        Gir tilbake linjer (HTML) til «Dette skjer» på høyre side
+     status(G)        – {n,maal} som sendes til elevene (felles framdrift). Poengspill får plasseringen lagt til av seg selv
+     ferdig(G)        – true når spillet skal stoppe før tida er ute
+     teller(G)        – det store tallet på høyre side
+     verdi(s)         – (poengspill) teksten bak navnet i lista
+     slutt(G)         – {tittel,tekst,tall:[[verdi,etikett]]} til resultatsiden
+   Elevene melder inn under f/<id>: r og f (riktige og feil), q (per spørsmål), p (poeng) og det spillet ellers trenger. */
+const hvem=s=>`<b>${KQ_IKON(s.n)} ${esc(s.n)}</b>`;
+const hend=(s,html,kl)=>`<div class="hend${kl?' '+kl:''}" style="border-color:${KQ_FARGE(s.i)}">${hvem(s)} ${html}</div>`;
+const UTG=[{n:'bronse',p:1},{n:'sølv',p:3},{n:'gull',p:6}];   /* utgavene av kortene i Samleren. Samme tall står i spill-med.html */
+const SPILL={
+  mosaikk:{n:'Mosaikken',om:'Samarbeid: hvert riktig svar legger en brikke. Klarer klassen å avdekke hele bildet før tida er ute?',feed:'Siste brikker',
+    ikon:`<rect x="6" y="6" width="52" height="52" rx="8" fill="#1f3231" stroke="#3a5753" stroke-width="3"/>`+[[0,0,'#e98554'],[1,0,'#f3d27a'],[2,0,'#2a4441'],[0,1,'#5fb0d9'],[1,1,'#2a4441'],[2,1,'#8fd0a8'],[0,2,'#2a4441'],[1,2,'#e98554'],[2,2,'#f3d27a']].map(b=>`<rect x="${12+b[0]*14}" y="${12+b[1]*14}" width="12" height="12" rx="2.5" fill="${b[2]}"/>`).join(''),
+    nivaa:[{v:1.5,n:'Lite bilde'},{v:2.5,n:'Passe'},{v:3.5,n:'Stort bilde'}],nivaaTittel:'Hvor stort skal bildet være?',
+    async start(G){
+      /* Bildet hentes fra en av de valgte delene. Størrelsen regnes ut fra antall elever og minutter,
+         så en liten og en stor klasse har omtrent like god sjanse til å bli ferdig. */
+      const t=stokk(KRONIKEN[G.ls].tema.filter(x=>G.ids.includes(x.id)))[0];
+      G.bilde=G.ls+'/bilder/'+t.bilde;G.asp=3/4;
+      await new Promise(ok=>{const im=new Image();im.onload=()=>{G.asp=im.naturalWidth/im.naturalHeight;ok();};im.onerror=ok;im.src=G.bilde;});
+      const onsket=Math.max(24,Math.round(G.rek.length*(G.tid/60)*G.nivaa));
+      G.k=Math.max(4,Math.round(Math.sqrt(onsket*G.asp)));G.r=Math.max(4,Math.round(G.k/G.asp));G.maal=G.k*G.r;
+      G.rekkefolge=stokk([...Array(G.maal).keys()]);G.lagt=0;
+    },
+    tegn(G){
+      let b='';for(let i=0;i<G.maal;i++){const l=17+rand(9);b+=`<i style="--s:hsl(${168+rand(14)} ${20+rand(10)}% ${l}%)"></i>`;}
+      return `<div class="mosramme"><div class="mosaikk" id="mos" style="--asp:${G.asp.toFixed(4)};--k:${G.k};--r:${G.r};background-image:url('${G.bilde}')"><div class="br" id="br">${b}</div></div></div>`;
+    },
+    oppdater(G,nye){
+      const br=$('#br');if(!br)return[];
+      nye.forEach(({id,ant})=>{for(let j=0;j<ant&&G.lagt<G.maal;j++){
+        const el=br.children[G.rekkefolge[G.lagt++]],f=KQ_FARGE(G.spillere[id].i);
+        el.style.setProperty('--pf',f);el.classList.add('ny');setTimeout(()=>el.classList.add('av'),260);
+        tone([523,587,659,784,880][G.lagt%5],0,.09,.035);}});
+      if(G.lagt>=G.maal)$('#mos').classList.add('ferdig');
+      return nye.slice(0,4).map(({id,ant})=>hend(G.spillere[id],'la '+(ant===1?'en brikke':ant+' brikker')));
+    },
+    status(G){return{n:G.lagt,maal:G.maal};},
+    ferdig(G){return G.lagt>=G.maal;},
+    teller(G){return `${G.lagt} <small>av ${G.maal} brikker er lagt</small>`;},
+    gjenskap(G){const br=$('#br');if(br)for(let j=0;j<G.lagt;j++)br.children[G.rekkefolge[j]].classList.add('av');},
+    slutt(G){const alt=G.lagt>=G.maal,pst=Math.round(G.lagt/G.maal*100);
+      return{tittel:alt?'Mosaikken er ferdig!':'Tida er ute',tekst:alt?(G.igjenVedSlutt>1?`Dere avdekket hele bildet med ${mmss(G.igjenVedSlutt)} igjen på klokka.`:'Dere avdekket hele bildet akkurat i tide.'):`Dere rakk ${pst} % av bildet. Prøv en gang til og se om dere kommer lenger!`,
+        tall:[[G.lagt,'brikker lagt'],[pst+' %','av bildet']]};}
+  },
+  samler:{n:'Samleren',poeng:true,om:'Riktig svar gir et tilfeldig kort med et fagord fra temaet. Kortene kommer i bronse, sølv og gull. Flest poeng vinner.',feed:'Dette skjer',
+    ikon:`<rect x="10" y="16" width="26" height="36" rx="5" fill="#5fb0d9" transform="rotate(-12 23 34)"/><rect x="26" y="12" width="28" height="40" rx="5" fill="#f3d27a" stroke="#162222" stroke-width="3"/><path d="M40 21l3.100 6.600 7.200.800-5.400 4.900 1.500 7.100-6.400-3.700-6.400 3.700 1.500-7.100-5.400-4.900 7.200-.800z" fill="#e98554"/>`,
+    start(G){G.funn={};G.kortSum=0;},
+    tegn(G){const n=G.kort.length;return `<div class="kortvegg${n>18?' mange':''}" id="vegg" style="--n:${n<=8?4:n<=18?6:7}">${G.kort.map((k,i)=>`<div class="kv" data-i="${i}"><b>${esc(k[0])}</b><small>${esc(k[1])}</small><em></em></div>`).join('')}</div>`;},
+    oppdater(G,nye){
+      /* Veggen viser hvor mange ganger klassen har funnet hvert kort. Tallene hentes fra albumene til elevene. */
+      const funn={},beste={};let sum=0;const linjer=[];
+      G.rek.forEach(id=>{const x=G.F[id]||{},s=G.spillere[id];
+        Object.entries(x.a||{}).forEach(([i,v])=>{const c=+(v&&v.c)||0;funn[i]=(funn[i]||0)+c;sum+=c;beste[i]=Math.max(beste[i]||0,+(v&&v.e)||0);});
+        const sk=x.sk;if(sk&&sk.c>(s.sett||0)){s.sett=sk.c;if(sk.e>0&&G.kort[sk.i])linjer.push(hend(s,`fikk <b>${esc(G.kort[sk.i][0])}</b> i ${UTG[sk.e].n}`,sk.e===2?'h-gull':''));if(sk.full)linjer.push(hend(s,'har alle kortene i albumet!','h-gull'));}});
+      G.funn=funn;G.kortSum=sum;
+      document.querySelectorAll('#vegg .kv').forEach(el=>{const i=el.dataset.i,c=funn[i]||0;el.classList.toggle('funnet',c>0);el.dataset.e=c?beste[i]:'';el.querySelector('em').textContent=c?'×'+c:'';});
+      if(nye.length)tone(660,0,.08,.03);
+      return linjer;
+    },
+    status(G){return{n:G.kortSum};},
+    teller(G){return `${G.kortSum} <small>kort er samlet</small>`;},
+    verdi:s=>s.p+' p',
+    gjenskap(G){this.oppdater(G,[]);},
+    slutt(G){const ulike=Object.keys(G.funn).filter(i=>G.funn[i]>0).length;return{tittel:'Tida er ute',tekst:`Klassen samlet ${G.kortSum} kort og fant ${ulike} av ${G.kort.length} ulike fagord.`,tall:[[G.kortSum,'kort samlet'],[ulike+' av '+G.kort.length,'ulike fagord']]};}
+  },
+  taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Feil svar river alt som ikke er sikret. Bare sikrede etasjer teller til slutt.',feed:'Dette skjer',
+    ikon:`<rect x="22" y="44" width="24" height="12" rx="2" fill="#8fd0a8"/><rect x="24" y="31" width="20" height="12" rx="2" fill="#5fb0d9"/><rect x="26" y="18" width="16" height="12" rx="2" fill="#f3d27a"/><path d="M34 6v11M34 7l9 3-9 3" stroke="#e98554" stroke-width="3" fill="#e98554" stroke-linejoin="round"/>`,
+    start(G){G.rek.forEach(id=>{G.spillere[id].p0=0;G.spillere[id].u0=0;});},
+    tegn(G){return `<div class="by" id="by"></div><p class="muted" style="margin:8px 0 0;font-size:15px">Hel farge er sikret. Stripete etasjer kan rase.</p>`;},
+    oppdater(G){
+      const by=$('#by'),linjer=[];if(!by)return linjer;
+      const maks=Math.max(12,...G.rek.map(id=>G.spillere[id].p+G.spillere[id].u));
+      G.rek.forEach(id=>{const s=G.spillere[id];let el=by.querySelector(`[data-id="${id}"]`);
+        if(!el){by.insertAdjacentHTML('beforeend',`<div class="hus" data-id="${id}" style="--f:${KQ_FARGE(s.i)}"><span class="tall"></span><i class="us"></i><i class="si"></i><span class="fot">${KQ_IKON(s.n)}</span></div>`);el=by.lastElementChild;}
+        el.querySelector('.si').style.height=(s.p/maks*100).toFixed(2)+'%';el.querySelector('.us').style.height=(s.u/maks*100).toFixed(2)+'%';el.querySelector('.tall').textContent=s.p+s.u||'';
+        if(s.p0==null){s.p0=0;s.u0=0;}
+        if(s.p>s.p0&&s.p-s.p0>=4){linjer.push(hend(s,`sikret ${s.p-s.p0} etasjer`,'h-stige'));tone(440,880,.25,.05);}
+        else if(s.u===0&&s.u0>=4&&s.p===s.p0){linjer.push(hend(s,`mistet ${s.u0} usikrede etasjer`,'h-ras'));el.classList.remove('ras');void el.offsetWidth;el.classList.add('ras');tone(300,90,.4,.06);}
+        s.p0=s.p;s.u0=s.u;});
+      return linjer;
+    },
+    status(G){return{n:Math.max(0,...G.rek.map(id=>G.spillere[id].p))};},
+    teller(G){return `${Math.max(0,...G.rek.map(id=>G.spillere[id].p))} <small>etasjer i det høyeste sikrede tårnet</small>`;},
+    verdi:s=>s.p+(s.p===1?' etasje':' etasjer'),
+    gjenskap(G){G.rek.forEach(id=>G.spillere[id].u=0);this.oppdater(G,[]);},
+    slutt(G){const sum=G.rek.reduce((a,id)=>a+G.spillere[id].p,0);return{tittel:'Tida er ute',tekst:'Bare de sikrede etasjene teller.',tall:[[sum,'sikrede etasjer til sammen']]};}
+  },
+  hjul:{n:'Lykkehjulet',poeng:true,om:'Riktig svar gir et spinn på hjulet: poeng, dobling eller ingenting. Her kan alle vinne.',feed:'Dette skjer',
+    ikon:`<circle cx="32" cy="34" r="22" fill="#1f3231" stroke="#fbf5ea" stroke-width="3"/>`+['#e98554','#5fb0d9','#f3d27a','#8fd0a8','#e98554','#5fb0d9'].map((f,i)=>{const a=i*60*Math.PI/180,b=(i+1)*60*Math.PI/180;return `<path d="M32 34L${(32+20*Math.cos(a)).toFixed(1)} ${(34+20*Math.sin(a)).toFixed(1)}A20 20 0 0 1 ${(32+20*Math.cos(b)).toFixed(1)} ${(34+20*Math.sin(b)).toFixed(1)}Z" fill="${f}"/>`;}).join('')+`<path d="M32 4l5 10H27z" fill="#fbf5ea"/>`,
+    start(G){G.spinn=0;},
+    tegn(G){return `<div class="stolper" id="stolper"></div>`;},
+    oppdater(G){
+      const boks=$('#stolper'),linjer=[];if(!boks)return linjer;let spinn=0;
+      G.rek.forEach(id=>{const x=G.F[id]||{},s=G.spillere[id],sp=x.sp;spinn+=+(sp&&sp.c)||0;
+        if(sp&&sp.c>(s.sett||0)){s.sett=sp.c;
+          if(sp.t==='x2'){linjer.push(hend(s,`fikk dobling: +${sp.v} poeng`,'h-gull'));tone(523,1046,.4,.06);}
+          else if(sp.v>=100){linjer.push(hend(s,`fikk ${sp.v} poeng på ett spinn`,'h-stige'));tone(660,990,.25,.05);}}});
+      G.spinn=spinn;
+      const sort=plasser().slice(0,10),maks=Math.max(100,...sort.map(s=>s.p));
+      boks.innerHTML=sort.map(s=>`<div class="sr"><b class="pl">${s.plass}</b>${brk(s)}<span class="sn">${esc(s.n)}</span><div class="sb"><i style="width:${(s.p/maks*100).toFixed(1)}%;background:${KQ_FARGE(s.i)}"></i></div><em>${s.p}</em></div>`).join('');
+      return linjer;
+    },
+    status(G){return{n:G.spinn};},
+    teller(G){return `${G.spinn} <small>spinn på hjulet</small>`;},
+    verdi:s=>s.p+' p',
+    gjenskap(G){this.oppdater(G,[]);},
+    slutt(G){return{tittel:'Tida er ute',tekst:'Hjulet har stanset. Her er resultatet.',tall:[[G.spinn,'spinn på hjulet']]};}
+  }
+};
+/* Plassering i poengspillene: flest poeng først, så flest riktige svar. Like tall deler plass. */
+function plasser(){
+  const sp=G.rek.map(id=>G.spillere[id]),n=s=>[s.p,s.r];
+  const sort=sp.slice().sort((a,b)=>b.p-a.p||b.r-a.r||a.i-b.i);
+  sort.forEach((s,i)=>{const f=sort[i-1];s.plass=(f&&n(f).join()===n(s).join())?f.plass:i+1;});
+  return sort;
+}
+const ikon=k=>`<svg viewBox="0 0 64 64" aria-hidden="true">${SPILL[k].ikon}</svg>`;
+
+/* ---------- 1. Oppsett ---------- */
+function oppsett(){
+  const livssyn=Object.entries(KRONIKEN);
+  const rad=(navn,liste,valgt,tekst)=>liste.map((n,i)=>`<label><input type="radio" name="${navn}" value="${n.v!=null?n.v:n}"${i===valgt?' checked':''}>${tekst(n)}</label>`).join('');
+  app.innerHTML=`<p class="kicker">Krøniken · øvespill</p><h1>Sett opp et øvespill</h1>
+  <p class="muted" style="margin:8px 0 0;max-width:900px">Elevene svarer på spørsmål i sitt eget tempo til tida er ute. Feil svar viser fasiten, og spørsmålet kommer tilbake litt senere. Vil du heller ta ett spørsmål om gangen i samlet klasse? <a href="quiz.html" style="color:var(--a2);font-weight:800">Gå til klassequizen</a>.</p>
+  <section class="steg">
+    <div class="stegh"><span class="nr">1</span><h2>Hva skal dere øve på?</h2><select id="ls" aria-label="Livssyn">${livssyn.map(([k,l])=>`<option value="${k}">${esc(l.navn)}</option>`).join('')}</select><button type="button" class="lenke" id="alle">Velg alle</button></div>
+    <div class="temag" id="tema"></div>
+  </section>
+  <section class="steg">
+    <div class="stegh"><span class="nr">2</span><h2>Velg spill</h2></div>
+    <div class="spillg" id="spill">${Object.entries(SPILL).map(([k,m],i)=>`<label><input type="radio" name="spill" value="${k}"${i===0?' checked':''}>${ikon(k)}<b>${m.n}</b><small>${m.om}</small></label>`).join('')}</div>
+  </section>
+  <section class="steg">
+    <div class="stegh"><span class="nr">3</span><h2>Hvor lenge skal dere spille?</h2></div>
+    <div class="lengde"><div class="inl"><h3>Tid</h3><div class="valg rad" id="tid">${rad('tid',[3,5,8,10],1,n=>n+' min')}</div></div>
+    <div class="inl" id="nivaaboks"></div></div>
+  </section>
+  <div class="bunn"><button class="knapp" id="lag">Lag spill</button><span class="muted" id="oppsum"></span><span class="no" id="feil" style="font-weight:800"></span></div>`;
+  const v=n=>{const e=document.querySelector(`[name=${n}]:checked`);return e?e.value:null;};
+  const temaer=()=>[...document.querySelectorAll('#tema input')];
+  let vistNivaa='';
+  const oppsum=()=>{
+    const n=temaer().filter(i=>i.checked).length,alle=temaer().every(i=>i.checked),sp=SPILL[v('spill')];
+    if(vistNivaa!==v('spill')){vistNivaa=v('spill');$('#nivaaboks').innerHTML=sp.nivaa?`<h3>${sp.nivaaTittel}</h3><div class="valg rad">${rad('nivaa',sp.nivaa,1,x=>x.n)}</div>`:'';}
+    $('#alle').textContent=alle?'Fjern alle':'Velg alle';$('#feil').textContent='';
+    $('#oppsum').textContent=[KRONIKEN[$('#ls').value].navn,n+(n===1?' del':' deler'),sp.n,v('tid')+' minutter'].join(' · ');
+  };
+  const tema=()=>{$('#tema').innerHTML=KRONIKEN[$('#ls').value].tema.map((t,i)=>`<label><input type="checkbox" value="${t.id}"${i===0?' checked':''}><span class="tn">${i+1}</span><span><b>${esc(t.tittel)}</b><small>${esc(t.om)}</small></span></label>`).join('');};
+  $('#ls').onchange=()=>{tema();oppsum();};
+  $('#alle').onclick=()=>{const paa=!temaer().every(i=>i.checked);temaer().forEach(i=>i.checked=paa);oppsum();};
+  /* ?ls=islam&t=tema2-koranen velger livssyn og del på forhånd (brukes fra temasidene) */
+  const Qp=new URLSearchParams(location.search),qls=Qp.get('ls'),qt=Qp.get('t');
+  if(qls&&KRONIKEN[qls])$('#ls').value=qls;
+  tema();
+  if(qt&&temaer().some(i=>i.value===qt))temaer().forEach(i=>i.checked=i.value===qt);
+  app.onchange=oppsum;oppsum();
+  $('#lag').onclick=async()=>{
+    const ls=$('#ls').value,ids=temaer().filter(x=>x.checked).map(x=>x.value);
+    if(!ids.length){$('#feil').textContent='Velg minst én del.';return;}
+    $('#lag').disabled=true;
+    const {sp,kort}=await hentSporsmal(ls,ids);
+    if(!sp.length){$('#feil').textContent='Fant ingen spørsmål.';$('#lag').disabled=false;return;}
+    app.onchange=null;
+    start({spill:v('spill'),tid:+v('tid')*60,nivaa:+(v('nivaa')||1),ls,ids,sp,kort,tittel:KRONIKEN[ls].navn});
+  };
+}
+/* Samme rekkefølge som på elevsiden (spill-med.html), så spørsmål nr. 7 og kort nr. 3 er de samme begge steder. */
+async function hentSporsmal(ls,ids){let sp=[],kort=[];for(const id of ids){window.PRES=null;await last(ls+'/'+id+'.js');if(window.PRES){if(PRES.quiz)sp=sp.concat(PRES.quiz);if(PRES.begreper)PRES.begreper.forEach(b=>{if(!kort.some(k=>k[0]===b[0]))kort.push(b);});}}return{sp,kort};}   /* samme fagord i to deler blir ett kort */
+
+/* ---------- 2. Lobby ---------- */
+async function start(o){
+  const kode=Array.from({length:4},()=>KQ_TEGN[rand(KQ_TEGN.length)]).join('');
+  net=await KQNet(kode);$('#demo').hidden=!net.demo;
+  G=Object.assign(o,{kode,fase:'lobby',runde:1,spillere:{},rek:[],F:{}});
+  await net.remove('');
+  await net.set('v',vFelt());
+  net.on('s',s=>{Object.entries(s||{}).forEach(([id,x])=>{if(!G||G.spillere[id])return;G.spillere[id]={n:String(x.n||'?').slice(0,24),i:G.rek.length,r:0,p:0,u:0};G.rek.push(id);});if(G&&G.fase==='lobby')lobby();else if(G&&G.fase==='spill'){const e=$('#antmed');if(e)e.textContent=G.rek.length;}});
+  lobby();
+}
+/* type:'fri' forteller bli-med.html at dette er et øvespill, så eleven sendes til spill-med.html. */
+function vFelt(mer){return Object.assign({type:'fri',spill:G.spill,fase:G.fase,runde:G.runde,ls:G.ls,ids:G.ids,tid:G.tid,ts:Date.now()},mer||{});}
+function adresse(){const u=new URL('bli-med.html',location.href);u.search=(DEMO?'demo=1&':'')+'k='+G.kode;return u.href;}
+function brk(s){return `<span class="brk fast" style="background:${KQ_FARGE(s.i)}">${KQ_IKON(s.n)}</span>`;}
+function lobby(){
+  const sp=G.rek.map(id=>G.spillere[id]);
+  if(!$('#lobby')){app.innerHTML=`<div id="lobby" style="display:contents"><div class="topp"><div><p class="kicker">${esc(G.tittel)} · ${SPILL[G.spill].n} · ${G.tid/60} minutter</p><h1>Bli med i spillet</h1></div></div>
+    <div class="delt" style="align-items:center;margin-top:10px"><div><p class="muted" style="font-size:24px;margin:0">Åpne <b style="color:var(--cream)">bli-med.html</b> og skriv koden</p><div class="kode">${G.kode}</div><p class="muted" id="adr" style="word-break:break-all;font-size:15px"></p></div>
+    <div style="text-align:center"><div id="qr" style="display:inline-block;background:#fff;padding:14px;border-radius:18px"></div></div></div>
+    <h2 style="margin-top:20px"><span id="ant">0</span> er med</h2><div class="chips" id="chips"></div>
+    <div class="bunn"><button class="knapp" id="go" disabled>Start spillet</button><span class="muted">${esc(SPILL[G.spill].om)}</span><button class="knapp sek" id="avbryt" style="margin-left:auto">Avbryt</button></div></div>`;
+    $('#adr').textContent=location.protocol==='file:'?'Elevene kan bare bli med når siden ligger på nett (ikke fra en lokal fil).':adresse();
+    $('#go').onclick=kjor;$('#avbryt').onclick=avslutt;
+    if(location.protocol!=='file:')last('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js').then(()=>{const boks=$('#qr');if(!boks)return;try{const q=qrcode(0,'M');q.addData(adresse());q.make();boks.innerHTML=q.createSvgTag({cellSize:6,margin:0});}catch(e){boks.remove();}});else $('#qr').remove();
+  }
+  $('#ant').textContent=sp.length;$('#go').disabled=!sp.length;
+  $('#chips').innerHTML=sp.map(s=>`<span class="chip">${brk(s)}${esc(s.n)}</span>`).join('');
+}
+
+/* ---------- 3. Spillet går ---------- */
+function ledere(){const S=SPILL[G.spill];return plasser().slice(0,5).map(s=>`<div class="lr"><b class="pl">${s.plass}</b>${brk(s)}${esc(s.n)}<span>${S.verdi(s)}</span></div>`).join('');}
+function statusNaa(){const S=SPILL[G.spill],st=S.status(G);if(S.poeng){st.pl={};plasser().forEach(s=>st.pl[G.rek[s.i]]=s.plass);st.ant=G.rek.length;}return st;}
+async function kjor(){
+  $('#go').disabled=true;const S=SPILL[G.spill];
+  G.F={};G.rek.forEach(id=>Object.assign(G.spillere[id],{r:0,p:0,u:0,sett:0,p0:0,u0:0}));
+  await S.start(G);
+  G.fase='spill';G.t0=Date.now();G.sistSendt=0;G.sistStatus='';
+  await net.update('',{f:null,m:Object.assign({igjen:G.tid},statusNaa()),v:vFelt({igjen:G.tid})});
+  app.innerHTML=`<div class="topp"><div><p class="kicker" style="margin:0">${esc(G.tittel)} · ${S.n}</p></div><div class="t"><span><span id="antmed">${G.rek.length}</span> spiller · kode <b style="color:var(--a2);letter-spacing:.1em">${G.kode}</b></span></div></div>
+   <div class="spillflate"><div id="flate">${S.tegn(G)}</div>
+   <div><div class="klokke" id="klokke">${mmss(G.tid)}</div><div class="teller" id="teller">${S.teller(G)}</div>${S.poeng?'':'<div class="fremdrift"><i id="fr"></i></div>'}
+   ${S.poeng&&G.spill!=='hjul'?'<h2 style="margin-top:16px">I ledelsen</h2><div class="liste" id="leder" style="margin-bottom:16px"></div>':'<div style="height:16px"></div>'}
+   <h2>${S.feed}</h2><div class="feed" id="feed"><div class="hend">Spillet er i gang!</div></div></div></div>
+   <div class="bunn"><button class="knapp sek" id="stopp">Avslutt nå</button><button class="knapp sek" id="lydk">Lyd: ${lydPaa?'på':'av'}</button><span class="muted">${esc(S.om)}</span></div>`;
+  $('#stopp').onclick=()=>slutt();
+  $('#lydk').onclick=()=>{lydPaa=!lydPaa;$('#lydk').textContent='Lyd: '+(lydPaa?'på':'av');};
+  const vis=nye=>{
+    const feed=$('#feed');if(!feed)return;const linjer=S.oppdater(G,nye)||[];
+    linjer.slice(0,4).forEach(l=>feed.insertAdjacentHTML('afterbegin',l));while(feed.children.length>(S.poeng&&G.spill!=='hjul'?4:6))feed.lastElementChild.remove();
+    $('#teller').innerHTML=S.teller(G);const st=S.status(G),fr=$('#fr');if(fr&&st.maal)fr.style.width=Math.min(100,st.n/st.maal*100).toFixed(1)+'%';
+    const l=$('#leder');if(l)l.innerHTML=ledere();
+  };
+  vis([]);
+  if(G.fv)G.fv();
+  G.fv=net.on('f',f=>{if(!G||G.fase!=='spill')return;G.F=f||{};
+    const nye=[];G.rek.forEach(id=>{const x=G.F[id]||{},s=G.spillere[id],r=Math.max(0,Math.min(9999,+x.r||0));
+      s.p=Math.max(0,Math.min(999999,+x.p||0));s.u=Math.max(0,Math.min(9999,+x.u||0));
+      if(r>s.r){nye.push({id,ant:r-s.r});s.r=r;}});
+    vis(nye);
+    if(S.ferdig&&S.ferdig(G))setTimeout(()=>{if(G&&G.fase==='spill')slutt();},1800);
+  });
+  clearInterval(tikk);tikk=setInterval(()=>{
+    if(!G||G.fase!=='spill')return;
+    const igjen=G.tid-(Date.now()-G.t0)/1000,k=$('#klokke');
+    if(k){k.textContent=mmss(igjen);k.classList.toggle('lite',igjen<=30);}
+    if(igjen<=0){slutt();return;}
+    /* Felles framdrift, plassering og klokke til elevene: når noe er endret, men høyst annethvert sekund, og ellers hvert femte sekund. */
+    const st=statusNaa(),tekst=JSON.stringify(st),naa=Date.now();
+    if((tekst!==G.sistStatus&&naa-G.sistSendt>(S.poeng?2000:1000))||naa-G.sistSendt>5000){G.sistStatus=tekst;G.sistSendt=naa;net.set('m',Object.assign({igjen:Math.round(igjen)},st));}
+  },250);
+}
+
+/* ---------- 4. Resultat ---------- */
+function ovMer(){
+  /* Spørsmålene flest bommet på. Elevene melder inn riktig/feil per spørsmål under f/<id>/q/<nr>. */
+  const t={};Object.values(G.F||{}).forEach(x=>Object.entries(x&&x.q||{}).forEach(([nr,v])=>{const o=t[nr]=t[nr]||{r:0,f:0};o.r+=+(v&&v.r)||0;o.f+=+(v&&v.f)||0;}));
+  let rett=0,feil=0;Object.values(t).forEach(o=>{rett+=o.r;feil+=o.f;});
+  const verst=Object.entries(t).filter(([nr,o])=>o.f>0&&G.sp[nr]).sort((a,b)=>b[1].f-a[1].f||(b[1].f/(b[1].f+b[1].r))-(a[1].f/(a[1].f+a[1].r))).slice(0,S_ANT);
+  return{rett,feil,verst};
+}
+const S_ANT=5;
+async function slutt(){
+  if(!G||G.fase!=='spill')return;const S=SPILL[G.spill];
+  clearInterval(tikk);if(G.fv){G.fv();G.fv=null;}G.fase='slutt';G.igjenVedSlutt=Math.max(0,G.tid-(Date.now()-G.t0)/1000);
+  if(G.spill==='taarn')G.rek.forEach(id=>G.spillere[id].u=0);   /* usikrede etasjer teller ikke */
+  const res=S.slutt(G),st=statusNaa(),o=ovMer(),alle=o.rett+o.feil,sort=S.poeng?plasser():[];
+  await net.update('',{m:Object.assign({igjen:0},st),v:vFelt({igjen:0,res:{tittel:res.tittel,tekst:res.tekst}})});
+  if(S.poeng||st.n>=st.maal)[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0,.35,.08),i*140));
+  let pall='';
+  if(S.poeng){const p=sort.slice(0,3).map((s,k)=>`<div class="p${k+1}"><b>${s.plass}</b><strong>${KQ_IKON(s.n)} ${esc(s.n)}</strong>${S.verdi(s)}</div>`);
+    pall=`<div class="pall">${(p.length===3?[p[1],p[0],p[2]]:p.length===2?[p[1],p[0]]:p).join('')}</div><div class="liste" style="max-width:640px;margin:0 auto 14px">${sort.slice(3,10).map(s=>`<div class="lr"><b class="pl">${s.plass}</b>${brk(s)}${esc(s.n)}<span>${S.verdi(s)}</span></div>`).join('')}</div>`;}
+  app.innerHTML=`<p class="kicker">${esc(G.tittel)} · ${S.n}</p><h1>${esc(S.poeng?'Resultat':res.tittel)}</h1><p class="muted" style="font-size:22px;margin:8px 0 0">${esc(res.tekst)}</p>
+   <div class="spillflate"><div>${pall}<div id="flate"></div></div>
+   <div><div class="tallrad">${res.tall.concat([[alle?Math.round(o.rett/alle*100)+' %':'–','riktige svar'],[alle,'svar til sammen']]).map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+   <h2 style="margin-top:18px">Dette kan vi øve mer på</h2><div class="ovliste">${o.verst.length?o.verst.map(([nr,x])=>`<div class="ov"><p>${esc(G.sp[nr].q)}</p><span>Riktig svar: <b>${esc(G.sp[nr].a[G.sp[nr].r])}</b> · ${x.f} feil av ${x.f+x.r} svar</span></div>`).join(''):'<p class="muted">Ingen feil svar denne gangen.</p>'}</div></div></div>
+   <div class="bunn"><button class="knapp" id="igjen">Spill en gang til</button><button class="knapp sek" id="ny">Nytt oppsett</button><span class="muted">Spillet slettes fra nettet når du velger «Nytt oppsett» eller «Avslutt».</span><button class="knapp sek" id="avbryt" style="margin-left:auto">Avslutt</button></div>`;
+  /* Spillflata slik den ble (mosaikken, kortveggen, tårnene). Lykkehjulet viser bare pallen. */
+  if(G.spill!=='hjul'){$('#flate').innerHTML=S.tegn(G);if(S.gjenskap)S.gjenskap(G);}
+  $('#igjen').onclick=async()=>{G.fase='lobby';G.runde++;await net.update('',{f:null,m:null,v:vFelt()});lobby();};
+  $('#ny').onclick=avslutt;$('#avbryt').onclick=avslutt;
+}
+async function avslutt(){clearInterval(tikk);if(G&&G.fv)G.fv();if(net)await net.remove('');G=null;oppsett();}
+window.addEventListener('beforeunload',e=>{if(G&&G.fase==='spill'){e.preventDefault();e.returnValue='';}});
+window.KS_TEST=()=>G;
+oppsett();
+})();
+</script>
+</body>
+</html>
