@@ -29,54 +29,64 @@ button,select,input{font:inherit}
 #velg .g label{display:flex;gap:8px;align-items:flex-start;background:#1e2a29;border:1px solid #34423f;border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:700;font-size:14px}
 #velg .g input{margin-top:3px;accent-color:#e9a35f}
 #velg .lag{margin-top:26px;font-weight:800;font-size:17px;padding:12px 22px;border-radius:10px;border:0;background:#e9a35f;color:#1b1408;cursor:pointer}
-/* Arket */
-#ark{max-width:210mm;margin:22px auto 70px;background:#fff;padding:14mm 15mm;border-radius:6px;box-shadow:0 16px 50px rgba(0,0,0,.35)}
-.hode{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:10px}
-.hode h1{font-size:27px}.hode small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin-bottom:3px}
-.navn{font-size:13px;white-space:nowrap}.navn i{display:inline-block;width:52mm;border-bottom:1px solid var(--ink);margin-left:6px}
-.slik{background:var(--soft);border-radius:10px;padding:9px 14px;font-size:13.5px;margin-bottom:6px}
-.slik b{font-weight:800}
-.tema{margin-top:18px}
-.tema>h2{font-size:20px;background:var(--ink);color:#fff;padding:7px 12px;border-radius:8px;break-after:avoid}
-.tema>h2 small{font:800 11px/1 "Nunito",sans-serif;letter-spacing:.1em;text-transform:uppercase;opacity:.8;display:block;margin-bottom:3px}
-.tema h3{font-size:15px;margin:12px 0 5px;color:var(--a);break-after:avoid}
-.ord{display:grid;grid-template-columns:max-content 1fr;gap:3px 14px;margin:0;font-size:13.5px}
-.ord dt{font-weight:800}.ord dd{margin:0}
-.les{font-size:13px;margin:8px 0 0;color:#47524f}
-ol.sp{margin:0;padding-left:1.5em}
-ol.sp li{margin:0 0 9px;break-inside:avoid;font-weight:700;font-size:14px}
-ol.sp .linje{border-bottom:1px solid #9aa5a2;height:7.5mm}
-ol.sp .alt{display:grid;grid-template-columns:1fr 1fr;gap:1px 18px;font-weight:400;margin-top:2px;font-size:13.5px}
-ol.sp .alt span::before{content:"☐ ";font-size:15px}
-.fasit{break-before:page;margin-top:26px;border-top:3px solid var(--ink);padding-top:10px}
-.fasit h2{font-size:20px;margin-bottom:6px}
-.fasit h3{font-size:14px;margin:10px 0 3px;color:var(--a)}
-.fasit ol{margin:0;padding-left:1.5em;columns:2;column-gap:24px;font-size:12.5px}
-.fasit li{break-inside:avoid;margin-bottom:2px}
-.fot{margin-top:16px;font-size:11px;color:#6a7774;text-align:right}
-@page{size:A4;margin:12mm 13mm}
+/* Arket: ett A4-ark per tema. Forside = les og dekk til svaret. Bakside = test deg selv med fasit opp ned. */
+#ark{margin:22px auto 70px;width:210mm}
+.side{--z:1;--m:#2a4441;--d:#162222;--a:#e98554;--a2:#f6b890;position:relative;width:210mm;height:297mm;background:#fff;overflow:hidden;display:flex;flex-direction:column;font-size:calc(10.6pt*var(--z));line-height:1.32;margin:0 0 18px;box-shadow:0 16px 50px rgba(0,0,0,.35);break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.inn{flex:1;min-height:0;display:flex;flex-direction:column;padding:6mm 14mm 9mm}
+.topp{position:relative;flex:none;height:60mm;background:var(--d);color:#fff;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-between;gap:10mm;padding:0 14mm 9mm}
+.topp img{position:absolute;right:0;top:0;width:62%;height:100%;object-fit:cover;object-position:50% 38%}
+.topp::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--d) 36%,color-mix(in srgb,var(--d) 55%,transparent) 62%,color-mix(in srgb,var(--d) 34%,transparent))}
+.rad[hidden]{display:none}
+.navn{text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.side.utenbilder .topp{height:38mm}.side.utenbilder .topp img,.side.utenbilder .rad,.side.utenbilder .bhode img{display:none}
+.topp>div{position:relative;z-index:1}
+.topp small,.bhode small{display:block;font-weight:800;font-size:8.6pt;letter-spacing:.2em;text-transform:uppercase;color:var(--a2);margin-bottom:1.5mm}
+.topp h1{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:700;font-size:30pt;line-height:1.02;max-width:112mm;text-wrap:balance}
+.topp .und{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:600;font-size:13pt;margin-top:1.5mm;color:#fff}
+.navn{width:58mm;font-size:9pt;font-weight:700;border-bottom:.5mm solid #fff;padding-bottom:6mm;flex:none}
+.slik{flex:none;display:flex;gap:4mm;align-items:center;background:color-mix(in srgb,var(--a) 20%,#fff);border-radius:4mm;padding:3.2mm 5mm;margin:0 0 4mm}
+.slik span{font-size:1.9em;line-height:1}.slik b{font-weight:800;color:var(--m)}
+.qa{flex:none;columns:2;column-gap:8mm}
+.qa>div{break-inside:avoid;display:flex;gap:3mm;padding:2.3mm 0 2.5mm;border-bottom:.3mm solid #d9dedc}
+.qa i{flex:none;width:1.75em;height:1.75em;border-radius:50%;background:var(--m);color:#fff;font:700 .82em/1 "Fredoka",sans-serif;display:grid;place-items:center;font-style:normal;margin-top:.1em}
+.qa b{display:block;font-weight:800;color:var(--m);margin-top:.4mm}
+.rad{flex:1;min-height:0;display:flex;justify-content:space-between;align-items:flex-end;gap:5mm;padding-top:5mm}
+.rad img{flex:1;min-width:0;max-width:27mm;max-height:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2.5mm}
+.bhode{flex:none;display:flex;align-items:center;gap:5mm;padding:9mm 14mm 4mm;border-bottom:1.8mm solid var(--m)}
+.bhode img{width:15mm;aspect-ratio:3/4;object-fit:cover;border-radius:2mm}
+.bhode small{color:#6a7774;margin-bottom:.5mm}
+.bhode h1{font-family:"Fredoka","Trebuchet MS",sans-serif;font-weight:700;font-size:20pt;color:var(--m);line-height:1.05}
+.bhode .ant{margin-left:auto;width:52mm;border-top:.4mm solid #6a7774;padding-top:1.5mm;text-align:right;font-size:9pt;color:#47524f;align-self:flex-end;flex:none}
+.inst{flex:none;color:#47524f;font-size:.92em;margin:0 0 3mm}
+.test{flex:none;columns:2;column-gap:8mm}
+.test>div{break-inside:avoid;padding:0 0 3.2mm}
+.test p{margin:0 0 1mm;font-weight:800;padding-left:1.7em;text-indent:-1.7em}.test p em{font-style:normal;color:var(--m);display:inline-block;width:1.7em;text-indent:0}
+.test .alt{display:grid;grid-template-columns:1fr 1fr;gap:.8mm 4mm;padding-left:1.7em;font-size:.93em}
+.test .alt span{display:flex;gap:1.8mm;align-items:flex-start}
+.test .alt u{flex:none;text-decoration:none;width:1.45em;height:1.45em;border:.35mm solid #6a7774;border-radius:1mm;font:700 .78em/1 "Nunito",sans-serif;display:grid;place-items:center;color:#47524f}
+.fasit{flex:none;margin-top:auto;border:.35mm dashed #9aa5a2;border-radius:3mm;padding:2.6mm 5mm;transform:rotate(180deg);font-size:8.4pt;letter-spacing:.04em;color:#47524f;text-align:left;word-spacing:.25em}
+.fasit b{letter-spacing:.2em;font-weight:800;margin-right:2mm}
+@page{size:A4;margin:0}
 @media print{
   body{background:#fff}#bar,#velg{display:none!important}
-  #ark{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0}
-  .tema>h2,.slik{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #ark{margin:0;width:auto}.side{margin:0;box-shadow:none}
 }
+@media screen and (max-width:230mm){#ark{zoom:.62}}
 </style>
 </head>
 <body>
-<!-- Øveark til utskrift. Åpnes med ?t=buddhismen/tema1-historie,buddhismen/tema2-laeren (ett eller flere temaer, skilt med komma)
-     og gjerne &tittel=Navn på prøven. Uten ?t= vises en liste der læreren krysser av temaer.
-     Spørsmålene og ordene hentes fra temafilene (quiz og begreper). Ingenting lagres. -->
+<!-- Øveark til utskrift. Åpnes med ?t=buddhismen/tema1-historie,buddhismen/tema2-laeren (ett eller flere temaer, skilt med komma).
+     Uten ?t= vises en liste der læreren krysser av temaer. Hvert tema blir ett A4-ark med to sider.
+     Spørsmål, svar og bilder hentes fra temafilene (quiz og lysbilder). Ingenting lagres. -->
 <div id="bar"><b>Krøniken · øveark</b>
   <span id="valg" hidden>
-    <label>Spørsmål per tema <select id="ant"><option value="5">5</option><option value="10" selected>10</option><option value="99">Alle</option></select></label>
-    <label><input type="checkbox" id="alt"> Svaralternativer</label>
-    <label><input type="checkbox" id="ord" checked> Viktige ord</label>
-    <label><input type="checkbox" id="fas"> Fasit bakerst</label>
+    <label><input type="checkbox" id="bilder" checked> Med bilder</label>
+    <span>Skriv ut tosidig: ett ark per tema.</span>
     <a href="oveark.html">Velg andre temaer</a>
     <button id="skriv">Skriv ut</button>
   </span>
 </div>
-<div id="velg" hidden><h1>Øveark</h1><p>Kryss av temaene elevene skal øve på. Arket får viktige ord og øvespørsmål fra hvert tema, og kan skrives ut.</p><div id="liste"></div><button class="lag" id="lag">Lag øveark</button></div>
+<div id="velg" hidden><h1>Øveark</h1><p>Kryss av temaene elevene skal øve på. Hvert tema blir ett ark: forsiden har de 20 spørsmålene med svar, baksiden er en test med fasit.</p><div id="liste"></div><button class="lag" id="lag">Lag øveark</button></div>
 <main id="ark" hidden></main>
 <script src="oversikt.js"></script>
 <script src="felles/tilbake.js"></script>
@@ -98,6 +108,14 @@ if(!ider.length){
 
 const last=src=>new Promise((ok,feil)=>{const s=document.createElement('script');s.src=src;s.onload=()=>{s.remove();ok();};s.onerror=()=>{s.remove();feil();};document.head.appendChild(s);});
 const temaer=[];
+/* Fargene til hvert livssyn på arket: d = mørk topp, m = mørk farge til tall og svar, a/a2 = lys aksent (samme som tema.css). */
+const FARGER={kristendommen:['#162222','#2a4441','#e98554','#f6b890'],jodedommen:['#131b2e','#263459','#e3b24c','#f4d896'],islam:['#0f211b','#1f4234','#5fd0b0','#b6ecd9'],
+  hinduismen:['#231426','#44274a','#f5a32e','#fbd392'],buddhismen:['#2a1016','#54252f','#edc04f','#f8e0a0'],humanismen:['#1b232c','#364452','#ffd24a','#ffe9a6'],
+  menneskerettigheter:['#241a15','#4a372c','#74c6ec','#c3e7f7'],filosofi:['#1d2315','#3e4a2a','#f4a9ba','#fbd5dd'],livssporsmal:['#1b1836','#383265','#ffb37a','#ffdbc0']};
+/* Fast «tilfeldig» rekkefølge per tema, så arket blir likt hver gang det åpnes og fasiten alltid stemmer. */
+function stokker(tekst){let h=2166136261;for(const c of tekst){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}
+  const r=()=>{h|=0;h=h+0x6D2B79F5|0;let t=Math.imul(h^h>>>15,1|h);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+  return l=>{const a=l.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};}
 (async()=>{
   for(const id of ider){
     const [m,f]=id.split('/'),L=K[m];if(!L)continue;
@@ -105,37 +123,45 @@ const temaer=[];
     try{window.PRES=null;await last(id+'.js');}catch(e){continue;}
     const P=window.PRES||{};
     const sp=(P.quiz||[]).filter(q=>q&&q.q&&Array.isArray(q.a)&&q.a[q.r]!=null);
-    if(sp.length)temaer.push({id,livssyn:L.navn,nr:nr+1,tittel:meta.tittel,ord:P.begreper||[],sp});
+    const bilder=[...new Set((P.lysbilder||[]).filter(l=>l.bilde&&l.bilde.fil).map(l=>l.bilde.fil))];
+    if(sp.length)temaer.push({id,mappe:m,livssyn:L.navn,nr:nr+1,tittel:meta.tittel,om:meta.om||'',topp:meta.bilde||bilder[0],bilder:bilder.filter(b=>b!==meta.bilde),sp});
   }
   window.PRES=null;
   if(!temaer.length){$('velg').hidden=false;$('liste').innerHTML='<p style="color:#ffb4a2">Fant ingen av temaene. Velg på nytt.</p>';$('lag').hidden=true;return;}
   $('valg').hidden=false;$('ark').hidden=false;
-  if(temaer.length<=2)$('ant').value='99';
-  ['ant','alt','ord','fas'].forEach(i=>$(i).onchange=tegn);$('skriv').onclick=()=>print();
-  tegn();
+  $('bilder').onchange=tegn;$('skriv').onclick=()=>print();
+  tegn();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(tilpass);addEventListener('load',tilpass);
 })();
 
-/* Plukker n spørsmål jevnt fordelt utover temaets liste, så arket dekker hele temaet */
-function plukk(sp,n){if(n>=sp.length)return sp;const ut=[];for(let i=0;i<n;i++)ut.push(sp[Math.floor(i*sp.length/n)]);return ut;}
-
 function tegn(){
-  const n=+$('ant').value,medAlt=$('alt').checked,medOrd=$('ord').checked,medFasit=$('fas').checked;
-  const ettLivssyn=new Set(temaer.map(t=>t.livssyn)).size===1;
-  const overskrift=tittel||(ettLivssyn?temaer[0].livssyn:'KRLE');
-  let fasit='';
-  const deler=temaer.map(t=>{
-    const sp=plukk(t.sp,n);
-    fasit+=`<h3>${esc(t.livssyn)}: ${esc(t.tittel)}</h3><ol>${sp.map(q=>`<li>${esc(q.a[q.r])}</li>`).join('')}</ol>`;
-    return `<section class="tema"><h2><small>${esc(t.livssyn)} · tema ${t.nr}</small>${esc(t.tittel)}</h2>
-      ${medOrd&&t.ord.length?`<h3>Viktige ord</h3><dl class="ord">${t.ord.map(([o,f])=>`<dt>${esc(o)}</dt><dd>${esc(f)}</dd>`).join('')}</dl>`:''}
-      <h3>Øv på disse spørsmålene</h3>
-      <ol class="sp">${sp.map(q=>`<li>${esc(q.q)}${medAlt?`<div class="alt">${q.a.map(a=>`<span>${esc(a)}</span>`).join('')}</div>`:'<div class="linje"></div>'}</li>`).join('')}</ol>
-      <p class="les">Vil du lese mer? Se kapittelet «${esc(t.tittel)}» i elevboka.</p></section>`;}).join('');
-  $('ark').innerHTML=`<div class="hode"><div><small>Øveark</small><h1>${esc(overskrift)}</h1></div><div class="navn">Navn:<i></i></div></div>
-    <div class="slik"><b>Slik øver du:</b> Les de viktige ordene. Dekk til forklaringen og prøv å si den med egne ord. Svar så på spørsmålene${medAlt?'':' uten å se i boka'}. Sjekk svarene etterpå, og øv en gang til på dem du bommet på.</div>
-    ${deler}${medFasit?`<section class="fasit"><h2>Fasit</h2>${fasit}</section>`:''}
-    <p class="fot">Krøniken · øveark</p>`;
-  document.title='Øveark – '+overskrift;
+  const medBilder=$('bilder').checked,AB='ABCD';
+  $('ark').innerHTML=temaer.map(t=>{
+    const f=FARGER[t.mappe]||FARGER.kristendommen,stil=`--d:${f[0]};--m:${f[1]};--a:${f[2]};--a2:${f[3]}`,kl='side'+(medBilder?'':' utenbilder'),bm=t.mappe+'/bilder/';
+    const stokk=stokker(t.id),test=stokk(t.sp).map(q=>{const alt=stokk(q.a.map((x,i)=>({x,r:i===q.r})));return{q:q.q,alt,r:alt.findIndex(a=>a.r)};});
+    const n=t.sp.length;
+    return `<section class="${kl} for" style="${stil}">
+      <div class="topp">${t.topp?`<img src="${bm}${t.topp}" alt="">`:''}<div><small>Øveark · ${esc(t.livssyn)} · tema ${t.nr}</small><h1>${esc(t.tittel)}</h1>${t.om?`<p class="und">${esc(t.om)}</p>`:''}</div><div class="navn">Navn</div></div>
+      <div class="inn"><div class="slik"><span>📖</span><div>Dette er de <b>${n} spørsmålene</b> fra temaet. Les spørsmål og svar, dekk til svaret med hånda og se om du husker det. Når du er klar: <b>snu arket og test deg selv!</b></div></div>
+      <div class="qa">${t.sp.map((q,i)=>`<div><i>${i+1}</i><span>${esc(q.q)}<b>${esc(q.a[q.r])}</b></span></div>`).join('')}</div>
+      <div class="rad">${t.bilder.slice(0,6).map(b=>`<img src="${bm}${b}" alt="">`).join('')}</div></div>
+    </section>
+    <section class="${kl} bak" style="${stil}">
+      <div class="bhode">${t.topp?`<img src="${bm}${t.topp}" alt="">`:''}<div><small>Test deg selv · ${esc(t.livssyn)} · tema ${t.nr}</small><h1>${esc(t.tittel)}</h1></div><div class="ant">Antall riktige: ____ av ${n}</div></div>
+      <div class="inn"><p class="inst">Kryss av for det svaret du tror er riktig. Spørsmålene kommer i en annen rekkefølge enn på forsiden. Fasiten står opp ned nederst.</p>
+      <div class="test">${test.map((q,i)=>`<div><p><em>${i+1}.</em>${esc(q.q)}</p><div class="alt">${q.alt.map((a,j)=>`<span><u>${AB[j]}</u>${esc(a.x)}</span>`).join('')}</div></div>`).join('')}</div>
+      <div class="fasit"><b>Fasit</b>${test.map((q,i)=>`${i+1}${AB[q.r]}`).join(' ')}</div></div>
+    </section>`;}).join('');
+  document.title='Øveark – '+(temaer.length===1?temaer[0].tittel:new Set(temaer.map(t=>t.livssyn)).size===1?temaer[0].livssyn:'KRLE');
+  tilpass();
+}
+/* Alt skal få plass på én side. Er teksten for lang, krymper skriften litt og litt (ned til 80 %). Bilderaden nederst tar bare plassen som er til overs. */
+function tilpass(){
+  document.querySelectorAll('.side').forEach(s=>{
+    const inn=s.querySelector('.inn'),rad=s.querySelector('.rad');let z=1;s.style.setProperty('--z',z);if(rad)rad.hidden=false;
+    const over=()=>inn.scrollHeight>inn.clientHeight+1||(rad&&!rad.hidden&&rad.clientHeight<70&&rad.children.length);
+    while(over()&&z>.8){z=+(z-.02).toFixed(2);s.style.setProperty('--z',z);if(rad&&z<=.9)rad.hidden=true;}
+    if(rad&&!rad.hidden&&(rad.clientHeight<70||!rad.children.length))rad.hidden=true;
+  });
 }
 })();
 </script>
