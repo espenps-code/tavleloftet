@@ -28,7 +28,7 @@ const MODUS={
   klassisk:{n:'Klassisk',om:'Raskt og riktig svar gir flest poeng.'},
   lag:{n:'Lagkamp',om:'Klassen deles i lag. Snittet på laget teller, så alle svar betyr noe.'},
   sistemann:{n:'Sistemann står',om:'Alle har tre liv. Feil svar koster ett liv.'},
-  stige:{n:'Stigespillet',om:'Riktig svar gir et terningkast på brettet med stiger og sklier.'},
+  stige:{n:'Stigespillet',om:'Riktig svar gir et terningkast. Eleven kaster selv på sin egen skjerm.'},
   erobring:{n:'Erobringen',om:'Riktig svar gir en tilfeldig rute på kartet. Du kan ta andres ruter.'}};
 const LAG=[{n:'Rød',f:'#e98554'},{n:'Blå',f:'#5fb0d9'},{n:'Gul',f:'#f3d27a'},{n:'Grønn',f:'#8fd0a8'}];
 const KOL=8,RAD=6,MAAL=48,STIGER={2:18,5:22,9:26,17:34,27:42,29:45},SKLIER={19:4,23:7,37:21,41:25,46:30,47:32};   /* halvparten rett opp/ned, halvparten på skrå. Ingen krysser hverandre. */
@@ -127,7 +127,7 @@ function aktive(){return G.rek.filter(id=>G.modus!=='sistemann'||G.spillere[id].
 async function sporsmal(){
   if(G.nr<0&&G.modus==='lag'){stokk(G.rek).forEach((id,i)=>G.spillere[id].lag=i%G.antLag);}
   G.nr++;G.fase='sporsmal';G.svar={};const q=G.sp[G.nr];G.t0=Date.now();
-  if(G.av)G.av();
+  if(G.av)G.av();if(G.kv){G.kv();G.kv=null;}
   G.av=net.on('a/'+G.nr,a=>{if(G.fase!=='sporsmal')return;G.svar=a||{};const n=Object.keys(G.svar).length;const e=$('#svart');if(e)e.textContent=n;if(n>=G.rek.length&&n>0)avslor();});
   const opp={};if(G.nr===0&&G.modus==='lag')G.rek.forEach(id=>opp['r/'+id]={p:0,lag:G.spillere[id].lag});
   opp.v={fase:'sporsmal',modus:G.modus,ant:G.sp.length,nr:G.nr,q:q.q,a:q.a,tid:G.tid,ts:Date.now()};
@@ -177,7 +177,7 @@ async function avslor(){
     app.innerHTML=hode+`<div class="fasitstripe"><span>${esc(q.q)}</span><b style="--f:${KQ_SVAR[q.r].f}">${esc(q.a[q.r])}</b><em>${fordeling[q.r]} av ${G.rek.length} riktig</em></div>
      <div class="storbrett"><div>${m==='stige'?brettHTML():kart()}</div>
      <div><h2 style="font-size:24px;margin-bottom:8px">${m==='stige'?'Dette skjedde':'Erobringer'}</h2><div id="feed" class="feed">${m==='erobring'?erobringsFeed(hendelser):''}</div>
-     <h2 style="font-size:24px;margin:16px 0 8px">I ledelsen</h2><div class="liste">${topp.map(s=>rad(s,m==='stige'?stigeVerdi(s):s.ruter+(s.ruter===1?' rute':' ruter'))).join('')}</div></div></div>`+knapper;
+     <h2 style="font-size:24px;margin:16px 0 8px">I ledelsen</h2><div class="liste" id="leder">${topp.map(s=>rad(s,m==='stige'?stigeVerdi(s):s.ruter+(s.ruter===1?' rute':' ruter'))).join('')}</div></div></div>`+knapper;
     if(m==='stige')animerStige(hendelser);
   }else{
     app.innerHTML=hode+`<div class="delt"><div><p class="sp" style="font-size:clamp(24px,2.6vw,40px)">${esc(q.q)}</p>
@@ -230,22 +230,30 @@ const vent=ms=>new Promise(r=>setTimeout(r,ms));
 let lyd=null;
 function tone(f0,f1,dur,vol=.12){try{lyd=lyd||new (window.AudioContext||window.webkitAudioContext)();const t=lyd.currentTime,o=lyd.createOscillator(),g=lyd.createGain();o.type='triangle';o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(lyd.destination);o.start(t);o.stop(t+dur+.05);}catch(e){}}
 async function animerStige(h){
-  const mitt=G.anim=(G.anim||0)+1,pos={},feed=$('#feed');
-  G.rek.forEach(id=>pos[id]=h[id].fra);plasserBrikker(pos);await vent(700);
-  const kast=G.rek.filter(id=>h[id].kast);
-  kast.forEach(id=>{const el=document.querySelector(`.brk[data-id="${id}"]`);if(el)el.dataset.k=h[id].kast;});
-  for(let steg=1;steg<=6;steg++){if(G.anim!==mitt)return;let noen=false;
-    kast.forEach(id=>{if(h[id].kast>=steg&&pos[id]<h[id].mellom){pos[id]++;noen=true;}});
-    if(!noen)break;plasserBrikker(pos);tone(520+steg*40,0,.07,.05);await vent(330);}
-  document.querySelectorAll('.brk[data-k]').forEach(e=>delete e.dataset.k);
-  const hopp=kast.filter(id=>h[id].hopp);
-  for(const type of ['stige','sklie']){const l=hopp.filter(id=>h[id].hopp===type);if(!l.length)continue;if(G.anim!==mitt)return;
-    await vent(450);l.forEach(id=>{pos[id]=h[id].til;const s=G.spillere[id];
-      feed.insertAdjacentHTML('beforeend',`<div class="hend h-${type}">${type==='stige'?'🪜':'🛝'} <b>${KQ_IKON(s.n)} ${esc(s.n)}</b> ${type==='stige'?'klatret':'skled'} fra ${h[id].mellom} til ${h[id].til}</div>`);});
-    type==='stige'?tone(400,900,.4):tone(700,220,.45);plasserBrikker(pos);await vent(700);}
-  if(G.anim!==mitt)return;
-  if(!hopp.length&&!G.rek.some(id=>h[id].maal))feed.insertAdjacentHTML('beforeend',`<div class="hend">${kast.length?'Ingen stiger eller sklier denne runden.':'Ingen svarte riktig, så ingen fikk kaste.'}</div>`);
-  const i=G.rek.filter(id=>h[id].maal);if(i.length){feed.insertAdjacentHTML('beforeend',`<div class="hend h-stige">🏆 <b>${i.map(id=>esc(G.spillere[id].n)).join(', ')}</b> kom i mål, får en stjerne og starter på en ny runde.</div>`);tone(523,1046,.6);}
+  /* Hver elev kaster selv: brikken flytter seg på tavla når eleven trykker på terningen sin.
+     Kastet er trukket her på tavla, så ingen kan velge tallet. Den som ikke trykker, blir flyttet etter 12 sekunder. */
+  const mitt=G.anim=(G.anim||0)+1,pos={},feed=$('#feed'),gjort={};let ferdige=0;
+  G.rek.forEach(id=>pos[id]=h[id].fra);plasserBrikker(pos);
+  const kast=G.rek.filter(id=>h[id].kast),leder=$('#leder'),lederHTML=leder?leder.innerHTML:'';
+  const si=html=>{feed.insertAdjacentHTML('afterbegin',html);while(feed.children.length>7)feed.lastElementChild.remove();};
+  if(!kast.length){si('<div class="hend">Ingen svarte riktig, så ingen fikk kaste.</div>');return;}
+  if(leder)leder.innerHTML=`<div class="hend" id="venter">🎲 Venter på <b>${kast.length}</b> terningkast …</div>`;
+  const flytt=async id=>{
+    if(gjort[id]||G.anim!==mitt||!h[id]||!h[id].kast)return;gjort[id]=1;
+    const s=G.spillere[id],el=document.querySelector(`.brk[data-id="${id}"]`),hvem=`<b>${KQ_IKON(s.n)} ${esc(s.n)}</b>`;
+    const igjen=kast.length-Object.keys(gjort).length,v=$('#venter b');if(v)v.textContent=igjen;
+    if(el)el.dataset.k=h[id].kast;si(`<div class="hend">🎲 ${hvem} kastet ${h[id].kast}</div>`);
+    while(pos[id]<h[id].mellom){await vent(300);if(G.anim!==mitt)return;pos[id]++;plasserBrikker(pos);tone(520+(pos[id]%6)*40,0,.07,.05);}
+    if(el)delete el.dataset.k;
+    if(h[id].hopp){const type=h[id].hopp;await vent(450);if(G.anim!==mitt)return;pos[id]=h[id].til;
+      si(`<div class="hend h-${type}">${type==='stige'?'🪜':'🛝'} ${hvem} ${type==='stige'?'klatret':'skled'} fra ${h[id].mellom} til ${h[id].til}</div>`);
+      type==='stige'?tone(400,900,.4):tone(700,220,.45);plasserBrikker(pos);await vent(500);if(G.anim!==mitt)return;}
+    if(h[id].maal){si(`<div class="hend h-stige">🏆 ${hvem} kom i mål, får en stjerne og starter på en ny runde.</div>`);tone(523,1046,.6);}
+    if(++ferdige>=kast.length&&leder)leder.innerHTML=lederHTML;
+  };
+  if(G.kv)G.kv();
+  G.kv=net.on('k/'+G.nr,k=>Object.keys(k||{}).forEach(flytt));
+  setTimeout(()=>{if(G.anim===mitt)kast.forEach(flytt);},12000);
 }
 function kart(){
   const R=26,w=Math.sqrt(3)*R;let s='<svg viewBox="-250 -225 500 450" style="width:100%;max-height:64vh">';

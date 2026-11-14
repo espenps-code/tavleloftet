@@ -24,7 +24,20 @@ const ADJ=['Rask','Lur','Glad','Modig','Rolig','Kvikk','Snill','Sprek','Våken',
 const DYR=Object.keys(KQ_DYR);
 const LAG=[{n:'Rød',f:'#e98554'},{n:'Blå',f:'#5fb0d9'},{n:'Gul',f:'#f3d27a'},{n:'Grønn',f:'#8fd0a8'}];
 const minne={get(k){try{return sessionStorage.getItem(k);}catch(e){return this[k]||null;}},set(k,v){try{sessionStorage.setItem(k,v);}catch(e){}this[k]=v;}};
-let net=null,kode='',id='',navn='',V=null,R=null,svart={},t0=0,tikk=null,vistNr=-2,vistFase='';
+let net=null,kode='',id='',navn='',V=null,R=null,svart={},kastet={},t0=0,tikk=null,vistNr=-2,vistFase='';
+/* Terningen i Stigespillet. Tallet er trukket på tavla; eleven trykker for å kaste og se det. */
+const OYNE={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+const terning=(n,kl)=>`<span class="tern ${kl||''}" data-n="${n}">${[...Array(9).keys()].map(i=>`<i${OYNE[n].includes(i)?' class="p"':''}></i>`).join('')}</span>`;
+function kast(){
+  const nr=V.nr,maal=R.kast,kn=$('#tern');if(kastet[nr]||!kn)return;kastet[nr]='ruller';
+  net.set('k/'+nr+'/'+id,1);try{navigator.vibrate&&navigator.vibrate(40);}catch(e){}
+  kn.disabled=true;kn.classList.add('ruller');const txt=$('#terntxt');if(txt)txt.textContent='Terningen ruller …';
+  let n=0;const rull=setInterval(()=>{const k=$('#tern');if(!k){clearInterval(rull);return;}
+    if(++n<11){k.innerHTML=terning(1+rand(6));return;}
+    clearInterval(rull);k.classList.remove('ruller');k.classList.add('landet');k.innerHTML=terning(maal);if($('#terntxt'))$('#terntxt').textContent='Du kastet '+maal+'!';
+    try{navigator.vibrate&&navigator.vibrate([30,40,60]);}catch(e){}
+    setTimeout(()=>{kastet[nr]=1;if(V&&V.fase==='fasit'&&V.nr===nr)tegn();},1300);},90);
+}
 
 function midt(html){app.innerHTML=`<div class="midt">${html}</div>`;}
 function kodeside(feil){
@@ -71,8 +84,14 @@ function tegn(){
   if(V.fase==='fasit'){
     if(!R||R.nr!==V.nr)return void(app.innerHTML=hode()+`<div class="midt"><p class="muted">Riktig svar: <b style="color:var(--cream)">${esc(V.a[V.r])}</b></p><p class="muted">Du blir med fra neste spørsmål.</p></div>`);
     let ekstra='';const m=V.modus;
+    if(m==='stige'&&R.ok&&R.kast&&kastet[V.nr]!==1){
+      if(kastet[V.nr]==='ruller'&&$('#tern'))return;
+      kastet[V.nr]=0;
+      app.innerHTML=hode()+`<div class="midt"><div class="stor ok">Riktig!</div><button class="ternknapp" id="tern" aria-label="Kast terningen">${terning(6)}</button><p id="terntxt" style="font-size:26px;font-weight:800;margin:0">Trykk på terningen!</p></div>`;
+      $('#tern').onclick=kast;return;
+    }
     if(m==='sistemann')ekstra=R.ute?'<p class="muted">Du er ute, men kan fortsatt svare for moro skyld.</p>':`<div class="liv no">${'♥'.repeat(R.liv)}</div>${R.mistet?'<p class="muted">Du mistet ett liv.</p>':''}`;
-    if(m==='stige')ekstra=R.ok?`<p style="font-size:24px;font-weight:800">Du kastet ${R.kast}${R.hopp==='stige'?' og fant en stige!':R.hopp==='sklie'?' og havnet på en sklie.':'.'}</p>${R.maal?'<p style="font-size:24px;font-weight:800">🏆 Du kom i mål! Du får en stjerne og starter på en ny runde.</p>':`<p class="muted">Du står på rute ${R.pos} av 48. Følg med på brettet!</p>`}`:`<p class="muted">Ingen terningkast. Du står på rute ${R.pos}.</p>`;
+    if(m==='stige')ekstra=R.ok?`${terning(R.kast,'liten')}<p style="font-size:24px;font-weight:800">Du kastet ${R.kast}${R.hopp==='stige'?' og fant en stige!':R.hopp==='sklie'?' og havnet på en sklie.':'.'}</p>${R.maal?'<p style="font-size:24px;font-weight:800">🏆 Du kom i mål! Du får en stjerne og starter på en ny runde.</p>':`<p class="muted">Du står på rute ${R.pos} av 48. Følg med på brettet!</p>`}`:`<p class="muted">Ingen terningkast. Du står på rute ${R.pos}.</p>`;
     if(m==='erobring')ekstra=(R.ok?`<p style="font-size:24px;font-weight:800">${R.tok?'Du tok en rute fra '+esc(R.tok)+'!':'Du fikk en ny rute!'}</p>`:'')+(R.mistet?`<p class="muted">Du mistet ${R.mistet} ${R.mistet===1?'rute':'ruter'}.</p>`:'')+`<p class="muted">Du har ${R.ruter} ${R.ruter===1?'rute':'ruter'}.</p>`;
     if(m==='lag'&&R.lag!=null)ekstra=`<p class="muted">${LAG[R.lag].n} lag ligger på ${R.lagPlass}. plass med ${R.lagP} poeng.</p>`;
     app.innerHTML=hode()+`<div class="midt"><div class="stor ${R.ok?'ok':'no'}">${R.ok?'Riktig!':R.svart?'Feil':'Ikke svart'}</div>${R.ok?`<p style="font-size:26px;font-weight:800;margin:0">+${R.d} poeng</p>`:`<p class="muted" style="margin:0">Riktig svar: <b style="color:var(--cream)">${esc(V.a[V.r])}</b></p>`}${ekstra}${m==='lag'?'':`<p class="muted">Du ligger på ${R.plass}. plass.</p>`}</div>`;return;

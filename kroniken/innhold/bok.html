@@ -76,9 +76,11 @@ a{color:inherit}
 .flyt section{margin:0 0 18px}
 .flyt p{margin:0 0 11px}
 .flyt ul{margin:0 0 11px;padding-left:1.2em}.flyt li{margin:0 0 5px}
-.flyt figure{float:right;width:42%;margin:4px 0 10px 16px;break-inside:avoid}
-.flyt figure img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;display:block}
-.flyt figcaption{font-size:.66em;line-height:1.35;color:#5d6866;margin-top:5px}
+/* Bildet står midtstilt under overskriften, så stort det går uten å ta mer enn rundt halve boksiden. */
+.flyt figure{width:min(66%,calc(var(--fh,640px)*.4));margin:8px auto 14px;break-inside:avoid}
+.flyt figure img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.14)}
+.flyt figcaption{font-size:.72em;line-height:1.35;color:#5d6866;margin-top:7px;text-align:center}
+body.rull .flyt figure{width:min(72%,360px)}
 .flyt blockquote{margin:12px 0;padding:10px 14px;border-left:5px solid var(--a);background:var(--soft);border-radius:0 12px 12px 0;font-family:"Fredoka","Trebuchet MS",sans-serif;line-height:1.35;break-inside:avoid}
 .flyt blockquote small{display:block;font:400 .72em/1.4 "Nunito",sans-serif;color:#5d6866;margin-top:6px}
 #blanav{display:flex;justify-content:center;align-items:center;gap:16px;margin:16px auto 0;color:#fbf5ea;font-size:15px;font-weight:700;flex-wrap:wrap}
@@ -197,13 +199,14 @@ function vis(){
       return b?`<button class="term" data-o="${esc(b.o)}" data-f="${esc(b.f)}">${vis}</button>`:`<b>${vis}</b>`;})
     .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
   const alt={};P.lysbilder.forEach(l=>{if(l.bilde)alt[l.bilde.fil]=l.bilde.alt;});
-  const fig=f=>f&&alt[f]!==undefined?`<figure><img src="${mappe}bilder/${f}" alt="${esc(alt[f])}" loading="lazy"><figcaption>${esc(alt[f])}</figcaption></figure>`:'';
+  /* Bildebeskrivelsen fra lysbildet er skrevet for skjermlesere og brukes bare som alt-tekst. Synlig bildetekst vises bare når kapittelet har en egen (bildetekst i .bok.js). */
+  const fig=(f,tekst)=>f&&alt[f]!==undefined?`<figure><img src="${mappe}bilder/${f}" alt="${esc(alt[f])}" loading="lazy">${tekst?`<figcaption>${fmt(tekst)}</figcaption>`:''}</figure>`:'';
   const her=rekke.findIndex(k=>k.id===p),meg=rekke[her]||{nr:'',ls:P.livssyn};
   const tittelbilde=(P.lysbilder.find(l=>l.type==='tittel')||{}).bilde;
   let ingress='',kropp='';
   if(BOK){
     ingress=BOK.ingress||'';
-    kropp=BOK.deler.map(d=>`<section><h2>${fmt(d.t)}</h2>${fig(d.bilde)}${d.a.map(a=>`<p>${fmt(a)}</p>`).join('')}</section>`).join('')
+    kropp=BOK.deler.map(d=>`<section><h2>${fmt(d.t)}</h2>${fig(d.bilde,d.bildetekst)}${d.a.map(a=>`<p>${fmt(a)}</p>`).join('')}</section>`).join('')
       +(BOK.husk?`<div class="boks"><h2>Stopp og tenk</h2><ul>${BOK.husk.map(h=>`<li>${fmt(h)}</li>`).join('')}</ul></div>`:'');
   }else{
     /* Automatisk utgave fra lysbildene. Samtale-, påstands- og sjekklysbilder hoppes over, og lærernotatene (n) brukes aldri. */
