@@ -16,12 +16,13 @@ lysbilder:[
  'Grunnloven fra 1814 ga mange friheter, men ikke religionsfrihet.',
  'Den sa at jøder og jesuitter ikke hadde adgang til riket.'],
  n:['Jesuittene er en katolsk munkeorden.','Bildet viser Eidsvollsbygningen, der Grunnloven ble skrevet.','Fortellingen om Henrik Wergeland og jødeparagrafen finnes som lesehistorie under Jødedommen.']},
-{type:'punkter',kicker:'1771–1824',tittel:'Hans Nielsen Hauge',hoyre:true,bilde:{fil:'hauge.webp',alt:'En mann i bondeklær fra rundt 1800 med skreppe på ryggen sett bakfra. Han går langs en landevei forbi gårder med torvtak og strikker mens han går'},punkter:[
+{type:'punkter',kicker:'1771–1824',tittel:'Hans Nielsen Hauge',hoyre:true,bilde:{fil:'hauge.webp',alt:'En mann i bondeklær fra rundt 1800 med skreppe på ryggen sett bakfra. Han går langs en landevei forbi gårder med torvtak og strikker mens han går, slik en kjent fortelling sier at Hauge gjorde'},punkter:[
  'Bondesønnen **Hans Nielsen Hauge** vandret rundt i Norge og talte om kristen tro.',
  'Det var forbudt for andre enn prester.',
  'Han ble arrestert mange ganger og satt til slutt mange år i fengsel.',
- 'Loven han brøt, ble fjernet i 1842.'],
- n:['Loven het konventikkelplakaten og var fra 1741.','Hauge var selv luthersk kristen. Saken viser at religionsfrihet også handler om retten til å tro på sin egen måte innenfor flertallets religion.','Fortellingen finnes som lesetekst: «Mannen som gikk og strikket».']},
+ 'Loven han brøt, ble fjernet i 1842.',
+ 'Det fortelles at han strikket mens han gikk. Ingen har funnet bevis for det. Kanskje er det en **myte**.'],
+ n:['Loven het konventikkelplakaten og var fra 1741.','Hauge var selv luthersk kristen. Saken viser at religionsfrihet også handler om retten til å tro på sin egen måte innenfor flertallets religion.','Fortellingen finnes som lesetekst: «Mannen som gikk og strikket».','Myte eller fakta? Strikkehistorikeren Nina Granlund Sæther skriver at fortellingene om strikking på vandring ikke har troverdige kilder, men at Hauge selv forteller i et brev at han strikket i fengselet (1804–1811). Spør elevene: Hvordan kan vi finne ut om en gammel fortelling er sann?']},
 {type:'tidslinje',kicker:'Steg for steg',tittel:'Veien til religionsfrihet i Norge',punkter:[
  {aar:'1845',tekst:['Andre kristne kirker','blir tillatt']},{aar:'1851',tekst:['Jøder får','komme til Norge']},{aar:'1956',tekst:['Forbudet mot','jesuitter fjernes']},{aar:'1964',tekst:['Religionsfrihet','inn i Grunnloven']},{aar:'2012',tekst:['Slutt på','statskirken']}],
  n:['Loven fra 1845 kalles dissenterloven. En dissenter var en kristen som sto utenfor statskirken.','Det tok altså 150 år fra Grunnloven ble skrevet til full religionsfrihet sto i den.','I dag sier Grunnloven § 16: «Alle innbyggere i riket har fri religionsutøvelse.»']},
