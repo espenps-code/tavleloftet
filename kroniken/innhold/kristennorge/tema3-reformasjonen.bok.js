@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"I 1537 ble Norge luthersk. Ingen i Norge hadde stemt over det. Avgjørelsen ble tatt av en konge i København.",
+deler:[
+{"t":"Luther protesterer","bilde":"kirkedor.webp","a":["I 1517 skrev den tyske munken Martin Luther 95 setninger med kritikk av kirken. Han reagerte særlig på at kirken solgte brev som skulle gi [[tilgivelse|Avlat]] for synder.","Luther mente at alle skulle kunne lese Bibelen på sitt eget språk. De som fulgte ham, ble kalt [[lutheranere|Luthersk]]. Kirken i Vest-Europa ble delt i to."]},
+{"t":"Kongen bestemmer","a":["Norge var i [[union|Union]] med Danmark og hadde felles konge. Kong Christian 3. var lutheraner. I 1536 bestemte han at Danmark og Norge skulle bli lutherske.","I Norge var det få som hadde bedt om det. Reformasjonen kom ovenfra. Den siste katolske erkebiskopen, Olav Engelbrektsson, flyktet fra landet i 1537."]},
+{"t":"Hva ble forandret?","a":["Mye ble forandret. Kongen ble kirkens leder i stedet for paven. Gudstjenesten gikk fra latin til dansk. Klostrene ble stengt, og kongen overtok jorda og verdiene til kirken. Prestene fikk lov til å gifte seg og få familie."]},
+{"t":"Bibel, katekisme og salmer","bilde":"gammelbibel.webp","a":["I 1550 kom den første hele Bibelen på dansk. Den kalles Christian 3.s bibel. Barna skulle lære Luthers lille [[katekisme|Katekisme]]. Det er en kort bok med det viktigste i troen.","Menigheten begynte å synge salmer sammen på sitt eget språk. Men språket var dansk. En hel bibel på norsk kom ikke før på 1900-tallet."]},
+{"t":"Det tok tid","a":["En lov kan forandres på en dag. Det folk tror og gjør, forandrer seg sakte. Mange steder fortsatte den gamle presten i samme kirke, nå som luthersk prest.","Folk holdt lenge på gamle skikker, som å be til helgener og gå til hellige kilder. Det gikk flere generasjoner før den lutherske troen var blitt folkets egen."]}
+],
+husk:["Hvem bestemte at Norge skulle bli luthersk?","Hva ble forandret i kirken etter reformasjonen?","Hvorfor tok det lang tid før folk flest hadde skiftet tro?"]};

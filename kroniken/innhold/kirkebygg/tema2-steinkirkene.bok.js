@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Å bygge en katedral kunne ta flere hundre år. De som la den første steinen, fikk aldri se den ferdig.",
+deler:[
+{"t":"Kirker av stein","a":["De første kirkene i Norge var av tre. På 1100-tallet begynte man også å bygge i stein. Stein var dyrt og tungvint. Det var konger, biskoper og rike stormenn som fikk bygd steinkirker.","Håndverkerne kom ofte fra England og Tyskland, der man hadde bygd i stein lenge. Mange av steinkirkene fra middelalderen står fortsatt og brukes hver søndag."]},
+{"t":"Romansk eller gotisk?","bilde":"buer.webp","a":["Steinkirkene ble bygd i to stiler. Den [[romanske|Romansk stil]] stilen har runde buer, tykke murer og små vinduer. Kirkene er mørke og tunge, nesten som borger. Den [[gotiske|Gotisk stil]] stilen har spisse buer, høye vinduer og mye lys. Murene støttes av buer på utsiden."]},
+{"t":"Nidarosdomen","bilde":"nidaros.webp","a":["[[Nidarosdomen]] er den største [[katedralen|Katedral]] i Norge. Etter tradisjonen står høyalteret der kong Olav den hellige ble gravlagt etter slaget på Stiklestad i 1030.","Byggingen begynte rundt 1070, og kirken sto trolig ferdig rundt år 1300. I middelalderen kom [[pilegrimer|Pilegrim]] fra hele Nord-Europa for å besøke graven."]},
+{"t":"En kirke som aldri fikk fred","a":["Nidarosdomen har hatt en urolig historie. Byggingen begynte rundt 1070, og katedralen sto ferdig rundt år 1300. Siden ble den rammet av minst fem store branner, og store deler ble stående som ruiner. I 1869 begynte arbeidet med å bygge den opp igjen. Først i 2001 var arbeidet offisielt ferdig."]},
+{"t":"De som bygde","bilde":"steinhugger.webp","a":["En katedral ble bygd av steinhuggere, murere, smeder, snekkere og glassmestere. Steinen ble hogd til for hånd, én blokk om gangen.","Mange steinhuggere risset inn sitt eget merke i steinene de hadde laget. Verkstedet ved Nidarosdomen lærer fortsatt opp steinhuggere i det gamle håndverket."]}
+],
+husk:["Hva er forskjellen på romansk og gotisk stil?","Hvorfor ble Nidarosdomen bygd akkurat der den står?","Hva har skjedd med Nidarosdomen siden middelalderen?"]};

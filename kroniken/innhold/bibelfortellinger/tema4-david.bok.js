@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Ingen person i Det gamle testamentet får så mye plass som David. Vi følger ham fra sauemarken til tronen.",
+deler:[
+{"t":"Den yngste blir valgt","a":["David var den yngste av åtte brødre og passet sauene til faren i Betlehem. Fortellingen sier at profeten Samuel kom for å finne en ny konge blant brødrene.","Han så på de eldste og sterkeste, men ingen av dem ble valgt. Til slutt hentet de David fra marken. Samuel helte olje på hodet hans. Det kalles å [[salve|Salve]], og var tegnet på at han skulle bli konge."]},
+{"t":"David og Goliat","bilde":"slynge.webp","a":["Folket var i krig med nabofolket [[filisterne|Filisterne]]. De hadde en kjempe av en kriger som het Goliat. Hver dag ropte Goliat at én mann skulle komme og kjempe mot ham. Ingen våget.","David meldte seg. Han ville ikke ha rustning, bare gjeterstaven, en slynge og fem steiner fra bekken. Den første steinen traff Goliat i pannen. Kjempen falt."]},
+{"t":"David blir konge","bilde":"borgby.webp","a":["Etter kong Saul ble David konge over hele folket. Han gjorde Jerusalem til hovedstad.","Under David og sønnen [[Salomo]] var riket større og sterkere enn noen gang. Salomo bygde det første [[tempelet|Tempel]] i Jerusalem."]},
+{"t":"Dikter og menneske","bilde":"lyre.webp","a":["David var også musiker. Han spilte harpe, og fortellingen sier at han spilte for kong Saul når kongen var tung til sinns. Mange av [[salmene|Salme]] i Bibelen knyttes til David. Den mest kjente begynner slik: «Herren er min hyrde».","Bibelen skjuler ikke at David også gjorde alvorlige feil. Han måtte svare for dem."]},
+{"t":"Arven etter David","a":["For jøder er David den største kongen folket har hatt. Den sekstakkede stjernen i det israelske flagget kalles Davidsstjernen.","I Det nye testamentet kalles Jesus «Davids sønn», fordi han regnes som en etterkommer av David. Derfor er det viktig i juleevangeliet at Jesus ble født i Betlehem, Davids by."]}
+],
+husk:["Hvordan ble David valgt til konge?","Hva skjedde da David møtte Goliat?","Hvorfor er David viktig for både jøder og kristne?"]};

@@ -1,0 +1,11 @@
+window.BOK={
+ingress:"I fem hundre år var Norge et katolsk land. Kirken bestemte når folk arbeidet, hva de spiste, og hvor de ble gravlagt.",
+deler:[
+{"t":"En del av en verdenskirke","a":["I middelalderen hørte kirken i Norge til den [[katolske kirke|Den katolske kirke]], som ble ledet av [[paven|Pave]] i Roma. Gudstjenesten foregikk på latin, akkurat som i resten av Vest-Europa.","I 1152 eller 1153 fikk Norge sin egen [[erkebiskop|Erkebiskop]]. Han hadde sete i Nidaros. Erkebiskopen i Nidaros ledet også kirken på Island, Grønland, Færøyene og øyene nord for Skottland."]},
+{"t":"Kirken i tall","a":["Tidlig på 1300-tallet fantes det rundt 1300 kirker og 28 klostre i Norge. Bøndene betalte en tidel av avlingen til kirken. Denne avgiften ble kalt [[tiende|Tiende]]. Etter hvert eide kirken også en stor del av jorda i landet."]},
+{"t":"Klostrene","bilde":"munk.webp","a":["I et [[kloster|Kloster]] levde munker eller nonner et liv med bønn og arbeid. De skrev av bøker for hånd. Før boktrykkerkunsten var det den eneste måten å lage bøker på.","Mange klostre hadde urtehager og tok seg av syke og reisende. Utstein kloster i Rogaland er det best bevarte klosteret fra middelalderen i Norge."]},
+{"t":"Kirken fulgte folk hele livet","a":["Et barn ble døpt få dager etter fødselen. Året var fullt av helligdager da ingen skulle arbeide. Før de store høytidene var det [[faste|Faste]].","På fredager og i fastetiden spiste man ikke kjøtt. Derfor ble fisk så viktig. Til slutt ble man gravlagt på kirkegården, i vigslet jord."]},
+{"t":"Helgener og pilegrimer","bilde":"pilegrim.webp","a":["Folk ba helgenene om hjelp. Norge hadde tre egne: Olav i Nidaros, Sunniva på Selja og Hallvard i Oslo. Mange dro på [[pilegrimsreise|Pilegrimsreise]] til graven til en helgen.","Nidaros var det viktigste pilegrimsmålet i Norden. Reisen kunne ta mange uker til fots. Langs veien lå det herberger der pilegrimene kunne sove."]},
+{"t":"Svartedauden","a":["I 1349 kom pesten til Norge med et skip til Bergen. Kanskje halvparten av befolkningen døde.","Prestene skulle være hos de døende. Derfor døde særlig mange av dem. Etterpå sto gårder øde og kirker tomme. Både landet og kirken ble sterkt svekket."]}
+],
+husk:["Hvordan var kirken i Norge organisert i middelalderen?","Hva gjorde munker og nonner i klostrene?","Hva skjedde med kirken da svartedauden kom?"]};

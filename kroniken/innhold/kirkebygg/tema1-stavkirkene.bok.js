@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Noen av de eldste trebygningene i verden står i Norge. De er kirker, og de ble bygd lenge før Columbus seilte til Amerika.",
+deler:[
+{"t":"Hva er en stavkirke?","bilde":"staver.webp","a":["En [[stavkirke]] er en kirke av tre fra [[middelalderen|Middelalderen]]. Veggene og taket bæres av stående stolper. En slik stolpe kalles en stav.","Stavene står på en ramme av bjelker som hviler på stein. Derfor råtnet ikke treverket. Kirkene ble smurt inn med [[tjære]] for å tåle regn og sol."]},
+{"t":"Mange ble bygd, få står igjen","a":["Det ble trolig bygd over tusen stavkirker i Norge, de fleste på 1100- og 1200-tallet. I dag står 28 igjen. De er de eldste trekirkene i den kristne verden som fortsatt er bevart.","I 1979 kom Urnes stavkirke på UNESCOs liste over verdens kultur- og naturarv."]},
+{"t":"Urnes, Borgund og Heddal","a":["Urnes stavkirke regnes som den eldste. Den ble bygd tidlig på 1130-tallet og ligger i Luster ved Sognefjorden. Borgund stavkirke i Lærdal er den best bevarte og har dragehoder på taket. Heddal stavkirke i Notodden i Telemark er den største."]},
+{"t":"Drager og kors","bilde":"portal.webp","a":["Rundt dørene er det ofte skåret ut dyr, drager og planter som slynger seg i hverandre. En slik pyntet inngang kalles en [[portal]]. På taket kan det sitte både kors og dragehoder.","Ingen vet sikkert hva dragehodene skulle bety. Kanskje skulle de verne mot det onde. Utskjæringene likner på kunsten fra vikingtiden, men kirkene ble bygd etter at vikingtiden var over."]},
+{"t":"De som ble borte","a":["Da [[svartedauden|Svartedauden]] kom i 1349, døde svært mange. Flere kirker ble stående uten folk som kunne ta vare på dem. Etter hvert ble kirkene for små og gamle. Mange ble revet på 1800-tallet, da nye regler krevde større kirker.","På midten av 1800-tallet begynte noen å forstå at stavkirkene var verdt å ta vare på. Flere ble reddet i siste liten. Noen ble flyttet til museum, og én står i dag i Polen."]}
+],
+husk:["Hvordan er en stavkirke bygd?","Hvilke tre stavkirker er eldst, best bevart og størst?","Hvorfor står det så få stavkirker igjen?"]};

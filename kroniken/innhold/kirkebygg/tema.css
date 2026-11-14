@@ -1,0 +1,5 @@
+/* Kirkebygg – tjærebrun, blågrønn og oker (samme palett som illustrasjonene) */
+:root{
+  --bg:#1c1712; --bg2:#262019; --bg3:#3d3327; --card:#2c251c; --line:#54473a; --dark:#100d09;
+  --a:#4fb3a9; --a2:#a9dcd6; --a-ink:#06201d;
+}

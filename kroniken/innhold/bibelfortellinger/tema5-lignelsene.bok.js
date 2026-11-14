@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Jesus skrev ingen bøker. Han fortalte. Og fortellingene var så korte og gode at folk husket dem ordrett.",
+deler:[
+{"t":"Hva er en lignelse?","a":["En [[lignelse]] er en kort fortelling fra hverdagen som har et dypere poeng. Jesus fortalte mange lignelser. Han brukte ting folk kjente: sauer, såkorn, brød, bryllup og penger.","En lignelse forklarer ikke alt. Den som hører, må tenke selv. Derfor kan samme lignelse [[tolkes|Tolke]] på flere måter."]},
+{"t":"Det som ble borte","bilde":"sonnen.webp","a":["I lignelsen om sauen som ble borte, har en gjeter hundre sauer. Én blir borte. Han lar de nittini stå og leter til han finner den.","I lignelsen om sønnen som kom hjem, sløser en sønn bort arven sin og kommer hjem i skam. Faren løper ham i møte og holder fest. Begge lignelsene handler om at den som har gått seg bort, er like mye verdt."]},
+{"t":"Den barmhjertige samaritan","a":["En mann blir overfalt av røvere og ligger hjelpeløs ved veien. To menn som regnes som fromme og fine, går forbi uten å hjelpe.","Så kommer en [[samaritan]], en fra et folk tilhørerne så ned på. Han stanser, forbinder sårene og betaler for at mannen skal få pleie. Jesus fortalte lignelsen som svar på spørsmålet: «Hvem er min neste?»"]},
+{"t":"Frø som vokser","bilde":"samannen.webp","a":["I lignelsen om såmannen sår en bonde korn. Noe faller på veien, noe på steingrunn, noe blant torner og noe i god jord. Bare det siste gir avling.","I lignelsen om sennepsfrøet blir det minste frøet til den største planten i hagen, så stor at fuglene bygger rede i den. Lignelsen handler om at noe lite kan bli til noe stort."]},
+{"t":"Talentene","a":["En mann skal ut og reise og gir tjenerne sine ansvar for pengene sine. Pengesummen kalles [[talenter|Talent]]. To av tjenerne bruker pengene og får dem til å vokse.","Den tredje er redd og graver pengene ned i jorda. Det er fra denne lignelsen vi har fått ordet talent om noe en er flink til."]}
+],
+husk:["Hva er en lignelse?","Hva skjer i lignelsen om den barmhjertige samaritan?","Hvor kommer ordet talent fra?"]};

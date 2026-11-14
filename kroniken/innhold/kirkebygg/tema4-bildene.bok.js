@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"I hundrevis av år kunne nesten ingen lese. Likevel kjente folk fortellingene. De hadde sett dem.",
+deler:[
+{"t":"Hvor finner du kunsten?","a":["En [[altertavle]] er et bilde eller en utskåret tavle bak alteret. Den viser ofte korsfestelsen, nattverden eller oppstandelsen. Et [[kalkmaleri]] er malt rett på murveggen eller i taket. Slike bilder er vanlige i steinkirker fra middelalderen.","Et [[glassmaleri]] er et vindu av farget glass. Når sola skinner, fylles rommet med farger. Et krusifiks er et kors med en figur av Jesus. I gamle kirker henger det ofte høyt over inngangen til koret."]},
+{"t":"Bildene var boka","bilde":"kalkmaleri.webp","a":["I middelalderen kunne de færreste lese, og gudstjenesten var på latin. Bildene viste fortellingene fra Bibelen og livet til [[helgenene|Helgen]].","Slik kunne alle lære fortellingene, også de som ikke forsto språket. Hver helgen hadde sitt eget tegn, slik at folk kunne kjenne dem igjen. Olav den hellige har en øks."]},
+{"t":"Hva betyr symbolene?","a":["Kirkekunsten er full av [[symboler|Symbol]]. Fisken er et av de eldste kristne tegnene. De første kristne brukte det som et hemmelig tegn. Duen er et tegn på Den hellige ånd, og på fred. Lammet er et bilde på Jesus. Alfa og omega er den første og den siste bokstaven i det greske alfabetet. De betyr begynnelsen og slutten."]},
+{"t":"Da bildene ble tatt ned","a":["Etter [[reformasjonen|Reformasjonen]] ble kirken i Norge luthersk. Mange helgenfigurer ble fjernet, fordi man ikke lenger skulle be til helgener.","Noen kalkmalerier ble malt over med hvit kalk. Bildene av Jesus og fortellingene fra Bibelen fikk som regel bli. Derfor har lutherske kirker fortsatt altertavler."]},
+{"t":"Steinfigurene på Nidarosdomen","bilde":"vestfront.webp","a":["Forsiden av Nidarosdomen er dekket av figurer av stein. De viser konger, profeter, apostler og helgener.","De fleste figurene er laget på 1900-tallet, da kirken ble bygd opp igjen. Den siste figuren kom på plass i 1983."]}
+],
+husk:["Hvilke fire slags bilder finner du ofte i en kirke?","Hvorfor var bildene viktige i middelalderen?","Hva skjedde med kirkekunsten etter reformasjonen?"]};

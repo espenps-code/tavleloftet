@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Bibelen begynner ikke med Jesus. Den begynner med fire fortellinger om hvordan alt ble til, og hva som gikk galt.",
+deler:[
+{"t":"Sju dager","bilde":"dagene.webp","a":["Bibelen begynner med ordene «I begynnelsen skapte Gud himmelen og jorden». Fortellingen sier at Gud skapte verden på seks dager: lyset, himmelen, landet og plantene, sola og månen, fuglene og fiskene, og til slutt dyrene og menneskene.","Den sjuende dagen hvilte Gud. Derfor har uka sju dager, og derfor har jøder og kristne en hviledag."]},
+{"t":"Hagen","bilde":"hagen.webp","a":["Den neste fortellingen handler om de første menneskene, Adam og Eva, som bodde i [[Edens hage]]. De kunne spise av alle trærne unntatt ett: treet som gir kunnskap om godt og ondt.","En slange lokket dem til å spise likevel. Etterpå måtte de forlate hagen. Fortellingen kalles ofte [[syndefallet|Syndefallet]]."]},
+{"t":"Flommen og tårnet","bilde":"arken.webp","a":["Fortellingen om Noah sier at Gud lot en stor flom komme. Noah bygde en [[ark]], en stor båt, og reddet familien og dyrene. Da vannet sank, ble regnbuen et tegn på et løfte om at det aldri skulle skje igjen. Et slikt løfte kalles en [[pakt]].","Fortellingen om Babels tårn sier at menneskene ville bygge et tårn som nådde opp til himmelen. Gud lot dem begynne å snakke ulike språk, så de ikke forsto hverandre."]},
+{"t":"Fortelling eller faktabok?","a":["Kristne leser disse fortellingene på ulike måter. Noen leser dem som en beskrivelse av det som faktisk skjedde.","Mange leser dem som fortellinger som sier noe sant om mennesket, uten at de er naturfag. De spør ikke først «hvordan skjedde det?», men «hva vil fortellingen si om hvem vi er?»"]},
+{"t":"Fortellinger tre religioner deler","a":["Disse fortellingene står i den første boka i Bibelen, 1. Mosebok. Jøder kaller den samme boka for begynnelsen av Toraen.","Kristne kaller denne delen av Bibelen for [[Det gamle testamentet]]. Også i Koranen fortelles det om Adam, Noah og flere av de andre."]}
+],
+husk:["Hva forteller Bibelen om de sju dagene?","Hva skjedde i Edens hage ifølge fortellingen?","På hvilke ulike måter leser kristne disse fortellingene?"]};

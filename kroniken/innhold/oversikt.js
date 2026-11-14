@@ -11,6 +11,33 @@ window.KRONIKEN={
     {id:'tema7-mangfold',tittel:'Én tro, mange kirker',om:'Mangfold og kirkesamfunn',bilde:'mangfold.webp'}
   ]},
   /* Høytidsopplegg i kristendomskunnskap. To deler for hvert trinn: del 1–2 for 5. trinn, 3–4 for 6. trinn, 5–6 for 7. trinn. */
+  bibelfortellinger:{navn:'Fortellinger fra Bibelen',type:'modulen',bilde:'skapelsen.webp',
+    verktoy:{oppgaver:'tavlene.webp',historier:'karavane.webp',quiz:'slynge.webp'},tema:[
+    {id:'tema1-begynnelsen',tittel:'I begynnelsen',om:'5. trinn · Skapelsen, hagen og den store flommen',bilde:'skapelsen.webp'},
+    {id:'tema2-abraham',tittel:'Abraham og Josef',om:'5. trinn · Fortellingene om en familie',bilde:'stjernehimmel.webp'},
+    {id:'tema3-moses',tittel:'Moses',om:'5. trinn · Fra slaveri til frihet',bilde:'tornebusk.webp'},
+    {id:'tema4-david',tittel:'David',om:'5. trinn · Gjetergutten som ble konge',bilde:'gjetergutt.webp'},
+    {id:'tema5-lignelsene',tittel:'Lignelsene til Jesus',om:'6. trinn · Korte fortellinger med et dypere poeng',bilde:'gjeteren.webp'},
+    {id:'tema6-bergprekenen',tittel:'Bergprekenen',om:'6. trinn · Den mest kjente talen i Bibelen',bilde:'fjellsiden.webp'}
+  ]},
+  kristennorge:{navn:'Kristendommen i Norge',type:'modulen',bilde:'steinkors.webp',
+    verktoy:{oppgaver:'gammelbibel.webp',historier:'kulistein.webp',quiz:'langskip.webp'},tema:[
+    {id:'tema1-kristningen',tittel:'Da Norge ble kristent',om:'6. trinn · Fra norrøn tro til kristendom',bilde:'steinkors.webp'},
+    {id:'tema2-middelalderen',tittel:'Kirken i middelalderen',om:'6. trinn · Klostre, helgener og en kirke for hele Europa',bilde:'kloster.webp'},
+    {id:'tema3-reformasjonen',tittel:'Reformasjonen i Norge',om:'6. trinn · Da kongen bestemte troen',bilde:'festning.webp'},
+    {id:'tema4-konfirmasjonen',tittel:'Konfirmasjon og skole',om:'7. trinn · Da alle barn skulle lære å lese',bilde:'skolestue.webp'},
+    {id:'tema5-vekkelsene',tittel:'Vekkelser og religionsfrihet',om:'7. trinn · Fra én tillatt tro til frihet for alle',bilde:'bedehus.webp'},
+    {id:'tema6-samene',tittel:'Samene og kirken',om:'7. trinn · Tro, urett og forsoning',bilde:'fjellkirke.webp'}
+  ]},
+  kirkebygg:{navn:'Kirkebygg og kirkekunst',type:'modulen',bilde:'stavkirke.webp',
+    verktoy:{oppgaver:'notatblokk.webp',historier:'nidaros.webp',quiz:'glassmaleri.webp'},tema:[
+    {id:'tema1-stavkirkene',tittel:'Stavkirkene',om:'6. trinn · Trekirkene fra middelalderen',bilde:'stavkirke.webp'},
+    {id:'tema2-steinkirkene',tittel:'Steinkirkene og Nidarosdomen',om:'6. trinn · Fra tykke murer til spisse buer',bilde:'katedral.webp'},
+    {id:'tema3-kirkerommet',tittel:'Slik leser du et kirkerom',om:'5. trinn · Hva tingene heter, og hva de brukes til',bilde:'kirkerom.webp'},
+    {id:'tema4-bildene',tittel:'Bilder som forteller',om:'6. trinn · Kirkekunst og symboler',bilde:'glassmaleri.webp'},
+    {id:'tema5-idag',tittel:'Kirker i dag',om:'7. trinn · Fra bygdekirke til arbeidskirke',bilde:'modernekirke.webp'},
+    {id:'tema6-undersok',tittel:'Undersøk din egen kirke',om:'5. trinn · Et opplegg for kirkebesøk',bilde:'besok.webp'}
+  ]},
   jul:{navn:'Jul',type:'modulen',bilde:'julenatt.webp',
     verktoy:{oppgaver:'adventskrans.webp',historier:'biskopen.webp',quiz:'koret.webp'},tema:[
     {id:'tema1-julenatten',tittel:'Fortellingen om julenatten',om:'5. trinn · Juleevangeliet',bilde:'julenatt.webp'},

@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Et kirkerom kan leses nesten som en bok. Når du kan ordene, ser du hvorfor alt står der det står.",
+deler:[
+{"t":"Veien gjennom kirken","a":["Først kommer du inn i [[våpenhuset|Våpenhus]]. Det er det lille rommet ved inngangen. Så kommer [[skipet|Skip]], som er det store rommet der folk sitter. Lengst framme ligger [[koret|Kor]]. Der står [[alteret|Alter]]."]},
+{"t":"Skipet","bilde":"skipet.webp","a":["[[Skipet|Skip]] er det største rommet. Her sitter [[menigheten|Menighet]], altså de som kommer til gudstjeneste. Benkene vender framover, mot koret og alteret.","Midt i rommet går midtgangen. Den brukes når noen bæres til dåp, og ved bryllup og gravferd. I mange kirker henger det et skip under taket. Det er en gave fra sjøfolk og kalles kirkeskip."]},
+{"t":"Alter, døpefont og prekestol","bilde":"dopefont.webp","a":["[[Alteret|Alter]] er bordet lengst framme. Her feires nattverden. Foran står ofte en lav ring der folk kneler.","[[Døpefonten|Døpefont]] er et kar med vann som brukes ved dåp. I gamle kirker er den ofte av stein. [[Prekestolen|Prekestol]] er den opphøyde plassen der presten taler. Den står høyt, slik at alle skal høre."]},
+{"t":"Orgel og klokker","a":["Orgelet er instrumentet som brukes til salmesangen. Det står ofte på et galleri bak i kirken. Kirkeklokkene henger i tårnet. De ringer før gudstjenesten og ved store hendelser.","Klokkene ringer også jula inn klokka fem på julaften. Før i tiden var klokkene den raskeste måten å varsle en hel bygd på."]},
+{"t":"Hvorfor vender kirken mot øst?","bilde":"soloppgang.webp","a":["De fleste gamle kirker er bygd slik at koret vender mot øst. Sola står opp i øst. For kristne er soloppgangen et bilde på oppstandelsen.","Inngangen er derfor ofte i vest, og man går mot lyset når man går inn. Mange kirker er bygd som et kors når man ser dem ovenfra. De kalles korskirker."]}
+],
+husk:["Hva heter de tre rommene du går gjennom fra døra til alteret?","Hva brukes alteret, døpefonten og prekestolen til?","Hvorfor vender de fleste gamle kirker mot øst?"]};
