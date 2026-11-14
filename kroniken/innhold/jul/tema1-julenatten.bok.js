@@ -1,0 +1,11 @@
+window.BOK={
+ingress:"Nesten alle kjenner fortellingen om julenatten. Men hva står egentlig i Bibelen?",
+deler:[
+{"t":"To som forteller","a":["Bibelen har fire [[evangelier|Evangelium]] om livet til Jesus. Bare to av dem forteller om fødselen: Lukas og Matteus.","Lukas forteller om reisen til Betlehem, krybben og gjeterne. Fortellingen hans kalles [[juleevangeliet]] og leses i kirkene på julaften. Matteus forteller om stjernen og vismennene."]},
+{"t":"Veien til Betlehem","a":["Lukas forteller at keiser Augustus ville telle alle i riket. Josef og Maria reiste derfor fra Nasaret til [[Betlehem]].","Det var ikke plass i herberget. Maria fødte barnet og la det i en [[krybbe]]."]},
+{"t":"Gjeterne på marken","bilde":"gjeterne.webp","a":["Noen gjetere var ute om natten og passet sauene sine. En engel sa til dem: «Frykt ikke!» I dag er det født en frelser i Davids by.","Gjeterne skyndte seg til Betlehem og fant barnet i krybben. De var vanlige arbeidsfolk. De første som fikk høre nyheten, var ikke rike og mektige."]},
+{"t":"Vismennene og stjernen","bilde":"vismennene.webp","a":["Matteus forteller at noen [[vismenn]] fra Østen hadde sett en stjerne og fulgte den. De spurte kong Herodes i Jerusalem hvor den nye kongen var født.","De fant barnet i Betlehem og ga det gull, røkelse og [[myrra]]. Josef ble advart i en drøm, og familien flyktet til Egypt."]},
+{"t":"Står det i Bibelen?","a":["Mye av det vi forbinder med julenatten, står ikke i Bibelen. Den sier ikke hvor mange vismenn det var. Den nevner tre gaver, og derfor har man gjettet på tre. At de var konger, er en tradisjon som kom senere.","Lukas nevner en krybbe, men ordet stall står ikke i fortellingen. Eselet og oksen nevnes heller ikke. De har kommet inn i bilder og julekrybber senere."]},
+{"t":"Hvorfor er fortellingen viktig?","a":["Kristne tror at Jesus er Guds sønn, og at Gud kom til jorden som et lite barn. Barnet ble født blant vanlige folk, ikke i et slott. Navnet Jesus betyr «Herren frelser». Derfor er jul en av de største høytidene i kristendommen."]}
+],
+husk:["Hvilke to evangelier forteller om Jesu fødsel?","Hva forteller Lukas, og hva forteller Matteus?","Nevn to ting mange tror står i Bibelen, men som ikke gjør det."]};

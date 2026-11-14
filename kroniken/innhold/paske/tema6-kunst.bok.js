@@ -1,0 +1,11 @@
+window.BOK={
+ingress:"Påskefortellingen er malt, bygd, spilt og sunget i nesten to tusen år. Sporene finnes overalt i Europa.",
+deler:[
+{"t":"Kors og krusifiks","a":["Et kors er tomt. Det minner om at Jesus døde, og om at han ifølge kristen tro sto opp. Det er vanlig i protestantiske kirker.","Et [[krusifiks]] er et kors med en figur av Jesus. Det minner særlig om lidelsen og er vanlig i katolske og ortodokse kirker."]},
+{"t":"Pasjonene","a":["[[Pasjon]] betyr lidelse. Fortellingen om Jesu siste dager kalles pasjonsfortellingen. En pasjon kan også være et stort musikkstykke som forteller den fortellingen.","Den mest kjente er Matteuspasjonen av Johann Sebastian Bach. Den ble framført første gang i 1727 og ble skrevet for å framføres i kirken på langfredag."]},
+{"t":"Hallelujakoret","bilde":"orkester.webp","a":["Messias av Georg Friedrich Händel er et stort verk for kor og orkester om livet til Jesus. Det ble framført første gang i Dublin i 1742, i påsketiden.","Det mest kjente stykket er Hallelujakoret. I dag framføres Messias oftest til jul."]},
+{"t":"Prosesjoner og spill","bilde":"prosesjon.webp","a":["[[Korsveien]] er fjorten bilder langs veggene i mange katolske kirker. De viser veien Jesus gikk til korset. I Spania går store [[prosesjoner|Prosesjon]] gjennom gatene hele påskeuka. Uka kalles Semana Santa.","Oberammergau er en tysk landsby som har spilt pasjonsfortellingen som teater siden 1634, omtrent hvert tiende år."]},
+{"t":"Ortodoks påske","bilde":"rodeegg.webp","a":["I [[ortodokse|Ortodoks]] kirker feires påsken med gudstjeneste midt på natten. Ved midnatt tennes lysene, og folk hilser hverandre: «Kristus er oppstanden!» Svaret er: «Ja, han er sannelig oppstanden!»","Mange farger egg røde. Fargen minner om blodet, egget om det nye livet. Ortodoks påske kommer ofte på en annen dato, fordi kirkene regner den ut etter den gamle kalenderen."]},
+{"t":"Påskemorgen slukker sorgen","a":["En av de mest kjente påskesalmene i Norge er «Påskemorgen slukker sorgen». Teksten er av den danske presten N.F.S. Grundtvig. Melodien er av den norske komponisten Ludvig Mathias Lindeman. Den synges i gudstjenesten første påskedag i mange kirker."]}
+],
+husk:["Hva er forskjellen på et kors og et krusifiks?","Hva er en pasjon?","Hvordan feires påsken i ortodokse kirker?"]};

@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Jula i Norge er satt sammen av skikker fra tre ulike tider. Noen er eldre enn kristendommen her i landet.",
+deler:[
+{"t":"Den norrøne jula","bilde":"langhus.webp","a":["Ordet jul kommer fra det norrøne ordet [[jól]]. Det var navnet på en [[midtvintersfest]] lenge før kristendommen kom til Norge. Folk samlet seg til gjestebud med mat og øl. Å feire jul ble kalt å «drikke jul».","Festen ble holdt midt på vinteren, da det var mørkest og kaldest. Vi vet lite sikkert om hva som skjedde. Kildene er få og skrevet ned lenge etterpå."]},
+{"t":"Kongen som flyttet jula","a":["Kong Håkon den gode var kristen og vokste opp i England. Sagaen forteller at han bestemte at jula i Norge skulle feires samtidig som de kristne feiret Jesu fødsel.","Slik fikk den kristne høytiden det gamle navnet. Vi sier fortsatt jul, ikke «Kristmesse» som på engelsk. Mange gamle skikker fulgte med inn i den nye jula."]},
+{"t":"Skikker fra bondegården","a":["Julenek er et kornbånd som settes ut til fuglene. Skikken er kjent i Norge fra 1700-tallet.","Folk trodde det bodde en [[fjøsnisse]] på gården som passet på dyrene. Han måtte få grøt på julaften. I romjula gikk barn og voksne julebukk. Da kledde de seg ut og gikk fra dør til dør."]},
+{"t":"Juletreet kommer","bilde":"juletre.webp","a":["Skikken med [[juletre]] kommer fra Tyskland. Til Norge kom juletreet på 1800-tallet, først til rike familier i byene.","Etter hvert fikk skoler og bedehus juletrefester, og skikken spredte seg til hele landet. Å gå rundt juletreet og synge er særlig vanlig i Norden."]},
+{"t":"En høytid med mange lag","a":["Jula i dag har kristne skikker som julegudstjeneste, juleevangeliet, julesalmer og julekrybbe. Den har gamle folkeskikker som julemat, juleøl, julenek og julebukk. Og den har nyere skikker som juletre, julenisse med gaver, julekalender og julekort.","Derfor feires jul av mange som ikke er kristne, og på mange forskjellige måter."]}
+],
+husk:["Hvor kommer ordet jul fra?","Hva forteller sagaen at Håkon den gode gjorde?","Nevn én kristen skikk, én gammel folkeskikk og én nyere skikk i jula."]};

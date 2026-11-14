@@ -10,6 +10,25 @@ window.KRONIKEN={
     {id:'tema6-etikk',tittel:'Hvordan bør vi leve?',om:'Etikk og levesett',bilde:'forsoning.webp'},
     {id:'tema7-mangfold',tittel:'Én tro, mange kirker',om:'Mangfold og kirkesamfunn',bilde:'mangfold.webp'}
   ]},
+  /* Høytidsopplegg i kristendomskunnskap. To deler for hvert trinn: del 1–2 for 5. trinn, 3–4 for 6. trinn, 5–6 for 7. trinn. */
+  jul:{navn:'Jul',type:'modulen',bilde:'julenatt.webp',
+    verktoy:{oppgaver:'adventskrans.webp',historier:'biskopen.webp',quiz:'koret.webp'},tema:[
+    {id:'tema1-julenatten',tittel:'Fortellingen om julenatten',om:'5. trinn · Juleevangeliet',bilde:'julenatt.webp'},
+    {id:'tema2-advent',tittel:'Advent: ventetiden',om:'5. trinn · Fra første søndag i advent til trettende dag jul',bilde:'adventskrans.webp'},
+    {id:'tema3-tradisjoner',tittel:'Jul i Norge før og nå',om:'6. trinn · Fra midtvintersfest til juletre',bilde:'julebord.webp'},
+    {id:'tema4-nissen',tittel:'Hvor kommer julenissen fra?',om:'6. trinn · Myte eller fakta om jula',bilde:'biskopen.webp'},
+    {id:'tema5-verden',tittel:'Jul i verden',om:'7. trinn · Samme høytid, ulike datoer og skikker',bilde:'verden.webp'},
+    {id:'tema6-sangene',tittel:'Julens sanger og bilder',om:'7. trinn · Salmer, krybber og kulturarv',bilde:'koret.webp'}
+  ]},
+  paske:{navn:'Påske',type:'modulen',bilde:'tomgrav.webp',
+    verktoy:{oppgaver:'egg.webp',historier:'inntoget.webp',quiz:'fullmane.webp'},tema:[
+    {id:'tema1-paskeuka',tittel:'Påskeuka dag for dag',om:'5. trinn · Fra palmesøndag til påskedag',bilde:'jerusalem.webp'},
+    {id:'tema2-tegn',tittel:'Påskens tegn og tradisjoner',om:'5. trinn · Faste, egg, fullmåne og påskefjell',bilde:'egg.webp'},
+    {id:'tema3-pesach',tittel:'Påske og pesach',om:'6. trinn · To høytider med felles rot',bilde:'seder.webp'},
+    {id:'tema4-nattverd',tittel:'Det siste måltidet',om:'6. trinn · Nattverden før og nå',bilde:'brodvin.webp'},
+    {id:'tema5-pinse',tittel:'Fra påske til pinse',om:'7. trinn · Himmelfart, pinse og kirkens begynnelse',bilde:'pinseild.webp'},
+    {id:'tema6-kunst',tittel:'Påsken i kunst og musikk',om:'7. trinn · Kors, prosesjoner og pasjoner',bilde:'korsene.webp'}
+  ]},
   /* Hovedpresentasjonen for jødedommen er en vanlig innholdsfil (hoved.js) og åpnes gjennom presentasjon.html. */
   jodedommen:{navn:'Jødedommen',type:'religionen',hoved:'../presentasjon.html?p=jodedommen/hoved',bilde:'tittel-menora.webp',
     verktoy:{oppgaver:'skriver.webp',historier:'sivkurven.webp',quiz:'david.webp'},tema:[

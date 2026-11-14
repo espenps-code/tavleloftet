@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – lærerveiledning</title>
+<link rel="stylesheet" href="felles/kr-fonter.css">
+<link rel="stylesheet" href="felles/veiledning.css">
+</head>
+<body>
+<!-- Lærerveiledning. veiledning.html?l=kristendommen viser veiledningen til ett tema. Uten ?l= vises en oversikt.
+     Det meste hentes rett fra temafilene (fagord, oppstartsspørsmål, påstander, lærernotater). Læringsmål, «vær oppmerksom på»
+     og koblingen til kompetansemål ligger i veiledning-data.js. Siden er laget for både skjerm og utskrift. Ingenting lagres. -->
+<div id="bar"><b>Krøniken · lærerveiledning</b>
+  <select id="velg" aria-label="Velg tema"></select>
+  <label id="nl" hidden><input type="checkbox" id="notater" checked> Med lærernotater</label>
+  <a href="aarsplan.html">Årsplaner</a>
+  <button id="skriv">Skriv ut</button>
+</div>
+<main id="ark"></main>
+<script src="oversikt.js"></script>
+<script src="veiledning-data.js"></script>
+<script src="felles/tilbake.js"></script>
+<script>
+(function(){
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+/* Lysbildetekstene bruker **fet** og [[fagord]]. Her vises de som ren tekst. */
+const ren=s=>esc(String(s==null?'':s).replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g,'$1').replace(/\*\*/g,''));
+const $=id=>document.getElementById(id);
+const K=window.KRONIKEN||{},V=window.VEILEDNING||{km:[],temaer:{}},m=new URLSearchParams(location.search).get('l');
+const lite=n=>n.charAt(0).toLowerCase()+n.slice(1);
+$('velg').innerHTML='<option value="">Oversikt</option>'+Object.entries(K).map(([k,l])=>`<option value="${k}"${k===m?' selected':''}>${esc(l.navn)}</option>`).join('');
+$('velg').onchange=e=>location.href='veiledning.html'+(e.target.value?'?l='+e.target.value:'');
+$('skriv').onclick=()=>print();
+const last=src=>new Promise(ok=>{const s=document.createElement('script');s.src=src;s.onload=()=>{s.remove();ok(true);};s.onerror=()=>{s.remove();ok(false);};document.head.appendChild(s);});
+const kmListe=nr=>`<ol class="km">${nr.map(i=>`<li value="${i+1}">${esc(V.km[i])}</li>`).join('')}</ol>`;
+
+if(!m||!K[m]){
+  /* Oversikt: kom i gang + alle temaene */
+  $('ark').innerHTML=`<header class="hode"><small>Lærerveiledning</small><h1>Krøniken</h1><p>KRLE for 5.–7. trinn. Alt er klart til bruk i klasserommet.</p></header>
+  <section><h2>Slik er Krøniken bygd</h2>
+   <p>Krøniken har seks religioner og livssyn (kristendommen, jødedommen, islam, hinduismen, buddhismen og humanismen), to høytidsopplegg (jul og påske) og tre moduler (menneskerettigheter, filosofi og de store spørsmålene). Hvert tema er delt i deler, og hver del er laget for om lag to skoletimer.</p>
+   <table class="t"><tr><th>Til hver del</th><th>Brukes til</th></tr>
+    <tr><td><b>Presentasjon</b></td><td>Vises på tavla. Har oppstartsspørsmål, fagstoff, «sant eller usant», sjekkspørsmål og utgangsbillett. Trykk N for lærernotater.</td></tr>
+    <tr><td><b>Elevbok</b></td><td>Et kapittel eleven leser selv, med ordforklaringer og «Sjekk deg selv». Trenger ikke innlogging.</td></tr>
+    <tr><td><b>Oppgaveark</b></td><td>Skrives ut. Oppgaver som å koble, fylle inn, sette i rekkefølge og avgjøre sant eller usant.</td></tr>
+    <tr><td><b>Øveark</b></td><td>Skrives ut tosidig. Forsiden har 20 spørsmål med svar, baksiden er en test med fasit.</td></tr>
+    <tr><td><b>Klassequiz</b></td><td>Elevene svarer på egne skjermer. Fem spillmoduser.</td></tr></table>
+   <p>I tillegg har hvert tema <b>lesehistorier</b> med ordforklaringer og spørsmål, og de seks religionene og livssynene har en <b>hovedpresentasjon</b> som gir oversikten før dere går i dybden.</p></section>
+  <section><h2>Veiledning til hvert tema</h2><div class="kort">${Object.entries(K).map(([k,l])=>`<a href="veiledning.html?l=${k}"><strong>${esc(l.navn)}</strong><span>${l.tema.length} deler</span></a>`).join('')}</div>
+   <p class="skjerm"><a class="knapp" href="aarsplan.html">Forslag til årsplaner for 5.–7. trinn</a></p></section>
+  <section><h2>Kompetansemål etter 7. trinn</h2><p>Fra læreplanen i KRLE (RLE01-04). Tallene brukes i veiledningene og årsplanene.</p>${kmListe(V.km.map((_,i)=>i))}
+   <p class="liten">Kilde: Utdanningsdirektoratet, udir.no/lk20/rle01-04. Hentet 14. november 2026. Sjekk alltid mot Udirs egen side.</p></section>
+  <p class="fot">Krøniken · lærerveiledning</p>`;
+  return;
+}
+
+(async()=>{
+  const L=K[m],H=(V.temaer||{})[m]||{},deler=[];
+  for(const [i,t] of L.tema.entries()){
+    window.PRES=null;window.BOK=null;await last(m+'/'+t.id+'.js');const P=window.PRES||{lysbilder:[]};
+    await last(m+'/'+t.id+'.bok.js');const B=window.BOK||{};
+    deler.push({nr:i+1,t,P,husk:B.husk||[]});
+  }
+  window.HISTORIER=null;await last(m+'/historier.js');const hist=(window.HISTORIER&&window.HISTORIER.historier)||[];
+  const antL=deler.reduce((a,d)=>a+d.P.lysbilder.length,0),antQ=deler.reduce((a,d)=>a+(d.P.quiz||[]).length,0);
+  const uker=deler.length+(L.hoved?1:0)+1;
+  $('nl').hidden=false;$('notater').onchange=e=>document.body.classList.toggle('utennotater',!e.target.checked);
+
+  const del=d=>{const p=m+'/'+d.t.id,S=d.P.lysbilder,snakk=S.filter(s=>s.type==='snakk'),pst=S.find(s=>s.type==='pastand'),ut=S.find(s=>s.type==='utbillett');
+    const notat=S.filter(s=>s.n&&s.type!=='tittel').map(s=>`<li><b>${ren(s.tittel||s.sporsmal||s.merke||'Lysbilde')}:</b> ${[].concat(s.n).map(ren).join(' ')}</li>`).join('');
+    const intro=(S.find(s=>s.type==='tittel')||{}).n;
+    return `<section class="del"><h3><span>${d.nr}</span>${esc(d.t.tittel)}<small>${esc(d.t.om)}</small></h3>
+    ${intro?`<p>${[].concat(intro).map(ren).join(' ')}</p>`:''}
+    <div class="to"><div>
+     ${d.husk.length?`<h4>Eleven skal kunne svare på</h4><ul>${d.husk.map(h=>`<li>${ren(h)}</li>`).join('')}</ul>`:''}
+     ${(d.P.begreper||[]).length?`<h4>Fagord</h4><dl>${d.P.begreper.map(([o,f])=>`<dt>${ren(o)}</dt><dd>${ren(f)}</dd>`).join('')}</dl>`:''}
+    </div><div>
+     ${snakk.length?`<h4>Samtalespørsmål</h4><ul>${snakk.map(s=>`<li>${ren(s.sporsmal)}${s.hjelp?` <i>${ren(s.hjelp)}</i>`:''}</li>`).join('')}</ul>`:''}
+     ${pst&&pst.pastander?`<h4>Sant eller usant?</h4><ul class="su">${pst.pastander.map(x=>`<li>${ren(x.t)} <b>${x.sant?'Sant':'Usant'}.</b>${x.f?' '+ren(x.f):''}</li>`).join('')}</ul>`:''}
+     ${ut&&ut.a?`<h4>Utgangsbillett</h4><p>${ren(ut.a)}</p>`:''}
+    </div></div>
+    ${notat?`<div class="notat"><h4>Lærernotater til lysbildene</h4><ul>${notat}</ul></div>`:''}
+    <p class="lenker skjerm">Åpne: <a href="presentasjon.html?p=${p}">Presentasjon</a><a href="bok.html?p=${p}">Elevbok</a><a href="oppgaver.html?p=${p}">Oppgaveark</a><a href="oveark.html?t=${p}">Øveark</a><a href="quiz.html?ls=${m}&t=${d.t.id}">Quiz</a></p></section>`;};
+
+  $('ark').innerHTML=`<header class="hode"><small>Lærerveiledning · Krøniken</small><h1>${esc(L.navn)}</h1>
+   <p>${deler.length} deler · ${antL} lysbilder · ${antQ} quizspørsmål · ${hist.length} lesehistorier${L.hoved?' · hovedpresentasjon':''}</p></header>
+
+  <section><h2>Kort om temaet</h2>
+   <p>Temaet har ${deler.length} deler. Hver del er laget for om lag to skoletimer, altså én uke i et fag med to timer i uka. ${L.hoved?'Start med hovedpresentasjonen, som gir oversikten. ':''}Med en uke til oppsummering og prøve tar hele temaet rundt <b>${uker} uker</b>. Det går fint å bruke lengre tid på en del, eller å hoppe over deler.</p>
+   <table class="t"><tr><th>Del</th><th>Tittel</th><th>Handler om</th></tr>${deler.map(d=>`<tr><td>${d.nr}</td><td><b>${esc(d.t.tittel)}</b></td><td>${esc(d.t.om)}</td></tr>`).join('')}</table></section>
+
+  ${H.maal?`<section><h2>Dette skal elevene sitte igjen med</h2><p>Etter arbeidet med ${esc(lite(L.navn))} skal eleven kunne</p><ul>${H.maal.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`:''}
+
+  <section><h2>Kompetansemål</h2><p>Temaet arbeider særlig med disse målene etter 7. trinn (LK20, læreplan i KRLE). Tallene viser til den samlede lista i oversikten.</p>${kmListe(H.km||[])}
+   <p class="liten">Koblingen mellom tema og mål er Krønikens forslag. Kilde for målene: udir.no/lk20/rle01-04, hentet 14. november 2026.</p></section>
+
+  <section class="sammen"><h2>Slik kan en uke se ut</h2>
+   <table class="t"><tr><th>Time 1: tavla og samtalen</th><th>Time 2: eget arbeid og øving</th></tr><tr>
+   <td><ol><li><b>Oppstart (5 min).</b> Samtalespørsmålet først i presentasjonen. Elevene snakker i par.</li><li><b>Fagstoff (20 min).</b> Gå gjennom lysbildene. Stopp ved «sant eller usant» og la elevene stemme før svaret vises.</li><li><b>Sjekk (10 min).</b> Sjekkspørsmålene sist i presentasjonen, sammen i klassen.</li><li><b>Utgangsbillett (5 min).</b> Hver elev skriver ett svar på en lapp.</li></ol></td>
+   <td><ol><li><b>Lese (15 min).</b> Kapittelet i elevboka, alene eller to og to. «Les høyt» finnes for dem som trenger det.</li><li><b>Oppgaveark (15 min).</b> Skriv ut på forhånd. Elevene kan slå opp i elevboka mens de arbeider.</li><li><b>Quiz eller øveark (10 min).</b> Klassequiz på egne skjermer, eller øvearket som lekse.</li></ol></td></tr></table>
+   <p>Lesehistoriene kan brukes som egen lesetime, som lekse, eller i norsk.</p></section>
+
+  ${H.obs?`<section><h2>Vær oppmerksom på</h2><ul>${H.obs.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`:''}
+
+  <h2 class="stor">Del for del</h2>
+  ${L.hoved?`<section class="del"><h3><span>★</span>Start her: kort om ${esc(lite(L.navn))}<small>Hovedpresentasjon</small></h3><p>Hovedpresentasjonen gir oversikten over hele ${esc(L.type||'temaet')} før dere går i dybden. Bruk den i første time, og kom gjerne tilbake til den når dere oppsummerer.</p><p class="lenker skjerm">Åpne: <a href="${m}/${L.hoved}">Hovedpresentasjon</a></p></section>`:''}
+  ${deler.map(del).join('')}
+
+  ${hist.length?`<section><h2>Lesehistorier</h2><p>Hver historie har ordforklaringer, spørsmål der svaret står i teksten, spørsmål der eleven må lese mellom linjene, og et samtalespørsmål uten fasit.</p>
+   <table class="t"><tr><th>Historie</th><th>Bygger på</th><th>Samtalespørsmål</th></tr>${hist.map(h=>`<tr><td><b><a href="historier.html#${h.id}">${esc(h.tittel)}</a></b></td><td>${esc(h.henvisning||'')}</td><td>${ren(h.snakk||'')}</td></tr>`).join('')}</table></section>`:''}
+
+  <section><h2>Vurdering</h2><ul>
+   <li><b>Underveis:</b> utgangsbillettene, sjekkspørsmålene og «Sjekk deg selv» i elevboka viser hva klassen har fått med seg.</li>
+   <li><b>Øving:</b> øvearkene har de 20 spørsmålene til hver del med fasit, så elevene kan rette seg selv.</li>
+   <li><b>Prøve:</b> Prøveportalen lager prøver fra de samme spørsmålene. Den krever innlogging for læreren.</li></ul>
+   <p class="lenker skjerm">Åpne: <a href="tema.html?l=${m}">Temasiden</a><a href="oveark.html?t=${L.tema.map(t=>m+'/'+t.id).join(',')}">Alle øvearkene</a><a href="../religionsprove/index.html?tema=${m}">Lag prøve</a></p></section>
+  <p class="fot">Krøniken · lærerveiledning · ${esc(L.navn)}</p>`;
+  document.title='Lærerveiledning – '+L.navn;
+})();
+})();
+</script>
+</body>
+</html>

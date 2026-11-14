@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Kristne over hele verden feirer at Jesus ble født. Men de feirer ikke på samme dag, og ikke på samme måte.",
+deler:[
+{"t":"To kalendere","a":["De fleste kirker feirer jul 25. desember. I 1582 fikk Europa en ny og mer nøyaktig kalender, den [[gregorianske|Gregoriansk kalender]]. Det er den vi bruker i dag.","Flere [[ortodokse|Ortodoks]] kirker beholdt den gamle, den [[julianske|Juliansk kalender]], til høytidene sine. Den gamle kalenderen ligger nå 13 dager etter. Deres 25. desember faller derfor på vår 7. januar."]},
+{"t":"Ortodoks jul","a":["I Russland og Serbia er julaften 6. januar. Mange faster før jul og spiser et festmåltid uten kjøtt når kvelden kommer.","I Etiopia og Eritrea heter jula Genna. Mange kler seg i hvitt og går til gudstjeneste tidlig om morgenen. De koptiske kristne i Egypt feirer jul 7. januar etter en lang fastetid."]},
+{"t":"Betlehem","bilde":"betlehem.webp","a":["I Betlehem ligger Fødselskirken. Den er bygd over stedet der tradisjonen sier at Jesus ble født. Kirken er en av de eldste i verden som fortsatt er i bruk.","Flere [[kirkesamfunn]] deler på kirken og feirer jul der på hver sine dager. Betlehem ligger på Vestbredden. De fleste som bor der i dag, er palestinere, både muslimer og kristne."]},
+{"t":"Rundt jorda","a":["I Mexico varer Las Posadas i ni kvelder før jul. Barn og voksne går fra hus til hus og spiller Josef og Maria som leter etter husrom.","På Filippinene går mange til gudstjeneste før soloppgang ni morgener på rad. Skikken heter Simbang Gabi. I Australia kommer jula midt på sommeren. Mange feirer ute, og julemiddagen kan spises på stranda."]},
+{"t":"Julenatten","bilde":"midnattsmesse.webp","a":["I [[katolske|Katolsk]] kirker feires ofte en gudstjeneste midt på natten til 25. desember. Den kalles [[midnattsmesse]]. I Norge går mange i kirken om ettermiddagen på julaften.","I England og USA åpnes gavene gjerne om morgenen første juledag. I Norge, Sverige og Danmark er det julaften som er den store kvelden."]}
+],
+husk:["Hvorfor feirer noen kristne jul 7. januar?","Hva er Fødselskirken?","Nevn to julefeiringer fra andre land og hva som er spesielt med dem."]};

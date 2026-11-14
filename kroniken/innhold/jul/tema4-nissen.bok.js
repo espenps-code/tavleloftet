@@ -1,0 +1,10 @@
+window.BOK={
+ingress:"Julenissen har en lang reise bak seg. Den begynner hos en biskop ved Middelhavet for 1700 år siden.",
+deler:[
+{"t":"Biskopen fra Myra","bilde":"myra.webp","a":["Nikolas var biskop i byen Myra på 300-tallet. Byen lå i det som i dag er Tyrkia. Vi vet lite sikkert om livet hans. Fortellingene om ham ble skrevet ned lenge etter at han døde.","En [[legende]] forteller at han i hemmelighet ga gull til en fattig familie. Han ble [[helgen]] for barn og sjøfolk. Dagen hans er 6. desember."]},
+{"t":"Navnet som reiste","a":["I middelalderen ble Sankt Nikolas den som ga gaver 6. desember. I Nederland ble navnet til Sinterklaas. I USA på 1800-tallet ble Sinterklaas til Santa Claus. I dag kommer julenissen på julaften."]},
+{"t":"To nisser blir til én","bilde":"fjosnissen.webp","a":["I Norge fantes det allerede en nisse: [[fjøsnissen|Fjøsnisse]] fra folketroen. Han var liten, bodde på gården og kom ikke med gaver.","På 1800-tallet kom den utenlandske julenissen med gaver til Norge. Den norske julenissen i dag er en blanding av de to."]},
+{"t":"Fire ting «alle vet»","a":["Mange tror at Coca-Cola fant opp julenissen. Det er en [[myte]]. Brusreklamen fra 1931 gjorde den røde, runde nissen kjent over hele verden, men han ble tegnet i rød drakt lenge før.","Ble Jesus født 25. desember? Ingen vet. Bibelen nevner ingen dato. Den eldste kjente feiringen 25. desember er fra Roma i år 336. Bibelen sier heller ikke hvor mange vismenn det var. Og juletreet er ingen vikingskikk. Det kom fra Tyskland til Norge på 1800-tallet."]},
+{"t":"Slik avslører du en myte","a":["Spør hvem som sier det. En [[kilde]] som var der selv, er bedre enn en som har hørt det av andre. Spør når det ble skrevet ned. Jo lenger tid som har gått, jo mer kan ha forandret seg.","Spør om flere sier det samme. Flere kilder som er uavhengige av hverandre, gjør oss sikrere. Og spør hva vi ikke vet. Noen ganger er det ærlige svaret «det vet ingen»."]}
+],
+husk:["Hvem var Nikolas, og hvor levde han?","Hvordan ble Sankt Nikolas til Santa Claus?","Hvilke spørsmål kan du stille for å avsløre en myte?"]};

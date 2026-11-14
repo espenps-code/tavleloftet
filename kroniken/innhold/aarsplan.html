@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krøniken – forslag til årsplaner 5.–7. trinn</title>
+<link rel="stylesheet" href="felles/kr-fonter.css">
+<link rel="stylesheet" href="felles/veiledning.css">
+</head>
+<body>
+<!-- Forslag til årsplaner for 5., 6. og 7. trinn. Planene ligger i veiledning-data.js (aarsplan). Titlene på delene hentes fra oversikt.js.
+     aarsplan.html?trinn=6 viser bare ett trinn. Laget for både skjerm og utskrift. Ingenting lagres. -->
+<div id="bar"><b>Krøniken · årsplaner</b>
+  <select id="velg" aria-label="Velg trinn"><option value="">Alle trinn</option><option value="5">5. trinn</option><option value="6">6. trinn</option><option value="7">7. trinn</option></select>
+  <a href="veiledning.html">Lærerveiledning</a>
+  <button id="skriv">Skriv ut</button>
+</div>
+<main id="ark"></main>
+<script src="oversikt.js"></script>
+<script src="veiledning-data.js"></script>
+<script src="felles/tilbake.js"></script>
+<script>
+(function(){
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const $=id=>document.getElementById(id);
+const K=window.KRONIKEN||{},V=window.VEILEDNING,A=V.aarsplan,valgt=new URLSearchParams(location.search).get('trinn');
+$('velg').value=A[valgt]?valgt:'';$('velg').onchange=e=>location.href='aarsplan.html'+(e.target.value?'?trinn='+e.target.value:'');
+$('skriv').onclick=()=>print();
+/* Omtrentlig måned for hver skoleuke (38 uker, ferier ikke regnet med) */
+const MND=['august','august','september','september','september','september','oktober','oktober','oktober','oktober','november','november','november','november','desember','desember','desember','januar','januar','januar','januar','februar','februar','februar','mars','mars','mars','mars','april','april','april','mai','mai','mai','mai','juni','juni','juni'];
+const trinn=Object.keys(A).filter(t=>!A[valgt]||t===valgt);
+let altU=0,altK=0;Object.values(A).forEach(p=>p.rader.forEach(r=>{altU+=r.u;if(r.k)altK+=r.u;}));
+
+const plan=t=>{const P=A[t];let uke=1,sumK=0;
+  const rader=P.rader.map(r=>{const fra=uke,til=uke+r.u-1;uke+=r.u;if(r.k)sumK+=r.u;
+    const L=r.m&&K[r.m],ider=L?(r.d==='alle'?L.tema.map(x=>x.id):r.d):[];
+    const deler=ider.map(id=>{const i=L.tema.findIndex(x=>x.id===id);return i<0?'':`<a href="presentasjon.html?p=${r.m}/${id}">Del ${i+1}: ${esc(L.tema[i].tittel)}</a>`;}).filter(Boolean);
+    const mnd=MND[fra-1]===MND[til-1]?MND[fra-1]:MND[fra-1]+'–'+MND[til-1];
+    return `<tr${r.k?' class="kr"':''}><td>${fra===til?fra:fra+'–'+til}<small>${mnd}</small></td>
+     <td><b>${esc(r.t)}</b>${L?`<small>${L&&r.hoved?'Hovedpresentasjon · ':''}${deler.join(' · ')||'Bygger på det klassen har arbeidet med før'}</small>`:''}</td>
+     <td>${esc(r.x)}${L?` <a class="skjerm" href="veiledning.html?l=${r.m}">Veiledning</a>`:''}</td><td class="k">${r.km.map(i=>i+1).join(', ')}</td></tr>`;}).join('');
+  return `<section class="plan"><header class="hode"><small>Forslag til årsplan · KRLE · Krøniken</small><h1>${P.tittel}</h1><p>${esc(P.om)}</p></header>
+   <table class="t"><tr><th>Uke</th><th>Tema</th><th>Slik kan dere arbeide</th><th>Mål</th></tr>${rader}</table>
+   <p class="liten">Uke 1 er første skoleuke i august. Månedene er omtrentlige, fordi ferier ikke er regnet med. Tallene under «Mål» viser til kompetansemålene på siste side. Linjer med farget strek er kristendomskunnskap: ${sumK} av ${uke-1} uker dette året.</p></section>`;};
+
+$('ark').innerHTML=`${valgt&&A[valgt]?'':`<header class="hode"><small>Krøniken · KRLE</small><h1>Forslag til årsplaner</h1><p>5., 6. og 7. trinn. Alle delene i Krøniken er fordelt på tre år.</p></header>
+ <section><h2>Slik er planene tenkt</h2><ul>
+  <li><b>38 skoleuker, om lag to skoletimer i uka.</b> Læreplanen gir 427 timer (à 60 minutter) til KRLE på 1.–7. trinn samlet. Hvordan timene fordeles mellom trinnene, bestemmer skoleeieren, så sjekk timetallet på din skole.</li>
+  <li><b>Én del er én uke.</b> I kristendommen er det satt av to uker til hver del, slik at klassen får gå i dybden.</li>
+  <li><b>Jul og påske har egne opplegg for hvert trinn</b>, med to nye deler hvert år.</li>
+  <li><b>Kristendommen kommer tilbake hvert år</b>, både som eget tema og gjennom jul og påske.</li>
+  <li><b>Hvert år har én–to ledige uker</b> til turer, fagdager og det som tar lengre tid enn planlagt.</li>
+  <li><b>Rekkefølgen er et forslag.</b> Temaene kan byttes om, for eksempel etter høytider eller etter det andre fag arbeider med.</li></ul>
+  <div class="merk"><b>Om kristendommens plass.</b> Kristendomskunnskap skal utgjøre om lag halvparten av undervisningstiden i KRLE. I disse planene er kristendommen hovedtema i ${altK} av ${altU} uker (${Math.round(altK/altU*100)} %). Krøniken har 19 deler med kristendomskunnskap (kristendommen, jul og påske), og det er ennå ikke nok stoff til å fylle halve tiden. Fyll på med kristendomsstoff fra andre kilder, og trekk inn kristendommen når dere sammenligner i de andre religionene.</div></section>`}
+ ${trinn.map(plan).join('')}
+ <section class="plan"><h2>Kompetansemål etter 7. trinn</h2><p>Fra læreplanen i KRLE (RLE01-04). Målene gjelder for 5.–7. trinn samlet, så skolen velger selv når hvert mål arbeides med.</p>
+  <ol class="km">${V.km.map((x,i)=>`<li value="${i+1}">${esc(x)}</li>`).join('')}</ol>
+  <p class="liten">Kilde: Utdanningsdirektoratet, udir.no/lk20/rle01-04. Hentet 14. november 2026. Koblingen mellom uker og mål er Krønikens forslag. Sjekk alltid mot Udirs egen side.</p></section>
+ <p class="fot">Krøniken · forslag til årsplaner</p>`;
+})();
+</script>
+</body>
+</html>

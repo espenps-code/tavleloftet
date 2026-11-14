@@ -166,7 +166,7 @@
   const K=window.KRONIKEN||{},esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
   const liste=Object.entries(K);
   const ant=liste.reduce((n,[,l])=>n+l.tema.length,0);
-  document.getElementById('tall').innerHTML=[[liste.length,'temaer og moduler'],[ant,'presentasjoner med oppgaveark'],['960','quizspørsmål'],['60','kapitler i elevboka']].map(([a,b])=>`<li><b>${a}</b> ${b}</li>`).join('');
+  document.getElementById('tall').innerHTML=[[liste.length,'temaer og moduler'],[ant,'presentasjoner med oppgaveark'],['1200','quizspørsmål'],['72','kapitler i elevboka']].map(([a,b])=>`<li><b>${a}</b> ${b}</li>`).join('');
   document.getElementById('vifte').innerHTML=['hinduismen','jodedommen','buddhismen'].filter(m=>K[m]).map(m=>`<img src="../innhold/${m}/bilder/${K[m].bilde}" alt="">`).join('');
   const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
   document.getElementById('temaliste').innerHTML=liste.map(([m,l])=>`<a class="tk" href="../innhold/tema.html?l=${m}"><img src="../innhold/${m}/bilder/${l.bilde}" alt="" loading="lazy"><span class="tx"><small>${ord[l.type]||'Tema'}</small><strong>${esc(l.navn)}</strong><p>${l.tema.length} deler: ${esc(l.tema.slice(0,3).map(t=>t.tittel).join(' · '))} …</p><span class="gaa">Åpne temaet →</span></span></a>`).join('');

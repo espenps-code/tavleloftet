@@ -1,0 +1,67 @@
+/* Krøniken – lærerveiledning og årsplaner. Lyst ark som ser likt ut på skjerm og papir. */
+:root{--ink:#1d2523;--m:#2a4441;--a:#b9532c;--soft:#f3ece0;--line:#cfd6d2;--bg:#161433}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.5 "Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif}
+h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif;font-weight:700;margin:0;line-height:1.15}
+a{color:var(--a)}
+#bar{position:sticky;top:0;z-index:5;background:#0c0b1f;color:#f3e9d2;padding:10px 16px 10px 150px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}
+#bar b{margin-right:auto;font-size:15px}
+#bar a{color:#f3e9d2;font-weight:700}
+#bar select{font:inherit;padding:7px 10px;border-radius:8px;border:1px solid #4a4780;background:#201d47;color:#f3e9d2}
+#bar button{font:inherit;font-weight:700;padding:9px 16px;border-radius:8px;border:0;background:#e8b04b;color:#161433;cursor:pointer}
+#bar label{display:flex;gap:6px;align-items:center}
+#ark{max-width:210mm;margin:22px auto 70px;background:#fffdf8;padding:16mm 17mm;border-radius:6px;box-shadow:0 16px 50px rgba(0,0,0,.4)}
+.hode{border-bottom:3px solid var(--m);padding-bottom:10px;margin-bottom:16px}
+.hode small{display:block;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--a)}
+.hode h1{font-size:40px;color:var(--m);margin:2px 0 4px}
+.hode p{margin:0;color:#4a5552}
+section{margin:0 0 20px}
+h2{font-size:23px;color:var(--m);margin:0 0 6px;break-after:avoid}
+h2.stor{font-size:28px;border-bottom:3px solid var(--m);padding-bottom:6px;margin:30px 0 14px;break-before:page}
+h4{font:700 12.5px/1.2 "Atkinson Hyperlegible",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--a);margin:10px 0 3px;break-after:avoid}
+p{margin:0 0 8px}ul,ol{margin:0 0 8px;padding-left:1.3em}li{margin:0 0 3px}
+.liten{font-size:12.5px;color:#5d6866}
+ol.km li{margin-bottom:4px}ol.km li::marker{font-weight:700;color:var(--a)}
+table.t{width:100%;border-collapse:collapse;margin:8px 0 10px;font-size:14.5px}
+table.t th{text-align:left;background:var(--m);color:#fff;padding:6px 9px;font-weight:700}
+table.t td{border-bottom:1px solid var(--line);padding:6px 9px;vertical-align:top}
+table.t tr{break-inside:avoid}
+table.t ol{margin:0}
+.sammen{break-inside:avoid}
+.kort{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}
+.kort a{display:block;text-decoration:none;color:var(--ink);background:var(--soft);border-radius:10px;padding:10px 12px}
+.kort strong{display:block;font-family:"Fraunces",serif;font-size:17px;color:var(--m)}.kort span{font-size:13px;color:#5d6866}
+.knapp{display:inline-block;background:var(--m);color:#fff;text-decoration:none;font-weight:700;border-radius:8px;padding:10px 16px}
+.del{border:1.5px solid var(--line);border-radius:12px;padding:12px 16px 10px;margin:0 0 14px}
+.del h3{font-size:21px;color:var(--m);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;break-after:avoid}
+.del h3 span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--m);color:#fff;display:inline-grid;place-items:center;font-size:16px;align-self:center}
+.del h3 small{font:400 14px/1.2 "Atkinson Hyperlegible",sans-serif;color:#5d6866}
+.to{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px}
+dl{margin:0 0 6px;display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;font-size:14.5px}
+dt{font-weight:700}dd{margin:0}
+.su b{color:var(--m)}
+li i{color:#5d6866}
+.notat{background:var(--soft);border-radius:8px;padding:2px 12px 6px;margin-top:8px;font-size:14px}
+.notat li{margin-bottom:4px}
+body.utennotater .notat{display:none}
+.lenker{margin:10px 0 0;font-size:14px}.lenker a{display:inline-block;margin:0 0 4px 8px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;text-decoration:none;font-weight:700;color:var(--m)}
+.fot{margin:22px 0 0;font-size:11.5px;color:#6a7774;text-align:right}
+/* Årsplan */
+.plan{break-before:page}.plan:first-of-type{break-before:auto}
+.plan table.t{font-size:13.5px}
+.plan td:first-child{white-space:nowrap;font-weight:700}
+.plan td.k{font-weight:700;color:var(--a);white-space:nowrap}
+.plan tr.kr td:nth-child(2){border-left:4px solid var(--a)}
+.plan small{display:block;color:#5d6866;font-weight:400}
+.andel{background:var(--soft);border-radius:10px;padding:10px 14px;margin:8px 0}
+.merk{border-left:5px solid var(--a);background:var(--soft);border-radius:0 10px 10px 0;padding:10px 14px}
+@media(max-width:800px){#ark{padding:22px 18px;margin:0;border-radius:0}.to{grid-template-columns:1fr}.kort{grid-template-columns:1fr 1fr}#bar{padding-left:16px;padding-top:50px}}
+@page{size:A4;margin:14mm 15mm}
+@media print{
+  body{background:#fff;font-size:10.5pt}#bar,.skjerm,#kr-tilbake{display:none!important}
+  #ark{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0;background:#fff}
+  a{color:inherit;text-decoration:none}
+  .plan table.t{font-size:8.8pt;margin:4px 0 6px}.plan table.t td,.plan table.t th{padding:3.5px 7px}.plan small{font-size:7.6pt}.plan .hode{margin-bottom:6px;padding-bottom:6px}.plan .hode h1{font-size:24pt}.plan .liten{font-size:8pt}
+  .del{break-inside:auto}.del h3,.to{break-inside:avoid}
+  table.t th,.del h3 span,.notat,.andel,.merk,.kort a{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
