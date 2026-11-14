@@ -78,12 +78,12 @@ const SPILL={
   taarn:{n:'Tårnet',
     mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
     linje:plassLinje,
-    /* Eleven sikrer ved å velge modul. Vindu og balkong gjelder alle etasjene som sikres, klokka bare den øverste. */
+    /* Eleven sikrer én etasje om gangen ved å trykke på en modul. Etasjene stables i den rekkefølgen eleven velger. */
     topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div>
-      <div class="sikre"><span>Sikre med</span>${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,'v'+k,0,false).replace(/<i class="et"[^>]*bunn[^>]*>.*?<\/i>/,'')}${m.n}</button>`).join('')}</div>
+      <div class="sikre"><span>Sikre én<br>etasje</span>${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,'v'+k,0,false).replace(/<i class="et"[^>]*bunn[^>]*>.*?<\/i>/,'')}${m.n}</button>`).join('')}</div>
       <span class="neste-gir">Neste riktige gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div><div class="mitttaarn" style="--w:${Math.max(24,Math.min(110,(innerHeight-120)/((stat.p+stat.u)*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,stat.et,stat.u,true)}</div>`,
-    bind(){document.querySelectorAll('.sikre button').forEach(k=>k.onclick=()=>{if(!stat.u||laast)return;const m=k.dataset.m;stat.et+=m==='u'?'v'.repeat(stat.u-1)+'u':m.repeat(stat.u);   /* klokka kommer bare på den øverste av etasjene som sikres */stat.p+=stat.u;stat.u=0;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:0,et:stat.et});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();});},
-    riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Sikre, eller bygg videre?`;},
+    bind(){document.querySelectorAll('.sikre button').forEach(k=>k.onclick=()=>{if(!stat.u||laast)return;stat.et+=k.dataset.m;stat.p++;stat.u--;stat.rekke=0;net.update('f/'+id,{p:stat.p,u:stat.u,et:stat.et});try{navigator.vibrate&&navigator.vibrate(30);}catch(e){}oppfrisk();});},
+    riktig(opp){stat.rekke=Math.min(3,stat.rekke+1);stat.u+=stat.rekke;opp.u=stat.u;opp.p=stat.p;return `Riktig! +${stat.rekke} ${stat.rekke===1?'etasje':'etasjer'}. Velg moduler for å sikre, eller bygg videre.`;},
     feil(opp){const tapt=stat.u;stat.u=0;stat.rekke=0;opp.u=0;return tapt?`Stillaset raste. Du mistet ${tapt} ${tapt===1?'usikret etasje':'usikrede etasjer'}.`:'';},
     lobby:()=>`<p class="muted" style="margin:0">Velg stein til tårnet ditt:</p><div class="stilvalg">${KTaarn.STILER.map((x,i)=>`<button data-s="${i}"${i===stil?' class="valgt"':''}>${KTaarn.tegn(i,'vvu',0,true)}${x.n}</button>`).join('')}</div>`,
     lobbyBind(){document.querySelectorAll('.stilvalg button').forEach(k=>k.onclick=()=>{stil=+k.dataset.s;minne.set('kq-st-'+kode,String(stil));net.update('s/'+id,{st:stil});document.querySelectorAll('.stilvalg button').forEach(x=>x.classList.toggle('valgt',x===k));});},
