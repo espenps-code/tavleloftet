@@ -46,8 +46,21 @@ if(!m||!K[m]){
     <tr><td><b>Elevbok</b></td><td>Et kapittel eleven leser selv, med ordforklaringer og «Sjekk deg selv». Trenger ikke innlogging.</td></tr>
     <tr><td><b>Oppgaveark</b></td><td>Skrives ut. Oppgaver som å koble, fylle inn, sette i rekkefølge og avgjøre sant eller usant.</td></tr>
     <tr><td><b>Øveark</b></td><td>Skrives ut tosidig. Forsiden har 20 spørsmål med svar, baksiden er en test med fasit.</td></tr>
-    <tr><td><b>Klassequiz</b></td><td>Elevene svarer på egne skjermer. Fem spillmoduser.</td></tr></table>
+    <tr><td><b>Klassequiz</b></td><td>Elevene svarer på egne skjermer, ett spørsmål om gangen i samlet klasse. Fem spillmoduser.</td></tr>
+    <tr><td><b>Øvespill</b></td><td>Elevene svarer i sitt eget tempo i 3–10 minutter. Fire spill. Bruker de samme spørsmålene som quizen.</td></tr></table>
    <p>I tillegg har hvert tema <b>lesehistorier</b> med ordforklaringer og spørsmål, og de seks religionene og livssynene har en <b>hovedpresentasjon</b> som gir oversikten før dere går i dybden.</p></section>
+  <section class="sammen"><h2>Klassequiz eller øvespill?</h2>
+   <p>Begge bruker de 20 spørsmålene som hører til hver del, og elevene blir med på samme måte: de åpner «bli med»-siden og skriver koden fra tavla. Alle får et tilfeldig kallenavn, så ingen navn lagres og ingen trenger å logge inn.</p>
+   <table class="t"><tr><th>Klassequiz</th><th>Øvespill</th></tr><tr>
+   <td>Du styrer tempoet. Alle får samme spørsmål samtidig, og fasiten vises på tavla før neste. Passer når dere vil snakke om svarene underveis.</td>
+   <td>Hver elev svarer i sitt eget tempo til tida er ute (3, 5, 8 eller 10 minutter). Passer til mengdetrening, som oppstart eller avslutning på en time.</td></tr></table>
+   <p><b>Slik virker øvespillene.</b> Svarer eleven feil, vises det riktige svaret, og eleven må vente tre sekunder før neste spørsmål. Da lønner det seg ikke å gjette. Spørsmålet kommer tilbake litt senere. Når tida er ute, viser tavla «Dette kan vi øve mer på»: de fem spørsmålene klassen bommet mest på. Bruk dem til en kort oppsummering.</p>
+   <table class="t"><tr><th>Spill</th><th>Slik spilles det</th></tr>
+    <tr><td><b>Mosaikken</b></td><td>Samarbeid. Hvert riktig svar legger en brikke, og klassen prøver å avdekke hele bildet før tida er ute. Tavla viser ikke hvor mye hver elev bidro med.</td></tr>
+    <tr><td><b>Samleren</b></td><td>Riktig svar gir et kort med et fagord og forklaringen. Kortene kommer tilfeldig i bronse, sølv og gull. Velg gjerne flere deler, så blir det flere kort å samle.</td></tr>
+    <tr><td><b>Tårnet</b></td><td>Riktige svar på rad gir én, to og så tre etasjer. Eleven velger selv når tårnet skal sikres. Feil svar river det som ikke er sikret.</td></tr>
+    <tr><td><b>Lykkehjulet</b></td><td>Riktig svar gir et spinn på hjulet. Flaksen gjør at alle kan vinne.</td></tr></table>
+   <p>Mosaikken har ingen vinnere og tapere. De tre andre viser plassering på tavla. Velg det som passer klassen din.</p></section>
   <section><h2>Veiledning til hvert tema</h2><div class="kort">${Object.entries(K).map(([k,l])=>`<a href="veiledning.html?l=${k}"><strong>${esc(l.navn)}</strong><span>${l.tema.length} deler</span></a>`).join('')}</div>
    <p class="skjerm"><a class="knapp" href="aarsplan.html">Forslag til årsplaner for 5.–7. trinn</a></p></section>
   <section><h2>Kompetansemål etter 7. trinn</h2><p>Fra læreplanen i KRLE (RLE01-04). Tallene brukes i veiledningene og årsplanene.</p>${kmListe(V.km.map((_,i)=>i))}
@@ -82,7 +95,7 @@ if(!m||!K[m]){
      ${ut&&ut.a?`<h4>Utgangsbillett</h4><p>${ren(ut.a)}</p>`:''}
     </div></div>
     ${notat?`<div class="notat"><h4>Lærernotater til lysbildene</h4><ul>${notat}</ul></div>`:''}
-    <p class="lenker skjerm">Åpne: <a href="presentasjon.html?p=${p}">Presentasjon</a><a href="bok.html?p=${p}">Elevbok</a><a href="oppgaver.html?p=${p}">Oppgaveark</a><a href="oveark.html?t=${p}">Øveark</a><a href="quiz.html?ls=${m}&t=${d.t.id}">Quiz</a></p></section>`;};
+    <p class="lenker skjerm">Åpne: <a href="presentasjon.html?p=${p}">Presentasjon</a><a href="bok.html?p=${p}">Elevbok</a><a href="oppgaver.html?p=${p}">Oppgaveark</a><a href="oveark.html?t=${p}">Øveark</a><a href="quiz.html?ls=${m}&t=${d.t.id}">Quiz</a><a href="spill.html?ls=${m}&t=${d.t.id}">Øvespill</a></p></section>`;};
 
   $('ark').innerHTML=`<header class="hode"><small>Lærerveiledning · Krøniken</small><h1>${esc(L.navn)}</h1>
    <p>${deler.length} deler · ${antL} lysbilder · ${antQ} quizspørsmål · ${hist.length} lesehistorier${L.hoved?' · hovedpresentasjon':''}</p></header>
@@ -99,7 +112,7 @@ if(!m||!K[m]){
   <section class="sammen"><h2>Slik kan en uke se ut</h2>
    <table class="t"><tr><th>Time 1: tavla og samtalen</th><th>Time 2: eget arbeid og øving</th></tr><tr>
    <td><ol><li><b>Oppstart (5 min).</b> Samtalespørsmålet først i presentasjonen. Elevene snakker i par.</li><li><b>Fagstoff (20 min).</b> Gå gjennom lysbildene. Stopp ved «sant eller usant» og la elevene stemme før svaret vises.</li><li><b>Sjekk (10 min).</b> Sjekkspørsmålene sist i presentasjonen, sammen i klassen.</li><li><b>Utgangsbillett (5 min).</b> Hver elev skriver ett svar på en lapp.</li></ol></td>
-   <td><ol><li><b>Lese (15 min).</b> Kapittelet i elevboka, alene eller to og to. «Les høyt» finnes for dem som trenger det.</li><li><b>Oppgaveark (15 min).</b> Skriv ut på forhånd. Elevene kan slå opp i elevboka mens de arbeider.</li><li><b>Quiz eller øveark (10 min).</b> Klassequiz på egne skjermer, eller øvearket som lekse.</li></ol></td></tr></table>
+   <td><ol><li><b>Lese (15 min).</b> Kapittelet i elevboka, alene eller to og to. «Les høyt» finnes for dem som trenger det.</li><li><b>Oppgaveark (15 min).</b> Skriv ut på forhånd. Elevene kan slå opp i elevboka mens de arbeider.</li><li><b>Quiz, øvespill eller øveark (10 min).</b> Klassequiz eller et øvespill på egne skjermer, eller øvearket som lekse.</li></ol></td></tr></table>
    <p>Lesehistoriene kan brukes som egen lesetime, som lekse, eller i norsk.</p></section>
 
   ${H.obs?`<section><h2>Vær oppmerksom på</h2><ul>${H.obs.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`:''}

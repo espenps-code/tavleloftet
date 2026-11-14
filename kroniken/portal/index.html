@@ -44,6 +44,7 @@
   .tk .gaa{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--gold-soft);margin-top:6px}
   /* Verktøy */
   .verktoyliste{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media (min-width:1101px){.verktoyliste{grid-template-columns:repeat(4,1fr)}}   /* sju kort: fire og tre */
   .verktoy{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--night-2);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:18px;padding:22px;text-decoration:none;color:var(--parchment);transition:transform .15s,border-color .15s,box-shadow .2s}
   .verktoy:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 16px 40px rgba(0,0,0,.35)}
   .verktoy:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
@@ -159,7 +160,7 @@
     <ul>
       <li>Presentasjoner til tavla, med lærernotater</li>
       <li>Oppgaveark og øveark til utskrift</li>
-      <li>Elevbok, lesehistorier og klassequiz</li>
+      <li>Elevbok, lesehistorier, klassequiz og øvespill</li>
       <li>Lærerveiledning og forslag til årsplaner</li>
       <li>Prøver, arbeidslogg og grupper</li>
     </ul>
@@ -198,6 +199,12 @@
         <div class="v-ikon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5.5 13.2h5L10 21l8-10.6h-5.2z"/></svg></div>
         <h3>Klassequiz</h3>
         <p>Kjør quiz på tavla: klassisk, lag, sistemann, stigespill eller erobring. Elevene blir med på egen skjerm.</p>
+        <span class="v-gaa">Åpne →</span>
+      </a>
+      <a class="verktoy" href="../innhold/spill.html" style="--c:#E0995C">
+        <div class="v-ikon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.8" y="3.8" width="7" height="7" rx="1.6"/><rect x="13.2" y="3.8" width="7" height="7" rx="1.6"/><rect x="3.8" y="13.2" width="7" height="7" rx="1.6"/><path d="M16.7 13.6v6.2M13.6 16.7h6.2"/></svg></div>
+        <h3>Øvespill</h3>
+        <p>La elevene svare i eget tempo i noen minutter: Mosaikken, Samleren, Tårnet eller Lykkehjulet. Tavla viser hva klassen bør øve mer på.</p>
         <span class="v-gaa">Åpne →</span>
       </a>
       <a class="verktoy" href="../innhold/oveark.html" style="--c:var(--teal)">
