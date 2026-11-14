@@ -25,6 +25,6 @@ deler:[
  'Naturen og universet kan fylle humanister med undring, uten at de ser noe guddommelig i det.']},
 {t:'Humanister i Norge og verden',bilde:'benken.webp',a:[
  'I Norge har livssynssamfunn uten religion rundt 159 000 medlemmer. De aller fleste er med i Human-Etisk Forbund. De siste årene har omtrent 1 av 5 femtenåringer valgt humanistisk konfirmasjon.',
- 'Humanistorganisasjoner i over 80 land samarbeider. I noen land er det farlig å si høyt at man ikke tror på Gud. Humanister arbeider for at alle skal ha frihet til å tro eller ikke tro.']}
+ 'Humanistorganisasjoner i over 60 land samarbeider. I noen land er det farlig å si høyt at man ikke tror på Gud. Humanister arbeider for at alle skal ha frihet til å tro eller ikke tro.']}
 ],
 husk:['Hva er forskjellen på en religion og et livssyn?','Hva betyr kritisk tenkning?','Hvilke seremonier har humanister?']};

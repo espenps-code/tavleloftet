@@ -69,7 +69,7 @@ lysbilder:[
  n:['Her er det viktig å være nøytral: Dette er hva humanister mener. Religionene har andre svar.','I en humanistisk gravferd er det livet til den døde som står i sentrum.']},
 {type:'punkter',kicker:'Mangfold',tittel:'Humanister i Norge og verden',bilde:{fil:'benken.webp',alt:'Tre ungdommer sitter på en benk i en skolegård og snakker og ler sammen. En har hodeplagg, en har et lite kors i kjede, og en har hettegenser'},punkter:[
  'I Norge er humanister organisert i Human-Etisk Forbund og i den mindre organisasjonen Humanistene.',
- 'Humanistorganisasjoner i over 80 land samarbeider i Humanists International.',
+ 'Humanistorganisasjoner i over 60 land samarbeider i Humanists International.',
  'I noen land er det farlig å si høyt at man ikke tror på Gud.',
  'Humanister arbeider for at alle skal ha frihet til å tro eller ikke tro.'],
  n:['Livssynsfrihet betyr både frihet til å ha en religion og frihet til å ikke ha en. Humanister forsvarer begge deler.','Mangfold er tema 7.']},

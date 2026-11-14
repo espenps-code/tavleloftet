@@ -16,7 +16,7 @@ deler:[
  'Humanister og troende er uenige om Gud, men enige om mye annet. I Samarbeidsrådet for tros- og livssynssamfunn møtes kristne, muslimer, jøder, buddhister, hinduer, humanister og flere. Der arbeider de for respekt, og for at alle skal behandles likt.',
  'Å samtale med noen som tror noe annet, kalles [[dialog]].']},
 {t:'Humanister i verden',bilde:'jordkloden.webp',a:[
- 'Humanistorganisasjoner fra over 80 land samarbeider i Humanists International. Organisasjonen taler humanistenes sak i FN og hjelper humanister som er i fare. Hvert år gir den ut en rapport om tankefriheten i alle verdens land.']},
+ 'Humanistorganisasjoner fra over 60 land samarbeider i Humanists International. Organisasjonen taler humanistenes sak i FN og hjelper humanister som er i fare. Hvert år gir den ut en rapport om tankefriheten i alle verdens land.']},
 {t:'Der det er farlig å ikke tro',bilde:'tom-stol.webp',a:[
  '[[Blasfemi]] er å håne det andre regner som hellig. I mange land er det forbudt å kritisere religion. I noen land er det også forbudt å forlate religionen man er født inn i. Mennesker har havnet i fengsel for å ha skrevet at de ikke tror på Gud.',
  'FNs verdenserklæring sier at alle har rett til tankefrihet, samvittighetsfrihet og religionsfrihet. Det gjelder friheten til å ha en tro, til å skifte tro og til ikke å ha noen tro. Humanister kaller det [[livssynsfrihet]] og forsvarer den for alle.']},

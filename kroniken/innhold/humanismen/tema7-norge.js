@@ -41,7 +41,7 @@ lysbilder:[
  'Å samtale med noen som tror noe annet, kalles [[dialog]].'],
  n:['Samarbeidsrådet forkortes STL og ble startet i 1996. Human-Etisk Forbund har vært med fra begynnelsen.','Poenget med dialog er ikke å bli enige, men å forstå hverandre.']},
 {type:'punkter',kicker:'Verden',tittel:'Humanists International',hoyre:true,bilde:{fil:'jordkloden.webp',alt:'Mange hender med ulike hudfarger strekker seg inn fra alle kanter og holder sammen oppe en liten jordklode'},punkter:[
- 'Humanistorganisasjoner fra over 80 land samarbeider i **Humanists International**.',
+ 'Humanistorganisasjoner fra over 60 land samarbeider i **Humanists International**.',
  'Organisasjonen ble startet i Amsterdam i 1952.',
  'Den taler humanistenes sak i FN og hjelper humanister som er i fare.',
  'Hvert år gir den ut en rapport om tankefriheten i alle verdens land.'],
@@ -83,7 +83,7 @@ quiz:[
 {q:'Hva er Samarbeidsrådet for tros- og livssynssamfunn?',a:['Et politisk parti','En skole','En avis','Et sted der troende og humanister møtes og samarbeider'],r:3},
 {q:'Hva kalles samtale mellom mennesker som tror ulikt?',a:['Dialog','Blasfemi','Seremoni','Hypotese'],r:0},
 {q:'Hva heter humanistenes verdensorganisasjon?',a:['FN','Humanists International','Røde Kors','Amnesty'],r:1},
-{q:'Hvor mange land har humanistorganisasjoner som er med?',a:['3','12','Over 80','Alle unntatt Norge'],r:2},
+{q:'Hvor mange land har humanistorganisasjoner som er med?',a:['3','12','Over 60','Alle unntatt Norge'],r:2},
 {q:'Hva er blasfemi?',a:['En humanistisk seremoni','En merkedag','En type meditasjon','Å håne eller kritisere det andre regner som hellig'],r:3},
 {q:'Hva sier artikkel 18 i menneskerettighetene?',a:['At alle har rett til tankefrihet og religionsfrihet','At alle må gå på skole','At alle skal ha ferie','At alle land skal ha president'],r:0},
 {q:'Hva omfatter livssynsfriheten?',a:['Bare retten til å være kristen','Retten til å ha en tro, skifte tro eller ikke ha noen','Bare retten til å la være å tro','Retten til å bestemme hva andre skal tro'],r:1},
