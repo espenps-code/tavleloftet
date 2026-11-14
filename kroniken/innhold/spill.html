@@ -91,26 +91,21 @@ const SPILL={
       return{tittel:alt?'Mosaikken er ferdig!':'Tida er ute',tekst:alt?(G.igjenVedSlutt>1?`Dere avdekket hele bildet med ${mmss(G.igjenVedSlutt)} igjen på klokka.`:'Dere avdekket hele bildet akkurat i tide.'):`Dere rakk ${pst} % av bildet. Prøv en gang til og se om dere kommer lenger!`,
         tall:[[G.lagt,'brikker lagt'],[pst+' %','av bildet']]};}
   },
-  samler:{n:'Samleren',poeng:true,om:'Riktig svar gir tre kort med baksiden opp. Baksiden viser gruppa, og eleven velger ett. En komplett gruppe gir bonus.',feed:'Dette skjer',
+  samler:{n:'Samleren',poeng:true,om:'Riktig svar gir tre kort med baksiden opp, og eleven velger ett. Hvert kort har et symbol i hjørnet. Tre like symboler kan byttes inn i bonuspoeng.',feed:'Dette skjer',
     ikon:`<rect x="10" y="16" width="26" height="36" rx="5" fill="#5fb0d9" transform="rotate(-12 23 34)"/><rect x="26" y="12" width="28" height="40" rx="5" fill="#f3d27a" stroke="#162222" stroke-width="3"/><path d="M40 21l3.100 6.600 7.200.800-5.400 4.900 1.500 7.100-6.400-3.700-6.400 3.700 1.500-7.100-5.400-4.900 7.200-.800z" fill="#e98554"/>`,
-    start(G){G.funn={};G.kortSum=0;},
-    tegn(G){
-      /* Én rad per gruppe. Kortene lyser opp når noen i klassen har funnet dem. */
-      const n=G.kort.length,bredest=Math.max(...G.grupper.map(g=>g.k.length));
-      return `<div class="kgrupper${n>18?' mange':''}" id="vegg">${G.grupper.map((g,gi)=>`<div class="kgr" style="--gf:${g.f}"><h3>${esc(g.n)}<small data-g="${gi}"></small></h3><div class="kortvegg" style="--n:${bredest}">${g.k.map(i=>`<div class="kv" data-i="${i}"><b>${esc(G.kort[i][0])}</b><small>${esc(G.kort[i][1])}</small><em></em></div>`).join('')}</div></div>`).join('')}</div>`;},
+    start(G){G.funn={};G.kortSum=0;G.rek.forEach(id=>G.spillere[id].byttet=0);},
+    tegn(G){const n=G.kort.length;return `<div class="kortvegg${n>18?' mange':''}" id="vegg" style="--n:${n<=8?4:n<=18?6:7}">${G.kort.map((k,i)=>`<div class="kv" data-i="${i}"><b>${esc(k[0])}</b><small>${esc(k[1])}</small><em></em></div>`).join('')}</div>`;},
     oppdater(G,nye){
       /* Veggen viser hvor mange ganger klassen har funnet hvert kort. Tallene hentes fra albumene til elevene. */
-      const funn={},beste={},ferdige=G.grupper.map(()=>0),linjer=[];let sum=0;
-      G.rek.forEach(id=>{const x=G.F[id]||{},s=G.spillere[id],a=x.a||{};
-        Object.entries(a).forEach(([i,v])=>{const c=+(v&&v.c)||0;funn[i]=(funn[i]||0)+c;sum+=c;beste[i]=Math.max(beste[i]||0,+(v&&v.e)||0);});
-        G.grupper.forEach((g,gi)=>{if(g.k.every(i=>a[i]))ferdige[gi]++;});
+      const funn={},beste={},linjer=[];let sum=0;
+      G.rek.forEach(id=>{const x=G.F[id]||{},s=G.spillere[id];
+        Object.entries(x.a||{}).forEach(([i,v])=>{const c=+(v&&v.c)||0;funn[i]=(funn[i]||0)+c;sum+=c;beste[i]=Math.max(beste[i]||0,+(v&&v.e)||0);});
         const sk=x.sk;if(sk&&sk.c>(s.sett||0)){s.sett=sk.c;
-          if(sk.g!=null&&G.grupper[sk.g])linjer.push(hend(s,`har hele gruppa <b>${esc(G.grupper[sk.g].n)}</b>`,'h-stige'));
           if(sk.full)linjer.push(hend(s,'har alle kortene i albumet!','h-gull'));
-          else if(sk.e===2&&G.kort[sk.i])linjer.push(hend(s,`fikk <b>${esc(G.kort[sk.i][0])}</b> i gull`,'h-gull'));}});
+          else if(sk.e===2&&G.kort[sk.i])linjer.push(hend(s,`fikk <b>${esc(G.kort[sk.i][0])}</b> i gull`,'h-gull'));}
+        const by=x.by;if(by&&by.c>(s.byttet||0)){s.byttet=by.c;const sy=KSamler.SYMBOLER[by.s];if(sy)linjer.push(hend(s,`byttet inn tre ${sy.flertall} ${sy.svg}`,'h-stige'));}});
       G.funn=funn;G.kortSum=sum;
       document.querySelectorAll('#vegg .kv').forEach(el=>{const i=el.dataset.i,c=funn[i]||0;el.classList.toggle('funnet',c>0);el.dataset.e=c?beste[i]:'';el.querySelector('em').textContent=c?'×'+c:'';});
-      document.querySelectorAll('#vegg [data-g]').forEach(el=>{const f=ferdige[el.dataset.g];el.textContent=f?f+(f===1?' elev har hele':' elever har hele'):'';});
       if(nye.length)tone(660,0,.08,.03);
       return linjer;
     },
@@ -245,14 +240,14 @@ function oppsett(){
     const ls=$('#ls').value,ids=temaer().filter(x=>x.checked).map(x=>x.value);
     if(!ids.length){$('#feil').textContent='Velg minst én del.';return;}
     $('#lag').disabled=true;
-    const {sp,kort,grupper}=await hentSporsmal(ls,ids);
+    const {sp,kort}=await hentSporsmal(ls,ids);
     if(!sp.length){$('#feil').textContent='Fant ingen spørsmål.';$('#lag').disabled=false;return;}
     app.onchange=null;
-    start({spill:v('spill'),tid:+v('tid')*60,nivaa:+(v('nivaa')||1),ls,ids,sp,kort,grupper,tittel:KRONIKEN[ls].navn});
+    start({spill:v('spill'),tid:+v('tid')*60,nivaa:+(v('nivaa')||1),ls,ids,sp,kort,tittel:KRONIKEN[ls].navn});
   };
 }
 /* Samme rekkefølge som på elevsiden (spill-med.html), så spørsmål nr. 7 og kort nr. 3 er de samme begge steder. */
-async function hentSporsmal(ls,ids){let sp=[];const lister=[];for(const id of ids){window.PRES=null;await last(ls+'/'+id+'.js');lister.push(window.PRES&&PRES.begreper||[]);if(window.PRES&&PRES.quiz)sp=sp.concat(PRES.quiz);}return Object.assign({sp},KSamler.bygg(ls,ids,lister));}
+async function hentSporsmal(ls,ids){let sp=[];const lister=[];for(const id of ids){window.PRES=null;await last(ls+'/'+id+'.js');lister.push(window.PRES&&PRES.begreper||[]);if(window.PRES&&PRES.quiz)sp=sp.concat(PRES.quiz);}return{sp,kort:KSamler.bygg(lister)};}
 
 /* ---------- 2. Lobby ---------- */
 async function start(o){
