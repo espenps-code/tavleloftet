@@ -12,7 +12,7 @@ deler:[
  'I meditasjon sitter man stille og samler tankene. Yoga betyr «å forene». Opprinnelig er det veier til å forene sjelen med det guddommelige.']},
 {t:'Navn og første hårklipp',bilde:'navnefest.webp',a:[
  'Rundt tolv dager etter fødselen får barnet navnet sitt i en seremoni. Navnet hviskes i øret på barnet. Ofte er det navnet på en gud eller gudinne.',
- 'Når barnet er mellom ett og tre år, klippes eller barberes håret for første gang.']},
+ 'Når barnet er mellom ett og tre år, klippes eller barberes håret for første gang. Det er et bilde på at barnet legger det gamle bak seg og begynner på nytt.']},
 {t:'Bryllup',bilde:'bryllup.webp',a:[
  'Et hinduistisk bryllup kan vare i flere dager og ha hundrevis av gjester. Midt i seremonien brenner en ild. Ilden er vitne til løftene.',
  'Brudeparet tar sju skritt sammen. For hvert skritt gir de et løfte. Når det sjuende skrittet er tatt, er de gift.']},

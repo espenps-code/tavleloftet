@@ -12,18 +12,18 @@ deler:[
  'Slike budskap kalles åpenbaringer. De fortsatte i rundt 23 år og ble til [[Koranen]]. I 622 flyttet Muhammad til byen Medina. Den muslimske tidsregningen starter det året. Han døde i 632.']},
 {t:'Kjernen i troen',a:[
  '[[Allah]] er det arabiske ordet for Gud. Trosbekjennelsen sier: «Det finnes ingen gud uten Gud, og Muhammad er Guds sendebud.» Den som sier dette og mener det, er muslim.',
- 'Muslimer tror at Gud har skapt alt og ikke kan avbildes. Gud har sendt mange profeter, blant dem Ibrahim, Musa og Isa. Muhammad er den siste. Hvert menneske skal en dag stå til ansvar for det det har gjort.']},
+ 'Muslimer tror at Gud har skapt alt og ikke kan avbildes. Gud har sendt mange profeter, blant dem Ibrahim, Musa og Isa. I Bibelen heter de Abraham, Moses og Jesus. Muhammad er den siste. Hvert menneske skal en dag stå til ansvar for det det har gjort.']},
 {t:'Koranen',bilde:'koranen.webp',a:[
  'For muslimer er Koranen Guds eget ord. Den har 114 kapitler og er på arabisk. Mange lærer deler av den utenat. Fortellinger om hva Muhammad sa og gjorde, kalles hadith. De viser hvordan man kan leve etter Koranen.']},
 {t:'De fem søylene',a:[
- '[[De fem søylene]] er de fem viktigste pliktene. Den første er trosbekjennelsen. Den andre er bønn fem ganger om dagen, vendt mot Mekka. Den tredje er å gi en fast del av det man eier til dem som trenger det.',
- 'Den fjerde er å faste fra daggry til solnedgang i måneden ramadan. Den femte er pilegrimsreisen til Mekka, én gang i livet hvis man kan.']},
+ '[[De fem søylene]] er de fem viktigste pliktene. De kalles søyler fordi de bærer troen, slik søyler bærer et hus. Den første er trosbekjennelsen. Den andre er bønn fem ganger om dagen, vendt mot Mekka. Den tredje er å gi en fast del av det man eier til dem som trenger det.',
+ 'Den fjerde er å faste fra daggry til solnedgang i måneden ramadan. Fasten skal lære selvkontroll og gi forståelse for dem som har lite. Den femte er pilegrimsreisen til Mekka, én gang i livet hvis man kan. Der kler alle seg i enkle hvite klær, så ingen ser hvem som er rik eller fattig.']},
 {t:'Fest, moské og mat',bilde:'kaba.webp',a:[
- 'Hver kveld i ramadan samles familie og venner til måltidet som bryter fasten. Når måneden er slutt, feires festen id al-fitr.',
- '[[Moskeen|Moské]] er huset for bønn, og en imam leder bønnen. Kaba er en kubeformet bygning i Mekka. Muslimer over hele verden vender seg mot den når de ber.',
+ 'Ramadan er måneden da Koranen ifølge tradisjonen først ble åpenbart. Hver kveld samles familie og venner til måltidet som bryter fasten. Når måneden er slutt, feires festen id al-fitr. Da tar folk på seg fine klær, besøker familie og spiser god mat.',
+ '[[Moskeen|Moské]] er huset for bønn, og en imam leder bønnen. Kaba er en kubeformet bygning i Mekka. Muslimer tror at Ibrahim og sønnen Ismail bygde den for å tilbe den ene Gud. Muslimer over hele verden vender seg mot Kaba når de ber.',
  'Halal betyr tillatt, og haram betyr forbudt. Svinekjøtt og alkohol er haram. Ordene brukes ikke bare om mat, men om alt man gjør.']},
 {t:'Retninger, og islam i Norge',bilde:'vindu.webp',a:[
- 'Islam har to hovedretninger. Rundt 85–90 prosent er sunnimuslimer. Rundt 10–15 prosent er sjiamuslimer, flest i Iran og Irak.',
+ 'Islam har to hovedretninger. Uenigheten begynte etter Muhammads død og handlet om hvem som skulle lede muslimene. Rundt 85–90 prosent er sunnimuslimer. Rundt 10–15 prosent er sjiamuslimer, flest i Iran og Irak.',
  'De første større gruppene med muslimer kom til Norge som arbeidsinnvandrere rundt 1970. Den første moskeen ble åpnet i Oslo i 1974. Norske muslimer har bakgrunn fra mange land, og mange er født og oppvokst her.']}
 ],
 husk:['Hva sier trosbekjennelsen?','Hva er de fem søylene?','Når kom de første større gruppene med muslimer til Norge?']};

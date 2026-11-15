@@ -15,15 +15,17 @@ deler:[
  'Gud har skapt alt og kan ikke avbildes. Derfor finnes det ikke bilder av Gud. Troen vises i det man gjør, og budene kalles mitsvot. Mange venter på Messias og en tid med fred for hele verden.']},
 {t:'Sabbat og høytider',bilde:'sabbat.webp',a:[
  '[[Sabbaten|Sabbat]] er hviledagen. Den varer fra fredag kveld til lørdag kveld. Den begynner med at det tennes to lys, og familien spiser et festmåltid. Mange går i synagogen og lar arbeid, lekser og handling ligge.',
- 'Året har mange høytider. Rosh hashana er nyttår om høsten. Jom kippur er forsoningsdagen, da voksne faster et døgn. Om vinteren kommer lysfesten hanukka. Om våren feires pesach, til minne om at israelittene ble fri fra slaveriet i Egypt.']},
+ 'Året har mange høytider. Rosh hashana er nyttår om høsten. Da spiser man eple dyppet i honning og ønsker hverandre et godt og søtt år. Like etter kommer jom kippur, forsoningsdagen. Voksne faster et døgn, ber om tilgivelse og gjør opp med mennesker de har såret.',
+ 'Om vinteren kommer lysfesten hanukka. I åtte kvelder tennes ett nytt lys, til minne om at tempelet i Jerusalem ble innviet på nytt. Om våren feires pesach, til minne om at israelittene ble fri fra slaveriet i Egypt. Da samles familien til et eget måltid, og i en uke spiser man usyret brød.']},
 {t:'Fra fødsel til død',bilde:'barmitsva.webp',a:[
- 'Gutter blir omskåret når de er åtte dager gamle. Jenter får navnet sitt i synagogen. Som 13-åring regnes en gutt som religiøst voksen. Det kalles bar mitsva. For jenter heter det bat mitsva, og det skjer når de er 12 eller 13.',
- 'I et bryllup står brudeparet under en baldakin. Når noen dør, skjer gravferden raskt, og familien har en sørgeuke.']},
+ 'Jødedommen har ritualer for de store øyeblikkene i livet. Gutter blir omskåret når de er åtte dager gamle. Det er tegnet på pakten mellom Gud og Abraham. Jenter får navnet sitt lest opp i synagogen.',
+ 'Som 13-åring blir en gutt bar mitsva, «budets sønn». En jente blir bat mitsva, «budets datter», når hun er 12 eller 13. Fra da av har de selv ansvaret for å følge budene.',
+ 'I et bryllup står brudeparet under en baldakin. Den er et bilde på hjemmet de skal lage sammen. Når noen dør, skjer gravferden raskt. Den første uka er familien hjemme, og venner kommer med mat og trøst.']},
 {t:'Synagogen og Jerusalem',bilde:'synagoge.webp',a:[
  '[[Synagogen|Synagoge]] er huset for bønn, undervisning og fellesskap. Torarullene oppbevares i et skap på veggen som vender mot Jerusalem. En rabbiner er lærer og veileder i menigheten.',
- 'Vestmuren i Jerusalem er det som står igjen etter tempelområdet. Dit reiser jøder for å be.']},
+ 'Jerusalem har vært jødenes hellige by siden kong David. Der sto tempelet, som romerne ødela i år 70. En del av muren rundt tempelområdet ble stående. Den kalles Vestmuren, og dit reiser jøder for å be.']},
 {t:'Jøder i Norge',bilde:'synagoge-norge.webp',a:[
  'Grunnloven fra 1814 nektet jøder å komme til Norge. Forbudet ble fjernet i 1851. I dag finnes det synagoger i Oslo og Trondheim.',
- 'Under andre verdenskrig ble over 770 jøder sendt fra Norge til dødsleirer. Bare noen få overlevde. Jødene er en av Norges fem nasjonale minoriteter.']}
+ 'Under andre verdenskrig ble over 770 jøder sendt fra Norge til dødsleirer. Bare noen få overlevde. Jødene er en av Norges fem nasjonale minoriteter. Det er grupper som har lang tilknytning til landet og egen kultur, språk eller religion.']}
 ],
 husk:['Hva er pakten mellom Gud og Abraham?','Når begynner og slutter sabbaten?','Hva skjedde med de norske jødene under andre verdenskrig?']};

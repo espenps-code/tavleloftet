@@ -16,17 +16,17 @@ deler:[
  'De fire [[evangeliene|Evangelium]] heter Matteus, Markus, Lukas og Johannes. De forteller om livet til Jesus.']},
 {t:'Ritualer',bilde:'daap.webp',a:[
  'I dåpen helles det vann over hodet, og den som døpes, blir en del av kirken. I nattverden deler menigheten brød og vin, slik Jesus gjorde med disiplene den siste kvelden. Dåp og nattverd kalles [[sakramenter|Sakrament]] i Den norske kirke.',
- 'I konfirmasjonen lærer ungdom mer om troen. Bønn er å snakke med Gud, alene eller sammen med andre. Den mest kjente bønnen heter Fadervår.']},
+ 'Konfirmasjon betyr å bekrefte. Der lærer ungdom mer om troen og blir bedt for i kirken. Bønn er å snakke med Gud, alene eller sammen med andre. Den mest kjente bønnen heter Fadervår.']},
 {t:'Høytider',bilde:'hoytider.webp',a:[
- 'Kirkeåret følger fortellingen om Jesus. I jula feirer kristne at Jesus ble født. I påsken minnes de at han døde og, ifølge kristen tro, sto opp igjen. Pinsen er 50 dager etter påske.',
+ 'Kirkeåret følger fortellingen om Jesus. Det begynner med advent, de fire søndagene med ventetid før jul. I jula feirer kristne at Jesus ble født. I påsken minnes de at han døde og, ifølge kristen tro, sto opp igjen. Pinsen er 50 dager etter påske. Da feires det at Den hellige ånd kom til disiplene, og pinsen kalles kirkens fødselsdag.',
  'Påsken er den viktigste høytiden i kristendommen, selv om jula er den største feiringen i Norge.']},
 {t:'Symboler',bilde:'symboler.webp',a:[
  'Korset er det viktigste symbolet, fordi Jesus døde på et kors. Fisken var et hemmelig tegn for de første kristne da de ble forfulgt i Romerriket. Duen står for Den hellige ånd og for fred. Lys tennes i kirken, i advent og ved dåp, fordi Jesus kalles «verdens lys».']},
 {t:'Hellige steder',bilde:'hellige-steder.webp',a:[
- 'Kirken er stedet der menigheten samles. Betlehem og Jerusalem er byene der Jesus ifølge Bibelen ble født, døde og sto opp. Nidarosdomen i Trondheim er bygd over graven til Olav den hellige. I Vatikanet i Roma bor paven.',
- 'En [[pilegrim]] er en som reiser til et hellig sted.']},
+ 'Kirken er stedet der menigheten samles. Betlehem og Jerusalem er byene der Jesus ifølge Bibelen ble født, døde og sto opp. Nidarosdomen i Trondheim er bygd over graven til Olav den hellige, kongen som falt på Stiklestad i 1030. I Vatikanet i Roma bor paven, som leder den katolske kirken.',
+ 'En [[pilegrim]] er en som reiser til et hellig sted. I middelalderen gikk tusenvis av mennesker til Nidaros for å besøke graven til Olav.']},
 {t:'Én religion, flere retninger',bilde:'mangfold.webp',a:[
- 'Kristendommen har tre hovedgrener: den katolske kirken, de ortodokse kirkene og de protestantiske kirkene. Den norske kirke er luthersk, altså protestantisk. Den var statskirke fram til 2012.',
+ 'De første kristne var én gruppe. I 1054 ble kirken delt i en østlig og en vestlig del. I 1517 begynte reformasjonen, og de protestantiske kirkene oppsto. Derfor har kristendommen i dag tre hovedgrener.','Den katolske kirken er den største og ledes av paven. De ortodokse kirkene er kirkene i øst, for eksempel i Hellas og Russland. Den norske kirke er luthersk, altså protestantisk. Den var statskirke fram til 2012.',
  'Kristne over hele verden har mye felles, men gudstjenester, ledere og regler kan være ganske ulike.']}
 ],
 husk:['Hva tror kristne om Jesus?','Hvorfor er påsken den viktigste høytiden i kristendommen?','Hva er de tre hovedgrenene i kristendommen?']};

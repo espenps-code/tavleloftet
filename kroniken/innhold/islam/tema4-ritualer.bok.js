@@ -2,7 +2,7 @@ window.BOK={
 ingress:'Fem plikter kalles søylene i islam, fordi de bærer troen slik søyler bærer et hus. Her leser du også om ritualene fra fødsel til død.',
 deler:[
 {t:'De fem søylene',a:[
- 'Den første søylen er trosbekjennelsen, [[shahada]]. Den andre er bønnen, [[salah]]. Den tredje er almissen, [[zakat]]. Den fjerde er fasten i måneden ramadan. Den femte er pilegrimsreisen til Mekka, [[hajj]].']},
+ 'Den første søylen er trosbekjennelsen, [[shahada]]. Den sier at det ikke finnes noen gud uten Gud, og at Muhammad er Guds sendebud. Den andre er bønnen, [[salah]]. Den tredje er almissen, [[zakat]]. Den fjerde er fasten i måneden ramadan, da voksne muslimer verken spiser eller drikker fra daggry til solnedgang. Den femte er pilegrimsreisen til Mekka, [[hajj]].']},
 {t:'Bønnen',bilde:'bonn.webp',a:[
  'Muslimer ber fem ganger om dagen: ved daggry, midt på dagen, om ettermiddagen, ved solnedgang og om kvelden. De vender seg mot Kaba i Mekka. Retningen kalles [[qibla]].',
  'Bønnen har faste bevegelser: Man står, bøyer seg, legger panna mot bakken og sitter. Man kan be hvor som helst der det er rent. Mange bruker et bønneteppe.']},

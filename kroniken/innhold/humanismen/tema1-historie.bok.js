@@ -6,7 +6,7 @@ deler:[
  'Epikur startet en skole i en hage. Han mente at målet i livet er å ha det godt, og at det viktigste da er vennskap og ro i sinnet. I hagen hans fikk også kvinner og slaver være med. Det var uvanlig.']},
 {t:'Renessansen',bilde:'renessanse.webp',a:[
  'I Italia begynte lærde å lese de gamle greske og romerske tekstene på nytt. Tiden kalles [[renessansen]], som betyr «gjenfødelse». De lærde ble kalt humanister, fordi de studerte mennesket: språk, historie, kunst og filosofi.',
- 'De mente at mennesket har stor verdi og kan forme sitt eget liv.']},
+ 'De mente at mennesket har stor verdi og kan forme sitt eget liv. De var selv kristne. Ordet humanist betydde noe annet den gangen enn i dag.']},
 {t:'Bøker til alle',bilde:'trykkpressa.webp',a:[
  'I Tyskland fant Johann Gutenberg opp en måte å trykke bøker med løse bokstaver på. Før måtte hver bok skrives av for hånd. Nå ble bøker billigere, og mange flere lærte å lese. Nye tanker kunne spre seg raskt, og det ble vanskeligere å stoppe dem.']},
 {t:'Vitenskapen våkner',bilde:'kikkerten.webp',a:[
@@ -18,9 +18,9 @@ deler:[
 {t:'Darwin',bilde:'beagle.webp',a:[
  'Charles Darwin reiste jorda rundt som ung naturforsker. Etter mange års arbeid forklarte han hvordan artene har utviklet seg over svært lang tid. Teorien kalles [[evolusjon]]. Den viser at mennesket er en del av naturen.']},
 {t:'Aldri mer',bilde:'fn-salen.webp',a:[
- 'Etter andre verdenskrig ville landene i verden hindre at noe slikt skjedde igjen. De opprettet [[FN]] i 1945. I 1948 vedtok FN Verdenserklæringen om menneskerettigheter.',
- 'I 1952 møttes humanister fra mange land i Amsterdam og dannet en verdensorganisasjon.']},
+ 'Etter andre verdenskrig ville landene i verden hindre at noe slikt skjedde igjen. De opprettet [[FN]] i 1945. I 1948 vedtok FN Verdenserklæringen om menneskerettigheter. Den bygger på tanken om at alle mennesker har samme verdi.',
+ 'I 1952 møttes humanister fra mange land i Amsterdam og dannet en verdensorganisasjon. Først nå ble humanisme navnet på et eget livssyn uten gud.']},
 {t:'Humanismen i Norge',a:[
- 'I 1912 var konfirmasjon ikke lenger påbudt i Norge. I 1951 ble den første borgerlige konfirmasjonen holdt. Human-Etisk Forbund ble stiftet i 1956. I 2004 fikk forbundet rett til å vie ektepar.']}
+ 'Fra 1736 til 1912 var konfirmasjon i kirken påbudt ved lov i Norge. Etterpå kunne folk velge selv, men lenge fantes det bare kirkelige seremonier. I 1951 ble den første borgerlige konfirmasjonen holdt. Botanikeren Kristian Horn tok initiativet til den, og også til Human-Etisk Forbund, som ble stiftet i 1956.','I 2004 fikk forbundet rett til å vie ektepar. I 2012 ble Grunnloven endret, og Norge har ikke lenger statskirke.']}
 ],
 husk:['Hva gjorde Sokrates på torget i Athen?','Hvorfor var boktrykkerkunsten viktig for nye tanker?','Hva krevde tenkerne i opplysningstiden?']};

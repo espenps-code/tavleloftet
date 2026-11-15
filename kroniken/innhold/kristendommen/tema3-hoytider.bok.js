@@ -5,10 +5,10 @@ deler:[
  '[[Kirkeåret]] er kirkens egen kalender. Det begynner med [[advent]], som betyr «komme». De fire søndagene før jul er ventetid, og mange tenner ett lys for hver søndag.',
  'I jula feirer kristne at Jesus ble født i Betlehem. Juleevangeliet leses i kirken på julaften. Helligtrekongersdag 6. januar minner om vismennene som fulgte stjernen til Jesus-barnet.']},
 {t:'Fastetiden',a:[
- 'Før påske kommer fastetiden. [[Faste]] er tid til ettertanke, der noen gir avkall på noe. Den varer i 40 dager, og mange samler inn penger til andre.',
+ 'Før påske kommer fastetiden. [[Faste]] er tid til ettertanke, der noen gir avkall på noe. Den varer i 40 dager, og mange samler inn penger til andre. Fastetiden minner om de 40 dagene Jesus ifølge Bibelen var i ørkenen.',
  'Søndagen før fasten heter fastelavn. Før i tiden spiste man seg mett den dagen. I dag spiser vi boller med krem. Første dag i fastetiden heter askeonsdag.']},
 {t:'Påskeuka',a:[
- 'Palmesøndag rir Jesus inn i Jerusalem. [[Skjærtorsdag]] spiser han det siste måltidet med disiplene. Langfredag dør han på korset. Påskeaften ligger han i graven.']},
+ 'Påskeuka følger de siste dagene i livet til Jesus, slik Bibelen forteller om dem. Palmesøndag rir Jesus inn i Jerusalem. [[Skjærtorsdag]] spiser han det siste måltidet med disiplene. Da innstiftet han nattverden.','Langfredag dør han på korset. Påskeaften ligger han i graven. Uka kalles også den stille uke.']},
 {t:'Påskemorgen',bilde:'tom-grav.webp',a:[
  'Ifølge Bibelen kom noen kvinner til graven tidlig søndag morgen. Steinen var rullet bort, og graven var tom.',
  'Kristne tror at Jesus sto opp fra de døde. Det kalles [[oppstandelsen]]. Derfor er påsken den viktigste høytiden i kristendommen. Hver søndag regnes som en liten påskedag.']},
@@ -18,6 +18,6 @@ deler:[
 {t:'Fargene i kirken',a:[
  'I kirken skifter fargene på tekstilene gjennom året. Hvit står for glede og fest og brukes i jul og påske. Lilla står for forberedelse og brukes i advent og fastetiden. Rød står for ild og blod og brukes i pinsen. Grønn står for vekst og liv og brukes i de lange periodene uten høytid.']},
 {t:'Flere merkedager',bilde:'symboler.webp',a:[
- 'Olsok er 29. juli og er til minne om Olav den hellige. Allehelgensdag er tidlig i november. Da tenner mange lys på gravene til dem de har mistet.']}
+ 'Olsok er 29. juli og er til minne om Olav den hellige, kongen som falt på Stiklestad i 1030. Allehelgensdag er tidlig i november. Da tenner mange lys på gravene til dem de har mistet.']}
 ],
 husk:['Hvorfor er påsken den viktigste høytiden for kristne?','Hva skjer hver av dagene i påskeuka?','Hva feires i pinsen?']};

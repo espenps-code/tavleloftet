@@ -13,10 +13,10 @@ deler:[
  'I Betlehem ligger Fødselskirken. Den er bygd over stedet der Jesus ifølge tradisjonen ble født. I Jerusalem ligger Gravkirken. Den er bygd der kristne mener Jesus ble korsfestet og gravlagt.',
  'Jerusalem er en hellig by for både jøder, kristne og muslimer.']},
 {t:'Roma, Santiago og klostrene',a:[
- 'Roma er sentrum for den katolske kirken. Paven bor i Vatikanstaten, som er verdens minste land. Santiago de Compostela i Spania er et av de mest kjente pilegrimsmålene i Europa.',
+ 'Roma er sentrum for den katolske kirken. Paven bor i Vatikanstaten, som er verdens minste land. Peterskirken der er ifølge tradisjonen bygd over graven til disippelen Peter. Santiago de Compostela i Spania er et av de mest kjente pilegrimsmålene i Europa.',
  'Et [[kloster]] er et sted der munker eller nonner bor, ber og arbeider sammen.']},
 {t:'Pilegrimer',bilde:'pilegrim.webp',a:[
  'En [[pilegrim]] reiser til et hellig sted, ofte til fots. I middelalderen gikk tusenvis av mennesker til Nidaros for å besøke graven til Olav den hellige.',
- 'I dag går mange pilegrimsleden for å få ro, tenke eller oppleve natur og historie.']}
+ 'I dag går mange pilegrimsleden for å få ro, tenke eller oppleve natur og historie. Leden fra Oslo til Trondheim er rundt 640 kilometer.']}
 ],
 husk:['Hva brukes alteret, prekestolen og døpefonten til?','Hvorfor er Nidarosdomen et pilegrimsmål?','Hvilke to kirker er bygd der Jesus ifølge tradisjonen ble født og gravlagt?']};

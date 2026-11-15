@@ -20,7 +20,7 @@ deler:[
  'Mange barn og voksne er bekymret for framtida. Det er ikke rart. Bekymring viser at du bryr deg. Men ansvaret for de store løsningene ligger hos de voksne og hos dem som styrer.',
  'Det som hjelper mest mot bekymring, er å gjøre noe sammen med andre.']},
 {t:'Kvinnen som plantet trær',bilde:'treplanterne.webp',a:[
- 'Wangari Maathai så at skogen forsvant der hun hadde vokst opp, og at elvene tørket inn. I 1977 begynte hun å plante trær sammen med kvinner på landsbygda. Hun ble ledd av, og hun ble arrestert. Men hun fortsatte.',
+ 'Wangari Maathai fra Kenya så at skogen forsvant der hun hadde vokst opp, og at elvene tørket inn. I 1977 begynte hun å plante trær sammen med kvinner på landsbygda. Hun ble ledd av, og hun ble arrestert. Men hun fortsatte.',
  'Bevegelsen har plantet titalls millioner trær. I 2004 fikk hun Nobels fredspris.']},
 {t:'Fire steder å begynne',bilde:'reparere.webp',a:[
  'Bruk ting lenger: Reparer, arv, bytt og lån i stedet for å kjøpe nytt. Kast mindre, særlig mat. Si fra: Barn har rett til å bli hørt, så snakk i elevrådet og spør de voksne.',

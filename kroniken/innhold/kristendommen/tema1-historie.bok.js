@@ -10,13 +10,13 @@ deler:[
  'Paulus reiste rundt Middelhavet, startet nye grupper av kristne og skrev brev som står i Bibelen. De som reiste ut og fortalte om Jesus, kalles [[apostler|Apostel]], og en gruppe kristne som hører sammen, kalles en [[menighet]].',
  'De kristne ville ikke tilbe keiseren. Derfor ble mange forfulgt, og de møttes ofte i hemmelighet. Den som blir drept for troen sin, kalles en [[martyr]].']},
 {t:'Fra forbudt til statsreligion',a:[
- 'I år 64 forfulgte keiser Nero de kristne. Men i år 313 tillot keiser Konstantin kristendommen. I år 380 ble den [[statsreligion]] i Romerriket. Det betyr at staten bestemte at dette skulle være landets religion.',
- 'I 1054 ble kirken delt i to, en i øst og en i vest.']},
+ 'I år 64 forfulgte keiser Nero de kristne. Men i år 313 tillot keiser Konstantin kristendommen. I år 380 ble den [[statsreligion]] i Romerriket. Det betyr at staten bestemte at dette skulle være landets religion. På under 400 år gikk kristendommen fra å være forbudt til å være den eneste tillatte religionen i riket.',
+ 'I 1054 ble kirken delt i to: den ortodokse kirken i øst og den katolske kirken i vest.']},
 {t:'Kristendommen kommer til Norge',bilde:'steinkors.webp',a:[
- 'Vikinger møtte kristendommen på reiser til England, Irland og resten av Europa. Kongene Håkon den gode, Olav Tryggvason og Olav Haraldsson ville gjøre Norge kristent.',
+ 'Vikinger møtte kristendommen på reiser til England, Irland og resten av Europa. Kongene Håkon den gode, Olav Tryggvason og Olav Haraldsson ville gjøre Norge kristent. Kristningen tok flere hundre år og skjedde ofte med tvang.',
  'Olav Haraldsson falt i slaget på Stiklestad i 1030. Etterpå ble han kalt Olav den hellige. Fra da av var kristendommen religionen i Norge i nesten tusen år.']},
 {t:'Reformasjonen',bilde:'luther.webp',a:[
- 'Martin Luther var en tysk munk. Han mente at kirken hadde fått for mye makt og penger. I 1517 skrev han 95 teser, altså punkter med kritikk av kirken. Han oversatte også Bibelen til tysk, slik at vanlige folk kunne lese den selv.',
+ 'Martin Luther var en tysk munk. Han mente at kirken hadde fått for mye makt og penger. Han kritiserte blant annet at folk kunne betale kirken for å få tilgivelse. I 1517 skrev han 95 teser, altså punkter med kritikk av kirken. Han oversatte også Bibelen til tysk, slik at vanlige folk kunne lese den selv.',
  'Bruddet med den katolske kirken kalles [[reformasjonen]]. I 1537 bestemte kongen at Danmark-Norge skulle være luthersk.']},
 {t:'Samene og minoritetene',bilde:'vidda.webp',a:[
  'Samene hadde sin egen religion. Fjell, innsjøer og store steiner kunne være hellige steder. En noaidi var religiøs leder og brukte en tromme med malte figurer.',

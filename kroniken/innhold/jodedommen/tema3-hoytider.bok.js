@@ -23,6 +23,6 @@ deler:[
  '[[Pesach]] feires i mars eller april, til minne om utferden fra Egypt. Den første kvelden samles familien til et måltid som heter [[seder]]. Det yngste barnet spør: «Hvorfor er denne kvelden annerledes enn alle andre kvelder?»',
  'I en uke spiser man usyret brød, fordi folket ikke rakk å la deigen heve da de dro.']},
 {t:'Shavuot og minnedagene',a:[
- 'Sju uker etter pesach kommer shavuot. Da feires det at Toraen ble gitt på Sinai. Om våren er det en minnedag for holocaust. Om sommeren er det en sørgedag til minne om at de to templene ble ødelagt.']}
+ 'Sju uker etter pesach kommer shavuot. Da feires det at Toraen ble gitt på Sinai, og mange studerer hele natten.','Om våren er det en minnedag for holocaust. I Israel står hele landet stille i to minutter den dagen. Om sommeren er det en sørgedag til minne om at de to templene ble ødelagt, og mange faster.']}
 ],
 husk:['Hvorfor spiser man eple og honning til rosh hashana?','Hva minner løvhytta om?','Hvilket spørsmål stiller det yngste barnet under seder?']};

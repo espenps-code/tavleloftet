@@ -17,10 +17,10 @@ deler:[
  'I Sør-India begynte diktere å synge om kjærligheten til Gud på sitt eget språk, tamil. De sa at alle kunne nå Gud, uansett kaste og kjønn. Det viktigste var hengivenhet.',
  'Denne veien kalles [[bhakti]]. Bevegelsen spredte seg over hele India og preger hinduismen den dag i dag.']},
 {t:'Under andre riker',a:[
- 'Fra 1206 styrte muslimske sultaner fra Delhi. I 1526 ble Mogulriket grunnlagt. I 1858 tok britene styringen over India.']},
+ 'I rundt seks hundre år ble store deler av India styrt av muslimske herskere. Fra 1206 styrte sultaner fra Delhi, og i 1526 ble Mogulriket grunnlagt. Hinduer og muslimer levde side om side, noen ganger i fred og noen ganger i konflikt.','I 1858 tok britene styringen over India. I denne tiden begynte hinduer å beskrive religionen sin samlet for omverdenen, og ordet hinduisme ble vanlig.']},
 {t:'Mahatma Gandhi',bilde:'saltmarsj.webp',a:[
  'Mohandas Gandhi ledet kampen for et fritt India. Han mente at kampen måtte føres helt uten vold. Han bygde på tanken om [[ahimsa]], ikke-vold.',
- 'I 1930 gikk han nesten 400 kilometer til havet for å protestere mot britenes saltskatt. India ble selvstendig i 1947. Året etter ble Gandhi drept.']},
+ 'I 1930 gikk han nesten 400 kilometer til havet for å protestere mot britenes saltskatt. India ble selvstendig i 1947. Samtidig ble landet delt i India og Pakistan, og mange millioner mennesker måtte flykte. Året etter ble Gandhi drept.']},
 {t:'Hinduismen nå',a:[
  'I India er 8 av 10 hinduer. India er likevel en stat uten statsreligion. Hinduer bor i dag i alle verdensdeler, blant annet i Storbritannia, USA og Norge.']}
 ],

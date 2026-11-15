@@ -13,8 +13,8 @@ deler:[
 {t:'Bønn',a:[
  'Fadervår er bønnen Jesus lærte disiplene. Den bes av kristne over hele verden. Mange ber også med egne ord: De takker, ber om hjelp eller ber for andre. Man kan be i kirken, ved måltider, om kvelden eller når som helst.']},
 {t:'Konfirmasjon, vigsel og gravferd',a:[
- 'Konfirmasjon betyr å bekrefte. Konfirmantene lærer om troen og blir bedt for i kirken. I en vigsel lover to personer hverandre troskap, og presten ber om Guds velsignelse.',
- 'I en gravferd tar familie og venner farvel. Presten kaster jord på kista tre ganger.']},
+ 'Konfirmasjon betyr å bekrefte. Konfirmantene lærer om troen og blir bedt for i kirken. I dag velger ungdom selv mellom kirkelig, humanistisk eller ingen konfirmasjon. I en vigsel lover to personer hverandre troskap, og presten ber om Guds velsignelse.',
+ 'I en gravferd tar familie og venner farvel. Presten kaster jord på kista tre ganger og sier: «Av jord er du kommet, til jord skal du bli, av jorden skal du igjen oppstå.» Ordene uttrykker håpet om oppstandelse.']},
 {t:'Tro hjemme',a:[
  'Noen familier ber bordbønn eller aftenbønn, leser i barnebibel og går i kirken sammen. Et av de ti bud sier at man skal hedre far og mor. Foreldrene skal ta vare på barna og lære dem om troen.']},
 {t:'Ekteskap og samliv',a:[

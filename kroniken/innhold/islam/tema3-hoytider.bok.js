@@ -21,7 +21,7 @@ deler:[
  '[[Id al-adha]] feires i pilegrimsmåneden, omtrent ti uker senere. Den minner om profeten Ibrahim, som var villig til å gi Gud det kjæreste han hadde.',
  'Tradisjonelt slaktes et dyr, og kjøttet deles i tre: til familien, til venner og til fattige. Mange i Norge gir i stedet penger til mat for mennesker i nød.']},
 {t:'Andre merkedager',a:[
- 'Den første dagen i året er en stille dag, ikke en stor fest. For sjiamuslimer er ashura en sørgedag til minne om Husayn, Muhammads barnebarn, som ble drept i 680.',
+ 'Den første dagen i året minner om flyttingen til Medina. Det er en stille dag, ikke en stor fest. For sjiamuslimer er ashura en sørgedag til minne om Husayn, Muhammads barnebarn, som ble drept i 680.',
  'Noen muslimer feirer Muhammads fødselsdag med fortellinger og sang. Andre mener dagen ikke bør feires.']}
 ],
 husk:['Hvorfor kommer ramadan litt tidligere hvert år?','Hvem trenger ikke å faste?','Hva er forskjellen på id al-fitr og id al-adha?']};

@@ -19,7 +19,7 @@ deler:[
 {t:'Moteksempelet',a:[
  'Noen sier: «Alle fugler kan fly.» Du svarer: «Hva med pingvinen?» Ett eneste [[moteksempel]] er nok til å vise at en påstand om «alle» ikke stemmer. Da må påstanden gjøres om: «De fleste fugler kan fly.»']},
 {t:'Møt en tenker: René Descartes',bilde:'ovnen.webp',a:[
- 'René Descartes ville finne noe som var helt sikkert. Derfor bestemte han seg for å tvile på alt som det gikk an å tvile på. Kunne han stole på øynene sine? Kunne alt være en drøm?',
- 'Til slutt fant han én ting han ikke kunne tvile på: at han tvilte, og altså tenkte.']}
+ 'René Descartes levde i Frankrike på 1600-tallet. Han ville finne noe som var helt sikkert. Derfor bestemte han seg for å tvile på alt som det gikk an å tvile på. Kunne han stole på øynene sine? Kunne alt være en drøm?',
+ 'Til slutt fant han én ting han ikke kunne tvile på: at han tvilte, og altså tenkte. Setningen han er kjent for, er «Jeg tenker, altså er jeg.»']}
 ],
 husk:['Hva er et argument?','Hvilke tre spørsmål kan du stille for å sjekke en grunn?','Hva er en stråmann?']};
