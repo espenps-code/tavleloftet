@@ -298,17 +298,34 @@ function vis(){
     start();
   }
 
-  /* Les høyt med nettleserens egen stemme. Ingenting sendes noe sted. */
-  if('speechSynthesis' in window){
-    const k=$('hoyt');k.hidden=false;
-    const stopp=()=>{speechSynthesis.cancel();k.setAttribute('aria-pressed','false');k.textContent='Les høyt';};
-    k.onclick=()=>{
-      if(k.getAttribute('aria-pressed')==='true'){stopp();return;}
+  /* Les høyt: spiller innlest lydfil (<tema>/lyd/<kapittel>.mp3) når den finnes.
+     Ellers brukes nettleserens egen stemme. Ingenting sendes noe sted. */
+  {
+    const k=$('hoyt'),harTale='speechSynthesis' in window;
+    const lydUrl=p.replace(/([^/]+)$/,'lyd/$1.mp3');
+    let lyd=null,lydFins=null;
+    const tekst=t=>{k.textContent=t;};
+    const stopp=()=>{if(lyd){lyd.pause();lyd.currentTime=0;}if(harTale)speechSynthesis.cancel();k.setAttribute('aria-pressed','false');tekst('Les høyt');};
+    const tale=()=>{
+      if(!harTale){stopp();return;}
       const biter=[...master.querySelectorAll('.tittelside h1,.tittelside .ingress,.les h2,.les p:not(.auto),.les li,.les blockquote')].map(e=>e.textContent).filter(Boolean);
       const stemme=speechSynthesis.getVoices().find(v=>/^(nb|no)/i.test(v.lang));
       biter.forEach((t,j)=>{const u=new SpeechSynthesisUtterance(t);u.lang='nb-NO';if(stemme)u.voice=stemme;u.rate=.95;if(j===biter.length-1)u.onend=stopp;speechSynthesis.speak(u);});
-      k.setAttribute('aria-pressed','true');k.textContent='Stopp opplesing';};
-    addEventListener('pagehide',()=>speechSynthesis.cancel());
+    };
+    const spill=()=>{
+      if(!lyd){lyd=new Audio(lydUrl);lyd.preload='auto';lyd.onended=stopp;}
+      lyd.play().catch(()=>{lydFins=false;tale();});
+    };
+    /* Sjekk om lydfila finnes, så knappen kan vises også der nettleseren mangler tale */
+    fetch(lydUrl,{method:'HEAD'}).then(r=>{lydFins=r.ok;if(r.ok||harTale)k.hidden=false;if(r.ok)k.title='Innlest lyd';}).catch(()=>{lydFins=false;if(harTale)k.hidden=false;});
+    k.onclick=()=>{
+      if(k.getAttribute('aria-pressed')==='true'){
+        if(lyd&&lydFins&&!lyd.paused){lyd.pause();k.setAttribute('aria-pressed','false');tekst('Fortsett opplesing');return;}
+        stopp();return;}
+      k.setAttribute('aria-pressed','true');tekst(lydFins?'Pause':'Stopp opplesing');
+      if(lydFins)spill();else tale();
+    };
+    addEventListener('pagehide',stopp);
   }
 }
 })();
