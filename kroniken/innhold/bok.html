@@ -75,6 +75,8 @@ a{color:inherit}
 .flyt h2{font-size:1.3em;color:var(--bg3);margin:0 0 6px;padding-top:4px;break-after:avoid;clear:both}
 .flyt section{margin:0 0 18px}
 .flyt p{margin:0 0 11px}
+.leses{background:#fff1bf;box-shadow:0 0 0 5px #fff1bf;border-radius:3px;transition:background .3s}
+.tittelside .leses{background:transparent;box-shadow:none;text-decoration:underline 2px #f2c94c;text-underline-offset:6px}
 .flyt ul{margin:0 0 11px;padding-left:1.2em}.flyt li{margin:0 0 5px}
 /* Bildet står midtstilt under overskriften, så stort det går uten å ta mer enn rundt halve boksiden. */
 .flyt figure{width:min(66%,calc(var(--fh,640px)*.4));margin:8px auto 14px;break-inside:avoid}
@@ -303,9 +305,24 @@ function vis(){
   {
     const k=$('hoyt'),harTale='speechSynthesis' in window;
     const lydUrl=p.replace(/([^/]+)$/,'lyd/$1.mp3');
-    let lyd=null,lydFins=null;
+    let lyd=null,lydFins=null,tider=null,naa=-1,ventSide=null;
+    const SEL='.tittelside h1,.tittelside .ingress,.les h2,.les p:not(.auto),.les li,.les blockquote';
+    const deler=()=>[...master.querySelectorAll(SEL)].filter(e=>e.textContent);
+    /* Hvilken side (spalte) et avsnitt begynner på i blavisning */
+    const sideFor=el=>{const m=master.getBoundingClientRect(),r=el.getBoundingClientRect();return Math.max(0,Math.min(antall-1,Math.floor((r.left-m.left+4)/PW)));};
+    const vises=i=>i>=side&&i<side+per;
+    const gaaTil=t=>{if(vises(t))return;if(per===2&&!rolig&&t>=side+per&&t<side+2*per)bla(1);else{side=Math.floor(t/per)*per;tegn();}};
+    const merk=i=>{master.querySelectorAll('.leses').forEach(e=>e.classList.remove('leses'));
+      const el=i>=0?deler()[i]:null;if(el)el.classList.add('leses');
+      if(document.body.classList.contains('rull')){if(el){const r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-40)el.scrollIntoView({behavior:rolig?'auto':'smooth',block:'center'});}return;}
+      if(!el){if(!laast)tegn();return;}
+      const t=sideFor(el);if(vises(t)){if(!laast)tegn();}else ventSide=t;};
+    /* Følger lyden: når et nytt avsnitt begynner, markeres det og boka blar dit */
+    const folg=()=>{if(!tider||!lyd)return;const ct=lyd.currentTime;let i=0;while(i+1<tider.length&&tider[i+1]<=ct+.15)i++;
+      if(i!==naa){naa=i;merk(i);}
+      if(ventSide!==null&&!laast){const t=ventSide;ventSide=null;gaaTil(t);}};
     const tekst=t=>{k.textContent=t;};
-    const stopp=()=>{if(lyd){lyd.pause();lyd.currentTime=0;}if(harTale)speechSynthesis.cancel();k.setAttribute('aria-pressed','false');tekst('Les høyt');};
+    const stopp=()=>{if(naa>=0){naa=-1;ventSide=null;merk(-1);}if(lyd){lyd.pause();lyd.currentTime=0;}if(harTale)speechSynthesis.cancel();k.setAttribute('aria-pressed','false');tekst('Les høyt');};
     const tale=()=>{
       if(!harTale){stopp();return;}
       const biter=[...master.querySelectorAll('.tittelside h1,.tittelside .ingress,.les h2,.les p:not(.auto),.les li,.les blockquote')].map(e=>e.textContent).filter(Boolean);
@@ -313,11 +330,13 @@ function vis(){
       biter.forEach((t,j)=>{const u=new SpeechSynthesisUtterance(t);u.lang='nb-NO';if(stemme)u.voice=stemme;u.rate=.95;if(j===biter.length-1)u.onend=stopp;speechSynthesis.speak(u);});
     };
     const spill=()=>{
-      if(!lyd){lyd=new Audio(lydUrl);lyd.preload='auto';lyd.onended=stopp;}
+      if(!lyd){lyd=new Audio(lydUrl);lyd.preload='auto';lyd.onended=stopp;lyd.ontimeupdate=folg;}
       lyd.play().catch(()=>{lydFins=false;tale();});
     };
     /* Sjekk om lydfila finnes, så knappen kan vises også der nettleseren mangler tale */
-    fetch(lydUrl,{method:'HEAD'}).then(r=>{lydFins=r.ok;if(r.ok||harTale)k.hidden=false;}).catch(()=>{lydFins=false;if(harTale)k.hidden=false;});
+    fetch(lydUrl,{method:'HEAD'}).then(r=>{lydFins=r.ok;if(r.ok||harTale)k.hidden=false;
+      /* Tidsstempler for avsnittene, laget ved innlesingen. Stemmer ikke antallet med teksten, blar ikke boka selv. */
+      if(r.ok)fetch(lydUrl.replace(/\.mp3$/,'.json')).then(x=>x.ok?x.json():null).then(j=>{if(j&&j.tider&&j.tider.length===deler().length)tider=j.tider;}).catch(()=>{});}).catch(()=>{lydFins=false;if(harTale)k.hidden=false;});
     k.onclick=()=>{
       if(k.getAttribute('aria-pressed')==='true'){
         if(lyd&&lydFins&&!lyd.paused){lyd.pause();k.setAttribute('aria-pressed','false');tekst('Fortsett opplesing');return;}
