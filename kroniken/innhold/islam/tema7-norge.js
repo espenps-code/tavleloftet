@@ -48,7 +48,7 @@ lysbilder:[
  n:['Angrepet skjedde 10. august 2019 mot Al-Noor Islamic Centre. Før angrepet hadde gjerningsmannen drept stesøsteren sin, Johanne Zhangjia Ihle-Hansen, som var 17 år. Ingen i moskeen ble drept. En av de eldre mennene som overmannet ham, Mohammad Rafiq, var 65 år. Vurder selv hvor mye av dette klassen bør høre.','Regjeringen har en egen handlingsplan mot muslimfiendtlighet for 2025–2030.','Det er lov å være uenig med og kritisere en religion. Det er ikke det samme som å hate eller diskriminere mennesker som tilhører den.','Kilder: regjeringen.no og Stortinget.']},
 {type:'punkter',kicker:'2015',tittel:'Fredens ring',hoyre:true,bilde:{fil:'ring.webp',alt:'Mennesker i alle aldre holder hverandre i hendene i en lang rekke langs en bygate en vinterkveld'},punkter:[
  'I februar 2015 ble en jødisk vakt drept utenfor synagogen i København.',
- 'En uke senere inviterte åtte unge muslimer i Oslo til en markering utenfor synagogen der.',
+ 'En uke senere inviterte en gruppe unge muslimer i Oslo til en markering utenfor synagogen der.',
  'Over **tusen** mennesker kom og holdt hverandre i hendene i en ring.',
  'En av initiativtakerne, Hajrah Arshad, var 17 år.'],
  n:['Markeringen fant sted lørdag 21. februar 2015. Fortellingen finnes som lesehistorie: «Ringen rundt synagogen».','Bruk den sammen med tema 7 om jødedommen. Antisemittisme og muslimfiendtlighet rammer to minoriteter som ofte har støttet hverandre.','Kilder: Antirasistisk Senter og talene fra markeringen (virksommeord.no).']},

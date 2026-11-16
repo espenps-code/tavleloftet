@@ -22,6 +22,6 @@ deler:[
 {t:'Gullalderen',bilde:'visdommens-hus.webp',a:[
  'Hovedstaden Bagdad ble et av verdens viktigste sentre for kunnskap. Lærde oversatte greske, persiske og indiske bøker til arabisk og bygde videre på dem.',
  'Al-Khwarizmi skrev boka som ga oss ordet algebra. Legen Ibn Sina skrev en lærebok i medisin som ble brukt i Europa i flere hundre år.',
- 'I dag har 53 land et flertall av muslimer. Flest muslimer bor i Sør- og Sørøst-Asia.']}
+ 'I dag har rundt 50 land et flertall av muslimer. Flest muslimer bor i Sør- og Sørøst-Asia.']}
 ],
 husk:['Hvorfor likte ikke lederne i Mekka budskapet til Muhammad?','Hva er hijra?','Hva var sunni- og sjiamuslimer uenige om?']};

@@ -23,7 +23,7 @@ deler:[
  '[[Moskeen|Moské]] er huset for bønn, og en imam leder bønnen. Kaba er en kubeformet bygning i Mekka. Muslimer tror at Ibrahim og sønnen Ismail bygde den for å tilbe den ene Gud. Muslimer over hele verden vender seg mot Kaba når de ber.',
  'Halal betyr tillatt, og haram betyr forbudt. Svinekjøtt og alkohol er haram. Ordene brukes ikke bare om mat, men om alt man gjør.']},
 {t:'Retninger, og islam i Norge',bilde:'vindu.webp',a:[
- 'Islam har to hovedretninger. Uenigheten begynte etter Muhammads død og handlet om hvem som skulle lede muslimene. Rundt 85–90 prosent er sunnimuslimer. Rundt 10–15 prosent er sjiamuslimer, flest i Iran og Irak.',
+ 'Islam har to hovedretninger. Uenigheten begynte etter Muhammads død og handlet om hvem som skulle lede muslimene. Rundt 85–90 prosent er sunnimuslimer. Rundt 10–15 prosent er sjiamuslimer. De er i flertall i blant annet Iran og Irak.',
  'De første større gruppene med muslimer kom til Norge som arbeidsinnvandrere rundt 1970. Den første moskeen ble åpnet i Oslo i 1974. Norske muslimer har bakgrunn fra mange land, og mange er født og oppvokst her.']}
 ],
 husk:['Hva sier trosbekjennelsen?','Hva er de fem søylene?','Når kom de første større gruppene med muslimer til Norge?']};

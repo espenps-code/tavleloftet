@@ -20,7 +20,7 @@ deler:[
  '[[Muslimfiendtlighet]] er fordommer mot, hat mot og diskriminering av muslimer. Det kan være stygge ord, å bli holdt utenfor eller å ikke få jobb på grunn av navnet sitt.',
  'I 2019 angrep en høyreekstrem mann en moské i Bærum. Han ble stanset av menn som var i moskeen. Etterpå stilte naboer og folk fra andre religioner seg i ring rundt moskeer for å vise støtte.']},
 {t:'Fredens ring',bilde:'ring.webp',a:[
- 'I februar 2015 ble en jødisk vakt drept utenfor synagogen i København. En uke senere inviterte åtte unge muslimer i Oslo til en markering utenfor synagogen der.',
+ 'I februar 2015 ble en jødisk vakt drept utenfor synagogen i København. En uke senere inviterte en gruppe unge muslimer i Oslo til en markering utenfor synagogen der.',
  'Over tusen mennesker kom og holdt hverandre i hendene i en ring. En av initiativtakerne, Hajrah Arshad, var 17 år.']}
 ],
 husk:['Hvorfor kom de første muslimene til Norge?','Hva er muslimfiendtlighet?','Hva var Fredens ring?']};
