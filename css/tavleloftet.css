@@ -139,6 +139,8 @@ h1,h2,h3,.disp{font-family:var(--display);text-wrap:balance}
 .steg p{margin:0;font-size:16px;line-height:1.55;color:var(--dempet)}
 .kurs{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;background:var(--gronn);color:var(--papir);border-radius:22px;padding:28px}
 .kurs h3{margin:0 0 6px;font-size:23px}.kurs p{margin:0;font-size:16px;line-height:1.55;color:#D4EFEA}
+.stott{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;background:#fff;color:var(--blekk);border-radius:22px;padding:28px;box-shadow:0 4px 0 #EADFC8}
+.stott h3{margin:0 0 6px;font-size:23px}.stott p{margin:0;font-size:16px;line-height:1.55;color:var(--dempet)}
 
 /* Hyllene */
 .hyller{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:72px 24px;padding-top:88px}
