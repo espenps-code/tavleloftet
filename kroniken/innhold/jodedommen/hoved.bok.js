@@ -2,7 +2,7 @@ window.BOK={
 ingress:'Jødedommen er en liten religion med en veldig lang historie. Den handler om én Gud, en avtale og et folk som har holdt fast ved den i flere tusen år.',
 deler:[
 {t:'Få, men over hele verden',a:[
- 'Det finnes omtrent 14,8 millioner jøder i verden. Det er omtrent 2 av 1000 mennesker. De fleste bor i Israel eller i USA. I Norge bor det rundt 1500 jøder, og rundt 770 av dem er medlem av en jødisk menighet.',
+ 'Det finnes omtrent 15,8 millioner jøder i verden. Det er omtrent 2 av 1000 mennesker. De fleste bor i Israel eller i USA. I Norge bor det rundt 1500 jøder, og rundt 770 av dem er medlem av en jødisk menighet.',
  'At et folk bor spredt i mange land, kalles [[diaspora]].']},
 {t:'Abraham og pakten',bilde:'abraham.webp',a:[
  'Fortellingene i Toraen begynner med Abraham, som regnes som jødenes stamfar. Gud ba ham forlate hjemlandet sitt og dra til et nytt land.',

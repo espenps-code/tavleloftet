@@ -2,7 +2,7 @@ window.BOK={
 ingress:'Det jødiske året er fullt av fester. Mange av dem forteller historien om igjen, med mat, lys og spørsmål rundt bordet.',
 deler:[
 {t:'Et år som følger månen',bilde:'maanen.webp',a:[
- 'Den jødiske kalenderen følger månen. En ny måned begynner ved nymåne. Derfor faller høytidene på ulike datoer i vår kalender fra år til år.',
+ 'Den jødiske kalenderen følger månen. En ny måned begynner ved nymåne. Derfor faller høytidene på ulike datoer i vår kalender fra år til år. Men noen år får en ekstra måned, slik at høytidene holder seg i samme årstid.',
  'Døgnet begynner om kvelden, så alle høytider starter når sola går ned. Årene telles fra skapelsen slik tradisjonen regner den. Høsten 2026 begynte år 5787.']},
 {t:'Sabbaten',bilde:'sabbat.webp',a:[
  '[[Sabbaten|Sabbat]] varer fra solnedgang fredag til det er mørkt lørdag kveld. Fredag kveld tennes to lys. Det leses en velsignelse over vinen og over brødet.',

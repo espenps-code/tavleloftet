@@ -3,7 +3,7 @@ lysbilder:[
 {type:'tittel',kicker:'Jødedommen · Hovedpresentasjon',tittel:'Jødedommen',ingress:'Én Gud, én pakt og en historie på flere tusen år',bilde:{fil:'tittel-menora.webp',alt:'En sjuarmet lysestake med sju flammer på en høyde under fullmånen'},
  n:['Hovedpresentasjonen gir oversikten over hele religionen. De sju temapresentasjonene går grundigere inn i hvert område.','Jødedommen er den eldste av de tre religionene som regner Abraham som stamfar. Kristendommen og islam vokste senere fram med røtter i den.']},
 {type:'tall',kicker:'En liten verdensreligion',tittel:'Hvor mange er jøder?',kort:[
- {tall:'14,8',t:'millioner',p:'jøder i verden. Det er omtrent 2 av 1000 mennesker.'},
+ {tall:'15,8',t:'millioner',p:'jøder i verden. Det er omtrent 2 av 1000 mennesker.'},
  {tall:'85 %',t:'i to land',p:'De fleste jøder bor i Israel eller i USA.'},
  {tall:'Ca. 1500',t:'i Norge',p:'Rundt 770 av dem er medlem av en jødisk menighet.'}],
  kilde:'Kilder: Pew Research Center (tall for 2020), regjeringen.no (2024) og Statistisk sentralbyrå (2026)',
