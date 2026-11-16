@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Krøniken – elevbok</title>
+<link rel="icon" href="../ikoner/favicon.ico" sizes="any">
+<link rel="icon" href="../ikoner/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../ikoner/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Krøniken">
 <style>
 @font-face{font-family:"Fredoka";font-weight:600;font-display:swap;src:url("felles/fonts/fredoka-latin-600-normal.woff2") format("woff2")}
 @font-face{font-family:"Nunito";font-weight:400;font-display:swap;src:url("felles/fonts/nunito-latin-400-normal.woff2") format("woff2")}
@@ -20,6 +24,14 @@ a{color:inherit}
 #bar b{margin-right:auto}
 #bar button,#bar a{font-weight:800;font-size:15px;padding:8px 14px;border-radius:8px;border:1px solid #47504e;background:#1e2726;color:#fbf5ea;text-decoration:none}
 #bar button[aria-pressed="true"]{background:#fbf5ea;color:#0c1212}
+#bar a.ovelse{background:#f2c94c;border-color:#f2c94c;color:#0c1212}
+#bar a.ovelse:hover,#bar a.ovelse:focus-visible{background:#ffd966}
+/* Bli med på øving: boks på bokhylla */
+.ovboks{margin:22px 0 4px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#1e2726;border:1px solid #47504e;border-radius:16px;padding:16px 20px;color:#fbf5ea}
+.ovboks p{margin:0;flex:1 1 260px;font-size:15px;line-height:1.45}
+.ovboks strong{display:block;font-size:18px;margin-bottom:2px}
+.ovboks a{font:800 17px/1 "Nunito",sans-serif;padding:13px 22px;border-radius:999px;background:#f2c94c;color:#0c1212;text-decoration:none;white-space:nowrap}
+.ovboks a:hover,.ovboks a:focus-visible{background:#ffd966}
 /* Meny */
 #meny{max-width:1100px;margin:0 auto;padding:36px 20px 70px;color:#fbf5ea}
 #meny h1{font-size:clamp(38px,6vw,62px)}
@@ -125,7 +137,7 @@ body.rull .tittelside img{width:170px;max-height:none}
 @media (max-width:640px){.under{padding:4px 18px 24px;border-radius:0}body.rull #holder{padding:20px 18px;border-radius:0}}
 @media (prefers-reduced-motion:reduce){.leaf{transition:none}}
 @media print{
-  body{background:#fff}#bar,#bokvis,#test,.blad,#forkl{display:none!important}
+  body{background:#fff}#bar,#bokvis,#test,.blad,#forkl,.ovboks{display:none!important}
   #holder{position:static;visibility:visible;height:auto;width:auto;overflow:visible}
   #master{width:auto;height:auto;column-width:auto;columns:auto}
   .tittelside{height:auto;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tittelside img{width:150px;max-height:none}
@@ -140,12 +152,13 @@ body.rull .tittelside img{width:170px;max-height:none}
      Mangler den, lages siden automatisk fra lysbildene. Lærernotater, fasit og samtalekort vises aldri her.
      Ingenting lagres om eleven. Bare valgt skriftstørrelse huskes i nettleseren. -->
 <div id="bar"><b>Krøniken · elevbok</b>
+  <a id="ovelse" class="ovelse" href="bli-med.html">Bli med på øving</a>
   <a id="tilmeny" href="bok.html" hidden>← Alle kapitler</a>
   <button id="mindre" aria-label="Mindre skrift">A−</button><button id="storre" aria-label="Større skrift">A+</button>
   <button id="hoyt" hidden aria-pressed="false">Les høyt</button>
   <button id="modus" hidden aria-pressed="false">Rullevisning</button>
 </div>
-<div id="meny"><h1>Elevbok</h1><p>Alle bøkene står på samme hylle. Velg en bok, så et kapittel, og bla deg gjennom det. Trykk på ord med prikker under for å få dem forklart.</p><button id="del" type="button">Kopier lenke til bokhylla</button><div class="hylle" id="hylle"></div><div id="liste"></div></div>
+<div id="meny"><h1>Elevbok</h1><p>Alle bøkene står på samme hylle. Velg en bok, så et kapittel, og bla deg gjennom det. Trykk på ord med prikker under for å få dem forklart.</p><button id="del" type="button">Kopier lenke til bokhylla</button><div class="ovboks"><p><strong>Quiz eller øvespill i timen?</strong>Når læreren har startet en quiz eller et øvespill, trykker du her og skriver koden fra tavla.</p><a href="bli-med.html">Bli med på øving</a></div><div class="hylle" id="hylle"></div><div id="liste"></div></div>
 <main id="kap" hidden></main>
 <script src="oversikt.js"></script>
 <script src="felles/tilbake.js"></script>
