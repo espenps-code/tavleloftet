@@ -32,7 +32,7 @@ lysbilder:[
  'Da buddhismen kom til Kina, forandret stupaen form.',
  'Den ble et høyt tårn med mange tak over hverandre: en [[pagode]].',
  'Pagoder finnes i Kina, Korea, Japan og Vietnam.',
- 'De har alltid et ulikt antall etasjer, ofte tre, fem eller sju.'],
+ 'De har nesten alltid et ulikt antall etasjer, ofte tre, fem eller sju.'],
  n:['I Vietnam brukes ordet pagode også om hele tempelet.','Dette er et godt eksempel på hvordan buddhismen tok farge av kulturen der den kom.']},
 {type:'punkter',kicker:'Et sted å samles',tittel:'Tempelet',bilde:{fil:'thai-tempel.webp',alt:'Et thailandsk tempel med bratte tak i rødt og gull, et høyt gyllent spir, palmer og en dam med lotusblomster'},punkter:[
  'I et tempel står det en eller flere statuer av Buddha.',

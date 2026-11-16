@@ -10,7 +10,7 @@ deler:[
  'Da Buddha døde, ble asken hans delt og lagt i gravhauger. En slik haug kalles en [[stupa]]. Den er formet som en kuppel med et spir på toppen.',
  'Man går ikke inn i en stupa. Man går rundt den, med klokka. Stupaer kan også inneholde hellige tekster eller minner etter kjente lærere. Noe som er igjen etter en hellig person, kalles en [[relikvie]].']},
 {t:'Pagoden',bilde:'pagode.webp',a:[
- 'Da buddhismen kom til Kina, forandret stupaen form. Den ble et høyt tårn med mange tak over hverandre: en [[pagode]]. Pagoder finnes i Kina, Korea, Japan og Vietnam. De har alltid et ulikt antall etasjer, ofte tre, fem eller sju.']},
+ 'Da buddhismen kom til Kina, forandret stupaen form. Den ble et høyt tårn med mange tak over hverandre: en [[pagode]]. Pagoder finnes i Kina, Korea, Japan og Vietnam. De har nesten alltid et ulikt antall etasjer, ofte tre, fem eller sju.']},
 {t:'Tempel og kloster',bilde:'thai-tempel.webp',a:[
  'I et tempel står det en eller flere statuer av Buddha. Folk tar av seg skoene før de går inn, og setter seg på gulvet. De tenner lys og røkelse, mediterer og hører munkene undervise. Man skal ikke peke føttene mot statuen. Det regnes som uhøflig.',
  'I et [[kloster]] bor munker eller nonner sammen. Dagen begynner tidlig, ofte før soloppgang. Klostrene har også vært skoler, biblioteker og sykehus for folk i nærheten. I Tibet kunne de største klostrene ha flere tusen munker.']},
