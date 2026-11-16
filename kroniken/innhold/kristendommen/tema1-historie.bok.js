@@ -2,7 +2,7 @@ window.BOK={
 ingress:'Det begynte med en mann fra Nasaret og tolv venner. To tusen år senere er kristendommen verdens største religion.',
 deler:[
 {t:'Jesus fra Nasaret',bilde:'jesus.webp',a:[
- 'Jesus ble født i Betlehem og vokste opp i Nasaret, i en jødisk familie. Da han var rundt 30 år, ble han døpt av døperen Johannes i Jordanelva.',
+ 'Ifølge Bibelen ble Jesus født i Betlehem. Han vokste opp i Nasaret, i en jødisk familie. Da han var rundt 30 år, ble han døpt av døperen Johannes i Jordanelva.',
  'I omtrent tre år vandret han rundt og fortalte om Guds rike. Han samlet tolv elever og etterfølgere. En slik etterfølger kalles en [[disippel]].',
  'Rundt år 30 ble Jesus korsfestet i Jerusalem. Den gangen var det romerne som styrte landet.']},
 {t:'De første kristne',bilde:'katakombe.webp',a:[
@@ -17,7 +17,7 @@ deler:[
  'Olav Haraldsson falt i slaget på Stiklestad i 1030. Etterpå ble han kalt Olav den hellige. Fra da av var kristendommen religionen i Norge i nesten tusen år.']},
 {t:'Reformasjonen',bilde:'luther.webp',a:[
  'Martin Luther var en tysk munk. Han mente at kirken hadde fått for mye makt og penger. Han kritiserte blant annet at folk kunne betale kirken for å få tilgivelse. I 1517 skrev han 95 teser, altså punkter med kritikk av kirken. Han oversatte også Bibelen til tysk, slik at vanlige folk kunne lese den selv.',
- 'Bruddet med den katolske kirken kalles [[reformasjonen]]. I 1537 bestemte kongen at Danmark-Norge skulle være luthersk.']},
+ 'Bruddet med den katolske kirken kalles [[reformasjonen]]. I 1536 bestemte kongen at Danmark skulle bli luthersk, og i 1537 ble reformasjonen innført i Norge.']},
 {t:'Samene og minoritetene',bilde:'vidda.webp',a:[
  'Samene hadde sin egen religion. Fjell, innsjøer og store steiner kunne være hellige steder. En noaidi var religiøs leder og brukte en tromme med malte figurer.',
  'På 1700-tallet drev kirken sterk misjon blant samene. Mange trommer ble tatt eller ødelagt, og den gamle religionen forsvant for det meste. I 1840-årene startet presten Lars Levi Læstadius en kristen vekkelse som ble viktig for mange samer og kvener.',

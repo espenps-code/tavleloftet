@@ -35,7 +35,7 @@ lysbilder:[
  '[[Martin Luther]] var en tysk munk som mente at kirken hadde fått for mye makt og penger.',
  'I **1517** skrev han **95 teser**, punkter med kritikk av kirken.',
  'Han oversatte Bibelen til tysk, slik at vanlige folk kunne lese den selv.',
- 'I **1537** bestemte kongen at Danmark-Norge skulle være luthersk.'],
+ 'I **1536** ble Danmark luthersk, og i **1537** ble reformasjonen innført i Norge.'],
  n:['Luther kritiserte blant annet avlatshandelen: at folk kunne betale kirken for å få tilgivelse.','Ordet protestant kommer av å protestere.','Fortellingen sier at Luther spikret tesene på kirkedøra i Wittenberg. Historikere er usikre på om det skjedde akkurat slik, men tesene ble spredt raskt med den nye trykkekunsten.']},
 {type:'punkter',kicker:'Sápmi',tittel:'Samisk religion og kristendommen',hoyre:true,bilde:{fil:'vidda.webp',alt:'Et fjellandskap med en stor stein ved et vann, reinsdyr, en lavvo og en liten kirke langt borte'},punkter:[
  'Samene hadde sin egen religion. Fjell, innsjøer og store steiner kunne være **hellige steder**.',

@@ -21,7 +21,7 @@ deler:[
  'Kirkeåret følger fortellingen om Jesus. Det begynner med advent, de fire søndagene med ventetid før jul. I jula feirer kristne at Jesus ble født. I påsken minnes de at han døde og, ifølge kristen tro, sto opp igjen. Pinsen er 50 dager etter påske. Da feires det at Den hellige ånd kom til disiplene, og pinsen kalles kirkens fødselsdag.',
  'Påsken er den viktigste høytiden i kristendommen, selv om jula er den største feiringen i Norge.']},
 {t:'Symboler',bilde:'symboler.webp',a:[
- 'Korset er det viktigste symbolet, fordi Jesus døde på et kors. Fisken var et hemmelig tegn for de første kristne da de ble forfulgt i Romerriket. Duen står for Den hellige ånd og for fred. Lys tennes i kirken, i advent og ved dåp, fordi Jesus kalles «verdens lys».']},
+ 'Korset er det viktigste symbolet, fordi Jesus døde på et kors. Fisken var et kjennetegn for de første kristne. Det fortelles at de brukte den som et hemmelig tegn da de ble forfulgt i Romerriket. Duen står for Den hellige ånd og for fred. Lys tennes i kirken, i advent og ved dåp, fordi Jesus kalles «verdens lys».']},
 {t:'Hellige steder',bilde:'hellige-steder.webp',a:[
  'Kirken er stedet der menigheten samles. Betlehem og Jerusalem er byene der Jesus ifølge Bibelen ble født, døde og sto opp. Nidarosdomen i Trondheim er bygd over graven til Olav den hellige, kongen som falt på Stiklestad i 1030. I Vatikanet i Roma bor paven, som leder den katolske kirken.',
  'En [[pilegrim]] er en som reiser til et hellig sted. I middelalderen gikk tusenvis av mennesker til Nidaros for å besøke graven til Olav.']},

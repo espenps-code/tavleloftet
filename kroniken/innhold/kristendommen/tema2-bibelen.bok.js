@@ -18,7 +18,7 @@ deler:[
  'En prest og en tempeltjener går forbi uten å hjelpe. Så kommer en samaritan, en fremmed som mange så ned på. Han stopper og hjelper mannen. Jesus spør: Hvem av de tre var en neste for ham?']},
 {t:'Fortellinger mange kjenner',a:[
  'I Det gamle testamentet står det at Gud skaper verden på seks dager og hviler den sjuende. Noa bygger en stor båt og redder familien og dyrene fra flommen. Moses fører israelittene ut av Egypt og tar imot de ti bud. Gjetergutten David vinner over kjempen Goliat med en steinslynge.',
- 'I Det nye testamentet står juleevangeliet, der Jesus blir født i en stall i Betlehem. Der står også lignelsen om sønnen som sløser bort arven, men som faren likevel tar imot med åpne armer.']},
+ 'I Det nye testamentet står juleevangeliet, der Jesus blir født i Betlehem og lagt i en krybbe. Der står også lignelsen om sønnen som sløser bort arven, men som faren likevel tar imot med åpne armer.']},
 {t:'Slik brukes Bibelen',a:[
  'I gudstjenesten leses det tekster høyt hver søndag. Presten holder en [[preken]], en tale som forklarer en av tekstene. Hjemme leser mange alene, i grupper, i en app eller i en barnebibel.',
  'Bibeltekster leses også på livets store dager: i dåp, konfirmasjon, bryllup og gravferd.']}
