@@ -57,7 +57,7 @@ lysbilder:[
  'I 1952 møttes de i Amsterdam og dannet en verdensorganisasjon.',
  'De skrev ned hva de sto for i **Amsterdam-erklæringen**.',
  'I dag heter organisasjonen Humanists International.'],
- n:['Amsterdam-erklæringen er fornyet to ganger, i 2002 og i 2022.','Først nå ble humanisme et navn på et eget livssyn uten gud.']},
+ n:['Amsterdam-erklæringen er fornyet to ganger, i 2002 og i 2022.','Etter hvert ble humanisme navnet på et eget livssyn uten gud i mange land.']},
 {type:'tidslinje',kicker:'Her hjemme',tittel:'Humanismen i Norge',punkter:[
  {aar:'1912',tekst:['Konfirmasjon er ikke','lenger påbudt']},{aar:'1951',tekst:['Første borgerlige','konfirmasjon']},{aar:'1956',tekst:['Human-Etisk Forbund','blir stiftet']},{aar:'2004',tekst:['Rett til å vie','ektepar']},{aar:'2012',tekst:['Norge har ikke','lenger statskirke']}],
  n:['Fra 1736 til 1912 var konfirmasjon i kirken påbudt ved lov i Norge.','Botanikeren Kristian Horn tok initiativet både til konfirmasjonen i 1951 og til forbundet i 1956. Begge fortellingene finnes som lesehistorier.','I 2012 ble Grunnloven endret. Den sier nå at verdigrunnlaget er «vår kristne og humanistiske arv».']},

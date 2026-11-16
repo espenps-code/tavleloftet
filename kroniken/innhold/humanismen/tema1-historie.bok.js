@@ -19,7 +19,7 @@ deler:[
  'Charles Darwin reiste jorda rundt som ung naturforsker. Etter mange års arbeid forklarte han hvordan artene har utviklet seg over svært lang tid. Teorien kalles [[evolusjon]]. Den viser at mennesket er en del av naturen.']},
 {t:'Aldri mer',bilde:'fn-salen.webp',a:[
  'Etter andre verdenskrig ville landene i verden hindre at noe slikt skjedde igjen. De opprettet [[FN]] i 1945. I 1948 vedtok FN Verdenserklæringen om menneskerettigheter. Den bygger på tanken om at alle mennesker har samme verdi.',
- 'I 1952 møttes humanister fra mange land i Amsterdam og dannet en verdensorganisasjon. Først nå ble humanisme navnet på et eget livssyn uten gud.']},
+ 'I 1952 møttes humanister fra mange land i Amsterdam og dannet en verdensorganisasjon. Slik ble humanisme etter hvert navnet på et eget livssyn uten gud, i mange land.']},
 {t:'Humanismen i Norge',a:[
  'Fra 1736 til 1912 var konfirmasjon i kirken påbudt ved lov i Norge. Etterpå kunne folk velge selv, men lenge fantes det bare kirkelige seremonier. I 1951 ble den første borgerlige konfirmasjonen holdt. Botanikeren Kristian Horn tok initiativet til den, og også til Human-Etisk Forbund, som ble stiftet i 1956.','I 2004 fikk forbundet rett til å vie ektepar. I 2012 ble Grunnloven endret, og Norge har ikke lenger statskirke.']}
 ],
