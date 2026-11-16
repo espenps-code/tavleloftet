@@ -30,7 +30,7 @@ lysbilder:[
  n:['Det er store forskjeller. Mange hinduer spiser kylling, fisk og lam, og vanene varierer mellom ulike deler av India og mellom familier.','Kua gir melk, smør og yoghurt, trekker plogen og gir gjødsel. Derfor blir den sammenlignet med en mor.','Ahimsa er også et viktig ideal i buddhismen og jainismen.']},
 {type:'punkter',kicker:'Maten',tittel:'Et vegetarisk måltid',hoyre:true,bilde:{fil:'thali.webp',alt:'Et rundt metallfat med ris, små skåler med linsesuppe, grønnsaker og yoghurt, brød og en søt kake'},punkter:[
  'Et vanlig måltid kan være ris eller brød med linser, grønnsaker og yoghurt.',
- 'Mat som skal ofres til gudene, er alltid vegetarisk.',
+ 'Mat som skal ofres til gudene, er som regel vegetarisk.',
  'Mange spiser med høyre hånd.',
  'Noen faster på bestemte ukedager eller før høytider.'],
  n:['India er landet i verden med flest vegetarianere.','Faste betyr i hinduismen oftest at man lar være å spise visse ting, ikke at man lar være å spise helt.']},
@@ -87,6 +87,6 @@ window.PRES.oppgaver=[
 {type:'koble'},
 {type:'fyll',tekst:'{Dharma} betyr den rette måten å leve på. {Karma} betyr handling. Å ikke skade noe levende kalles {ahimsa}. Det helligste dyret er {kua}. Gandhi kjempet uten {vold}.'},
 {type:'santusant',p:[['En elev og en forelder har de samme pliktene.',false,'Mange plikter avhenger av alder og rolle.'],['Mange hinduer er vegetarianere.',true],['Karma betyr skjebne.',false,'Det betyr handling.'],['Indias grunnlov forbyr diskriminering på grunn av kaste.',true],['Namaste er en hilsen.',true]]},
-{type:'sporsmal',side2:true,linjer:2,sp:[['Hvorfor spiser nesten ingen hinduer storfekjøtt?','Kua er hellig. Den gir melk og blir sammenlignet med en mor.'],['Hva er de fire målene i livet?','Dharma (å gjøre det rette), artha (å tjene til livets opphold), kama (glede) og moksha (frigjøring).'],['Hva gikk Gandhis metode ut på?','Å gjøre motstand mot urett uten vold: nekte å adlyde urettferdige lover og ta straffen uten å slå tilbake.']]},
+{type:'sporsmal',side2:true,linjer:2,sp:[['Hvorfor spiser de fleste hinduer ikke storfekjøtt?','Kua er hellig. Den gir melk og blir sammenlignet med en mor.'],['Hva er de fire målene i livet?','Dharma (å gjøre det rette), artha (å tjene til livets opphold), kama (glede) og moksha (frigjøring).'],['Hva gikk Gandhis metode ut på?','Å gjøre motstand mot urett uten vold: nekte å adlyde urettferdige lover og ta straffen uten å slå tilbake.']]},
 {type:'fri',side2:true,tittel:'Mine plikter',tekst:'Lag en liste over tre plikter du har hjemme, tre du har på skolen og tre du har mot venner. Sett ring rundt den du synes er viktigst.',linjer:5,fasit:'Egne svar.'},
 {type:'fri',side2:true,utfordring:true,tittel:'Tenk selv',tekst:'Læren om karma sier at alt man gjør, får følger. Hva kan være bra med å tenke slik? Kan det også være noe problematisk med det? Skriv minst tre setninger.',linjer:5,fasit:'Egne svar. Mulige momenter: Det gir ansvar for egne handlinger og håp om at man kan forandre seg. Men det kan misbrukes til å si at de som har det vondt, selv har skylden.'}];

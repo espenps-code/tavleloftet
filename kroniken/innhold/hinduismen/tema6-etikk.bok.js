@@ -10,7 +10,7 @@ deler:[
  'Tradisjonen nevner fire mål. Det første er å gjøre det som er rett. Det andre er å tjene til livets opphold og skaffe trygghet for familien. Det tredje er glede, kjærlighet, kunst og nytelse. Det fjerde og endelige målet er frigjøring fra kretsløpet.']},
 {t:'Ahimsa',bilde:'kua.webp',a:[
  '[[Ahimsa]] betyr å ikke skade noe levende, verken med handling, ord eller tanke. Tanken bygger på at alt levende har en sjel.',
- 'Mange hinduer er derfor vegetarianere. Kua er særlig hellig, og nesten ingen hinduer spiser storfekjøtt. Et vanlig måltid kan være ris eller brød med linser, grønnsaker og yoghurt. Mat som skal ofres til gudene, er alltid vegetarisk.']},
+ 'Mange hinduer er derfor vegetarianere. Kua er særlig hellig, og de fleste hinduer spiser ikke storfekjøtt. Et vanlig måltid kan være ris eller brød med linser, grønnsaker og yoghurt. Mat som skal ofres til gudene, er som regel vegetarisk.']},
 {t:'Eldre, lærere og gjester',bilde:'namaste.webp',a:[
  'Et gammelt ord sier: Mor, far, læreren og gjesten skal æres som guder. Barn viser respekt ved å bøye seg og berøre føttene til besteforeldre og lærere.',
  'Hilsenen [[namaste]] betyr «jeg bøyer meg for deg». Mange forklarer den slik: Det guddommelige i meg hilser det guddommelige i deg.']},
