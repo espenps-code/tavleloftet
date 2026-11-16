@@ -317,7 +317,7 @@ function vis(){
       lyd.play().catch(()=>{lydFins=false;tale();});
     };
     /* Sjekk om lydfila finnes, så knappen kan vises også der nettleseren mangler tale */
-    fetch(lydUrl,{method:'HEAD'}).then(r=>{lydFins=r.ok;if(r.ok||harTale)k.hidden=false;if(r.ok)k.title='Innlest lyd';}).catch(()=>{lydFins=false;if(harTale)k.hidden=false;});
+    fetch(lydUrl,{method:'HEAD'}).then(r=>{lydFins=r.ok;if(r.ok||harTale)k.hidden=false;}).catch(()=>{lydFins=false;if(harTale)k.hidden=false;});
     k.onclick=()=>{
       if(k.getAttribute('aria-pressed')==='true'){
         if(lyd&&lydFins&&!lyd.paused){lyd.pause();k.setAttribute('aria-pressed','false');tekst('Fortsett opplesing');return;}
