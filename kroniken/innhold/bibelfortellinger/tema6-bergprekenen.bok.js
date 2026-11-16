@@ -1,5 +1,5 @@
 window.BOK={
-ingress:"Tre kapitler i én av evangeliene. Det tar et kvarter å lese dem høyt. Likevel er det få tekster som har betydd mer.",
+ingress:"Tre kapitler i ett av evangeliene. Det tar et kvarter å lese dem høyt. Likevel er det få tekster som har betydd mer.",
 deler:[
 {"t":"Hva er Bergprekenen?","a":["[[Bergprekenen]] er en lang tale Jesus holdt for disiplene og en stor folkemengde. Matteus forteller at han gikk opp i en fjellside og satte seg ned. Derfor heter den Bergprekenen.","Talen handler om hvordan mennesker bør leve. Mange av de mest kjente ordene til Jesus står her."]},
 {"t":"Saligprisningene","bilde":"lampen.webp","a":["Talen begynner med ni setninger som alle starter med ordet «salige». De kalles [[saligprisningene|Saligprisning]]. Salig betyr lykkelig, eller velsignet.","Jesus kaller dem salige som sørger, som er ydmyke, og som skaper fred. Det var uventet. Folk var vant til å tenke at de rike og mektige var de lykkelige."]},
