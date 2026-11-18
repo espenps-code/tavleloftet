@@ -112,37 +112,44 @@ async function lag(boks,valg){
     return hus[s.id]=h;
   }
   const BUNN=.72;
-  function bygg(h,s){
+  /* Høye tårn: etasjene presses sammen i høyden (ys < 1), så hele byen fortsatt fyller skjermen.
+     Tallet på skiltet viser alltid riktig antall etasjer. */
+  let ys=1;
+  function bygg(h,s,tving){
     const et=String(s.etasjer||''),u=Math.max(0,Math.min(200,+s.usikret||0)),stil=Math.max(0,Math.min(K.STILER.length-1,+s.stil||0)),sig=stil+'|'+et+'|'+u;
-    if(sig===h.sig)return;h.sig=sig;
+    if(sig===h.sig&&!tving)return;h.sig=sig;const eh=EH*ys;
     if(stil!==h.stil){h.etasjer.forEach(m=>h.g.remove(m));h.etasjer=[];h.stil=stil;}
     /* sikrede etasjer: nye faller på plass ovenfra */
     while(h.etasjer.length>et.length)h.g.remove(h.etasjer.pop());
     let nyNr=0;
-    for(let i=0;i<et.length;i++){const m=i===0?'bunn':et[i],y=BUNN+EH/2+i*EH;let o=h.etasjer[i];
+    for(let i=0;i<et.length;i++){const m=i===0?'bunn':et[i],y=BUNN+eh/2+i*eh;let o=h.etasjer[i];
       if(o&&o.userData.m!==m){h.g.remove(o);o=null;}
       if(!o){o=new THREE.Group();o.userData.m=m;o.add(new THREE.Mesh(G.etasje,tekst[stil][m]));
         if(m==='b')klosse(M.stang,TB+1.1,.22,TB+1.1,0,-EH*.28,0,o);   /* balkongen stikker ut som en hylle rundt tårnet */
         o.position.set(0,y+(rolig?0:9),0);o.userData.y=y;o.userData.vent=(nyNr++)*.07;h.g.add(o);h.etasjer[i]=o;h.fall.push(o);}
-      o.userData.y=y;}
+      o.userData.y=y;o.scale.y=ys;if(!h.fall.includes(o))o.position.y=y;}
     /* stillas for det usikrede */
     while(h.stillas.length>u)h.g.remove(h.stillas.pop());
     while(h.stillas.length<u){const l=new THREE.LineSegments(G.stillas,M.stillas);h.g.add(l);h.stillas.push(l);}
-    h.stillas.forEach((l,k)=>l.position.set(0,BUNN+EH/2+(et.length+k)*EH,0));
+    h.stillas.forEach((l,k)=>{l.position.set(0,BUNN+eh/2+(et.length+k)*eh,0);l.scale.y=ys;});
     /* taket står på når alt er sikret */
     const skalHaTak=et.length>0&&u===0;
     if(h.tak&&(!skalHaTak||h.tak.userData.stil!==stil)){h.g.remove(h.tak);h.tak=null;}
     if(skalHaTak&&!h.tak){const tg=new THREE.Group();tg.userData.stil=stil;const st=K.STILER[stil];
       const tk=new THREE.Mesh(G.tak,mat(parseInt(st.tak.slice(1),16),true));tk.position.y=TB*.31;tg.add(tk);
       klosse(M.stang,.12,1.8,.12,0,TB*.62+.8,0,tg);klosse(M.flagg,.9,.5,.06,.5,TB*.62+1.4,0,tg);h.g.add(tg);h.tak=tg;}
-    const topp=BUNN+(et.length+u)*EH;if(h.tak)h.tak.position.y=BUNN+et.length*EH;
+    const topp=BUNN+(et.length+u)*eh;if(h.tak)h.tak.position.y=BUNN+et.length*eh;
     h.høyde=topp+(h.tak?TB*.62+2:0);h.skilt.position.y=h.høyde+2.4;h.skilt.userData.tegn(et.length+u?String(et.length+u):'');
     h.et=et;h.u=u;
   }
   let maksH=10;
   function oppdater(liste){
     if(!tekst)return;
-    liste.forEach(s=>{const h=hus[s.id]||nyttHus(s);if(h)bygg(h,s);});
+    /* Det høyeste tårnet skal ikke bli mye høyere enn byen er bred. Under ca. 35 etasjer er alt som før. */
+    const maksEt=Math.max(1,...liste.map(s=>String(s.etasjer||'').length+Math.max(0,Math.min(200,+s.usikret||0))));
+    const nyYs=Math.max(.12,Math.min(1,(N*P*.85)/(maksEt*EH)));
+    const tving=Math.abs(nyYs-ys)>.02;if(tving)ys=nyYs;
+    liste.forEach(s=>{const h=hus[s.id]||nyttHus(s);if(h)bygg(h,s,tving);});
     maksH=Math.max(10,...Object.values(hus).map(h=>h.høyde||0));
   }
   const støv=[];

@@ -119,7 +119,7 @@ const SPILL={
     gjenskap(G){this.oppdater(G,[]);},
     slutt(G){const ulike=Object.keys(G.funn).filter(i=>G.funn[i]>0).length;return{tittel:'Tida er ute',tekst:`Klassen samlet ${G.kortSum} kort og fant ${ulike} av ${G.kort.length} ulike fagord.`,tall:[[G.kortSum,'kort samlet'],[ulike+' av '+G.kort.length,'ulike fagord']]};}
   },
-  taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Når eleven sikrer, velges modul til hver etasje nedenfra. Feil svar river stillaset. Bare sikrede etasjer teller.',feed:'Dette skjer',
+  taarn:{n:'Tårnet',poeng:true,om:'Riktig svar gir etasjer: én, så to, så tre om gangen. Eleven kan bare sikre rett etter et riktig svar. Når eleven sikrer, velges modul til hver etasje nedenfra. Feil svar river stillaset. Bare sikrede etasjer teller.',feed:'Dette skjer',
     ikon:`<rect x="22" y="44" width="24" height="12" rx="2" fill="#8fd0a8"/><rect x="24" y="31" width="20" height="12" rx="2" fill="#5fb0d9"/><rect x="26" y="18" width="16" height="12" rx="2" fill="#f3d27a"/><path d="M34 6v11M34 7l9 3-9 3" stroke="#e98554" stroke-width="3" fill="#e98554" stroke-linejoin="round"/>`,
     async start(G){
       G.rek.forEach(id=>{G.spillere[id].p0=0;G.spillere[id].u0=0;});

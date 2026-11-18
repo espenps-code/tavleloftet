@@ -101,28 +101,37 @@ const SPILL={
     mitt:s=>'🔒 '+s.p+(s.u?' · usikret '+s.u:''),
     linje:plassLinje,
     /* Eleven bygger så lenge hen vil uten å sikre. «Sikre» åpner en velger der eleven fyller etasjene nedenfra,
-       én modul per etasje. Hver etasje er sikret i det den er valgt. */
-    topp:()=>`<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div>
-      <button class="knapp" id="sikre"${stat.u?'':' disabled'}>🔒 Sikre ${stat.u||''} ${stat.u===1?'etasje':'etasjer'}</button>
-      <span class="neste-gir">Neste riktige gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div><div class="mitttaarn" style="--w:${Math.max(24,Math.min(110,(innerHeight-120)/((stat.p+stat.u)*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,stat.et,stat.u,true)}</div>`,
-    bind(){const k=$('#sikre');if(k)k.onclick=()=>{if(stat.u&&!laast&&!opptatt)this.velger();};},
+       én modul per etasje. Hver etasje er sikret i det den er valgt.
+       Sikre går bare rett etter et riktig svar. Har eleven gått videre til et nytt spørsmål, er risikoen tatt. */
+    kan:()=>!!(stat.u&&naa&&naa.valgt!=null&&naa.valgt===naa.r&&!laast),
+    topp(){const kan=this.kan();return `<div class="sikrerad"><div class="minitaarn"><b>${stat.p}</b><small>sikret</small></div><div class="minitaarn us"><b>${stat.u}</b><small>usikret</small></div>
+      <button class="knapp" id="sikre"${kan?'':' disabled'}>🔒 Sikre ${stat.u||''} ${stat.u===1?'etasje':'etasjer'}</button>
+      <span class="neste-gir">Neste riktige gir <b style="color:var(--cream)">+${Math.min(3,stat.rekke+1)}</b></span></div><div class="mitttaarn" style="--w:${Math.max(24,Math.min(110,(innerHeight-120)/((stat.p+stat.u)*KTaarn.BILDE_ASP+.6))).toFixed(0)}px">${KTaarn.tegn(stil,stat.et,stat.u,true)}</div>`;},
+    bind(){const k=$('#sikre');if(k)k.onclick=()=>{if(this.kan()&&!opptatt)this.velger();};},
     velger(){
       opptatt=true;const alle=stat.u;let nr=0;
       const lag=document.createElement('div');lag.className='kortlag velger';app.appendChild(lag);
-      const lukk=()=>{if(!lag.isConnected)return;lag.remove();opptatt=false;if(!V||V.fase!=='spill')return;oppfrisk();if(naa&&naa.valgt!=null&&naa.valgt===naa.r&&!laast)neste();};
+      const lukk=()=>{if(!lag.isConnected)return;lag.remove();opptatt=false;if(!V||V.fase!=='spill')return;oppfrisk();if(nr&&naa&&naa.valgt!=null&&naa.valgt===naa.r&&!laast)neste();};
       const tegnVelger=()=>{
         if(!lag.isConnected)return;
-        /* utsnitt: én etasje under (om den finnes), det som er valgt til nå, og stillaset som står igjen */
-        const under=stat.p-nr>0,utsnitt=(under?stat.et.slice(stat.p-nr-1):stat.et),w=Math.max(60,Math.min(230,innerHeight*.42/((alle+(under?1:0))*KTaarn.BILDE_ASP)));
+        /* utsnitt: én etasje under (om den finnes), de siste (høyst tre) som er valgt nå, og høyst fem etasjer stillas.
+           Slik får modulknappene alltid plass, også når eleven har 30 usikrede etasjer. */
+        const vis=Math.min(nr,3),start=stat.p-vis,under=start>0,utsnitt=stat.et.slice(under?start-1:0),visU=Math.min(stat.u,5),flere=stat.u-visU;
+        const w=Math.max(40,Math.min(230,innerHeight*.34/((utsnitt.length+visU)*KTaarn.BILDE_ASP)));
         lag.innerHTML=`<p class="hjultxt">${stat.u?`Velg etasje ${nr+1} av ${alle}`:'Sikret!'}</p><p class="muted" style="margin:-12px 0 0">${stat.u?'Du fyller opp nedenfra.':''}</p>
-          <div class="utsnitt" style="--w:${w.toFixed(0)}px">${KTaarn.tegn(stil,utsnitt,stat.u,false,under)}</div>
+          ${flere>0?`<p class="muted flere">+ ${flere} ${flere===1?'etasje':'etasjer'} til over</p>`:''}
+          <div class="utsnitt" style="--w:${w.toFixed(0)}px">${KTaarn.tegn(stil,utsnitt,visU,false,under)}</div>
           <div class="modulvalg">${Object.entries(KTaarn.MODULER).map(([k,m])=>`<button data-m="${k}"${stat.u?'':' disabled'}>${KTaarn.tegn(stil,k,0,false,true)}${m.n}</button>`).join('')}</div>
+          ${stat.u>=2?'<button class="knapp sek" id="vfyll">🎲 Fyll resten tilfeldig</button>':''}
           ${stat.u&&nr?`<button class="knapp sek" id="vstopp">Stopp her. ${stat.u} ${stat.u===1?'etasje står':'etasjer står'} usikret</button>`:stat.u?'<button class="knapp sek" id="vstopp">Avbryt</button>':''}`;
         lag.querySelectorAll('.modulvalg button').forEach(b=>b.onclick=()=>{if(!stat.u||laast)return;
           stat.et+=b.dataset.m;stat.p++;stat.u--;stat.rekke=0;nr++;net.update('f/'+id,{p:stat.p,u:stat.u,et:stat.et});
           try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}
           tegnVelger();if(!stat.u)setTimeout(lukk,650);});
         const st=$('#vstopp');if(st)st.onclick=lukk;
+        const fy=$('#vfyll');if(fy)fy.onclick=()=>{if(!stat.u||laast)return;const ms=Object.keys(KTaarn.MODULER);
+          while(stat.u){stat.et+=ms[rand(ms.length)];stat.p++;stat.u--;nr++;}stat.rekke=0;net.update('f/'+id,{p:stat.p,u:stat.u,et:stat.et});
+          try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}tegnVelger();setTimeout(lukk,650);};
       };
       tegnVelger();
     },
@@ -265,6 +274,9 @@ function visFasit(ny){
   oppfrisk();
   if(ok){m.className='melding ok';m.innerHTML=naa.tekst||'Riktig!';
     if(opptatt)return;   /* kortet eller hjulet sier selv fra når eleven kan gå videre */
+    if(V.spill==='taarn'&&stat.u){   /* Tårnet: eleven velger selv. Sikre (knappen over), eller ta sjansen og bygg videre */
+      m.innerHTML=`<span>${naa.tekst||'Riktig!'}</span><button class="knapp" id="bygg">Bygg videre →</button>`;
+      $('#bygg').onclick=()=>{if(!laast&&!opptatt)neste();};return;}
     const denne=naa;setTimeout(()=>{if(naa===denne&&V&&V.fase==='spill'&&!laast&&!opptatt)neste();},ny?(V.spill==='taarn'?1700:1100):300);}
   else{m.className='melding no';m.innerHTML=`<span>${naa.tekst||'Se på det riktige svaret.'}</span><button class="knapp" id="videre" disabled style="--v:${VENT}s">Neste<i></i></button>`;
     const denne=naa;setTimeout(()=>{const k=$('#videre');if(k&&naa===denne){k.disabled=false;k.querySelector('i').remove();k.onclick=()=>{if(!laast)neste();};}},VENT*1000);}
