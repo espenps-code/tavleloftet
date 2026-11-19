@@ -7,6 +7,40 @@
 <meta name="description" content="En egen læringsverden bygget rundt det eleven elsker, med oppgaver som treffer akkurat det eleven skal øve på.">
 <link rel="stylesheet" href="css/tavleloftet.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect x='3' y='6' width='38' height='28' rx='4' fill='%2324453E' stroke='%23C98B55' stroke-width='4'/%3E%3Cpath d='M11 24c4-6 8-6 11-2s7 4 11-4' fill='none' stroke='%23F3EFE4' stroke-width='2.5' stroke-linecap='round'/%3E%3Crect x='10' y='36' width='24' height='5' rx='2.5' fill='%23C98B55'/%3E%3C/svg%3E">
+<style>
+.henv{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:start}
+@media (max-width:860px){.henv{grid-template-columns:1fr}}
+.henv-intro p{color:var(--lys-dempet);font-size:18px;line-height:1.6;margin:0 0 14px}
+.henv-intro ul{color:var(--lys-dempet);padding-left:1.2em;margin:0;line-height:1.7}
+.henv-kort{background:var(--papir);color:var(--blekk);border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:18px}
+.henv-kort form{display:flex;flex-direction:column;gap:30px}
+.henv-kort fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
+.henv-kort [hidden]{display:none!important}
+.henv-intro h2{font-size:clamp(32px,4vw,46px);line-height:1.08}
+.henv-kort legend{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:10px;padding:0}
+.henv-valg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:520px){.henv-valg{grid-template-columns:1fr}}
+.henv-valg label{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:16px;border:2px solid #E4DCC8;background:#fff;cursor:pointer;font-weight:700;line-height:1.3}
+.henv-valg label small{display:block;font-weight:400;color:var(--dempet);margin-top:2px}
+.henv-valg input{margin-top:3px;accent-color:var(--gronn)}
+.henv-valg label:has(input:checked){border-color:var(--gronn);background:var(--mint)}
+.henv-rad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.henv-rad{grid-template-columns:1fr}}
+.henv-felt{display:flex;flex-direction:column;gap:6px}
+.henv-felt label{font-weight:800;font-size:15px}
+.henv-felt small{color:var(--dempet);font-size:14px}
+.henv-felt input,.henv-felt select,.henv-felt textarea{font:400 17px var(--tekst);padding:12px 14px;border-radius:14px;border:2px solid #D9D0BA;background:#fff;color:var(--blekk);width:100%}
+.henv-felt textarea{min-height:92px;resize:vertical}
+.henv-felt input:focus,.henv-felt select:focus,.henv-felt textarea:focus{outline:none;border-color:var(--gronn)}
+.henv-samtykke{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45;color:var(--dempet)}
+.henv-samtykke input{margin-top:4px;accent-color:var(--gronn);flex-shrink:0}
+.henv-skjult{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.henv-mld{min-height:1.4em;margin:0;font-weight:800}
+.henv-mld.feil{color:#b03a2e}.henv-mld.ok{color:var(--gronn)}
+.henv-takk{text-align:center;padding:24px 8px}
+.henv-takk h3{font-family:var(--display);font-size:28px;margin:0 0 8px}
+.henv-takk p{margin:0;color:var(--dempet);font-size:17px}
+</style>
 </head>
 <body>
 <div class="teststripe">Testversjon – siden er under arbeid og ikke offisielt lansert ennå</div>
@@ -37,7 +71,7 @@
       <p class="eyebrow">Skreddersydd læring</p>
       <h1>En verden for én elev</h1>
       <p class="stor">Noen elever trenger mer enn en vanlig oppgavebok. Jeg lager en egen læringsverden bygget rundt det eleven elsker, med oppgaver som treffer akkurat det eleven skal øve på.</p>
-      <div class="knapperad"><a class="btn btn-amber" href="#slik-fungerer">Slik fungerer det</a><a class="btn btn-ghost" href="#logg-inn">Har du allerede en kode?</a></div>
+      <div class="knapperad"><a class="btn btn-amber" href="#slik-fungerer">Slik fungerer det</a><a class="btn btn-ghost" href="#henvendelse">Ta kontakt</a><a class="btn btn-ghost" href="#logg-inn">Har du allerede en kode?</a></div>
     </div>
     <div class="sidetopp-bilde"><img src="img/dinoparken.webp" alt="Skjermbilde fra Dinoparken: en 3D-park med innhegninger til salgs, mynter og meny for dinobibliotek, quiz og tidslinje"></div>
   </div>
@@ -119,7 +153,63 @@
       <h2 style="font-size:clamp(32px,4vw,46px);line-height:1.08">Ingen navn, bare en kode</h2>
       <p class="stor" style="font-size:18px">For å lage en god verden trenger jeg bare å vite hva eleven liker og hva som skal øves på. Jeg ber ikke om navn, diagnose eller sakkyndig vurdering. Eleven logger inn med en kode, og framgangen knyttes bare til den.</p>
       <div class="info-mint"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Skal skolen bruke verdenen, får dere en databehandleravtale.</p></div>
-      <div class="knapperad" style="margin-top:4px"><span class="kommer">Fortell om eleven · kommer snart</span></div>
+      <div class="knapperad" style="margin-top:4px"><a class="btn btn-teal" href="#henvendelse">Fortell om eleven</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="seksjon" id="henvendelse" aria-labelledby="henv-tittel">
+  <div class="wrap henv">
+    <div class="henv-intro">
+      <p class="eyebrow">Ta kontakt</p>
+      <h2 id="henv-tittel" style="margin:0 0 16px">Fortell om eleven</h2>
+      <p>Fyll ut skjemaet, så svarer jeg på e-post, som regel innen noen dager. Det er helt uforpliktende.</p>
+      <ul>
+        <li>Skriv ikke elevens navn.</li>
+        <li>Ingen diagnoser eller helseopplysninger – det er nok å vite hva eleven liker og hva som skal øves på.</li>
+        <li>Gjelder det kurs eller noe annet? Velg det øverst i skjemaet.</li>
+      </ul>
+    </div>
+    <div class="henv-kort">
+      <form id="henvSkjema">
+        <fieldset>
+          <legend>Hva gjelder det?</legend>
+          <div class="henv-valg">
+            <label><input type="radio" name="type" value="niva1" checked><span>Tilpasset verden<small>Nivå 1 – en verden som finnes</small></span></label>
+            <label><input type="radio" name="type" value="niva2"><span>Eget tema<small>Nivå 2 – en ny verden</small></span></label>
+            <label><input type="radio" name="type" value="kurs"><span>Kurs for kollegiet<small>Lag egne verktøy med KI</small></span></label>
+            <label><input type="radio" name="type" value="annet"><span>Noe annet<small>Spørsmål, samarbeid, feil</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset id="henvElev">
+          <legend>Om eleven</legend>
+          <div class="henv-felt"><label for="h-trinn">Trinn</label>
+            <select id="h-trinn"><option value="">Velg</option><option>1. trinn</option><option>2. trinn</option><option>3. trinn</option><option>4. trinn</option><option>5. trinn</option><option>6. trinn</option><option>7. trinn</option><option>Annet</option></select></div>
+          <div class="henv-felt"><label for="h-liker">Hva elsker eleven?</label><textarea id="h-liker" maxlength="500" placeholder="For eksempel tog, hester, fotball, verdensrommet …"></textarea></div>
+          <div class="henv-felt"><label for="h-ove">Hva skal eleven øve på?</label><textarea id="h-ove" maxlength="500" placeholder="For eksempel klokka, tiervenner, lyder i ord …"></textarea></div>
+        </fieldset>
+        <fieldset>
+          <legend>Om deg</legend>
+          <div class="henv-rad">
+            <div class="henv-felt"><label for="h-navn">Navn</label><input id="h-navn" maxlength="80" autocomplete="name" required></div>
+            <div class="henv-felt"><label for="h-epost">E-post</label><input id="h-epost" type="email" maxlength="120" autocomplete="email" required></div>
+          </div>
+          <div class="henv-rad">
+            <div class="henv-felt"><label for="h-rolle">Jeg er</label>
+              <select id="h-rolle"><option value="">Velg</option><option>Lærer</option><option>Spesialpedagog</option><option>Skoleleder</option><option>Foresatt</option><option>Annet</option></select></div>
+            <div class="henv-felt"><label for="h-skole">Skole <small>(valgfritt)</small></label><input id="h-skole" maxlength="120" autocomplete="organization"></div>
+          </div>
+          <div class="henv-felt"><label for="h-melding" id="h-meldingLbl">Noe mer du vil fortelle? (valgfritt)</label><textarea id="h-melding" maxlength="2000"></textarea></div>
+          <div class="henv-skjult" aria-hidden="true"><label for="h-nettside">Ikke fyll ut dette feltet</label><input id="h-nettside" tabindex="-1" autocomplete="off"></div>
+          <label class="henv-samtykke"><input type="checkbox" id="h-samtykke" required><span>Jeg har ikke skrevet elevens navn eller helseopplysninger. Jeg godtar at Tavleloftet lagrer det jeg har skrevet for å svare meg, og at det slettes senest 12 måneder etter siste kontakt. <a href="personvern.html" style="color:var(--gronn)">Les om personvern</a>.</span></label>
+          <button class="btn btn-amber" id="henvSend" type="submit" style="align-self:flex-start">Send henvendelse</button>
+          <p class="henv-mld" id="henvMld" role="status"></p>
+        </fieldset>
+      </form>
+      <div class="henv-takk" id="henvTakk" hidden tabindex="-1">
+        <h3>Takk!</h3>
+        <p>Henvendelsen er sendt. Jeg svarer på e-posten du oppga.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -129,15 +219,19 @@
   <div class="wrap">
     <div class="navn">Tavleloftet</div>
     <div>Laget av en lærer, for lærere og elever.</div>
+    <div class="foretak" style="opacity:.75;font-size:.9em">Tavleloftet Skjelstad · Org.nr. 838 831 702</div>
     <nav aria-label="Bunnmeny">
       <span class="snart-lenke">Om Tavleloftet <small>Kommer</small></span>
       <a href="elev/">Elevinnlogging</a>
       <a href="rapport.html">Framgangsrapport</a>
       <a href="personvern.html">Personvern</a>
-      <span class="snart-lenke">Kontakt <small>Kommer</small></span>
+      <a href="https://buymeacoffee.com/tavleloftet" target="_blank" rel="noopener">Støtt Tavleloftet</a>
+      <a href="skreddersydd.html?om=annet#henvendelse">Kontakt</a>
     </nav>
   </div>
 </footer>
 <script src="js/tavleloftet.js"></script>
+<script src="js/tavleloftet-firebase.js"></script>
+<script src="js/henvendelse.js"></script>
 </body>
 </html>

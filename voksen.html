@@ -83,6 +83,17 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
   #lapp .voksen svg{width:120px;height:120px}
   #lapp .ramme{padding:20px 26px;break-inside:avoid}
 }
+.henv{padding:16px 0;border-top:1px solid var(--linje)}
+.henv:first-child{border-top:0}
+.henv .topp{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.henv .hvem{font-weight:800;font-size:1.05rem}
+.henv dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0}
+.henv dt{color:var(--dempet);font-weight:800;font-size:.88rem}
+.henv dd{margin:0;white-space:pre-wrap;word-break:break-word}
+.henv .knapper{display:flex;gap:8px;flex-wrap:wrap}
+.henv .knapper button,.henv .knapper a{padding:8px 12px;font-size:.88rem}
+.merke.ny{background:var(--rav);color:var(--blekk);border-color:var(--rav)}
+.henv.arkivert{opacity:.55}
 </style>
 </head>
 <body>
@@ -238,7 +249,7 @@ function start(){
     $('epost').textContent = u.email || '';
     // Godkjent = databasereglene lar oss skrive på vår egen voksen-node.
     db.ref('voksne/' + u.uid + '/sist_innlogget').set(firebase.database.ServerValue.TIMESTAMP)
-      .then(function(){ vis('hoved', true); lastListe(); })
+      .then(function(){ vis('hoved', true); lastListe(); lastHenv(); })
       .catch(function(){ $('uid').textContent = u.uid; vis('ikkeGodkjent', true); });
   });
 }
@@ -316,6 +327,49 @@ function tid(ms){
 }
 
 var elever = {};
+/* ---------- Henvendelser fra skjemaet (bare for Espen) ---------- */
+var ADMIN_EPOST = 'espenps@gmail.com', henvData = {};
+var HENV_TYPE = { niva1: 'Nivå 1 – tilpasset verden', niva2: 'Nivå 2 – eget tema', kurs: 'Kurs', annet: 'Noe annet' };
+function lastHenv(){
+  if (!bruker || bruker.email !== ADMIN_EPOST) { vis('henvBoks', false); return; }
+  vis('henvBoks', true);
+  db.ref('henvendelser').orderByChild('tid').once('value').then(function(s){
+    henvData = s.val() || {}; tegnHenv();
+  }).catch(function(){ $('henvListe').innerHTML = '<p class="tom">Fikk ikke lest henvendelsene. Er databasereglene oppdatert?</p>'; });
+}
+function tegnHenv(){
+  var visArkiv = $('visArkiv').checked;
+  var ider = Object.keys(henvData).sort(function(a, b){ return (henvData[b].tid || 0) - (henvData[a].tid || 0); });
+  var nye = ider.filter(function(id){ return henvData[id].status === 'ny'; }).length;
+  $('henvAntall').hidden = !nye; $('henvAntall').textContent = nye + ' ny' + (nye === 1 ? '' : 'e');
+  var vises = ider.filter(function(id){ return visArkiv || henvData[id].status !== 'arkivert'; });
+  if (!vises.length) { $('henvListe').innerHTML = '<p class="tom">Ingen henvendelser ennå.</p>'; return; }
+  $('henvListe').innerHTML = vises.map(function(id){
+    var h = henvData[id], dato = h.tid ? new Date(h.tid).toLocaleString('nb-NO', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    var felt = [['Trinn', h.trinn], ['Eleven elsker', h.liker], ['Skal øve på', h.ove], ['Rolle', h.rolle], ['Skole', h.skole], ['Melding', h.melding]]
+      .filter(function(f){ return f[1]; }).map(function(f){ return '<dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd>'; }).join('');
+    var emne = encodeURIComponent('Sv: Henvendelse til Tavleloftet (' + (HENV_TYPE[h.type] || h.type) + ')');
+    return '<div class="henv ' + esc(h.status) + '"><div class="topp"><span class="hvem">' + esc(h.navn) + ' · <a href="mailto:' + esc(h.epost) + '?subject=' + emne + '">' + esc(h.epost) + '</a></span>'
+      + '<span><span class="merke' + (h.status === 'ny' ? ' ny' : '') + '">' + esc(h.status) + '</span> <span class="liten">' + esc(dato) + '</span></span></div>'
+      + '<p class="liten" style="margin:4px 0 0"><b>' + esc(HENV_TYPE[h.type] || h.type) + '</b></p><dl>' + felt + '</dl>'
+      + '<div class="knapper"><a class="rapportlenke" href="mailto:' + esc(h.epost) + '?subject=' + emne + '">Svar på e-post</a>'
+      + (h.status !== 'besvart' ? '<button class="sek" data-henv="besvart" data-id="' + id + '">Merk som besvart</button>' : '')
+      + (h.status !== 'arkivert' ? '<button class="sek" data-henv="arkivert" data-id="' + id + '">Arkiver</button>' : '<button class="sek" data-henv="ny" data-id="' + id + '">Hent fra arkiv</button>')
+      + '<button class="fare" data-henv="slett" data-id="' + id + '">Slett</button></div></div>';
+  }).join('');
+}
+$('visArkiv').addEventListener('change', tegnHenv);
+$('henvListe').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-henv]'); if (!b) return;
+  var id = b.dataset.id, h = b.dataset.henv;
+  if (h === 'slett') {
+    if (!confirm('Slette henvendelsen fra ' + (henvData[id] || {}).navn + ' for godt?')) return;
+    db.ref('henvendelser/' + id).remove().then(lastHenv);
+  } else {
+    db.ref('henvendelser/' + id + '/status').set(h).then(lastHenv);
+  }
+});
+
 function lastListe(){
   db.ref('voksne/' + bruker.uid + '/elever').get().then(function(s){
     elever = s.val() || {};
