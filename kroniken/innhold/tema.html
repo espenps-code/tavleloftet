@@ -21,6 +21,7 @@
   .topp{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
   .tilbake{font-size:15px;font-weight:700;text-decoration:none;color:var(--krem);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;box-shadow:0 3px 0 var(--dark)}
   .tilbake:hover{border-color:var(--a)}
+  .hoyre{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .bytt{background:var(--card);color:var(--krem);border:1px solid var(--line);border-radius:999px;padding:9px 14px;font:inherit;font-size:15px;box-shadow:0 3px 0 var(--dark)}
   /* Hode: bildet ligger som et trykk oppå en farget plate */
   .hode{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;background:linear-gradient(135deg,var(--bg3),var(--card) 70%);border:1px solid var(--line);border-radius:26px;padding:34px 36px;box-shadow:0 12px 0 var(--dark),0 30px 60px rgba(0,0,0,.45);overflow:visible;margin:8px 0 22px}
@@ -79,7 +80,7 @@
 <div class="wrap">
   <div class="topp">
     <a class="tilbake" href="../portal/index.html">← Alle temaer</a>
-    <select class="bytt" id="bytt" aria-label="Bytt tema"></select>
+    <div class="hoyre"><a class="tilbake" id="tilLogg" href="../portal/arbeidsark.html">Arbeidslogg</a><select class="bytt" id="bytt" aria-label="Bytt tema"></select></div>
   </div>
   <main id="inn"></main>
 </div>
@@ -98,6 +99,7 @@ if(!l){
 document.title='Krøniken – '+l.navn;
 document.getElementById('temafarger').href=m+'/tema.css';
 try{sessionStorage.setItem('kroniken-tema',m);}catch(e){}
+document.getElementById('tilLogg').href='../portal/arbeidsark.html?tema='+m;
 const ord={religionen:'Religion',livssynet:'Livssyn',modulen:'Temamodul'};
 const b=f=>`${m}/bilder/${f}`;
 const hovedIBok=l.hoved&&(l.bokhoved||/[?&]p=/.test(l.hoved));
@@ -108,7 +110,8 @@ const hele=[
   ['#7C8CE0',`quiz.html?ls=${m}`,'Klassequiz','Velg deler og spillmodus'],
   ['#E0995C',`spill.html?ls=${m}`,'Øvespill','Elevene svarer i eget tempo'],
   ['#4FB8A8',`oveark.html?t=${alle}&tittel=${encodeURIComponent(l.navn)}`,'Øveark','Viktige ord og øvespørsmål'],
-  ['#C9586B','../religionsprove/index.html?tema='+m,'Lag prøve','Temaet er valgt · krever innlogging']
+  ['#C9586B','../religionsprove/index.html?tema='+m,'Lag prøve','Temaet er valgt · krever innlogging'],
+  ['#2E9E8F','../portal/arbeidsark.html?tema='+m,'Arbeidslogg','Hvem har gjort hva · krever innlogging']
 ];
 const antH=l.tema.length;
 /* Hovedpresentasjonen står først i rekka, som en oversikt før delene */

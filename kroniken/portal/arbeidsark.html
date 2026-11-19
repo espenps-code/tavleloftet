@@ -916,6 +916,9 @@ function trykk(b){
       valg.appendChild(g);
       const d=document.createElement("option"); d.value=K[m].navn; $("pTemaListe").appendChild(d);
     }
+    /* Kommer man fra en temaside (?tema=islam), står temanavnet ferdig utfylt i «Ny periode». */
+    const fra=new URLSearchParams(location.search).get("tema");
+    if(fra&&K[fra]&&!$("pTema").value.trim()) $("pTema").value=K[fra].navn;
   }).catch(()=>{ valg.disabled=true; hint.textContent="Fant ikke Krøniken-innholdet (mappa «innhold»)."; });
   valg.addEventListener("change", async ()=>{
     hint.textContent=""; const id=valg.value; if(!id) return;
