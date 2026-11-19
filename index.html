@@ -62,6 +62,49 @@
 @media (max-width:960px){.hero-diorama{flex:none;width:calc(100% + 48px);max-width:none;height:440px;margin:-10px -24px -40px}.lapp span{display:none}.lapp{padding:5px 9px 6px}.lapp strong{font-size:13px}}
 @media (max-width:560px){.hero-diorama{height:330px}.lapp strong{font-size:12px}.lapp{padding:4px 8px 5px}}
 </style>
+<style>
+/* Flyt-versjonen: øya er innholdsfortegnelsen. Seks steder = seks seksjoner i samme mal. */
+.stedslinje{position:sticky;top:0;z-index:20;background:rgba(12,26,30,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--linje)}
+.stedslinje-indre{max-width:1240px;margin:0 auto;padding:8px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.stedslinje-indre::-webkit-scrollbar{display:none}
+.stedslinje-indre::before,.stedslinje-indre::after{content:"";margin:auto}
+.stedslinje a{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:800;font-size:15px;color:var(--lys);white-space:nowrap;transition:background .2s,color .2s}
+.stedslinje a svg{color:var(--f);transition:color .2s}
+.stedslinje a:hover{background:rgba(255,255,255,.08);color:var(--lys)}
+.stedslinje a[aria-current="true"]{background:var(--f);color:var(--blekk)}
+.stedslinje a[aria-current="true"] svg{color:var(--blekk)}
+
+.sted{padding:72px 24px;scroll-margin-top:60px}
+.sted-indre{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(28px,5vw,64px)}
+.sted-tekst{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.sted-bilde{flex:1.15 1 460px;min-width:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.sted.snudd .sted-bilde{order:-1}
+.sted-merke{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--farge-lys);color:var(--blekk);font-weight:800;font-size:14px;letter-spacing:1.2px;text-transform:uppercase;padding:7px 15px 7px 10px;border-radius:999px}
+.sted h2{margin:0;font-size:clamp(34px,4.2vw,52px);line-height:1.06;font-weight:700;color:var(--papir)}
+.sted p.stor{margin:0;font-size:19px;line-height:1.6;color:#DCE4E0}
+.sted-bilde figcaption{font-size:15px;line-height:1.45;font-weight:700;color:var(--lys-dempet)}
+.sted-bilde>img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:24px;box-shadow:0 18px 36px rgba(0,0,0,.35)}
+.sted .knapperad{margin-top:4px}
+/* De to store: samme mal, men på papirkort */
+.sted.stor{padding:40px 24px}
+.sted.stor .sted-indre{background:var(--papir);color:var(--blekk);border-radius:36px;padding:clamp(28px,4.5vw,60px);box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.sted.stor h2{font-size:clamp(52px,6vw,84px);line-height:1;color:var(--farge)}
+.sted.stor p.stor{font-size:21px;line-height:1.5;font-weight:600;color:var(--blekk)}
+.sted.stor .sted-merke{background:var(--farge);color:var(--papir)}
+.sted.stor .sted-bilde figcaption{color:var(--dempet)}
+#myntland{padding-top:64px}
+.sted-bilde.monster{flex:.8 1 380px}
+.sted-bilde.monster>img{aspect-ratio:1/1;object-position:50% 40%;box-shadow:none;border-radius:28px}
+/* Reisene: sju små fliser i stedet for karusell */
+.reisefliser{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:44px}
+.reiseflis{background:var(--kort);border-radius:18px;overflow:hidden;text-decoration:none;color:var(--lys);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.reiseflis:hover{transform:translateY(-5px);box-shadow:0 16px 28px rgba(0,0,0,.4);color:var(--lys)}
+.reiseflis img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.reiseflis strong{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.15;padding:11px 13px 0}
+.reiseflis span{font-size:13px;font-weight:800;color:var(--farge-lys);padding:3px 13px 13px}
+.paa-vei{margin:0;font-size:16px;line-height:1.55;color:var(--dempet)}
+@media (max-width:960px){.sted{padding:52px 20px}.sted.stor{padding:24px 14px}.sted.snudd .sted-bilde{order:0}.reisefliser{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+</style>
 </head>
 <body>
 <div class="teststripe">Testversjon – siden er under arbeid og ikke offisielt lansert ennå</div>
@@ -78,11 +121,8 @@
       </a>
       <nav class="nav" aria-label="Hovedmeny">
       <a href="index.html" aria-current="page">Forside</a>
-      <a href="#prosjekter">Prosjekter</a>
       <a href="spill.html">Spill</a>
       <a href="skreddersydd.html">Skreddersydd</a>
-      <span class="snart-lenke">Lærerverktøy <small>Kommer</small></span>
-      <span class="snart-lenke">Til utskrift <small>Kommer</small></span>
       <a href="#slik">Slik er det laget</a>
       <a href="elev/">Elevinnlogging</a>
       <a class="btn btn-amber btn-liten" href="https://myntland.no">Myntland</a>
@@ -96,255 +136,141 @@
         <h1>Prosjekter klassen <em class="rav">husker</em></h1>
         <p class="stor">Spill, store klasseprosjekter og lærerverktøy for barneskolen – laget av en lærer og testet i ekte klasserom.</p>
         <div class="knapperad">
-          <a class="btn btn-amber" href="#prosjekter">Se prosjektene</a>
+          <a class="btn btn-amber" href="#steder">Se hva som finnes</a>
           <a class="btn btn-ghost" href="#myntland">Møt Myntland</a>
         </div>
       </div>
       <div class="hero-diorama">
         <canvas aria-hidden="true"></canvas>
         <nav class="lapper" aria-label="Prosjektene på øya">
-          <a class="lapp" data-punkt="myntland" href="#myntland"><strong>Myntland</strong><span>Klasseromsøkonomi</span></a><a class="lapp" data-punkt="kroniken" href="#kroniken"><strong>Krøniken</strong><span>KRLE</span></a><a class="lapp" data-punkt="reiser" href="#reiser"><strong>Reisene</strong><span>7 reiser</span></a><a class="lapp" data-punkt="spill" href="spill.html"><strong>Spillrommet</strong><span>10 spill</span></a><a class="lapp" data-punkt="skreddersydd" href="skreddersydd.html"><strong>Skreddersydd</strong><span>Én verden per elev</span></a><a class="lapp" data-punkt="nabolaget" href="https://espenps-code.github.io/nabolaget/"><strong>Erobre nabolaget</strong><span>Kroppsøving</span></a>
+          <a class="lapp" data-punkt="myntland" href="#myntland"><strong>Myntland</strong><span>Klasseromsøkonomi</span></a><a class="lapp" data-punkt="kroniken" href="#kroniken"><strong>Krøniken</strong><span>KRLE</span></a><a class="lapp" data-punkt="reiser" href="#reiser"><strong>Reisene</strong><span>7 reiser</span></a><a class="lapp" data-punkt="spill" href="#spill"><strong>Spillrommet</strong><span>10 spill</span></a><a class="lapp" data-punkt="skreddersydd" href="#skreddersydd"><strong>Skreddersydd</strong><span>Én verden per elev</span></a><a class="lapp" data-punkt="nabolaget" href="#nabolaget"><strong>Erobre nabolaget</strong><span>Kroppsøving</span></a>
         </nav>
       </div>
     </div>
   </div>
 </section>
 
-<section class="myntland" id="myntland" aria-labelledby="myntland-tittel">
-  <div class="wrap">
-    <div class="myntland-kort">
-      <div class="myntland-tekst">
-        <span class="merke-gronn">Hovedattraksjonen</span>
-        <h2 id="myntland-tittel">Myntland</h2>
-        <p class="stor">Klasseromsøkonomi for 1.–7. trinn. Elevene har jobber, tjener mynter, sparer, låner og handler i klassebutikken – og lærer økonomi ved å leve den.</p>
-        <div class="brikker">
-          <span>Jobber og lønn</span><span>Sparemål og rente</span><span>Klassebutikk med QR</span>
-          <span class="gul">Arbeidshefter på bokmål og nynorsk</span><span class="gul">Økonomiske historier</span><span class="gul">Escaperom</span>
-        </div>
-        <div class="trygt">
-          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Elevene bruker bare kallenavn og PIN – ingen elevnavn lagres.</span>
-        </div>
-        <div><a class="btn btn-teal" href="https://myntland.no">Besøk myntland.no</a></div>
+<nav class="stedslinje" id="steder" aria-label="Stedene på øya"><div class="stedslinje-indre">
+  <a href="#myntland" data-sted="myntland" style="--f:#5FD3BE"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"/></svg>Myntland</a>
+  <a href="#kroniken" data-sted="kroniken" style="--f:#EE9A78"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1l2.5 4.500h-5zM12 5l5 5.500H7zM3 22v-7l9-5.5 9 5.500v7h-7v-4h-4v4z"/></svg>Krøniken</a>
+  <a href="#reiser" data-sted="reiser" style="--f:#7CC4EA"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.2"/><ellipse cx="12" cy="12" rx="4" ry="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 12h19" stroke="currentColor" stroke-width="2"/></svg>Reisene</a>
+  <a href="#spill" data-sted="spill" style="--f:#F4B942"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="4.5" fill="currentColor"/><g fill="rgba(0,0,0,.6)"><circle cx="8" cy="8" r="1.8"/><circle cx="16" cy="16" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="16" cy="8" r="1.8"/><circle cx="8" cy="16" r="1.8"/></g></svg>Spillrommet</a>
+  <a href="#skreddersydd" data-sted="skreddersydd" style="--f:#9BDB78"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.800-5.1 4.7 1.4 6.800L12 17.200l-6.1 3.4 1.4-6.800L2.2 9.100l6.9-.800z"/></svg>Skreddersydd</a>
+  <a href="#nabolaget" data-sted="nabolaget" style="--f:#F58F70"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2v20" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path fill="currentColor" d="M7 3h13l-3.5 4.500L20 12H7z"/></svg>Erobre nabolaget</a>
+</div></nav>
+
+<section class="sted stor" id="myntland" style="--farge:#0F6E63;--farge-lys:#5FD3BE" aria-labelledby="myntland-tittel">
+  <div class="wrap sted-indre">
+    <div class="sted-tekst">
+      <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"/></svg>Klasseromsøkonomi · 1.–7. trinn</span>
+      <h2 id="myntland-tittel">Myntland</h2>
+      <p class="stor">Elevene har jobber, tjener mynter, sparer, låner og handler i klassebutikken – og lærer økonomi ved å leve den.</p>
+      <div class="brikker">
+        <span>Jobber og lønn</span><span>Sparemål og rente</span><span>Klassebutikk med QR</span>
+        <span class="gul">Arbeidshefter på bokmål og nynorsk</span><span class="gul">Økonomiske historier</span><span class="gul">Escaperom</span>
       </div>
-      <div class="myntland-bilde"><img src="img/myntland-monster.webp" alt="Et blått, lodent Myntland-monster holder opp bankkortet sitt ved siden av myntstabler i klassebutikken"></div>
+      <div class="trygt"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Elevene bruker bare kallenavn og PIN – ingen elevnavn lagres.</span></div>
+      <div><a class="btn btn-teal" href="https://myntland.no">Besøk myntland.no</a></div>
     </div>
+    <figure class="sted-bilde monster">
+      <img src="img/myntland-monster.webp" alt="Et blått, lodent Myntland-monster holder opp bankkortet sitt ved siden av myntstabler i klassebutikken">
+    </figure>
   </div>
 </section>
 
-<section class="kroniken" id="kroniken" aria-labelledby="kroniken-tittel">
-  <div class="wrap">
-    <div class="kroniken-kort">
-      <div class="kroniken-bilde">
-        <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/kroniken-pres.webp" alt="Skjermbilde av en presentasjon i Krøniken: «Hva er en stavkirke?» med bilde av takkonstruksjonen i en stavkirke" loading="lazy"></div>
-        <p class="kroniken-bildetekst">Ekte skjermbilde: en presentasjon om stavkirker, klar for tavla</p>
+<section class="sted stor snudd" id="kroniken" style="--farge:#A4492A;--farge-lys:#EE9A78" aria-labelledby="kroniken-tittel">
+  <div class="wrap sted-indre">
+    <div class="sted-tekst">
+      <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1l2.5 4.500h-5zM12 5l5 5.500H7zM3 22v-7l9-5.5 9 5.500v7h-7v-4h-4v4z"/></svg>KRLE · 5.–7. trinn</span>
+      <h2 id="kroniken-tittel">Krøniken</h2>
+      <p class="stor">Alt du trenger til KRLE på ett sted. Seks religioner og livssyn, høytidene, filosofi og de store spørsmålene.</p>
+      <div class="tall-rad">
+        <div><strong>14</strong><span>temaområder</span></div>
+        <div><strong>84</strong><span>temaer</span></div>
+        <div><strong>5</strong><span>quizmoduser</span></div>
       </div>
-      <div class="kroniken-tekst">
-        <span class="merke-terra">KRLE · 5.–7. trinn</span>
-        <h2 id="kroniken-tittel">Krøniken</h2>
-        <p class="stor">Alt du trenger til KRLE på ett sted. Seks religioner og livssyn, høytidene, filosofi og de store spørsmålene – med presentasjoner til tavla, oppgaver, lesehistorier, quiz og prøver.</p>
-        <div class="tall-rad">
-          <div><strong>14</strong><span>temaområder</span></div>
-          <div><strong>84</strong><span>temaer</span></div>
-          <div><strong>5</strong><span>quizmoduser</span></div>
-        </div>
-        <div class="brikker">
-          <span>Presentasjoner til tavla</span><span>Oppgavesett med fasit</span><span>Lesehistorier</span><span>Klassequiz</span>
-          <span class="terra">Elevbok med opplesing</span><span class="terra">Prøver og øveark</span><span class="terra">Lærerveiledning og årsplaner</span>
-        </div>
-        <div class="trygt">
-          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Alt innhold er kildesjekket.</span>
-        </div>
-        <div><a class="btn btn-terra" href="kroniken/">Åpne Krøniken</a></div>
+      <div class="brikker">
+        <span class="terra">Presentasjoner til tavla</span><span class="terra">Oppgaver, quiz og prøver</span><span class="terra">Elevbok med opplesing</span><span class="terra">Lærerveiledning og årsplaner</span>
       </div>
+      <div class="trygt"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Alt innhold er kildesjekket.</span></div>
+      <div><a class="btn btn-terra" href="kroniken/">Åpne Krøniken</a></div>
     </div>
+    <figure class="sted-bilde">
+      <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/kroniken-pres.webp" alt="Skjermbilde av en presentasjon i Krøniken: «Hva er en stavkirke?» med bilde av takkonstruksjonen i en stavkirke" loading="lazy"></div>
+      <figcaption>Ekte skjermbilde: en presentasjon om stavkirker, klar for tavla.</figcaption>
+    </figure>
   </div>
 </section>
 
-
-<section class="karusell" id="prosjekter" aria-labelledby="prosjekter-tittel" data-karusell>
+<section class="sted" id="reiser" style="--farge:#1E6E9E;--farge-lys:#7CC4EA" aria-labelledby="reiser-tittel">
   <div class="wrap">
-    <div class="karusell-topp">
-      <div class="seksjon-topp">
-        <p class="eyebrow">Store prosjekter og spill</p>
-        <h2 id="prosjekter-tittel">Hele klassen i gang</h2>
-        <p class="ingress">Prosjekter som varer i uker, og spill som tar fem minutter.</p>
-      </div>
-      <div class="karusell-knapper">
-        <span class="teller" aria-live="polite">1 / 4</span>
-        <button class="iconbtn" type="button" data-forrige aria-label="Forrige"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <button class="iconbtn" type="button" data-neste aria-label="Neste"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </div>
-    </div>
-    <div class="track">
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/erobre-nabolaget.webp" alt="Miniatyrnabolag med gateskilt og lagflagg"></div>
-        <div class="kort-tekst">
-          <span class="tag">Klasseprosjekt · Kroppsøving</span>
-          <h3>Erobre nabolaget</h3>
-          <p>Lagene erobrer gateskilt i nabolaget og laster opp bevis. Kan spilles av hvem som helst.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/nabolaget/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/dinoparken.webp" alt="Skjermbilde fra Dinoparken: en 3D-park med innhegninger, mynter og meny"><span class="kort-merke">Skreddersydd</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Tilpasset opplæring · 1.–7. trinn</span>
-          <h3>En verden for én elev</h3>
-          <p>En egen elevside bygget rundt det eleven elsker – dinosaurer, hester, fotball – med oppgaver laget for akkurat det eleven trenger å øve på.</p>
-          <a class="btn btn-amber" href="skreddersydd.html">Les mer</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-jorda.webp" alt="Jordkloden fra Jorda rundt med reiseruten tegnet inn"><span class="kort-merke">7 reiser</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Klasseprosjekt · Samfunnsfag og engelsk</span>
-          <h3>Reiseprosjektene</h3>
-          <p>Jorda rundt, Europa rundt, Norge rundt, tre reiser på engelsk – og en tur gjennom solsystemet.</p>
-          <a class="btn btn-amber" href="#reiser">Se alle reisene</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/spillrommet.webp" alt="Skjermbilder fra seks spill: Livet på egne bein, Myldrejakt, Slagskip, Labyrinten, Drivhuset og Fire på rad"><span class="kort-merke">10 spill</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Spill · Alle aldre</span>
-          <h3>Spillrommet</h3>
-          <p>Livet på egne bein, Pizzabutikken, Slagskip, Fire på rad, Myldrejakt og flere – spill til en ledig stund i klasserommet.</p>
-          <a class="btn btn-amber" href="spill.html">Se alle spillene</a>
-        </div>
-      </article>
-    </div>
-    <div class="prikker" aria-label="Velg prosjekt"></div>
-  </div>
-</section>
-
-<section class="karusell reiser" id="reiser" aria-labelledby="reiser-tittel" data-karusell>
-  <div class="wrap">
-    <div class="karusell-topp">
-      <div class="seksjon-topp">
-        <p class="eyebrow">Reiseprosjektene</p>
+    <div class="sted-indre">
+      <div class="sted-tekst">
+        <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.2"/><ellipse cx="12" cy="12" rx="4" ry="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 12h19" stroke="currentColor" stroke-width="2"/></svg>Klasseprosjekt · 5.–7. trinn</span>
         <h2 id="reiser-tittel">Reis med klassen</h2>
-        <p class="ingress">Sju reiser med samme opplegg: gruppene får et reisebudsjett, booker transport og overnatting, fører reiselogg og kjemper om flest steder. Gratis og uten elevkontoer.</p>
+        <p class="stor">Sju reiser med samme opplegg: gruppene får et reisebudsjett, booker transport og overnatting, fører reiselogg og kjemper om flest steder. Gratis og uten elevkontoer.</p>
       </div>
-      <div class="karusell-knapper">
-        <span class="teller" aria-live="polite">1 / 7</span>
-        <button class="iconbtn" type="button" data-forrige aria-label="Forrige reise"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <button class="iconbtn" type="button" data-neste aria-label="Neste reise"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </div>
-    </div>
-    <div class="track">
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-jorda.webp" alt="Jordkloden fra Jorda rundt" loading="lazy"></div>
-        <div class="kort-tekst">
-          <span class="tag">Samfunnsfag · 5.–7. trinn</span>
-          <h3>Jorda rundt</h3>
-          <p>Reis verden rundt med 200 000 kroner i lomma. Fly mellom land, book hotell og erobre flest av 198 land.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-europa.webp" alt="Europa på jordkloden fra Europa rundt" loading="lazy"></div>
-        <div class="kort-tekst">
-          <span class="tag">Samfunnsfag · 5.–7. trinn</span>
-          <h3>Europa rundt</h3>
-          <p>Reis Europa rundt med 100 000 kroner – med fly, tog eller buss. 109 byer i 46 land.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/europa/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-norge.webp" alt="Norge på jordkloden fra Norge rundt" loading="lazy"></div>
-        <div class="kort-tekst">
-          <span class="tag">Samfunnsfag · 5.–7. trinn</span>
-          <h3>Norge rundt</h3>
-          <p>Buss, tog, fly eller båt – eller telt med allemannsretten. 72 steder i 15 fylker pluss Svalbard.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/norge/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-usa.webp" alt="Kart over USA fra Across America med reiseruten tegnet inn" loading="lazy"><span class="kort-merke">På engelsk</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Engelsk · 5.–7. trinn</span>
-          <h3>Across America</h3>
-          <p>Travel the USA with 20,000 dollars. 50 states in 7 regions – camping by Leave No Trace.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/usa/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-uk.webp" alt="Kart over Storbritannia fra Across the UK med reiseruten tegnet inn" loading="lazy"><span class="kort-merke">På engelsk</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Engelsk · 5.–7. trinn</span>
-          <h3>Across the UK</h3>
-          <p>Travel the UK with 8,000 pounds – by train, coach or ferry. 40 places in 12 regions.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/uk/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-australia.webp" alt="Kart over Australia fra Across Australia med reiseruten tegnet inn" loading="lazy"><span class="kort-merke">På engelsk</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Engelsk · 5.–7. trinn</span>
-          <h3>Across Australia</h3>
-          <p>Travel Australia with 12,000 dollars – from the coast to the red outback. 44 places.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/australia/">Åpne</a>
-        </div>
-      </article>
-      <article class="kort">
-        <div class="kort-bilde"><img src="img/reise-solsystem.webp" alt="Kart over solsystemet fra Solsystemet rundt" loading="lazy"><span class="kort-merke">Rommet</span></div>
-        <div class="kort-tekst">
-          <span class="tag">Naturfag · 5.–7. trinn</span>
-          <h3>Solsystemet rundt</h3>
-          <p>År 2247: Mannskapene reiser fra romstasjonen til Pluto i hvert sitt romskip. 37 steder i 8 systemer.</p>
-          <a class="btn btn-amber" href="https://espenps-code.github.io/jorda-rundt/solsystem/">Åpne</a>
-        </div>
-      </article>
-    </div>
-    <div class="prikker" aria-label="Velg reise"></div>
-  </div>
-</section>
-
-
-<section class="seksjon skredder" id="skreddersydd" aria-labelledby="skredder-tittel">
-  <div class="wrap">
-    <div class="skredder-kort">
-      <div class="skredder-tekst">
-        <p class="eyebrow">Skreddersydd læring</p>
-        <h2 id="skredder-tittel">En verden for én elev</h2>
-        <p class="stor">Noen elever trenger mer enn en vanlig oppgavebok. Jeg lager en egen læringsverden bygget rundt det eleven elsker – dinosaurer, roboter, fotball – med oppgaver som treffer akkurat det eleven skal øve på.</p>
-        <div class="brikker mork"><span>Eleven logger inn med egen kode</span><span>Framgangen lagres uten navn</span><span>Framgangsrapport til den voksne</span></div>
-        <div class="knapperad">
-          <a class="btn btn-amber" href="skreddersydd.html">Les om skreddersydd</a>
-          <a class="btn btn-ghost" href="elev/">Elevinnlogging</a>
-        </div>
-      </div>
-      <div class="skredder-bilder">
-        <img src="img/dinoparken.webp" alt="Skjermbilde fra Dinoparken: en 3D-park med innhegninger, mynter og meny" loading="lazy">
-        <img src="img/lyslaget.webp" alt="Fra Lyslaget: roboten Spor ruller inn på stasjonen som et tog med klokke på fronten" loading="lazy">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="seksjon" id="i-bruk" aria-labelledby="bruk-tittel">
-  <div class="wrap">
-    <div class="seksjon-topp" style="margin-bottom:40px">
-      <p class="eyebrow">Ekte skjermbilder</p>
-      <h2 id="bruk-tittel">Se det i bruk</h2>
-      <p class="ingress">Slik ser verktøyene ut når klassen bruker dem – ikke illustrasjoner, men det elevene faktisk får på skjermen.</p>
-    </div>
-    <div class="skjermer">
-      <figure class="skjerm">
-        <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/myntland-elevapp.webp" alt="Skjermbilde av nettbanken i Myntlands elevapp: brukskonto, sparekonto, fondskonto, ukas økonomiquiz og klassens sparemål" loading="lazy" style="object-position:top left"></div>
-        <figcaption><strong>Myntland.</strong> Nettbanken i elevappen: brukskonto, sparekonto, fond og klassens sparemål. Eleven her er oppdiktet.</figcaption>
-      </figure>
-      <figure class="skjerm">
+      <figure class="sted-bilde">
         <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/jorda-rundt-tavle.webp" alt="Skjermbilde av tavla i Jorda rundt: en jordklode der landene er farget etter gruppe, og en poengliste med 12 grupper" loading="lazy"></div>
-        <figcaption><strong>Jorda rundt.</strong> Tavla på storskjermen: kloden viser hvem som eier hvilke land, og poenglista oppdateres mens gruppene reiser. Gruppene her er oppdiktet.</figcaption>
-      </figure>
-      <figure class="skjerm">
-        <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/spill-slagskip.webp" alt="Skjermbilde fra Slagskip" loading="lazy" style="object-position:top left"></div>
-        <figcaption><strong>Slagskip.</strong> Velg motstander, brett og størrelse – så er det bare å plassere skipene.</figcaption>
+        <figcaption>Ekte skjermbilde: tavla i Jorda rundt på storskjermen. Gruppene her er oppdiktet.</figcaption>
       </figure>
     </div>
+    <div class="reisefliser" aria-label="Velg reise">
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/"><img src="img/reise-jorda.webp" alt="" loading="lazy"><strong>Jorda rundt</strong><span>Samfunnsfag</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/europa/"><img src="img/reise-europa.webp" alt="" loading="lazy"><strong>Europa rundt</strong><span>Samfunnsfag</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/norge/"><img src="img/reise-norge.webp" alt="" loading="lazy"><strong>Norge rundt</strong><span>Samfunnsfag</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/usa/"><img src="img/reise-usa.webp" alt="" loading="lazy"><strong>Across America</strong><span>Engelsk</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/uk/"><img src="img/reise-uk.webp" alt="" loading="lazy"><strong>Across the UK</strong><span>Engelsk</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/australia/"><img src="img/reise-australia.webp" alt="" loading="lazy"><strong>Across Australia</strong><span>Engelsk</span></a>
+      <a class="reiseflis" href="https://espenps-code.github.io/jorda-rundt/solsystem/"><img src="img/reise-solsystem.webp" alt="" loading="lazy"><strong>Solsystemet rundt</strong><span>Naturfag</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sted snudd" id="spill" style="--farge:#B9861F;--farge-lys:#F4B942" aria-labelledby="spill-tittel">
+  <div class="wrap sted-indre">
+    <div class="sted-tekst">
+      <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="4.5" fill="currentColor"/><g fill="rgba(0,0,0,.6)"><circle cx="8" cy="8" r="1.8"/><circle cx="16" cy="16" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="16" cy="8" r="1.8"/><circle cx="8" cy="16" r="1.8"/></g></svg>10 spill · Alle aldre</span>
+      <h2 id="spill-tittel">Spillrommet</h2>
+      <p class="stor">Livet på egne bein, Pizzabutikken, Slagskip, Fire på rad, Myldrejakt og flere – spill til en ledig stund i klasserommet.</p>
+      <div class="knapperad"><a class="btn btn-amber" href="spill.html">Se alle spillene</a></div>
+    </div>
+    <figure class="sted-bilde">
+      <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/spill-slagskip.webp" alt="Skjermbilde fra Slagskip" loading="lazy" style="object-position:top left"></div>
+      <figcaption>Ekte skjermbilde: Slagskip. Velg motstander, brett og størrelse.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="sted" id="skreddersydd" style="--farge:#3E8A2A;--farge-lys:#9BDB78" aria-labelledby="skredder-tittel">
+  <div class="wrap sted-indre">
+    <div class="sted-tekst">
+      <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.800-5.1 4.7 1.4 6.800L12 17.200l-6.1 3.4 1.4-6.800L2.2 9.100l6.9-.800z"/></svg>Tilpasset opplæring · 1.–7. trinn</span>
+      <h2 id="skredder-tittel">En verden for én elev</h2>
+      <p class="stor">Noen elever trenger mer enn en vanlig oppgavebok. Jeg lager en egen læringsverden rundt det eleven elsker – dinosaurer, roboter, fotball – med oppgaver som treffer akkurat det eleven skal øve på.</p>
+      <div class="knapperad">
+        <a class="btn btn-amber" href="skreddersydd.html">Les om skreddersydd</a>
+        <a class="btn btn-ghost" href="elev/">Elevinnlogging</a>
+      </div>
+    </div>
+    <figure class="sted-bilde">
+      <div class="vindu"><div class="vindu-topp" aria-hidden="true"><i></i><i></i><i></i></div><img src="img/dinoparken.webp" alt="Skjermbilde fra Dinoparken: en 3D-park med innhegninger, mynter og meny" loading="lazy"></div>
+      <figcaption>Ekte skjermbilde: Dinoparken, en verden laget for én elev.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="sted snudd" id="nabolaget" style="--farge:#C4532F;--farge-lys:#F58F70" aria-labelledby="nabolaget-tittel">
+  <div class="wrap sted-indre">
+    <div class="sted-tekst">
+      <span class="sted-merke"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2v20" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path fill="currentColor" d="M7 3h13l-3.5 4.500L20 12H7z"/></svg>Klasseprosjekt · Kroppsøving</span>
+      <h2 id="nabolaget-tittel">Erobre nabolaget</h2>
+      <p class="stor">Lagene erobrer gateskilt i nabolaget og laster opp bevis. Kan spilles av hvem som helst.</p>
+      <div class="knapperad"><a class="btn btn-amber" href="https://espenps-code.github.io/nabolaget/">Åpne</a></div>
+    </div>
+    <figure class="sted-bilde">
+      <img src="img/erobre-nabolaget.webp" alt="Miniatyrnabolag med gateskilt og lagflagg" loading="lazy">
+    </figure>
   </div>
 </section>
 
@@ -358,6 +284,7 @@
         <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="none" stroke="#0F6E63" stroke-width="2"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#0F6E63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Elevdata sendes aldri til KI.</strong> KI brukes når jeg lager verktøyene – ikke når elevene bruker dem.</p>
       </div>
+      <p class="paa-vei"><strong>På vei til loftet:</strong> lærerverktøy og hefter til utskrift.</p>
     </div>
     <div>
       <div class="steg"><span class="nr">1</span><div><h3>Ideen kommer fra klasserommet</h3><p>Behovene, pedagogikken og oppleggene er mine – bygget på LK20 og det jeg ser i klassen hver dag.</p></div></div>
@@ -375,20 +302,6 @@
   </div>
 </section>
 
-<section class="seksjon" id="hyller" aria-labelledby="hylle-tittel">
-  <div class="wrap">
-    <div class="seksjon-topp">
-      <p class="eyebrow">Hyllene på loftet</p>
-      <h2 id="hylle-tittel">Finn noe til din klasse</h2>
-    </div>
-    <div class="hyller">
-      <a class="hylle" href="spill.html"><img src="img/obj-kloss.webp" alt=""><h3>Spill</h3><p>Livet på egne bein, Pizzabutikken, Drivhuset, Slagskip, Fire på rad, Gjett hvem, Ordjakt og flere.</p></a>
-      <div class="hylle"><img src="img/obj-ridder.webp" alt=""><span class="snart">Kommer</span><h3>Lærerverktøy</h3><p>Timeplanlegger, sjakkturnering, relasjonskart for lærerteam, valgfag og arbeidsark-sporing.</p></div>
-      <a class="hylle" href="#prosjekter"><img src="img/obj-globus.webp" alt=""><h3>Klasseprosjekter</h3><p>Sju reiseprosjekter og Erobre nabolaget – prosjekter for hele klassen.</p></a>
-      <div class="hylle"><img src="img/obj-blyant.webp" alt=""><span class="snart">Kommer</span><h3>Til utskrift</h3><p>Arbeidshefter, årsplaner og planleggere – klare til å skrive ut.</p></div>
-    </div>
-  </div>
-</section>
 
 <footer class="bunn">
   <div class="wrap">
@@ -405,6 +318,28 @@
     </nav>
   </div>
 </footer>
+<script>
+// Følgelinja: lyser opp stedet du er ved mens du ruller
+(function () {
+  var linje = document.querySelector('.stedslinje-indre');
+  if (!linje || !('IntersectionObserver' in window)) return;
+  var lenker = {};
+  linje.querySelectorAll('a[data-sted]').forEach(function (a) { lenker[a.dataset.sted] = a; });
+  function sett(id) {
+    Object.keys(lenker).forEach(function (k) {
+      if (k === id) lenker[k].setAttribute('aria-current', 'true'); else lenker[k].removeAttribute('aria-current');
+    });
+    var a = lenker[id];
+    if (a && linje.scrollWidth > linje.clientWidth) linje.scrollTo({ left: a.offsetLeft - (linje.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
+  }
+  var obs = new IntersectionObserver(function (treff) {
+    treff.forEach(function (t) { if (t.isIntersecting) sett(t.target.id); });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('.sted').forEach(function (s) { obs.observe(s); });
+  var hero = document.querySelector('.hero');
+  if (hero) new IntersectionObserver(function (t) { if (t[0].isIntersecting) sett(''); }, { rootMargin: '-45% 0px -50% 0px' }).observe(hero);
+})();
+</script>
 <script src="js/tavleloftet.js"></script>
 <script src="js/three.min.js"></script>
 <script src="js/forside-diorama.js"></script>
