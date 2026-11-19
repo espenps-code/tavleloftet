@@ -235,3 +235,6 @@ aside.notes{display:none}
 .aktiv b{font-weight:800}
 .aktiv .ja{border-color:var(--ok)}.aktiv .ja svg{color:var(--ok)}
 .aktiv .nei{border-color:var(--no)}.aktiv .nei svg{color:var(--no)}
+.flip .bk.bk-fakta{background:#1f4a35;border:3px solid var(--ok)}.flip .bk.bk-myte{background:#4a2520;border:3px solid var(--no)}
+.flip .bk.bk-fakta p,.flip .bk.bk-myte p{color:var(--cream)}
+.flip .bk.bk-fakta .bkt{color:var(--ok);font-size:40px}.flip .bk.bk-myte .bkt{color:var(--no);font-size:40px}
