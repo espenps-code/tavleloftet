@@ -228,3 +228,10 @@ aside.notes{display:none}
 .vk strong{display:block;font-family:var(--f-head);font-weight:600;font-size:24px}
 .vk small{color:var(--muted);font-size:15px}
 @media (max-width:520px){.kk{width:270px}.karusell{padding-inline:calc(50% - 135px)}.kk img{height:230px}}
+
+/* Bevegelsesbanner på «Sant eller usant?» og «Myte eller fakta?» */
+.aktiv{display:flex;gap:18px;flex-wrap:wrap;margin:-4px 0 6px}
+.aktiv span{display:inline-flex;align-items:center;gap:12px;font:600 25px var(--f-body);color:var(--cream);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:8px 22px 8px 14px}
+.aktiv b{font-weight:800}
+.aktiv .ja{border-color:var(--ok)}.aktiv .ja svg{color:var(--ok)}
+.aktiv .nei{border-color:var(--no)}.aktiv .nei svg{color:var(--no)}
