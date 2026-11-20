@@ -216,3 +216,11 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 .innlogging h3{font-family:var(--display)}
 
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Støttefelt over bunnteksten */
+.stotte-band{background:var(--tavle-mork,#1A2E2A);color:var(--papir,#F3EFE4);padding:56px 24px;border-top:4px solid #C98B55}
+.stotte-indre{display:flex;flex-wrap:wrap;align-items:center;gap:24px 32px}
+.stotte-kopp{flex-shrink:0}
+.stotte-tekst{flex:1 1 360px}
+.stotte-tekst h2{margin:0 0 8px;font-size:clamp(26px,3vw,34px);line-height:1.15}
+.stotte-tekst p{margin:0;font-size:17px;line-height:1.55;opacity:.85;max-width:60ch}
