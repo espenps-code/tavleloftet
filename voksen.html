@@ -133,7 +133,7 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
       <h2>Ny elev</h2>
       <form id="nyElev" class="rad">
         <div><label for="navn">Navn (bare for deg)</label><input id="navn" maxlength="40" placeholder="Fornavn eller kallenavn" required></div>
-        <div><label for="verden">Verden</label><select id="verden"><option value="dinoparken">Dinoparken</option><option value="lyslaget">Lyslaget</option></select></div>
+        <div><label for="verden">Verden</label><select id="verden"><option value="dinoparken">Dinoparken</option><option value="dinoparken2">Dinoparken – lyder, venner og klosser</option><option value="lyslaget">Lyslaget</option></select></div>
         <button class="hoved" type="submit">Lag elevkode</button>
       </form>
       <p class="liten" style="margin:10px 0 0">Navnet lagres bare på din konto, og eleven ser det aldri. Bruk gjerne kallenavn eller fornavn. Framgangen lagres under koden, uten navn.</p>
@@ -217,13 +217,18 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
 'use strict';
 var CFG = window.TAVLELOFTET_FIREBASE;
 var FB = '10.12.2';
-var VERDENER = { dinoparken: 'Dinoparken', lyslaget: 'Lyslaget' };
+var VERDENER = { dinoparken: 'Dinoparken', dinoparken2: 'Dinoparken – lyder, venner og klosser', lyslaget: 'Lyslaget' };
+/* Oppgavepakke for verdener som har det. Lagres sammen med elevens framgang rett etter at koden er laget. */
+var PAKKE = { dinoparken2: { nokkel: 'dp2-pakke', verdi: 'lyd-venner-klosser' } };
 var ALFABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 /* Tekst til velkomstbrevet, per verden. «rapport» = verdenen er koblet til framgangsrapporten. */
 var BREV = {
   dinoparken: { rapport: true,
     intro: 'Dinoparken er en læringsverden der eleven bygger sin egen dinosaurpark. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien.',
     om: '<p>I hver innhegning står fem stasjoner med oppgaver: klokka, penger, 10-er-venner, lyder i ord og å lese ord. Oppgavene leses opp.</p><p>Riktige svar gir mynter. Myntene brukes til nye områder og egg som klekkes. Når eleven har 8 riktige av de 10 siste på et nivå, kommer en stjerne og et nytt nivå. Det er det samme som et nådd mål i rapporten.</p><p>Voksenmenyen i verdenen åpnes med voksenkoden over, og lar deg velge startnivå for hvert tema.</p>' },
+  dinoparken2: { rapport: true,
+    intro: 'Dinoparken er en læringsverden der eleven bygger sin egen dinosaurpark. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien. Denne parken har oppgaver som er valgt ut for akkurat denne eleven.',
+    om: '<p>I hver innhegning står fem stasjoner: Lyttetårnet (høre forskjell på lyder som ligner, som P og B), Bokstavreiret (bokstavlyder), Brøleskolen (si lyder, ord og setninger), Vennekroken (følelser og hvordan vi er mot hverandre) og Klosseverkstedet (mønster og logikk). Alt leses opp, og eleven svarer ved å trykke på bilder.</p><p><b>Brøleskolen trenger en voksen.</b> En iPad kan ikke høre om en lyd blir sagt riktig. Derfor holder en voksen inne en knapp for å starte, hører på, og trykker «Bra sagt» eller «Øv en gang til».</p><p>Riktige svar gir mynter. Myntene brukes til nye områder og egg som klekkes. Når eleven har 8 riktige av de 10 siste på et nivå, kommer en stjerne og et nytt nivå. Det er det samme som et nådd mål i rapporten.</p><p>Voksenmenyen i verdenen åpnes med voksenkoden over, og lar deg velge startnivå for hvert tema.</p>' },
   lyslaget: { rapport: false,
     intro: 'Lyslaget er en læringsverden med roboter, der eleven øver på matte, lesing, skriving og klokka.',
     om: '<p>Eleven velger selv hva som skal øves på, og robotene forklarer underveis. Alt eleven gjør, lagres under elevkoden.</p>' }
@@ -307,7 +312,12 @@ $('nyElev').addEventListener('submit', function(e){
     opp['elever/' + k + '/info'] = { eier: bruker.uid, verden: verden, opprettet: nå };
     opp['voksenkoder/' + vk + '/info'] = { elev: k, eier: bruker.uid, opprettet: nå };
     opp['voksne/' + bruker.uid + '/elever/' + k] = { navn: navn, verden: verden, opprettet: nå, voksenkode: vk };
-    return db.ref().update(opp).then(function(){ $('nyVk').textContent = fmtVk(vk); return k; });
+    return db.ref().update(opp).then(function(){
+      var P = PAKKE[verden];   // oppgavepakken må skrives etter at koden finnes (regelen krever det)
+      if (!P) return;
+      var d = {}; d[P.nokkel] = P.verdi;
+      return db.ref('elever/' + k + '/data').update(d).catch(function(){});   // mangler den, bruker verdenen standardpakken
+    }).then(function(){ $('nyVk').textContent = fmtVk(vk); return k; });
   }).then(function(k){
     $('nyNavn').textContent = navn + ' (' + VERDENER[verden] + ')';
     $('nyKodeTekst').textContent = fmt(k); $('nyKode').style.display = 'block';
@@ -320,8 +330,8 @@ $('nyElev').addEventListener('submit', function(e){
 function sammendrag(verden, data){
   if (!data) return 'Ikke startet ennå';
   var n = Object.keys(data).length;
-  if (verden === 'dinoparken') {
-    try { var st = JSON.parse(data['dinoparken-v8']); if (st) return '🪙 ' + (st.coins || 0) + ' · områder ' + ((st.owned || []).length) + ' av 6'; } catch (e) {}
+  if (verden === 'dinoparken' || verden === 'dinoparken2') {
+    try { var st = JSON.parse(data[verden === 'dinoparken2' ? 'dp2-v8' : 'dinoparken-v8']); if (st) return '🪙 ' + (st.coins || 0) + ' · områder ' + ((st.owned || []).length) + ' av 6'; } catch (e) {}
   }
   return n + ' lagrede ting';
 }

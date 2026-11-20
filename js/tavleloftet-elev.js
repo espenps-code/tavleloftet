@@ -20,6 +20,7 @@
   'use strict';
   var VERDENER = {
     dinoparken: { navn: 'Dinoparken', prefikser: ['dinoparken-'] },
+    dinoparken2: { navn: 'Dinoparken', prefikser: ['dp2-'] },      // Dinoparken med oppgavepakker (egne oppgaver per elev)
     lyslaget:   { navn: 'Lyslaget',   prefikser: ['kl-', 'rv-', 'ru-'] }
   };
   var me = document.currentScript;

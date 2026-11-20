@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lydsjekk – Dinoparken (lyder, venner og klosser)</title>
+<link href="../fonts/skrifter.css" rel="stylesheet">
+<style>
+  body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:#1f3b2c;background:#fffdf6;max-width:900px;margin:0 auto;padding:20px;line-height:1.45}
+  h1{font:700 30px Fredoka,sans-serif;margin:0 0 6px} h2{font:700 22px Fredoka,sans-serif;margin:28px 0 6px;border-bottom:3px solid #1f3b2c;padding-bottom:4px}
+  p.ing{margin:4px 0 10px;color:#4a6656}
+  .rad{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #e6dfc8}
+  .rad button{flex:none;min-width:52px;min-height:44px;border:3px solid #1f3b2c;border-radius:12px;background:#fff3cf;font-size:20px;cursor:pointer}
+  .rad span{flex:1}.rad small{color:#7a8a80;font-family:monospace}
+  .par{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .par button{min-width:120px;min-height:56px;border:3px solid #1f3b2c;border-radius:14px;background:#fff;font:600 22px Fredoka,sans-serif;cursor:pointer}
+  .spiller{background:#bfeac4!important}
+  .boks{background:#fff3cf;border:3px solid #e0a21f;border-radius:14px;padding:10px 14px}
+</style></head><body>
+<h1>Lydsjekk</h1>
+<p class="boks">Her kan du høre gjennom alle lydklippene til de nye stasjonene. <b>Hør særlig på ordparene øverst</b>: der må forskjellen mellom P og B, og mellom T og D, være helt tydelig. Finner du et klipp som ikke er bra, noter filnavnet, så leses det inn på nytt.</p>
+<h2>Ordpar (P/B og T/D)</h2><div id="par"></div>
+<h2>Enkeltlyder (fra Myntland, annen stemme)</h2><div class="par" id="lyder"></div>
+<h2>Ord</h2><div class="par" id="ord"></div>
+<div id="grupper"></div>
+<script>window.localStorage||0;</script>
+<script src="oppgaver.js"></script>
+<script>
+(function(){
+  var D=window.DinoOppgaver, T=D._test, spiller=null, lyd=null;
+  function spill(fil,knapp){ if(lyd){ lyd.pause(); } if(spiller) spiller.classList.remove('spiller'); lyd=new Audio(fil); spiller=knapp; knapp.classList.add('spiller'); lyd.onended=function(){ knapp.classList.remove('spiller'); }; lyd.play(); }
+  function knapp(tekst,fil){ var b=document.createElement('button'); b.textContent=tekst; b.onclick=function(){ spill(fil,b); }; return b; }
+  var par=document.getElementById('par');
+  Object.keys(T.LYDPAR).forEach(function(id){ T.LYDPAR[id].par.forEach(function(p){ var d=document.createElement('div'); d.className='par';
+    p.forEach(function(ord){ var o=T.ORD2.find(function(x){ return x.ord===ord; }); d.appendChild(knapp('🔊 '+ord,'lyd/ord-'+o.fil+'.mp3')); }); par.appendChild(d); }); });
+  var lyder=document.getElementById('lyder'); ['P','B','T','D','F','S','L'].forEach(function(b){ lyder.appendChild(knapp('🔊 '+b,'lyd/'+b+'.mp3')); });
+  var ord=document.getElementById('ord'); T.ORD2.forEach(function(o){ ord.appendChild(knapp('🔊 '+o.ord,'lyd/ord-'+o.fil+'.mp3')); });
+  var nye=['Lyttetårnet','Bokstavreiret','Brøleskolen','Vennekroken','Klosseverkstedet','Ros og tilbakemelding'], ut=document.getElementById('grupper');
+  D.klippListe().filter(function(g){ return nye.indexOf(g.navn)>-1; }).forEach(function(g){
+    var h=document.createElement('h2'); h.textContent=g.navn; ut.appendChild(h);
+    var i=document.createElement('p'); i.className='ing'; i.textContent=g.ingress; ut.appendChild(i);
+    g.klipp.forEach(function(k){ var r=document.createElement('div'); r.className='rad'; var s=document.createElement('span'); s.textContent=k.tekst; var sm=document.createElement('small'); sm.textContent=k.fil;
+      r.appendChild(knapp('🔊','lyd/'+k.fil)); r.appendChild(s); r.appendChild(sm); ut.appendChild(r); });
+  });
+})();
+</script>
+</body></html>
