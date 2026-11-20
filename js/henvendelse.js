@@ -1,7 +1,9 @@
 /* =========================================================================
    TAVLELOFTET – henvendelsesskjema (skreddersydd.html#henvendelse)
    Lagrer henvendelsen i Firebase under «henvendelser/». Bare Espen kan lese
-   dem (voksen.html → Henvendelser). Ingen e-post sendes automatisk ennå.
+   dem (voksen.html → Henvendelser). Etterpå sendes et kort varsel (fast tekst,
+   uten innholdet) til kontakt@tavleloftet.no og en bekreftelse til avsenderen,
+   via varsel.tavleloftet.no (webhotellet hos Gigahost).
    ========================================================================= */
 (function(){
   'use strict';
@@ -52,7 +54,14 @@
     firebaseKlar().then(function(db){
       data.tid = firebase.database.ServerValue.TIMESTAMP;
       return db.ref('henvendelser').push(data);
-    }).then(function(){
+    }).then(function(ref){
+      // Varsel og bekreftelse – feil her skal aldri stoppe skjemaet
+      try {
+        fetch('https://varsel.tavleloftet.no/index.php', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+          body: JSON.stringify({ id: ref && ref.key, type: data.type, epost: data.epost || '' })
+        }).catch(function(){});
+      } catch (e) {}
       skjema.reset(); oppdaterType(); skjema.hidden = true; $('henvTakk').hidden = false;
       $('henvTakk').focus();
     }).catch(function(){
