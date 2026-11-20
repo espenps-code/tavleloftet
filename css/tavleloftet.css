@@ -224,3 +224,16 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 .stotte-tekst{flex:1 1 360px}
 .stotte-tekst h2{margin:0 0 8px;font-size:clamp(26px,3vw,34px);line-height:1.15}
 .stotte-tekst p{margin:0;font-size:17px;line-height:1.55;opacity:.85;max-width:60ch}
+
+/* Tabeller og detaljer på tekstsidene (personvern, databehandleravtale) */
+.tekstside h3{font-size:19px;margin:26px 0 6px;color:var(--papir)}
+.tekstside .tabell{overflow-x:auto;margin:14px 0 6px}
+.tekstside table{width:100%;border-collapse:collapse;font-size:15px;line-height:1.5;color:#DCE4E0}
+.tekstside th,.tekstside td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--linje)}
+.tekstside th{color:var(--papir);font-weight:700;background:var(--kort)}
+.tekstside a{color:#F2C14E}
+.tekstside .ingress{font-size:19px}
+.tekstside .liten{font-size:14px;opacity:.8}
+.tekstside .boks{background:var(--kort);border-radius:16px;padding:16px 20px;margin:18px 0}
+.tekstside .felt{background:#2c4a49;border-radius:4px;padding:0 4px}
+@media print{.topp,.bunn{display:none}.tekstside{color:#000}.tekstside p,.tekstside li,.tekstside table,.tekstside h1,.tekstside h2,.tekstside h3,.tekstside th{color:#000;background:none}}

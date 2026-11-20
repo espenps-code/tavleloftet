@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Personvern – Tavleloftet</title>
-<meta name="description" content="Kort om personvern på Tavleloftet: ingen sporing, ingen informasjonskapsler, og elevene registreres ikke med navn.">
+<title>Personvernerklæring – Tavleloftet</title>
+<meta name="description" content="Personvernerklæring for Tavleloftet, Krøniken, læringsverdenene og Jorda rundt: hva som lagres, hvor, hvor lenge og dine rettigheter.">
 <link rel="stylesheet" href="css/tavleloftet.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect x='3' y='6' width='38' height='28' rx='4' fill='%2324453E' stroke='%23C98B55' stroke-width='4'/%3E%3Cpath d='M11 24c4-6 8-6 11-2s7 4 11-4' fill='none' stroke='%23F3EFE4' stroke-width='2.5' stroke-linecap='round'/%3E%3Crect x='10' y='36' width='24' height='5' rx='2.5' fill='%23C98B55'/%3E%3C/svg%3E">
 </head>
@@ -32,21 +32,112 @@
 
 <main class="tekstside">
   <a class="tilbake" href="index.html">← Til forsiden</a>
-  <h1>Personvern</h1>
-  <p>Tavleloftet drives av <strong>Tavleloftet Skjelstad</strong>, et enkeltpersonforetak med org.nr. 838 831 702, Porsmyrvegen 16D, 4250 Kopervik.</p>
-  <p>Spørsmål om personvern eller tjenesten kan du sende på e-post til <a href="mailto:kontakt@tavleloftet.no">kontakt@tavleloftet.no</a> eller via <a href="skreddersydd.html?om=annet#henvendelse">kontaktskjemaet</a>.</p>
-  <p>Den fullstendige personvernerklæringen og databehandleravtalen for Tavleloftet publiseres her snart.</p>
-  <h2>Kort fortalt allerede nå</h2>
+  <h1>Personvernerklæring</h1>
+  <p class="liten">Versjon 1.1 · Gjelder fra 20. november 2026</p>
+  <p class="ingress">Tavleloftet samler så få personopplysninger som mulig. De fleste spillene lagrer ingenting om deg, og elevene logger inn med koder, ikke navn. Navn finnes bare der en lærer selv skriver dem inn i Krøniken.</p>
+  <p>Tavleloftet er en samling spill, klasseprosjekter, lærerverktøy og skreddersydde læringsverdener for barneskolen. Tjenestene drives av <strong>Tavleloftet Skjelstad</strong>, et enkeltpersonforetak med org.nr. 838 831 702, Porsmyrvegen 16D, 4250 Kopervik. Erklæringen gjelder tavleloftet.no med Krøniken (kroniken.no), læringsverdenene og spillene, og Jorda rundt-spillene (jorda-rundt.no). Den forklarer hva som lagres, hvorfor, hvor lenge og hvilke rettigheter du har.</p>
+  <p><a href="https://myntland.no">Myntland</a> og <a href="https://erobrenabolaget.no/personvern.html">Erobre nabolaget</a> har egne personvernerklæringer. Skoler som bruker tjenestene med elever, kan inngå <a href="databehandleravtale.html">databehandleravtale</a> med oss.</p>
+
+  <h2>Hvem er ansvarlig?</h2>
+  <p>Tavleloftet er ansvarlig for nettstedet, henvendelser og lærerkontoer. Skolen er ansvarlig for elevenes data når tjenestene brukes i undervisningen.</p>
+  <div class="tabell"><table>
+    <tr><th>Situasjon</th><th>Behandlingsansvarlig</th><th>Tavleloftets rolle</th></tr>
+    <tr><td>Besøk på nettstedet og henvendelser til oss</td><td>Tavleloftet</td><td>Behandlingsansvarlig</td></tr>
+    <tr><td>Lærerkonto i Krøniken og Jorda rundt-spillene</td><td>Tavleloftet</td><td>Behandlingsansvarlig for selve kontoen</td></tr>
+    <tr><td>Elevdata når en skole bruker tjenestene i undervisningen (læringsverdener, Krøniken-grupper og -prøver, Jorda rundt)</td><td>Skoleeier (kommunen eller den private skolen)</td><td>Databehandler, etter databehandleravtale</td></tr>
+    <tr><td>Spill uten innlogging</td><td>Ingen – ingenting lagres hos oss</td><td>–</td></tr>
+  </table></div>
+
+  <h2>Hvilke opplysninger behandles?</h2>
+  <p>Det meste av Tavleloftet kan brukes uten konto. Ingen tjeneste ber om elevens fødselsdato eller adresse.</p>
+  <div class="tabell"><table>
+    <tr><th>Tjeneste</th><th>Hva som lagres</th><th>Hvor</th></tr>
+    <tr><td>Nettstedet</td><td>Ingen konto. Vertsleverandøren fører en teknisk logg med IP-adresse, tidspunkt og side.</td><td>GitHub Pages</td></tr>
+    <tr><td>Spill uten innlogging (for eksempel Labyrinten, Myldrejakt, Pizzabutikken)</td><td>Bare innstillinger og framgang i nettleseren på enheten. Sendes ikke til oss.</td><td>På enheten</td></tr>
+    <tr><td>Spill «mot en venn» (Fire på rad, Fyrstikkspillet, Gjett hvem, Slagskip)</td><td>En tilfeldig romkode, spilltilstanden og et valgfritt kallenavn mens dere spiller.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Skreddersydde læringsverdener (Dinoparken, Lyslaget)</td><td>Elevkode og voksenkode, mynter og framgang i verdenen: antall oppgaver, riktige svar og datoen hvert mål ble nådd. Ingen navn eller diagnoser. Navnet den voksne eventuelt skriver i rapporten, lagres bare i nettleseren på den voksnes egen enhet.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Krøniken – lærer</td><td>E-postadresse og innloggingsmetode (Google eller e-post og passord).</td><td>Firebase-innlogging (se under)</td></tr>
+    <tr><td>Krøniken – Mine grupper og arbeidsark</td><td>Gruppenavn og elevenes navn slik læreren skriver dem, hvilke oppgaver hver elev har gjort, og hvilke timer en elev er markert borte. Bare læreren som eier gruppa, kan se dette. Bruk gjerne fornavn eller kallenavn.</td><td>Firebase, EU</td></tr>
+    <tr><td>Krøniken – prøver</td><td>Prøvekoder og elevens svar. Svarene lagres bare med koden. Hvem koden tilhører, ser bare læreren.</td><td>Firebase, EU</td></tr>
+    <tr><td>Krøniken – quizspill</td><td>Romkode, kallenavn og svar mens spillet pågår.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Jorda rundt, Europa rundt, Norge rundt – lærer</td><td>Navn, e-postadresse, innloggingsmetode og spillene læreren har laget.</td><td>Spillene: Firebase, Belgia. Kontoen: Firebase-innlogging (se under)</td></tr>
+    <tr><td>Jorda rundt, Europa rundt, Norge rundt – elever</td><td>Anonym innlogging med gruppekode og PIN. Gruppenavn og farge (valgt av klassen), reiser, saldo, erobrede steder og en logg over hendelser i spillet.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Fotostudio (Reisebildet)</td><td>Bildet behandles bare i nettleseren og lastes ned til enheten. Det lastes ikke opp til oss.</td><td>På enheten</td></tr>
+    <tr><td>Henvendelser via skjemaet</td><td>Navn, e-post, rolle, skole og det du skriver. Du får en bekreftelse på e-post, og vi får et varsel uten innholdet.</td><td>Firebase, Belgia. E-post via Gigahost, Norge</td></tr>
+    <tr><td>Bestillinger og faktura</td><td>Navn, skole eller kommune og fakturaopplysninger.</td><td>Regnskapssystem</td></tr>
+  </table></div>
+  <p>Gruppenavn og koder skal ikke inneholde elevenes fulle navn. Vi ber skolene ikke legge inn sensitive opplysninger, for eksempel helseopplysninger eller diagnoser, i noen av tjenestene.</p>
+
+  <h2>Hvorfor, og med hvilket grunnlag?</h2>
+  <p>Opplysningene brukes bare til å levere tjenestene, aldri til reklame, profilering eller salg. Elevdata sendes aldri til KI-tjenester.</p>
+  <div class="tabell"><table>
+    <tr><th>Behandling</th><th>Formål</th><th>Rettslig grunnlag (personvernforordningen)</th></tr>
+    <tr><td>Teknisk logg på nettstedet</td><td>Drift, feilsøking og sikkerhet</td><td>Art. 6 nr. 1 bokstav f – berettiget interesse</td></tr>
+    <tr><td>Lærerkonto</td><td>Logge inn og lagre det læreren lager</td><td>Art. 6 nr. 1 bokstav b – avtale med læreren</td></tr>
+    <tr><td>Elevdata i undervisningen</td><td>Gjennomføre spillet, verdenen eller opplegget i undervisningen</td><td>Skolens grunnlag, normalt art. 6 nr. 1 bokstav e, jf. opplæringslova. Skolen avgjør dette.</td></tr>
+    <tr><td>Henvendelser og bestillinger</td><td>Svare, levere og fakturere</td><td>Art. 6 nr. 1 bokstav b – avtale (eller tiltak før avtale)</td></tr>
+    <tr><td>Regnskap</td><td>Oppbevare bilag</td><td>Art. 6 nr. 1 bokstav c – plikt etter bokføringsloven</td></tr>
+  </table></div>
+
+  <h2>Hvor lagres opplysningene, og hvem hjelper oss?</h2>
+  <p>Alle data fra spillene, verdenene og Krøniken lagres i Google Firebase-databaser i EU. Selve innloggingen (lærerens e-postadresse) håndteres av Firebase Authentication, som Google driver globalt. Skriftene ligger på vår egen server, så ingenting hentes fra Google Fonts.</p>
+  <div class="tabell"><table>
+    <tr><th>Leverandør</th><th>Hva de gjør for oss</th><th>Hvor</th></tr>
+    <tr><td>Google Ireland Ltd. (Firebase)</td><td>Database og skyfunksjoner</td><td>EU: Belgia (europe-west1). Krøniken: EU, Belgia og Nederland (eur3)</td></tr>
+    <tr><td>Google (Firebase Authentication)</td><td>Innlogging for lærere og anonyme elevkontoer i Jorda rundt</td><td>Globalt, med EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
+    <tr><td>GitHub, Inc. (GitHub Pages)</td><td>Leverer selve nettsidene</td><td>USA, med grunnlag i EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
+    <tr><td>Gigahost AS</td><td>E-post, bekreftelse og varsel om henvendelser</td><td>Norge</td></tr>
+    <tr><td>jsDelivr, unpkg og cdnjs (Cloudflare)</td><td>Programbiblioteker, for eksempel 3D-kloden, 3D-verdenene og QR-koder. De ser IP-adressen din når siden lastes.</td><td>Globalt</td></tr>
+    <tr><td>Wikimedia Commons</td><td>Bilder av steder i Jorda rundt-spillene. Wikimedia ser IP-adressen din når et bilde vises.</td><td>Globalt</td></tr>
+  </table></div>
+  <p>Eventuell teknisk støtte fra Google LLC i USA er regulert av EU-kommisjonens standardkontrakter og Googles databehandlervilkår for Firebase. Vi deler ikke opplysninger med andre, med mindre loven krever det. Lenken «Støtt Tavleloftet» åpner Buy Me a Coffee, et eget nettsted. Ingenting sendes dit før du klikker.</p>
+
+  <h2>Hvor lenge lagres opplysningene?</h2>
+  <p>Vi lagrer opplysningene bare så lenge tjenesten brukes. Et skript sletter gamle spill, rom og kontoer automatisk hver natt.</p>
+  <div class="tabell"><table>
+    <tr><th>Opplysninger</th><th>Slettes</th></tr>
+    <tr><td>Rom i spill «mot en venn» og Krøniken-quiz</td><td>24 timer etter at rommet ble laget eller sist brukt</td></tr>
+    <tr><td>Framgang i læringsverdenene, med voksenkode</td><td>Når den voksne eller vi sletter koden, innen 30 dager etter at avtalen med skolen er avsluttet, og senest 12 måneder etter siste aktivitet</td></tr>
+    <tr><td>Krøniken: grupper, arbeidsark og prøver</td><td>Når læreren sletter dem, og senest 12 måneder etter siste endring</td></tr>
+    <tr><td>Spill i Jorda rundt, Europa rundt og Norge rundt</td><td>Når læreren sletter spillet, og senest 12 måneder etter siste aktivitet</td></tr>
+    <tr><td>Lærerkontoer og anonyme elevkontoer</td><td>Når læreren ber om det. Ellers lærerkontoer 24 måneder og anonyme elevkontoer 12 måneder etter siste innlogging</td></tr>
+    <tr><td>Henvendelser via skjemaet</td><td>12 måneder etter at de kom inn</td></tr>
+    <tr><td>E-postkorrespondanse</td><td>Når saken er avsluttet, og senest etter 3 år</td></tr>
+    <tr><td>Fakturaer og regnskapsbilag</td><td>Etter 5 år, som bokføringsloven krever</td></tr>
+    <tr><td>Teknisk logg hos vertsleverandøren</td><td>Etter leverandørens egne regler</td></tr>
+  </table></div>
+
+  <h2>Lagring i nettleseren</h2>
+  <p>Tavleloftet bruker ingen informasjonskapsler for sporing, analyse eller reklame, og viser derfor ingen samtykkeboks. Noen tjenester lagrer litt i nettleseren på enheten:</p>
   <ul>
-    <li>I spillene og klasseprosjektene lager elevene ingen kontoer. De bruker kallenavn eller gruppenavn.</li>
-    <li>I de skreddersydde læringsverdenene logger eleven inn med en kode. Under koden lagres bare framgangen i verdenen, i et datasenter i Belgia. Den voksne ser framgangen med en egen voksenkode.</li>
-    <li>Data fra spill og klasseprosjekter slettes automatisk når de ikke trengs lenger – spillrom etter et døgn, klassespill etter tolv måneder.</li>
-    <li>Ingen reklame og ingen sporing. Skrifttypene ligger på vår egen side, så ingenting hentes fra Google Fonts.</li>
-    <li>Sender du en henvendelse via skjemaet, lagres navn, e-post og det du skriver, slik at jeg kan svare deg. Bare jeg kan lese det, og det slettes senest 12 måneder etter siste kontakt. Skriv ikke elevens navn eller helseopplysninger i skjemaet.</li>
-    <li>E-posten vår ligger hos Gigahost, på servere i Norge.</li>
-    <li>Myntland har egne vilkår og egen personvernerklæring på <a href="https://myntland.no">myntland.no</a>.</li>
+    <li><strong>Innstillinger og framgang i spill</strong>, for eksempel lyd av eller på og hvilke baner som er løst. Dette blir på enheten.</li>
+    <li><strong>Innlogging</strong>: elevkoden i læringsverdenene og innloggingsnøkkelen fra Firebase, slik at lærere og elever holdes innlogget.</li>
+    <li><strong>Navn i rapporten</strong>: navnet den voksne skriver i framgangsrapporten.</li>
   </ul>
+  <p>Denne lagringen er nødvendig for at tjenesten du har bedt om skal virke, og krever derfor ikke samtykke etter ekomloven. Du kan slette den når som helst i nettleserens innstillinger.</p>
+
+  <h2>Sikkerhet</h2>
+  <p>Tjenestene er bygget slik at det lagres minst mulig, og at hver bruker bare får tilgang til sine egne data.</p>
+  <ul>
+    <li>All trafikk går kryptert over HTTPS.</li>
+    <li>Databasereglene gjør at ingen kan liste ut elever, koder, grupper eller henvendelser. En lærer ser bare sine egne grupper, prøver og spill. En elevkode eller voksenkode gir bare tilgang til den ene eleven.</li>
+    <li>Kjøp og andre handlinger elevene gjør i Jorda rundt-spillene, kontrolleres av en skyfunksjon på serveren.</li>
+    <li>Elever i læringsverdenene og Jorda rundt logger inn uten navn, og bilder fra Fotostudio forlater aldri enheten.</li>
+    <li>Bare innehaveren av Tavleloftet har administrativ tilgang til databasene.</li>
+  </ul>
+
+  <h2>Dine rettigheter</h2>
+  <p>Du kan be om innsyn i, retting av eller sletting av opplysningene om deg. Du har også rett til å be om begrenset behandling, å protestere mot behandling som bygger på berettiget interesse, og å få utlevert opplysninger du har gitt oss (dataportabilitet).</p>
+  <p><strong>Elever og foresatte:</strong> Tjenestene er laget for barn, og barns rettigheter utøves vanligvis av foresatte. Fordi elevdata behandles på vegne av skolen, bør foresatte først kontakte skolen. Vi hjelper skolen med å svare.</p>
+  <p><strong>Klage:</strong> Mener du at vi behandler opplysninger i strid med regelverket, kan du klage til <a href="https://www.datatilsynet.no">Datatilsynet</a>. Vi setter pris på om du tar kontakt med oss først, så vi kan rette opp feilen.</p>
+
+  <h2>Endringer og kontakt</h2>
+  <p>Vi oppdaterer erklæringen når tjenestene endres, og varsler skoler med databehandleravtale før større endringer.</p>
+  <div class="boks">
+    <p style="margin:0"><strong>Kontakt om personvern</strong><br>Tavleloftet Skjelstad, org.nr. 838 831 702<br>E-post: <a href="mailto:kontakt@tavleloftet.no">kontakt@tavleloftet.no</a><br>Postadresse: Porsmyrvegen 16D, 4250 Kopervik</p>
+  </div>
 </main>
+
 <footer class="bunn">
   <div class="wrap">
     <div class="navn">Tavleloftet</div>
@@ -57,6 +148,7 @@
       <a href="elev/">Elevinnlogging</a>
       <a href="rapport.html">Framgangsrapport</a>
       <a href="personvern.html">Personvern</a>
+      <a href="databehandleravtale.html">Databehandleravtale</a>
       <a href="https://buymeacoffee.com/tavleloftet" target="_blank" rel="noopener">Støtt Tavleloftet</a>
       <a href="skreddersydd.html?om=annet#henvendelse">Kontakt</a>
     </nav>
