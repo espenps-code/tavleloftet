@@ -85,7 +85,7 @@
     <tr><th>Leverandør</th><th>Hva de gjør for oss</th><th>Hvor</th></tr>
     <tr><td>Google Ireland Ltd. (Firebase)</td><td>Database og skyfunksjoner</td><td>EU: Belgia (europe-west1). Krøniken: EU, Belgia og Nederland (eur3)</td></tr>
     <tr><td>Google (Firebase Authentication)</td><td>Innlogging for lærere og anonyme elevkontoer i Jorda rundt</td><td>Globalt, med EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
-    <tr><td>GitHub, Inc. (GitHub Pages)</td><td>Leverer selve nettsidene</td><td>USA, med grunnlag i EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
+    <tr><td>GitHub, Inc. (GitHub Pages og Actions)</td><td>Leverer selve nettsidene, kjører den nattlige slettingen og lagrer krypterte sikkerhetskopier som GitHub ikke kan lese</td><td>USA, med grunnlag i EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
     <tr><td>Gigahost AS</td><td>E-post, bekreftelse og varsel om henvendelser</td><td>Norge</td></tr>
     <tr><td>jsDelivr, unpkg og cdnjs (Cloudflare)</td><td>Programbiblioteker, for eksempel 3D-kloden, 3D-verdenene og QR-koder. De ser IP-adressen din når siden lastes.</td><td>Globalt</td></tr>
     <tr><td>Wikimedia Commons</td><td>Bilder av steder i Jorda rundt-spillene. Wikimedia ser IP-adressen din når et bilde vises.</td><td>Globalt</td></tr>
@@ -104,8 +104,11 @@
     <tr><td>Henvendelser via skjemaet</td><td>12 måneder etter at de kom inn</td></tr>
     <tr><td>E-postkorrespondanse</td><td>Når saken er avsluttet, og senest etter 3 år</td></tr>
     <tr><td>Fakturaer og regnskapsbilag</td><td>Etter 5 år, som bokføringsloven krever</td></tr>
+    <tr><td>Krypterte sikkerhetskopier av databasene</td><td>Automatisk etter 14 dager</td></tr>
     <tr><td>Teknisk logg hos vertsleverandøren</td><td>Etter leverandørens egne regler</td></tr>
   </table></div>
+
+  <p>Det som slettes, forsvinner også fra sikkerhetskopiene innen 14 dager.</p>
 
   <h2>Lagring i nettleseren</h2>
   <p>Tavleloftet bruker ingen informasjonskapsler for sporing, analyse eller reklame, og viser derfor ingen samtykkeboks. Noen tjenester lagrer litt i nettleseren på enheten:</p>
@@ -120,6 +123,7 @@
   <p>Tjenestene er bygget slik at det lagres minst mulig, og at hver bruker bare får tilgang til sine egne data.</p>
   <ul>
     <li>All trafikk går kryptert over HTTPS.</li>
+    <li>Databasene sikkerhetskopieres hver natt. Kopiene krypteres før de lagres, og slettes etter 14 dager.</li>
     <li>Databasereglene gjør at ingen kan liste ut elever, koder, grupper eller henvendelser. En lærer ser bare sine egne grupper, prøver og spill. En elevkode eller voksenkode gir bare tilgang til den ene eleven.</li>
     <li>Kjøp og andre handlinger elevene gjør i Jorda rundt-spillene, kontrolleres av en skyfunksjon på serveren.</li>
     <li>Elever i læringsverdenene og Jorda rundt logger inn uten navn, og bilder fra Fotostudio forlater aldri enheten.</li>

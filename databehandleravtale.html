@@ -115,12 +115,12 @@
   <p>Behandlingen består av innsamling, lagring, visning, endring og sletting. Tjenestene er ikke laget for særlige kategorier av personopplysninger (art. 9), og slike skal ikke registreres. Bilder tatt i Fotostudio (Reisebildet) behandles bare i nettleseren på enheten og lagres ikke hos Tavleloftet. De er derfor ikke en del av denne avtalen.</p>
 
   <h2>Bilag B – Underdatabehandlere</h2>
-  <p>Elevdata lagres i Google Firebase-databaser i EU. De andre leverandørene ser bare IP-adresser når en side lastes, eller behandler kontakt med skolen.</p>
+  <p>Elevdata lagres i Google Firebase-databaser i EU. De andre leverandørene ser bare IP-adresser når en side lastes, lagrer krypterte sikkerhetskopier de ikke kan lese, eller behandler kontakt med skolen.</p>
   <div class="tabell"><table>
     <tr><th>Underdatabehandler</th><th>Tjeneste</th><th>Opplysninger</th><th>Lokasjon og overføringsgrunnlag</th></tr>
     <tr><td>Google Ireland Ltd. (Firebase)</td><td>Database og skyfunksjoner</td><td>Alle opplysninger i Bilag A</td><td>EU: Belgia (europe-west1). Krøniken: Belgia og Nederland (eur3). Eventuell støtte fra Google LLC: EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
     <tr><td>Google (Firebase Authentication)</td><td>Innlogging</td><td>Lærerens e-post og navn, anonyme elevkontoer i Jorda rundt</td><td>Globalt, EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
-    <tr><td>GitHub, Inc. (GitHub Pages)</td><td>Levering av nettsidene</td><td>IP-adresse og teknisk logg</td><td>USA, EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
+    <tr><td>GitHub, Inc. (GitHub Pages og Actions)</td><td>Levering av nettsidene, nattlig sletting og lagring av krypterte sikkerhetskopier</td><td>IP-adresse og teknisk logg. Sikkerhetskopiene er kryptert før lagring, så GitHub har ikke tilgang til innholdet</td><td>USA, EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
     <tr><td>Gigahost AS</td><td>E-post</td><td>Kontakt med skolen og bestilleren, ikke elevdata</td><td>Norge</td></tr>
     <tr><td>jsDelivr, unpkg og cdnjs (Cloudflare)</td><td>Programbiblioteker</td><td>IP-adresse</td><td>Globalt</td></tr>
     <tr><td>Wikimedia Commons</td><td>Bilder i Jorda rundt-spillene</td><td>IP-adresse</td><td>Globalt</td></tr>
@@ -147,7 +147,7 @@
     <li>All trafikk går kryptert over HTTPS.</li>
     <li>Google krypterer lagrede data.</li>
     <li>Gamle data slettes automatisk hver natt etter fristene i Bilag A.</li>
-    <li>Det tas ikke automatiske sikkerhetskopier av databasene. Voksensiden kan eksportere én elevs framgang som fil.</li>
+    <li>Det tas en kryptert sikkerhetskopi av databasene hver natt (AES-256). Kopiene slettes automatisk etter 14 dager, og bare Tavleloftet har nøkkelen.</li>
   </ul>
   <h3>Organisatorisk</h3>
   <ul>
