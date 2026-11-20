@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /voksen.html
+Disallow: /rapport.html
+Disallow: /elev/
+
+Sitemap: https://tavleloftet.no/sitemap.xml
