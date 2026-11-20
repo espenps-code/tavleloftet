@@ -270,17 +270,17 @@ function tegn(){
   }
 
   /* --- Alle målene --- */
-  h += '<h2>Målene</h2><table><thead><tr><th>Mål</th><th>Status</th><th>Dato nådd</th><th class="skjul">Framgang</th><th class="gjor"></th></tr></thead><tbody>';
+  h += '<h2>Målene</h2><table><thead><tr><th>Mål</th><th>Status</th><th>Dato nådd</th><th class="skjul">Framgang</th></tr></thead><tbody>';
   var forrige = null;
   S.forEach(function(r){
-    if (r.gruppe !== forrige) { forrige = r.gruppe; h += '<tr class="gruppe"><td colspan="5">' + (r.gruppe.ikon ? r.gruppe.ikon + ' ' : '') + esc(r.gruppe.navn) + '</td></tr>'; }
+    if (r.gruppe !== forrige) { forrige = r.gruppe; h += '<tr class="gruppe"><td colspan="4">' + (r.gruppe.ikon ? r.gruppe.ikon + ' ' : '') + esc(r.gruppe.navn) + '</td></tr>'; }
     var merke = r.type === 'naadd' ? '<span class="merke m-naadd">✓ Nådd</span>' : r.type === 'vei' ? '<span class="merke m-vei">På vei</span>' : '<span class="merke m-ikke">Ikke startet</span>';
     if (r.repeter) merke += ' <span class="merke m-rep">Bør repeteres</span>';
     var detalj = r.v.antall ? r.v.antall + ' oppg. · ' + r.v.riktigeSiste + '/' + r.v.avSiste + ' siste riktige · ' + r.v.dager + (r.v.dager === 1 ? ' dag' : ' dager') : r.type === 'naadd' ? 'Nådd før rapporten ble koblet på' : 'Krav: ' + r.krav.riktige + ' riktige av de ' + r.krav.oppgaver + ' siste' + (r.krav.dager > 1 ? ', ' + r.krav.dager + ' dager' : '');
     h += '<tr data-maal="' + esc(r.maal.id) + '"><td>' + esc(r.maal.navn) + '</td><td>' + merke + '</td>' +
          '<td class="dato">' + (r.naadd ? dato(r.naadd) + (r.manuelt ? ' <span class="detalj">(godkjent av voksen)</span>' : r.senest ? ' <span class="detalj">(eller tidligere)</span>' : '') : r.opphevet ? '<span class="detalj">opphevet av voksen</span>' : '') + '</td>' +
          '<td class="skjul"><div class="stolpe"><i style="width:' + Math.round((r.type === 'naadd' ? 1 : r.v.andel) * 100) + '%"></i></div><div class="detalj">' + detalj + '</div></td>' +
-         '<td class="gjor">' + (r.type === 'naadd' ? '<button data-g="opphev">Opphev</button>' : '<button data-g="godkjenn">Godkjenn</button>') + (r.manuelt || r.opphevet ? ' <button data-g="auto">Angre</button>' : '') + '</td></tr>';
+         '</tr>';
   });
   h += '</tbody></table>';
 

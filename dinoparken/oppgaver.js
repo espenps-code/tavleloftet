@@ -900,11 +900,12 @@ function voksen(){
   R=null;   // egen kodeboks (ingen nettleserdialoger)
   rot.style.setProperty('--st','#1f3b2c');
   $d('doIkon').textContent='🔒'; $d('doTittel').textContent='Voksenmeny'; $d('doUnder').textContent='Læringsfremgang i Dinoparken';
-  $d('doPrikker').innerHTML=''; $d('doTekst').textContent='Skriv inn koden:';
-  $d('doBoks').innerHTML=`<div class="do-valg"><input id="doKode" class="do-input" inputmode="numeric" type="password" autocomplete="off" aria-label="Kode"><button class="do-knapp go" id="doKodeOk">Åpne</button></div>`;
+  $d('doPrikker').innerHTML=''; $d('doTekst').textContent='Skriv inn voksenkoden fra velkomstbrevet:';
+  $d('doBoks').innerHTML=`<div class="do-valg"><input id="doKode" class="do-input" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="14" type="password" autocomplete="off" aria-label="Voksenkode"><button class="do-knapp go" id="doKodeOk">Åpne</button></div>`;
   $d('doFot').innerHTML='';
   rot.classList.add('vis'); document.body.classList.add('do-åpen');
-  const sjekk=()=>{ if($d('doKode').value===LÆRING.voksenKode) visVoksen(); else { $d('doKode').value=''; $d('doTekst').textContent='Feil kode – prøv igjen:'; } };
+  const kodeOk=v=>(window.TL&&TL.sjekkVoksenkode&&TL.kode)?TL.sjekkVoksenkode(v):Promise.resolve(v===LÆRING.voksenKode);
+  const sjekk=()=>{ $d('doTekst').textContent='Sjekker …'; kodeOk($d('doKode').value).then(ok=>{ if(ok) visVoksen(); else { $d('doKode').value=''; $d('doTekst').textContent='Feil kode – prøv igjen:'; } }); };
   $d('doKodeOk').onclick=sjekk; $d('doKode').onkeydown=e=>{ if(e.key==='Enter') sjekk(); };
   setTimeout(()=>$d('doKode').focus(),50);
 }

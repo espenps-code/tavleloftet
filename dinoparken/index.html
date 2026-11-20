@@ -307,8 +307,8 @@
     <button class="mclose" id="adultClose" aria-label="Lukk">×</button>
     <div id="aPin">
       <h2 id="adultTitle">Voksenmeny</h2>
-      <p>Skriv inn voksenkoden.</p>
-      <input class="pinIn" id="pinIn" type="password" inputmode="numeric" autocomplete="off" maxlength="8" aria-label="Voksenkode">
+      <p>Skriv inn voksenkoden fra velkomstbrevet (for eksempel 12345-ABCDE).</p>
+      <input class="pinIn" id="pinIn" type="password" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" aria-label="Voksenkode">
       <div class="fb no" id="pinFb"></div>
       <button class="btn go" id="pinGo">Åpne</button>
     </div>
@@ -1291,9 +1291,17 @@ function unlock(e){
 function adultView(v){ ['aPin','aMenu','aConfirm'].forEach(id=>$(id).hidden=id!==v); }
 function openAdult(){ adultView('aPin'); $('pinIn').value=''; $('pinFb').textContent=''; $('adult').hidden=false; setTimeout(()=>$('pinIn').focus(),50); }
 function closeAdult(){ $('adult').hidden=true; }
+function voksenkodeOk(skrevet){
+  // På Tavleloftet: elevens egen voksenkode. Utenfor (lokal testing): den gamle koden i CONFIG.
+  if(window.TL && TL.sjekkVoksenkode && TL.kode) return TL.sjekkVoksenkode(skrevet);
+  return Promise.resolve(skrevet===String(CONFIG.adultPin));
+}
 function tryPin(){
-  if($('pinIn').value===String(CONFIG.adultPin)){ $('aCoins').textContent=state.coins; $('aOwned').textContent=state.owned.length; adultView('aMenu'); }
-  else { $('pinFb').textContent='Feil kode'; $('pinIn').select(); }
+  $('pinFb').textContent='Sjekker …';
+  voksenkodeOk($('pinIn').value).then(ok=>{
+    if(ok){ $('pinFb').textContent=''; $('aCoins').textContent=state.coins; $('aOwned').textContent=state.owned.length; adultView('aMenu'); }
+    else { $('pinFb').textContent='Feil kode'; $('pinIn').select(); }
+  });
 }
 $('adultBtn').addEventListener('click',openAdult);
 $('adultClose').addEventListener('click',closeAdult);

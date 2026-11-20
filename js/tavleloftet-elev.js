@@ -88,6 +88,16 @@
   };
   TL.formater = function (k) { return k ? k.slice(0, 3) + '-' + k.slice(3) : ''; };
   TL.KODE_RE = KODE_RE;
+  /* Voksenmenyen i verdenene: åpnes med elevens egen voksenkode (fra velkomstbrevet),
+     ikke en felles kode. Sjekker at voksenkoden hører til eleven som er logget inn. */
+  TL.sjekkVoksenkode = function (skrevet) {
+    var vk = String(skrevet || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+    if (!/^[A-HJ-NP-Z2-9]{10}$/.test(vk) || !TL.kode) return Promise.resolve(false);
+    return fetch(url('voksenkoder/' + vk + '/info'), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (info) { return !!(info && info.elev === TL.kode); })
+      .catch(function () { return false; });
+  };
 
   if (side === 'logginn') return;          // innloggingssida trenger ikke resten
 
