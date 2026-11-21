@@ -12,6 +12,7 @@
 <script src="js/tavleloftet-firebase.js"></script>
 <script src="js/maal-dinoparken.js"></script>
 <script src="js/maal-dinoparken2.js"></script>
+<script src="js/maal-lyslaget.js"></script>
 <script src="js/tavleloftet-framgang.js"></script>
 <style>
 @font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url(fonts/fredoka-latin-700-normal.woff2) format('woff2')}
@@ -219,7 +220,10 @@ function velg(vk){
 /* ================= Regn ut status for hvert mål ================= */
 function status(kode){
   var el = elever[kode], logg = logger[kode].logg, ov = overstyr[kode] || {};
-  return F.alleMaal(el.verden).filter(function(x){ return !x.gruppe.pakke || !el.pakke || x.gruppe.pakke === el.pakke; }).map(function(x){
+  // Grupper merket «skjulTom» (f.eks. nivåer eleven ikke bruker) vises bare når eleven har jobbet der
+  var aktiv = {};
+  F.alleMaal(el.verden).forEach(function(x){ if (logg.m[x.maal.id] || ov[x.maal.id]) aktiv[x.gruppe.id] = 1; });
+  return F.alleMaal(el.verden).filter(function(x){ return (!x.gruppe.pakke || !el.pakke || x.gruppe.pakke === el.pakke) && (!x.gruppe.skjulTom || aktiv[x.gruppe.id]); }).map(function(x){
     var m = logg.m[x.maal.id], k = F.krav(el.verden, x.maal.id), v = F.vurder(m, k), o = ov[x.maal.id];
     var r = { gruppe: x.gruppe, maal: x.maal, krav: k, v: v, sist: m && m.l, type: 'ikke', naadd: null, manuelt: false };
     if (o && o.s === 'godkjent') { r.type = 'naadd'; r.naadd = o.dato; r.manuelt = true; }

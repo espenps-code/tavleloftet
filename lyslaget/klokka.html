@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <script src="../js/tavleloftet-firebase.js"></script>
 <script src="../js/tavleloftet-elev.js" data-verden="lyslaget"></script>
+<script src="../js/maal-lyslaget.js"></script>
+<script src="../js/tavleloftet-framgang.js" data-verden="lyslaget"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Spors stasjon: lær klokka med Spor, steg for steg.">
 <meta name="theme-color" content="#133a6b">
@@ -527,7 +529,8 @@ let alleApne = les('kl-alle', false);
 const erFerdig = id => ferdig.includes(id);
 const nesteIndeks = () => { const i = STASJONER.findIndex(s => !erFerdig(s.id)); return i < 0 ? STASJONER.length - 1 : i; };
 const erApen = i => alleApne || i <= nesteIndeks();
-function merkFerdig(id) { if (!erFerdig(id)) { ferdig.push(id); skrivLS('kl-ferdig', ferdig); } }
+function merkFerdig(id) { if (!erFerdig(id)) { ferdig.push(id); skrivLS('kl-ferdig', ferdig); } if (window.TLFramgang) TLFramgang.merkNaadd('kl-' + id); }   // fullført stasjon = nådd mål i rapporten
+if (window.TLFramgang) ferdig.forEach(id => TLFramgang.merkNaadd('kl-' + id, true));   // stasjoner som var fullført før rapporten ble koblet på
 
 /* ---------- oppgaver ---------- */
 function feilTider(h, m, M, antall = 2) {
@@ -710,7 +713,7 @@ function visKart() {
     <div class="verktoy"><button type="button" class="pille" id="laas">${alleApne ? 'Lås stasjonene igjen' : 'Lås opp alle stasjoner'}</button>
       <button type="button" class="pille" id="nullstill">Nullstill framgang</button></div>
   </details>
-  <p class="fot">Ingen innlogging. Ingenting sendes noe sted. Framgangen lagres bare på denne maskinen.</p>`;
+  <p class="fot">Framgangen lagres under elevkoden, uten navn. Voksne kan se framgangen i <a href="../rapport.html" style="color:inherit">rapporten</a>.</p>`;
   app.innerHTML = html;
   koblLyd();
   app.querySelectorAll('[data-start]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.start; if (erApen(i)) startStasjon(i); }));
@@ -917,6 +920,7 @@ function svar(verdi, knapp) {
 }
 function feil(o, knapp, egenTekst) {
   const t = tilstand; t.forsok++;
+  if (t.fase === 2 && t.forsok === 1 && window.TLFramgang) TLFramgang.logg('kl-' + STASJONER[t.si].id, false);   // rapporten: første forsøk var feil
   t.niva = Math.min(2, t.niva + 1);
   if (t.fase === 2 && !o.gjentatt && t.ekstra < 4) { const kopi = { ...o, gjentatt: true }; t.ko.push(kopi); o.gjentatt = true; t.ekstra++; }
   // tegn på nytt med hint, men behold allerede utelukkede svar
@@ -929,6 +933,7 @@ function feil(o, knapp, egenTekst) {
 }
 function riktig(o) {
   const t = tilstand; t.lost = true;
+  if (t.fase === 2 && !t.forsok && window.TLFramgang) TLFramgang.logg('kl-' + STASJONER[t.si].id, true);   // rapporten: riktig på første forsøk («Selv»-delen)
   app.querySelectorAll('.vbtn').forEach(b => { b.disabled = true; if (b.dataset.verdi === o.svar) b.classList.add('rett'); });
   const sj = document.getElementById('sjekk'); if (sj) sj.hidden = true;
   let tekst, klipp;

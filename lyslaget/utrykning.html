@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <script src="../js/tavleloftet-firebase.js"></script>
 <script src="../js/tavleloftet-elev.js" data-verden="lyslaget"></script>
+<script src="../js/maal-lyslaget.js"></script>
+<script src="../js/tavleloftet-framgang.js" data-verden="lyslaget"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Utrykning: hjelp Pil å forvandle seg med matte, lesing og skriving.">
 <meta name="theme-color" content="#133a6b">
@@ -743,7 +745,7 @@ function alarm() {
         <div class="alarm-knapper"><button class="stor-knapp" id="start">${st.startet ? 'Fortsett utrykningen' : 'Start utrykningen'}</button>
         <button class="les" id="les" aria-label="Les opp">${HOYTTALER}</button></div></div></div>
   </article>
-  <div class="fot"><span>Nivå: ${NIVAER[nivaa].navn} (${NIVAER[nivaa].besk}) · Ingenting sendes noe sted.</span><button class="lenkeknapp" id="voksne">For voksne</button></div>`;
+  <div class="fot"><span>Nivå: ${NIVAER[nivaa].navn} (${NIVAER[nivaa].besk}) · Framgangen lagres under elevkoden, uten navn.</span><button class="lenkeknapp" id="voksne">For voksne</button></div>`;
   koblTopp();
   document.getElementById('start').addEventListener('click', () => { st.startet = true; lagre(); st.ferdig ? klar() : oppgave(); });
   document.getElementById('les').addEventListener('click', () => spill([`u/alarm-${SC.id}`], SC.alarm, true));
@@ -856,17 +858,21 @@ function oppgave() {
   document.getElementById('les').addEventListener('click', () => spill(o.lyd, o.tekst, true));
   spill(o.lyd, o.tekst);
   const knapp = document.getElementById('sjekk');
+  let bom = false; const maalId = 'u-' + o.kat + '-' + nivaa;   // rapporten: ett svar per oppgave, riktig bare hvis første «Sjekk» var riktig
+  const logg = ok => { if (window.TLFramgang) TLFramgang.logg(maalId, ok); };
   knapp.onclick = () => {
     const tomme = bokser.filter(b => !b.låst && b.val === '');
     if (tomme.length) { ctx.si('Fyll ut alle boksene først.', '', 'svar/fyll-ut'); sett(tomme[0]); return; }
     let feil = 0;
     bokser.forEach(b => { if (b.låst) return; if (+b.val === b.ans) { b.låst = true; b.el.classList.remove('aktiv', 'feil'); b.el.classList.add('ok'); } else { feil++; b.el.classList.add('feil'); } });
-    if (feil) { ctx.si('Nesten! Én boks er ikke riktig. Prøv igjen.', 'try', 'svar/nesten-en'); sett(bokser.find(b => !b.låst)); return; }
+    if (feil) { if (!bom) { bom = true; logg(false); } ctx.si('Nesten! Én boks er ikke riktig. Prøv igjen.', 'try', 'svar/nesten-en'); sett(bokser.find(b => !b.låst)); return; }
     const r = ekstra ? ekstra() : null;
+    if (r && !bom) { bom = true; logg(false); }
     if (r) { ctx.si(r.msg, 'try', r.lyd); return; }
     fullfor();
   };
   const fullfor = () => {
+    if (!bom) { bom = true; logg(true); }
     skrivFn = null; sett(null);
     const ros = ['Riktig! Takk for hjelpen!', 'Helt riktig! Du er en god mekaniker.', 'Supert! Jobben er ferdig.'];
     const ri = (st.stadium + st.oppg) % 3;
@@ -947,8 +953,8 @@ function voksne() {
       <h3>Tips</h3><ul>
         <li>Lesetekstene leses ikke opp, bare instruksen. Da må eleven lese selv.</li>
         <li>Skriveoppgavene bruker bokstavbrikker, én bokstav som mangler, og tastatur.</li>
-        <li>Fremgangen lagres på denne maskinen, så eleven kan fortsette senere.</li></ul>
-      <div class="voksen-knapper"><button class="lenkeknapp mork" id="ekstra">Ny utrykning nå</button><button class="fare" id="nullstill">Start denne på nytt</button><button class="lukk" id="lukk">Lukk</button></div></div>`;
+        <li>Framgangen lagres under elevkoden, uten navn. Rapporten viser hvilke mål som er nådd, og åpnes med voksenkoden.</li></ul>
+      <div class="voksen-knapper"><a class="lenkeknapp mork" href="../rapport.html" style="text-decoration:none">Se rapporten</a><button class="lenkeknapp mork" id="ekstra">Ny utrykning nå</button><button class="fare" id="nullstill">Start denne på nytt</button><button class="lukk" id="lukk">Lukk</button></div></div>`;
     el.querySelectorAll('.nivaa').forEach(b => b.addEventListener('click', () => { nivaa = b.dataset.n; skrivLS('rv-nivaa', nivaa); lastUtrykning(); tegn(); alarm(); document.body.appendChild(el); }));
     el.querySelector('#lukk').addEventListener('click', () => el.remove());
     el.querySelector('#ekstra').addEventListener('click', () => { el.remove(); nyUtrykning(); });

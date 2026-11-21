@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <script src="../js/tavleloftet-firebase.js"></script>
 <script src="../js/tavleloftet-elev.js" data-verden="lyslaget"></script>
+<script src="../js/maal-lyslaget.js"></script>
+<script src="../js/tavleloftet-framgang.js" data-verden="lyslaget"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Robotverkstedet: matteoppgaver 0–20 med nye jobber hver uke.">
 <meta name="theme-color" content="#133a6b">
@@ -892,7 +894,7 @@ function hjem() {
       ${alle ? '<span class="stempel">FERDIG</span>' : ''}</div>`;
   }).join('')}</div>
   ${alleFerdig() ? `<div class="diplom-banner"><b>Alle robotene er fikset!</b><button class="stor-knapp" id="tilDiplom">Se diplomet ditt</button></div>` : ''}
-  <div class="fot"><span>Ingenting sendes noe sted. Fremgangen lagres bare på denne maskinen.</span><button class="lenkeknapp" id="voksne">For voksne</button></div>`;
+  <div class="fot"><span>Framgangen lagres under elevkoden, uten navn.</span><button class="lenkeknapp" id="voksne">For voksne</button></div>`;
   app.querySelectorAll('.ordre').forEach(b => {
     const ga = () => { const si = +b.dataset.s; const forste = STASJONER[si].oppgaver.findIndex((_, ti) => !ferdig[key(si, ti)]); oppgave(si, forste < 0 ? 0 : forste); };
     b.addEventListener('click', ga); b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ga(); } }); });
@@ -937,17 +939,21 @@ function oppgave(si, ti) {
   document.querySelectorAll('.taster button').forEach(t => t.addEventListener('click', () => skriv(t.dataset.n)));
   visning.skriv = skriv;
 
+  let bom = false; const maalId = 'v-' + s.id + '-' + nivaa;   // rapporten: ett svar per jobb, riktig bare hvis første «Sjekk» var riktig
+  const logg = ok => { if (!ferdigFra && window.TLFramgang) TLFramgang.logg(maalId, ok); };
   const sjekk = () => {
     const tomme = bokser.filter(b => !b.låst && b.val === '');
     if (tomme.length) { ctx.si('Fyll ut alle boksene først.', '', 'svar/fyll-ut'); sett(tomme[0], true); return; }
     const ekstra = o.sjekk ? o.sjekk.call(o, kropp) : null;
     let feil = 0;
     bokser.forEach(b => { if (b.låst) return; if (+b.val === b.ans) { b.låst = true; b.el.classList.remove('aktiv', 'feil'); b.el.classList.add('ok'); } else { feil++; b.el.classList.add('feil'); } });
+    if ((ekstra || feil) && !bom) { bom = true; logg(false); }
     if (ekstra) { ctx.si(ekstra, 'try', hintLyd(ekstra)); sett(bokser.find(b => !b.låst) || null); return; }
     if (feil) { ctx.si(feil === 1 ? 'Nesten! Én boks er ikke riktig. Prøv igjen.' : `Nesten! ${feil} bokser er ikke riktige. Prøv igjen.`, 'try', feil === 1 ? 'svar/nesten-en' : 'svar/nesten-flere'); sett(bokser.find(b => !b.låst)); return; }
     fullfor();
   };
   const fullfor = () => {
+    if (!bom) { bom = true; logg(true); }
     ferdig[key(si, ti)] = true; lagre(); sett(null);
     const ros = ['Riktig! Takk for hjelpen!', 'Helt riktig! Du er en god mekaniker.', 'Supert! Jobben er ferdig.'];
     ctx.si(ros[(si + ti) % ros.length], 'ok', `svar/riktig-${(si + ti) % ros.length + 1}`);
@@ -1013,8 +1019,8 @@ function voksne() {
         <li>Bruk ekte konkreter ved siden av skjermen: skruer, muttere, legoklosser eller knapper.</li>
         <li>Høyttaler-knappen leser oppgaven høyt hvis enheten har norsk stemme.</li>
         <li>Feil svar gir oransje boks og «Prøv igjen». Riktige svar blir låst grønne.</li>
-        <li>Ingenting sendes noe sted. Fremgangen lagres bare i nettleseren på denne maskinen.</li></ul>
-      <div class="voksen-knapper"><button class="lenkeknapp mork" id="ekstra">Lag et ekstrasett nå</button><button class="fare" id="nullstill">Nullstill dette settet</button><button class="lukk" id="lukk">Lukk</button></div></div>`;
+        <li>Framgangen lagres under elevkoden, uten navn. Rapporten viser hvilke mål som er nådd, og åpnes med voksenkoden.</li></ul>
+      <div class="voksen-knapper"><a class="lenkeknapp mork" href="../rapport.html" style="text-decoration:none">Se rapporten</a><button class="lenkeknapp mork" id="ekstra">Lag et ekstrasett nå</button><button class="fare" id="nullstill">Nullstill dette settet</button><button class="lukk" id="lukk">Lukk</button></div></div>`;
     el.querySelectorAll('.nivaa').forEach(b => b.addEventListener('click', () => { nivaa = b.dataset.n; skrivLS('rv-nivaa', nivaa); lastSett(); tegn(); hjem(); }));
     el.querySelector('#lukk').addEventListener('click', () => el.remove());
     el.querySelector('#ekstra').addEventListener('click', () => { el.remove(); nyttEkstrasett(); });
