@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="nb"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vurdering i kroppsøving</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kroppsøving">
+<meta name="robots" content="noindex">
+<script defer src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<style>
+/* Skrifttypene ligger i mappa «fonts», så ingenting hentes fra Google */
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-400-italic.woff2) format('woff2')}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:200 800;font-display:swap;src:url(fonts/bricolage-grotesque-latin-opsz-normal.woff2) format('woff2')}
+:root{
+  --papir:#EFEDE6;
+  --papir2:#F6F5F1;
+  --kort:#FFFFFF;
+  --blekk:#1D2A36;
+  --demp:#697585;
+  --strek:#E4E1D8;
+  --strek2:#EEEBE3;
+  /* gymsal-linjer */
+  --handball:#2B6CB0;
+  --basket:#DD5A26;
+  --badminton:#E8B417;
+  --volley:#2E8B57;
+  --fokus:#2B6CB0;
+  --fokus-djup:#215791;
+  --fokus-lys:#E7F0FA;
+  --radius:16px;
+  --radius-sm:11px;
+  --skygge:0 1px 2px rgba(29,42,54,.04),0 6px 18px -8px rgba(29,42,54,.14);
+  --skygge-hev:0 2px 4px rgba(29,42,54,.05),0 18px 40px -14px rgba(29,42,54,.24);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+  color:var(--blekk);
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+  background:
+    radial-gradient(1200px 520px at 88% -8%,rgba(43,108,176,.10),transparent 60%),
+    radial-gradient(900px 460px at -6% 4%,rgba(221,90,38,.07),transparent 58%),
+    var(--papir);
+  background-attachment:fixed;
+}
+h1,h2,h3,.btn,.tab{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',sans-serif}
+
+/* Gymsal-linje: signaturmotiv */
+.gulvlinjer{display:flex;flex-direction:column;gap:4px;margin:12px 0 0;max-width:320px}
+.gulvlinjer span{height:4px;border-radius:3px;transform-origin:left;animation:strekInn .7s cubic-bezier(.2,.8,.2,1) both}
+.gulvlinjer .l1{background:var(--handball);width:100%}
+.gulvlinjer .l2{background:var(--basket);width:72%;animation-delay:.08s}
+.gulvlinjer .l3{background:var(--badminton);width:46%;animation-delay:.16s}
+@keyframes strekInn{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+
+header.app{
+  position:relative;overflow:hidden;
+  background:
+    linear-gradient(180deg,#243747,#1B2833);
+  color:#fff;
+  padding:26px 20px 24px;
+  border-bottom:3px solid var(--basket);
+}
+/* svak bane-strek-tekstur i toppbanneret */
+header.app::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:
+    radial-gradient(520px 520px at 84% 118%,rgba(43,108,176,.55),transparent 62%),
+    radial-gradient(360px 360px at 96% 4%,rgba(232,180,23,.18),transparent 60%);
+}
+header.app::after{
+  content:"";position:absolute;right:-90px;top:-90px;width:280px;height:280px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.10);
+  box-shadow:0 0 0 26px rgba(255,255,255,.04),0 0 0 27px rgba(255,255,255,.06);
+  pointer-events:none;
+}
+.app-inner{max-width:1040px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:center;gap:24px;justify-content:space-between}
+.app-tekst{min-width:0}
+.app-maskot{flex:none;width:min(310px,36vw);filter:drop-shadow(0 12px 22px rgba(0,0,0,.32));animation:sve 5s ease-in-out infinite;transform-origin:center}
+@keyframes sve{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+@media (max-width:620px){.app-inner{gap:12px}.app-maskot{width:120px}}
+@media (prefers-reduced-motion:reduce){.app-maskot{animation:none}}
+.merkelogo{display:inline-flex;align-items:center;gap:6px;font-family:'Bricolage Grotesque',sans-serif;
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:#BFD3E8;margin-bottom:8px}
+.merkelogo .prikk{width:8px;height:8px;border-radius:50%;background:var(--badminton);box-shadow:0 0 0 3px rgba(232,180,23,.25)}
+header.app h1{font-size:2rem;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+header.app .undertittel{color:#AFC1D4;font-size:.95rem;margin-top:4px}
+
+nav.tabs{
+  position:sticky;top:0;z-index:20;
+  background:rgba(239,237,230,.82);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--strek);
+}
+nav.tabs .tabs-inner{max-width:1040px;margin:0 auto;display:flex;gap:6px;padding:12px 20px;flex-wrap:wrap}
+.tab{
+  border:1px solid transparent;background:transparent;color:var(--demp);
+  padding:9px 16px;border-radius:999px;font-size:.95rem;font-weight:700;cursor:pointer;
+  transition:background .15s,color .15s,box-shadow .15s,transform .1s;
+}
+.tab:hover{color:var(--blekk);background:rgba(43,108,176,.08)}
+.tab:active{transform:translateY(1px)}
+.tab.aktiv{background:#fff;color:var(--fokus);box-shadow:var(--skygge);border-color:var(--strek)}
+.tab.aktiv::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--basket);margin-right:2px;vertical-align:1px}
+.tab:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid var(--handball);outline-offset:2px;
+}
+
+main{max-width:1040px;margin:0 auto;padding:24px 20px 90px}
+.kort{
+  position:relative;
+  background:var(--kort);border:1px solid var(--strek);border-radius:var(--radius);
+  padding:22px;margin-bottom:18px;box-shadow:var(--skygge);
+  transition:box-shadow .2s,transform .2s;
+  animation:kortInn .4s cubic-bezier(.2,.8,.2,1) both;
+}
+.kort:hover{box-shadow:var(--skygge-hev)}
+@keyframes kortInn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kort h2{font-size:1.2rem;font-weight:800;margin-bottom:10px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kort h2::before{content:"";width:5px;height:1.05em;border-radius:3px;background:linear-gradient(180deg,var(--fokus),var(--handball));flex:none}
+.kort h3{font-size:1rem;font-weight:600;margin-bottom:6px}
+.hjelpetekst{color:var(--demp);font-size:.9rem;margin-bottom:10px;text-wrap:pretty}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:.95rem;font-weight:700;
+  cursor:pointer;color:#fff;letter-spacing:.01em;
+  background:linear-gradient(180deg,var(--fokus),var(--fokus-djup));
+  box-shadow:0 1px 2px rgba(29,42,54,.12),0 6px 14px -8px rgba(43,108,176,.7);
+  transition:transform .12s,box-shadow .15s,filter .15s;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(29,42,54,.14),0 12px 22px -10px rgba(43,108,176,.75)}
+.btn:active{transform:translateY(0)}
+.btn.sekundaer{background:#fff;color:var(--blekk);border:1px solid var(--strek);box-shadow:var(--skygge)}
+.btn.sekundaer:hover{border-color:var(--fokus);color:var(--fokus)}
+.btn.fare{background:#fff;color:#B02B2B;border:1px solid #EBCFCF;box-shadow:none}
+.btn.fare:hover{background:#FCF3F3;border-color:#DDA9A9;transform:none}
+.btn.liten{padding:7px 12px;font-size:.85rem;border-radius:9px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+input[type=text],input[type=date],select,textarea{
+  font-family:inherit;font-size:.95rem;color:var(--blekk);
+  border:1px solid var(--strek);border-radius:10px;padding:10px 12px;background:var(--papir2);width:100%;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+input[type=text]:focus,input[type=date]:focus,select:focus,textarea:focus{
+  background:#fff;border-color:var(--fokus);box-shadow:0 0 0 3px rgba(43,108,176,.14);outline:none;
+}
+textarea{resize:vertical;min-height:110px}
+label{font-size:.82rem;font-weight:700;display:block;margin-bottom:5px;color:var(--blekk)}
+.felt{margin-bottom:14px}
+.rad{display:flex;gap:14px;flex-wrap:wrap}
+.rad>.felt{flex:1;min-width:180px}
+
+table.data{width:100%;border-collapse:collapse;font-size:.93rem}
+table.data th{
+  text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--demp);padding:9px 10px;border-bottom:2px solid var(--strek);
+}
+table.data td{padding:10px;border-bottom:1px solid var(--strek2);vertical-align:middle}
+table.data tbody tr{transition:background .12s}
+table.data tbody tr:hover{background:var(--fokus-lys)}
+table.data tr:last-child td{border-bottom:none}
+
+.merke{
+  display:inline-block;background:var(--fokus-lys);color:var(--fokus-djup);
+  border-radius:999px;padding:3px 11px;font-size:.78rem;font-weight:800;letter-spacing:.01em;
+}
+.merke.graa{background:#EFEEE8;color:var(--demp)}
+
+.tom{
+  border:2px dashed var(--strek);border-radius:var(--radius);padding:34px 26px;text-align:center;
+  color:var(--demp);margin-bottom:18px;font-size:.95rem;background:
+    repeating-linear-gradient(135deg,rgba(43,108,176,.03) 0 12px,transparent 12px 24px);
+}
+
+/* Vurderingsgrid på skjerm */
+.grid-omslutning{overflow-x:auto;border:1px solid var(--strek);border-radius:12px}
+table.vgrid{border-collapse:separate;border-spacing:0;font-size:.93rem;min-width:560px;width:100%}
+table.vgrid th,table.vgrid td{border-bottom:1px solid var(--strek2);border-right:1px solid var(--strek2);padding:8px 9px;text-align:center}
+table.vgrid tr>*:last-child{border-right:none}
+table.vgrid tbody tr:last-child td{border-bottom:none}
+table.vgrid th{background:linear-gradient(180deg,#F3F1EA,#ECEAE1);font-size:.78rem;font-weight:800;color:var(--blekk);position:sticky;top:0}
+table.vgrid td.navn{text-align:left;min-width:150px;font-weight:600}
+table.vgrid tbody tr:nth-child(even){background:rgba(43,108,176,.025)}
+table.vgrid td.symbolcelle{
+  cursor:pointer;width:64px;height:44px;font-size:1.3rem;font-weight:800;user-select:none;
+  transition:background .12s,transform .08s;
+}
+table.vgrid td.symbolcelle:hover{background:var(--fokus-lys);box-shadow:inset 0 0 0 2px rgba(43,108,176,.35)}
+table.vgrid td.symbolcelle:active{transform:scale(.9)}
+.sym-pluss{color:#1E7A46}.sym-hake{color:#2B6CB0}.sym-minus{color:#B02B2B}.sym-f{color:#8a6d1a}
+
+.symbolforklaring{display:flex;gap:8px;flex-wrap:wrap;font-size:.85rem;color:var(--demp);margin:10px 0 16px}
+.symbolforklaring span{display:inline-flex;align-items:center;gap:6px;background:var(--papir2);border:1px solid var(--strek);border-radius:999px;padding:4px 12px}
+.symbolforklaring b{font-size:1.05rem}
+
+.verktoylinje{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.status{font-size:.9rem;color:var(--demp);margin-top:10px;min-height:1.2em;font-weight:600}
+.status.feil{color:#B02B2B}
+.status.ok{color:#1E7A46}
+
+.spinner{
+  display:inline-block;width:16px;height:16px;border:2.5px solid #fff;border-top-color:transparent;
+  border-radius:50%;animation:snurr .7s linear infinite;vertical-align:-3px;
+}
+.spinner.moerk{border-color:var(--fokus);border-top-color:transparent}
+@keyframes snurr{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation-duration:1.6s}.kort,.gulvlinjer span{animation:none}}
+
+/* Modal */
+.modal-bak{position:fixed;inset:0;background:rgba(20,30,40,.55);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;z-index:50;overflow-y:auto}
+.modal-bak.vis{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:18px;max-width:760px;width:100%;padding:26px;box-shadow:var(--skygge-hev);animation:kortInn .3s cubic-bezier(.2,.8,.2,1) both}
+.modal h2{font-size:1.25rem;margin-bottom:10px}
+a{color:var(--fokus);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:var(--fokus-djup)}
+
+/* ===================== UTSKRIFT ===================== */
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body{background:#fff}
+  body.skriver-ut header.app,body.skriver-ut nav.tabs,body.skriver-ut main{display:none!important}
+  body.skriver-ut #printArea{display:block;width:100%;max-width:100%;margin:0;padding:0}
+  body.skriver-ut{margin:0;padding:0}
+  .p-ark,.p-egen,.p-rapport{width:100%;max-width:100%;box-sizing:border-box}
+  table.p-tabell,table.p-egentabell,table.p-rtabell{max-width:100%}
+  .p-topp{gap:8mm}
+  .p-meta{white-space:nowrap}
+}
+/* Utskriftsark: svart/hvitt, store ruter, skannevennlig */
+.p-ark{page-break-after:always;color:#000;font-family:'Atkinson Hyperlegible',sans-serif}
+.p-ark:last-child{page-break-after:auto}
+.p-topp{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #000;padding-bottom:6px;margin-bottom:4px}
+.p-topp .app-navn{font-size:9pt;letter-spacing:.12em;text-transform:uppercase}
+.p-topp h2{font-family:'Bricolage Grotesque',sans-serif;font-size:17pt;font-weight:800;margin:2px 0}
+.p-meta{font-size:10pt}
+.p-legende{font-size:9.5pt;margin:6px 0 8px;border:1.5px solid #000;padding:5px 8px;display:inline-block}
+table.p-tabell{width:100%;border-collapse:collapse}
+table.p-tabell th,table.p-tabell td{border:1.5px solid #000;padding:0 6px}
+table.p-tabell th{font-size:9.5pt;height:9mm;background:#fff;font-weight:700}
+table.p-tabell td{height:10.5mm;font-size:10.5pt}
+table.p-tabell td.p-nr{width:9mm;text-align:center;font-size:9pt}
+table.p-tabell td.p-navn{width:52mm}
+table.p-tabell td.p-celle{text-align:center;font-size:13pt;font-weight:700}
+.p-fot{font-size:8.5pt;margin-top:6px}
+
+/* Rapportutskrift */
+.p-rapport{page-break-after:always;color:#000}
+.p-rapport:last-child{page-break-after:auto}
+.p-rapport h2{font-family:'Bricolage Grotesque',sans-serif;font-size:16pt;font-weight:800;margin-bottom:2px}
+.p-rapport .p-under{font-size:10pt;margin-bottom:8px}
+table.p-rtabell{width:100%;border-collapse:collapse;font-size:10pt;margin-bottom:10px}
+table.p-rtabell th,table.p-rtabell td{border:1px solid #000;padding:4px 6px;text-align:left}
+table.p-rtabell th{font-size:8.5pt;text-transform:uppercase;letter-spacing:.04em}
+table.p-rtabell td.midt,table.p-rtabell th.midt{text-align:center}
+.p-oppsummering{font-size:10pt;border:1.5px solid #000;padding:6px 9px;margin-bottom:8px}
+.p-signatur{margin-top:14mm;font-size:10pt;display:flex;gap:24mm}
+.p-signatur div{border-top:1px solid #000;padding-top:2mm;width:60mm}
+
+/* ---- Tillegg: økter, nye tegn, egenvurdering ---- */
+.merke.oransje{background:#FBEDE6;color:#C4562A}
+.sym-p{color:#6B5B95}
+.sym-o{color:#C4562A}
+.sym-e{color:#0F766E}
+.sym-g{color:#5A6472}
+table.vgrid th.oktgruppe{background:var(--fokus-lys);color:var(--fokus-djup);font-size:.78rem}
+table.vgrid td.skille,table.vgrid th.skille{border-left:2px solid #B9C3CD}
+.skala{display:flex;gap:4px;justify-content:center}
+.skala button{border:1px solid var(--strek);background:#fff;border-radius:6px;min-width:34px;height:30px;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--demp);font-family:inherit}
+.skala button.valgt{background:var(--fokus);color:#fff;border-color:var(--fokus)}
+.sportabell td{vertical-align:middle}
+.uklar{background:#FDF3E7}
+table.p-tabell{table-layout:fixed}
+table.p-tabell th.oktgruppe{height:7mm;font-size:10pt}
+table.p-tabell th.rutenavn{height:6mm;font-size:7.5pt;font-weight:400}
+table.p-tabell th.datorad{height:6.5mm;font-size:8pt;font-weight:400}
+table.p-tabell td.p-navn{width:44mm;font-size:10pt}
+.p-skille{border-left:2.5px solid #000!important}
+.p-legende{display:block}
+.p-egen{page-break-after:always;color:#000;font-family:'Atkinson Hyperlegible',sans-serif}
+.p-egen:last-child{page-break-after:auto}
+.p-navnefelt{font-size:11.5pt;margin:6px 0}
+table.p-egentabell{width:100%;border-collapse:collapse;table-layout:fixed}
+table.p-egentabell th,table.p-egentabell td{border:1.25px solid #000;padding:3px 7px}
+table.p-egentabell th{font-size:8.5pt;height:8mm;text-align:center}
+table.p-egentabell th.sporsmalkol{text-align:left}
+table.p-egentabell td.p-sp{font-size:10.5pt;height:13mm}
+table.p-egentabell td.p-boks,table.p-egentabell th.p-boks{width:22mm;text-align:center}
+table.p-egentabell td.p-boks{font-size:14pt;font-weight:700}
+.p-fritekst{margin-top:8px}
+.p-fritekst .etikett{font-size:10pt;font-weight:700;margin-bottom:3px}
+.p-linje{border-bottom:1px solid #000;height:9mm}
+.p-avsnitt{font-family:'Bricolage Grotesque',sans-serif;font-size:11.5pt;font-weight:800;margin:12px 0 4px}
+.p-sitat{font-size:10pt;border-left:3px solid #000;padding-left:8px;margin-bottom:6px}
+.p-brodtekst{font-size:11pt;line-height:1.55;margin-bottom:7px;text-align:left}
+.p-punktliste{margin:0 0 8px 17px;padding:0}
+.p-punktliste li{font-size:11pt;line-height:1.45;margin-bottom:3px}
+
+@media (max-width:640px){
+  main{padding:14px 12px 60px}
+  header.app{padding:14px 14px 10px}
+  nav.tabs{padding:10px 12px 0}
+}
+
+/* ===================== DESIGNLØFT ===================== */
+header.app{border-bottom:4px solid;border-image:linear-gradient(90deg,var(--handball) 0 25%,var(--volley) 25% 50%,var(--badminton) 50% 75%,var(--basket) 75% 100%) 1;padding:30px 20px 28px}
+header.app h1{font-size:clamp(1.6rem,4.2vw,2.3rem)}
+.merkelogo{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 12px 5px 10px;color:#DCE7F3}
+input[type=number],input[type=password]{
+  font-family:inherit;font-size:.95rem;color:var(--blekk);
+  border:1px solid var(--strek);border-radius:10px;padding:10px 12px;background:var(--papir2);width:100%;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+input[type=number]:focus,input[type=password]:focus{background:#fff;border-color:var(--fokus);box-shadow:0 0 0 3px rgba(43,108,176,.14);outline:none}
+.kort:hover{box-shadow:var(--skygge)}
+.kort h2{font-size:1.25rem}
+
+/* Tegnene får hver sin farge, så arket kan leses på et blikk */
+.sym-f{color:#7A5F12}
+table.vgrid td.symbolcelle{height:48px;min-width:52px}
+table.vgrid td.symbolcelle.sym-pluss,.symbolforklaring b.sym-pluss{background:#E3F3E9}
+table.vgrid td.symbolcelle.sym-e,.symbolforklaring b.sym-e{background:#DCF2EF}
+table.vgrid td.symbolcelle.sym-hake,.symbolforklaring b.sym-hake{background:#E7F0FA}
+table.vgrid td.symbolcelle.sym-minus,.symbolforklaring b.sym-minus{background:#FBE9E9}
+table.vgrid td.symbolcelle.sym-p,.symbolforklaring b.sym-p{background:#EEEAF6}
+table.vgrid td.symbolcelle.sym-o,.symbolforklaring b.sym-o{background:#FBEDE6}
+table.vgrid td.symbolcelle.sym-g,.symbolforklaring b.sym-g{background:#EBEEF1}
+table.vgrid td.symbolcelle.sym-f,.symbolforklaring b.sym-f{background:#F6EFD8}
+.symbolforklaring span{padding:4px 12px 4px 4px;background:#fff;color:var(--blekk)}
+.symbolforklaring b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;font-size:1rem;line-height:1}
+table.vgrid td.navn{position:sticky;left:0;z-index:1;background:#fff;box-shadow:1px 0 0 var(--strek)}
+table.vgrid tbody tr:nth-child(even) td.navn{background:#FAFBFD}
+
+/* Kom i gang */
+.komigang{border-color:#C9DCF0;background:linear-gradient(180deg,#F5F9FE,#fff)}
+.steg{list-style:none;counter-reset:steg;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:6px}
+.steg li{counter-increment:steg;position:relative;padding:14px 14px 14px 54px;border:1px solid var(--strek);border-radius:var(--radius-sm);background:#fff}
+.steg li::before{content:counter(steg);position:absolute;left:12px;top:13px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:#fff;background:var(--fokus)}
+.steg li:nth-child(2)::before{background:var(--volley)}
+.steg li:nth-child(3)::before{background:var(--basket)}
+.steg b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:1rem}
+.steg span{display:block;color:var(--demp);font-size:.88rem;margin-top:2px}
+
+footer.bunn{max-width:1040px;margin:-50px auto 0;padding:0 20px 34px;color:var(--demp);font-size:.82rem;text-align:center}
+
+@media (max-width:720px){
+  nav.tabs .tabs-inner{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:10px 12px}
+  nav.tabs .tabs-inner::-webkit-scrollbar{display:none}
+  .tab{flex:none}
+  .kort{padding:16px}
+}
+@media print{footer.bunn{display:none}}
+
+/* ---------- tillegg: utfylling på skjerm, avkrysningsark og kontroll ---------- */
+.pensel{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.pensel button{min-height:44px;padding:6px 12px 6px 7px;border:1px solid var(--strek);border-radius:10px;background:#fff;font-family:inherit;font-size:.86rem;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--blekk)}
+.pensel button b{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:7px;font-size:1rem;background:#F1EFE8}
+.pensel button.valgt{border-color:var(--fokus);box-shadow:0 0 0 2px var(--fokus);background:var(--fokus-lys)}
+.pensel b.sym-pluss{background:#E3F3E9}.pensel b.sym-e{background:#DCF2EF}.pensel b.sym-hake{background:#E7F0FA}.pensel b.sym-minus{background:#FBE9E9}
+.pensel b.sym-p{background:#EEEAF6}.pensel b.sym-o{background:#FBEDE6}.pensel b.sym-g{background:#EBEEF1}.pensel b.sym-f{background:#F6EFD8}
+.oktknapp{margin-top:4px;border:1px solid #B9C3CD;background:#fff;border-radius:7px;padding:5px 9px;font-family:inherit;font-size:.74rem;font-weight:700;color:var(--fokus-djup);cursor:pointer}
+.oktknapp:hover{background:var(--fokus)}.oktknapp:hover{color:#fff}
+table.vgrid td.ikkelest{color:var(--demp);background:#F4F3EE}
+table.vgrid td.symbolcelle.uklar{box-shadow:inset 0 0 0 3px #E08A1E}
+td.redigerbar{cursor:text}
+td.redigerbar:hover{background:var(--fokus-lys)}
+td.redigerbar:focus{outline:2px solid var(--fokus);outline-offset:-2px;background:#fff}
+.maalliste{list-style:none;padding:0;margin:0;columns:2;column-gap:28px;font-size:.92rem}
+.maalliste li{break-inside:avoid;margin-bottom:7px;padding-left:38px;text-indent:-38px}
+.maalliste li b{display:inline-block;width:34px;text-indent:0;color:var(--fokus-djup)}
+@media(max-width:720px){.maalliste{columns:1}}
+#egenModalBak .modal{max-width:1180px}
+.skriftklipp{display:block;width:280px;max-width:100%;border:1px solid var(--strek);border-radius:6px;margin-bottom:5px}
+.skriftfelt{width:280px;max-width:100%;min-height:52px;font-size:.85rem}
+.p-omr{position:relative;width:186mm;height:268mm;overflow:hidden;page-break-after:always;break-after:page;color:#000;font-family:'Atkinson Hyperlegible',sans-serif}
+.p-omr:last-child{page-break-after:auto;break-after:auto}
+
+/* ---------- innlogging ---------- */
+body.ute main,body.ute nav.tabs,body.ute footer.bunn{display:none}
+.hvem{color:#DCE6F0;font-size:.85rem;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:0}
+.hvem span{overflow-wrap:anywhere}
+.hvem button{border:1px solid rgba(255,255,255,.45);background:transparent;color:#fff;border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;min-height:36px}
+.hvem button:hover{background:rgba(255,255,255,.14)}
+.port{max-width:440px;margin:34px auto 60px;padding:0 16px}
+.port-kort{background:#fff;border-radius:18px;padding:28px 26px;box-shadow:var(--skygge-hev)}
+.port-kort h2{font-family:'Bricolage Grotesque',sans-serif;font-size:1.45rem;margin-bottom:8px}
+.port-kort .btn{width:100%;justify-content:center}
+.port-kort form{margin-top:4px}
+.port-eller{text-align:center;color:var(--demp);font-size:.82rem;margin:14px 0 6px}
+.port-lenker{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.port-lenker button{border:none;background:none;color:var(--fokus-djup);font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;padding:6px 0;text-decoration:underline}
+.hjemtips{background:#FFF6DD;border:1px solid #E8D18A;border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:.92rem;display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.hjemtips button{flex:none}
+.hjemtips[hidden]{display:none}
+.port-kort input{width:100%;padding:11px 13px;border:1px solid var(--strek);border-radius:10px;background:#F6F5F1;font-family:inherit;font-size:1rem;color:var(--blekk)}
+.port-kort input:focus{outline:2px solid var(--fokus);outline-offset:1px;background:#fff}
+@media print{.port,.hjemtips{display:none!important}}
+</style>
+</head>
+<body class="ute">
+<header class="app">
+  <div class="app-inner">
+    <div class="app-tekst">
+      <div class="merkelogo"><span class="prikk"></span> <span id="toppMerke">Underveisvurdering</span></div>
+      <h1>Vurdering i kroppsøving</h1>
+      <div class="undertittel">Vurderingsark, avkrysning og rapporter – rett fra gymsalen</div>
+      <div class="gulvlinjer" aria-hidden="true"><span class="l1"></span><span class="l2"></span><span class="l3"></span></div>
+    </div>
+    <div class="hvem" id="hvem"></div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <div class="tabs-inner">
+    <button class="tab aktiv" data-fane="ark" role="tab">Vurderingsark</button>
+    <button class="tab" data-fane="egen" role="tab">Egenvurdering</button>
+    <button class="tab" data-fane="grupper" role="tab">Grupper</button>
+    <button class="tab" data-fane="aarsplan" role="tab">Årsplan</button>
+    <button class="tab" data-fane="rapporter" role="tab">Rapporter</button>
+    <button class="tab" data-fane="innstillinger" role="tab">Innstillinger</button>
+  </div>
+</nav>
+
+<div class="port" id="port" hidden>
+  <div class="port-kort">
+    <h2 id="portTittel">Logg inn</h2>
+    <p class="hjelpetekst">Bruk lærerkontoen din hos Tavleloftet. Det er den samme kontoen som i Krøniken. Elevnavn og vurderinger lagres bare i nettleseren din, aldri i kontoen.</p>
+    <button class="btn" id="googleBtn" type="button">Fortsett med Google</button>
+    <div class="port-eller">eller med e-post</div>
+    <form id="epostSkjema">
+      <div class="felt"><label for="epost">E-post</label><input id="epost" type="email" autocomplete="email" required></div>
+      <div class="felt"><label for="passord">Passord</label><input id="passord" type="password" autocomplete="current-password" required minlength="6"></div>
+      <button class="btn" id="epostBtn" type="submit">Logg inn</button>
+    </form>
+    <div class="port-lenker"><button type="button" id="nyBtn">Lag ny konto</button><button type="button" id="glemtBtn">Glemt passordet?</button></div>
+    <div class="status" id="authStatus" role="status"></div>
+  </div>
+</div>
+
+<main>
+  <div class="hjemtips" id="hjemTips" hidden>
+    <div><b>Bruker du iPad eller iPhone?</b> Legg verktøyet til på Hjem-skjermen og åpne det derfra: trykk på Del-knappen i Safari og velg «Legg til på Hjem-skjerm». Safari sletter det nettsider har lagret når de ikke har vært åpnet på sju dager med bruk. Gjør dette før du legger inn elever, for appen på Hjem-skjermen har sitt eget lager.</div>
+    <button class="btn sekundaer liten" type="button" onclick="state.skjulHjemTips=true;lagreState();oppdaterTopp()">Skjul</button>
+  </div>
+  <section id="fane-ark"></section>
+  <section id="fane-egen" hidden=""></section>
+  <section id="fane-grupper" hidden=""></section>
+  <section id="fane-aarsplan" hidden=""></section>
+  <section id="fane-rapporter" hidden=""></section>
+  <section id="fane-innstillinger" hidden=""></section>
+</main>
+
+<!-- Modal: kontroll av skannet ark -->
+<div class="modal-bak" id="skannModalBak">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="skannTittel">
+    <h2 id="skannTittel">Kontroller skanningen</h2>
+    <p class="hjelpetekst">Sjekk at tegnene stemmer med arket. Trykk på en rute for å endre før du lagrer. Økter som ikke er gjennomført, står med en prikk og blir ikke endret.</p>
+    <div class="status" id="skannOppsummering"></div>
+    <div class="grid-omslutning" id="skannGrid"></div>
+    <div class="verktoylinje">
+      <button class="btn" id="skannLagreBtn">Lagre i arket</button>
+      <button class="btn sekundaer" id="skannAvbrytBtn">Avbryt</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal-bak" id="egenModalBak">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="egenModalTittel">
+    <h2 id="egenModalTittel">Kontroller egenvurderingene</h2>
+    <p class="hjelpetekst">Trykk på en verdi for å endre. Håndskrevne svar vises som bilde. Skriv dem av i feltet under bildet hvis de skal med i rapporten.</p>
+    <div class="status" id="egenOppsummering"></div>
+    <div id="egenKontroll"></div>
+    <div class="verktoylinje">
+      <button class="btn" id="egenLagreBtn">Lagre svarene</button>
+      <button class="btn sekundaer" id="egenAvbrytBtn">Avbryt</button>
+    </div>
+  </div>
+</div>
+
+<footer class="bunn">Alt lagres lokalt i denne nettleseren. <span id="kopiPaaminnelse">Husk sikkerhetskopi under Innstillinger.</span></footer>
+
+<div id="printArea"></div>
+<input type="file" id="skannFil" accept="image/*,application/pdf" hidden="">
+<input type="file" id="egenSkannFil" accept="image/*,application/pdf" hidden="">
+<input type="file" id="csvFil" accept=".csv,text/csv" hidden="">
+
+<script>
+/* ===================== LAGRING ===================== */
+const LAGRINGSNOKKEL='kroppsoving-vurdering:state';
+const harWindowStorage=typeof window.storage!=='undefined';
+
+async function lastState(){
+  try{
+    if(harWindowStorage){
+      const res=await window.storage.get(LAGRINGSNOKKEL);
+      if(res&&res.value)return JSON.parse(res.value);
+    }else{
+      const raw=localStorage.getItem(LAGRINGSNOKKEL);
+      if(raw)return JSON.parse(raw);
+    }
+  }catch(e){/* nøkkel finnes ikke ennå */}
+  return null;
+}
+let lagreTimer=null;
+function lagreState(){
+  clearTimeout(lagreTimer);
+  lagreTimer=setTimeout(async()=>{
+    const json=JSON.stringify(state);
+    try{
+      if(harWindowStorage){await window.storage.set(LAGRINGSNOKKEL,json);}
+      else{localStorage.setItem(LAGRINGSNOKKEL,json);}
+    }catch(e){console.error('Lagring feilet',e);}
+  },400);
+}
+
+/* ===================== TILSTAND ===================== */
+let state={
+  grupper:[],   // {id,navn,elever:[{id,navn}]}
+  ark:[],       // {id,gruppeId,tema,dato,okter,oktDatoer:[],resultater:{elevId:{'okt-rute':symbol}}}
+  egen:[],      // {id,gruppeId,tema,dato,sporsmal:[],fritekst:[],svar:{elevId:{i:0|1|2}},tekst:{elevId:[..]}}
+  plan:null,    // {tittel,perioder:[{id,periode,halvaar,tema,innhold,maal,vurdering}]}
+  oppsummeringer:{}, // {elevId:{tekst,laget}}
+  tekstformat:'punkter', // 'punkter' | 'lang'
+  skole:'',     // vises på utskrifter
+  trinn:'',     // f.eks. '7. trinn' – vises på utskrifter
+  teller:0,     // løpenummer til utskrevne ark
+  sistKopi:''   // dato for siste sikkerhetskopi
+};
+const SYMBOLER=['','+','E','✓','−','P','O','G','F'];
+const SYMBOLFORKLARING={
+  '+':'God innsats','E':'Eksemplarisk oppførsel','✓':'Deltatt / OK','−':'Trenger oppfølging',
+  'P':'Passiv – unngår å delta','O':'Utfordrende oppførsel','G':'Glemt gymtøy','F':'Fravær'
+};
+const SKALA=['Ofte','Noen ganger','Sjelden'];
+const STANDARDSPORSMAL=[
+  'Jeg deltar aktivt i økta, også når aktiviteten er ny eller vanskelig for meg.',
+  'Jeg gjør mitt beste ut fra mine egne forutsetninger.',
+  'Jeg samarbeider godt og bidrar til at alle får være med.',
+  'Jeg følger reglene og viser fair play, også når det ikke går min vei.',
+  'Jeg tar ansvar for utstyr og bytter raskt, slik at økta kommer i gang.',
+  'Jeg føler meg trygg i kroppsøvingstimene.'
+];
+const STANDARDFRITEKST=[
+  'Dette har jeg blitt bedre til i denne perioden:',
+  'Dette vil jeg jobbe med videre:'
+];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const datoNorsk=iso=>{if(!iso)return'';const[y,m,d]=iso.split('-');return `${d}.${m}.${y}`;};
+const idag=()=>new Date().toISOString().slice(0,10);
+const finnGruppe=id=>state.grupper.find(g=>g.id===id);
+const symKlasse=s=>({'+':'sym-pluss','✓':'sym-hake','−':'sym-minus','P':'sym-p','O':'sym-o','F':'sym-f','E':'sym-e','G':'sym-g'}[s]||'');
+const normaliserNavn=n=>String(n||'').toLowerCase().replace(/[^a-zæøåäöü ]/g,'').replace(/\s+/g,' ').trim();
+/* Skole og trinn settes i Innstillinger og brukes i topp og utskrifter */
+const fagTopp=()=>['Kroppsøving',state.trinn,state.skole].map(x=>String(x||'').trim()).filter(Boolean).join(' · ');
+/* ===================== ÅRSPLANFORSLAG OG KOMPETANSEMÅL ===================== */
+/* Bygger på læreplan i kroppsøving (KRO01-06), som gjelder fra 1.8.2026.
+   Målene står her i kortform på bokmål. Den offisielle ordlyden finnes på udir.no. */
+const KOMPETANSEMAAL={
+  '7':{tittel:'Kompetansemål etter 7. trinn',maal:[
+    'Utforske og gjennomføre lek og spill sammen med andre',
+    'Øve på sammensatte bevegelser, alene og sammen med andre',
+    'Gjennomføre aktiviteter ut fra egne interesser og forutsetninger',
+    'Bruke kart, digitale verktøy og tegn i naturen til å orientere seg',
+    'Forstå og praktisere regler for aktivitet og spill, og respektere resultatene',
+    'Forstå ulikheter og delta i aktiviteter som er tilpasset andre enn en selv',
+    'Utføre grunnleggende svømming på magen, på ryggen og under vann',
+    'Vurdere sikkerhet i uteaktivitet og gjennomføre selvberging i vann',
+    'Bruke nærmiljøet og utforske lokale friluftslivskulturer',
+    'Gjøre rede for allemannsretten',
+    'Gjennomføre overnattingstur og reflektere over naturopplevelser'
+  ]},
+  '10':{tittel:'Kompetansemål etter 10. trinn',maal:[
+    'Utforske egne muligheter til trening, helse og velvære',
+    'Trene på og utvikle ferdigheter i varierte bevegelsesaktiviteter',
+    'Øve på og gjennomføre dans, og skape og presentere dansekomposisjoner',
+    'Reflektere over framstillinger av kropp i media og samfunn',
+    'Planlegge og gjennomføre aktivitet som passer ved skade eller sykdom',
+    'Bruke egne ferdigheter og kunnskaper slik at andre får framgang',
+    'Anerkjenne ulikhet og inkludere alle i bevegelsesaktiviteter',
+    'Forstå flere typer kart og digitale verktøy og orientere seg i kjente og ukjente miljø',
+    'Utføre varierte svømmeteknikker og svømme en lengre distanse',
+    'Forstå og gjennomføre livberging i, på og ved vann ute i naturen',
+    'Forstå og gjennomføre livreddende førstehjelp',
+    'Gjennomføre friluftsliv til ulike årstider, også med overnatting ute',
+    'Vurdere risiko og trygghet ute, og gjennomføre sporløs og trygg ferdsel'
+  ]}
+};
+const P=(periode,halvaar,tema,innhold,maal,vurdering)=>({periode,halvaar,tema,innhold,maal,vurdering});
+const FLEKS='Etter skolens plan';
+const AARSPLANER={
+  '5':{tittel:'Årsplan kroppsøving · forslag for 5. trinn',steg:'7',perioder:[
+    P('Uke 34–37','Høst','Oppstart: lek og samarbeid','Navneleker, sisten-varianter, samarbeidsleker og enkle lagkonkurranser. Rutiner for garderobe, utstyr og oppstart.','K1, K5, K6','Observasjon av deltakelse og samspill'),
+    P('Uke 38–41','Høst','Uteaktivitet og nærmiljø','Leker i skog og på lekeplass, natursti og enkel orientering på skolekart. Kle seg etter været, spor og tegn i naturen.','K4, K9, K10','Samtale om trygg ferdsel ute'),
+    P('Uke 43–47','Høst','Ballek og småspill','Kaste, ta imot, sprette og sparke i par og små grupper. Kanonball, stikkball og småspill tre mot tre med enkle regler.','K1, K2, K5','Observasjon av samspill og regelforståelse'),
+    P('Uke 48–51','Høst','Rytme og danseleker','Rytmeleker, speildans, sangleker og enkle fellesdanser. Lage egne bevegelser til musikk i par.','K2, K3','Deltakelse og medvirkning'),
+    P('Uke 2–7','Vår','Turn og hinderløype','Rulle, balansere, henge, klatre og hoppe i hinderløyper. Landing, mottak og trygg bruk av apparater.','K2, K6','Egenvurdering av mestring'),
+    P('Uke 9–13','Vår','Vinteraktivitet og utelek','Aking, ski eller skøyter der forholdene tillater det. Ellers uteleker og samarbeidsoppgaver ute.','K3, K9','Observasjon av deltakelse'),
+    P('Uke 15–19','Vår','Friidrettsleker','Løpe, hoppe og kaste gjennom leker og stasjoner. Stafetter med blandede lag og egne mål.','K2, K3','Egenregistrering av framgang'),
+    P('Uke 20–25','Vår','Spill og leker ute','Slåball, kubb, frisbee og elevenes egne leker. Elevene forklarer regler og leder en lek hver.','K1, K5, K6','Medvirkning og fair play'),
+    P(FLEKS,'','Svømming og trygghet i vann','Flyte, gli og dykke. Grunnleggende svømming på magen og på ryggen. Bade- og sjøvett.','K7, K8','Observasjon av trygghet og framgang i vann')
+  ]},
+  '6':{tittel:'Årsplan kroppsøving · forslag for 6. trinn',steg:'7',perioder:[
+    P('Uke 34–37','Høst','Oppstart: samarbeid og tillit','Samarbeidsoppgaver, tillitsøvelser og leker i blandede grupper. Felles kjøreregler laget sammen med elevene.','K1, K5, K6','Observasjon av deltakelse og samspill'),
+    P('Uke 38–42','Høst','Orientering og tur','Karttegn, orientere kartet, stjerneorientering og postjakt i nærområdet. Dagstur med vekt på bekledning, sekk og sporløs ferdsel.','K4, K8, K9, K10','Egenvurdering av orientering'),
+    P('Uke 43–47','Høst','Ballspill med tilpassede regler','Håndball, basket og innebandy som småspill. Elevene foreslår regelendringer som gjør at alle får delta.','K1, K5, K6','Observasjon av spilleforståelse og fair play'),
+    P('Uke 48–51','Høst','Dans og rytme','Linedance, folkedans og danser fra ulike kulturer. Smågrupper setter sammen egne trinn til en kort dans.','K2, K3','Framgang og medvirkning'),
+    P('Uke 2–7','Vår','Turn og akrobatikk','Rulle, hjul og håndstående mot vegg. Par- og gruppeakrobatikk med trygge løft og sikring.','K2, K6','Egenvurdering av framgang'),
+    P('Uke 9–13','Vår','Nettspill og slagspill','Badminton, bordtennis og volleyball med lett ball. Samarbeidsdueller der målet er lange ballvekslinger.','K2, K3, K5','Observasjon av innsats og samarbeid'),
+    P('Uke 15–19','Vår','Friidrett','Løp, lengde, høyde og kast gjennom stasjoner. Egne mål og framgang, ikke rangering.','K2, K3','Egenregistrering av framgang'),
+    P('Uke 20–25','Vår','Friluftsliv og overnattingstur','Planlegge og gjennomføre tur med overnatting: pakkeliste, telt eller gapahuk, bål og matlaging. Samtale om opplevelsene etterpå.','K8, K9, K10, K11','Refleksjon etter turen'),
+    P(FLEKS,'','Svømming og selvberging','Svømming på magen, på ryggen og under vann. Selvberging: flyte, rulle rundt, svømme med klær og ta seg opp av vannet.','K7, K8','Observasjon av ferdigheter og trygghet i vann')
+  ]},
+  '7':{tittel:'Årsplan kroppsøving · forslag for 7. trinn',steg:'7',perioder:[
+    P('Uke 34–37','Høst','Oppstart: trygghet og samspill','Bli-kjent-leker i bevegelse, samarbeidsoppgaver og lavterskel sisten. Faste rutiner og felles kjøreregler.','K1, K5, K6','Observasjon av deltakelse og samspill'),
+    P('Uke 38–42','Høst','Friluftsliv og orientering','Kart og karttegn, orientering med poster i nærområdet, tur, allemannsretten og sporløs ferdsel.','K4, K9, K10','Egenvurdering av orientering'),
+    P('Uke 43–47','Høst','Ballaktiviteter og spill for alle','Kaste, ta imot, føre og sikte gjennom stasjoner. Innebandy, ultimate, stikkball og kanonball med tilpassede regler.','K1, K5, K6','Observasjon av spilleforståelse og fair play'),
+    P('Uke 48–51','Høst','Dans, rytme og bevegelse','Oppvarmingsdanser, rytmeøvelser og enkel koreografi i smågrupper til ulike musikksjangre.','K2, K3','Framgang i sammensatte bevegelser og medvirkning'),
+    P('Uke 2–8','Vår','Turn, apparat og kroppskontroll','Matter, rulle, hjul, balanse, hopp fra bukk og kasse, ribbevegg. Øvelser bygget som stiger med sikring og mottak.','K2, K6','Egenvurdering av framgang på egen stige'),
+    P('Uke 10–14','Vår','Friidrett med løp, hopp og kast','Lekpreget løp, lengde, høyde og kast gjennom stasjoner og samarbeidsstafetter. Egen teknikk og framgang.','K2, K3','Egenregistrering av framgang'),
+    P('Uke 15–19','Vår','Idrett etter interesse','Elevvalgte aktiviteter: frisbeegolf, kubb, badminton, bordtennis og ballspill. Elevene leder oppvarming.','K3, K5, K6','Medvirkning, samarbeid og ansvar'),
+    P('Uke 20–25','Vår','Elevstyrt kroppsøving','Grupper på 3–4 planlegger og leder 30 minutter av økta, med oppvarming, hoveddel og rolig avslutning.','K1, K3, K5, K6','Egen- og hverandrevurdering av gjennomføringen'),
+    P(FLEKS,'','Svømming og selvberging','Teknikk på magen, på ryggen og under vann. Selvberging med klær, flyte og ta seg i land. Vurdere trygghet ved vann.','K7, K8','Observasjon av ferdigheter og trygghet i vann'),
+    P(FLEKS,'','Overnattingstur','Planlegge utstyr, mat og rute sammen. Overnatting ute eller i hytte, og refleksjon over egne naturopplevelser.','K8, K11','Refleksjon etter turen')
+  ]},
+  '8':{tittel:'Årsplan kroppsøving · forslag for 8. trinn',steg:'10',perioder:[
+    P('Uke 34–37','Høst','Oppstart: samspill og inkludering','Samarbeidsleker, lagbygging og aktiviteter i nye grupper. Hva skal til for at alle vil delta?','K2, K6, K7','Observasjon av deltakelse og samspill'),
+    P('Uke 38–42','Høst','Orientering og friluftsliv','Ulike karttyper og digitale kart, orientering i kjent terreng. Tur med vekt på trygg og sporløs ferdsel.','K8, K12, K13','Egenvurdering av orientering'),
+    P('Uke 43–47','Høst','Ballspill og spillforståelse','Håndball, basket, fotball og innebandy som småspill. Roller, bevegelse uten ball og å gjøre medspillere gode.','K2, K6, K7','Observasjon av innsats, samspill og fair play'),
+    P('Uke 48–51','Høst','Dans','Danser fra ungdomskulturer og andre kulturer. Grupper lager og viser en egen kort dansekomposisjon.','K3','Medvirkning og gjennomføring i gruppa'),
+    P('Uke 2–6','Vår','Styrke, utholdenhet og bevegelighet','Sirkeltrening med egen kroppsvekt, intervaller som lek og bevegelighet. Egne mål og hva som skjer i kroppen.','K1, K2','Egenvurdering av innsats og framgang'),
+    P('Uke 7–12','Vår','Turn og kroppsbeherskelse','Matteøvelser, hopp og balanse i egen progresjon. Parakrobatikk, sikring og mottak.','K2, K6','Egenvurdering av framgang'),
+    P('Uke 13–17','Vår','Nettspill','Badminton, volleyball og bordtennis. Samarbeid om lange ballvekslinger før konkurranse.','K2, K6, K7','Observasjon av innsats og samarbeid'),
+    P('Uke 18–21','Vår','Friidrett','Løp, hopp og kast med vekt på teknikk og egen framgang. Elevene måler og registrerer selv.','K1, K2','Egenregistrering av framgang'),
+    P('Uke 22–25','Vår','Friluftsliv og uteaktivitet','Tur med matlaging ute, og padling eller sykkel der det passer. Risikovurdering før turen.','K12, K13','Refleksjon etter turen'),
+    P(FLEKS,'','Svømming og livberging','Varierte svømmeteknikker og utholdenhet ut fra eget mål. Grunnleggende livberging og vurdering av risiko ved vann.','K9, K10','Observasjon av ferdigheter og egen målsetting')
+  ]},
+  '9':{tittel:'Årsplan kroppsøving · forslag for 9. trinn',steg:'10',perioder:[
+    P('Uke 34–37','Høst','Oppstart: egne mål og treningsglede','Prøve ulike treningsformer og aktiviteter. Sette egne mål for høsten og bli trygg i gruppa.','K1, K2, K7','Samtale om egne mål'),
+    P('Uke 38–42','Høst','Friluftsliv med overnatting','Planlegge og gjennomføre tur med overnatting ute: utstyr, mat, rute og risikovurdering. Refleksjon over naturopplevelser.','K8, K12, K13','Refleksjon etter turen'),
+    P('Uke 43–47','Høst','Ballspill og nye spillformer','Ultimate, tchoukball og andre spill som er nye for de fleste. Spill uten dommer, der elevene selv tar ansvar for fair play.','K2, K6, K7','Observasjon av samspill og fair play'),
+    P('Uke 48–51','Høst','Kropp, bevegelse og selvbilde','Yoga, parkour og styrke uten prestasjonskrav. Samtaler om hvordan kropp framstilles i media, og hvordan det påvirker lysten til å bevege seg.','K1, K4','Refleksjonssamtale i grupper'),
+    P('Uke 2–6','Vår','Dans og komposisjon','Øve inn danser fra ulike kulturer. Grupper skaper og presenterer egen komposisjon for klassen.','K3','Gjennomføring og samarbeid i gruppa'),
+    P('Uke 7–11','Vår','Førstehjelp og skadeforebygging','Varsling, sideleie, hjerte-lunge-redning på dukke, frie luftveier og stans av blødning. Tilpasset aktivitet ved skade eller sykdom.','K5, K11','Praktisk gjennomføring av førstehjelp'),
+    P('Uke 12–17','Vår','Nettspill og slagspill','Badminton, volleyball, bordtennis og slåball. Elevene hjelper hverandre med teknikk i par.','K2, K6','Observasjon av innsats og veiledning av medelever'),
+    P('Uke 18–21','Vår','Friidrett og egentrening','Løp, hopp og kast, og en egen treningsøkt eleven planlegger ut fra egne mål.','K1, K2','Egenvurdering av plan og gjennomføring'),
+    P('Uke 22–25','Vår','Elevstyrt aktivitet','Grupper planlegger og leder en økt for klassen, med tilpasninger slik at alle kan delta.','K2, K6, K7','Egen- og hverandrevurdering'),
+    P(FLEKS,'','Svømming og livberging','Varierte svømmeteknikker og lengre distanse ut fra eget mål. Livberging i, på og ved vann.','K9, K10','Observasjon av ferdigheter og egen målsetting')
+  ]},
+  '10':{tittel:'Årsplan kroppsøving · forslag for 10. trinn',steg:'10',perioder:[
+    P('Uke 34–37','Høst','Oppstart: egen treningsplan','Kartlegge egne interesser og mål. Lage en enkel plan for trening, helse og velvære, og prøve ulike treningsformer.','K1, K5','Samtale om egen plan'),
+    P('Uke 38–42','Høst','Friluftsliv og orientering i ukjent terreng','Orientering med flere karttyper og digitale verktøy i ukjent terreng. Tur til en ny årstid, med risikovurdering og sporløs ferdsel.','K8, K12, K13','Egenvurdering og refleksjon etter turen'),
+    P('Uke 43–47','Høst','Ballspill: taktikk og roller','Småspill og fullt spill i flere ballidretter. Elevene bytter på å være trener, dommer og spiller.','K2, K6, K7','Observasjon av innsats, samspill og ledelse'),
+    P('Uke 48–51','Høst','Dans: egne komposisjoner','Grupper velger stil, skaper en dansekomposisjon og presenterer den. Felles dans til avslutning.','K3','Gjennomføring og samarbeid i gruppa'),
+    P('Uke 2–6','Vår','Trening, helse og livsstil','Styrke, utholdenhet, restitusjon og søvn. Vurdere treningsråd og kroppsidealer i sosiale medier kritisk.','K1, K4, K5','Refleksjonsnotat eller samtale'),
+    P('Uke 7–11','Vår','Livreddende førstehjelp','Repetisjon av hjerte-lunge-redning og bruk av hjertestarter. Øving på realistiske situasjoner i grupper.','K11','Praktisk gjennomføring av førstehjelp'),
+    P('Uke 12–16','Vår','Turn, akrobatikk og alternative aktiviteter','Akrobatikk, parkour, klatring eller andre aktiviteter skolen har tilgang til. Sikring og å hjelpe hverandre fram.','K2, K6','Egenvurdering av framgang'),
+    P('Uke 17–20','Vår','Idrett etter eget valg','Elevene velger aktivitet i grupper og setter egne mål for perioden.','K1, K2, K7','Egenvurdering mot egne mål'),
+    P('Uke 21–25','Vår','Elevstyrt kroppsøving og friluftsliv','Grupper leder økter for klassen. Avsluttende tur som elevene planlegger selv.','K6, K7, K12','Egen- og hverandrevurdering'),
+    P(FLEKS,'','Svømming og livberging','Varierte svømmeteknikker og lengre distanse ut fra eget mål. Livberging i, på og ved vann, gjerne ute.','K9, K10','Observasjon av ferdigheter og egen målsetting')
+  ]}
+};
+function hentPlanForslag(trinn){
+  const kilde=AARSPLANER[trinn]||AARSPLANER['7'];
+  const plan=JSON.parse(JSON.stringify(kilde));
+  plan.trinn=String(trinn);
+  plan.perioder.forEach(p=>p.id=uid());
+  return plan;
+}
+
+/* ---------- spørsmålsbank til egenvurdering (uten AI) ---------- */
+const SPORSMALSBANK=[
+  {ord:['elevstyrt','interesse','eget valg','etter eget'],sporsmal:[
+    'Jeg bidrar når gruppa planlegger.',
+    'Jeg tar ansvar for min del av opplegget.',
+    'Jeg er med for fullt når andre leder aktiviteten.',
+    'Jeg tenker på at aktiviteten skal passe for alle.',
+    'Jeg gir andre vennlige og nyttige tilbakemeldinger.',
+    'Jeg hører på forslagene til de andre i gruppa.']},
+  {ord:['ball','spill','lagspill','nettspill','slagspill'],sporsmal:[
+    'Jeg er med i spillet, også når jeg ikke har ballen.',
+    'Jeg spiller andre gode og sender ballen videre.',
+    'Jeg følger reglene, også når ingen passer på.',
+    'Jeg tar det fint når laget mitt taper.',
+    'Jeg sørger for at alle på laget får være med.',
+    'Jeg prøver nye ting i spillet, selv om jeg kan gjøre feil.']},
+  {ord:['dans','rytme'],sporsmal:[
+    'Jeg er med på dansen, også når den er ny for meg.',
+    'Jeg prøver å følge rytmen i musikken.',
+    'Jeg kommer med forslag når vi lager noe selv.',
+    'Jeg samarbeider godt med dem jeg danser med.',
+    'Jeg tør å vise fram det vi har øvd på.',
+    'Jeg er en god publikummer når andre viser fram.']},
+  {ord:['turn','akrobatikk','apparat','hinderløype','kroppskontroll','kroppsbeherskelse'],sporsmal:[
+    'Jeg prøver øvelser som er litt vanskelige for meg.',
+    'Jeg øver flere ganger for å få det bedre til.',
+    'Jeg hjelper til med å sikre og ta imot andre.',
+    'Jeg følger reglene for trygg bruk av apparatene.',
+    'Jeg sier fra når jeg trenger hjelp.',
+    'Jeg merker at jeg får til mer enn før.']},
+  {ord:['friluft','orientering','tur','ute','nærmiljø','overnatting','vinter'],sporsmal:[
+    'Jeg kler meg slik at jeg har det bra ute.',
+    'Jeg er med på oppgavene, uansett vær.',
+    'Jeg bruker kartet til å finne ut hvor jeg er.',
+    'Jeg tar vare på naturen og rydder etter meg.',
+    'Jeg samarbeider godt med gruppa mi.',
+    'Jeg tenker over hva som er trygt før jeg gjør noe.']},
+  {ord:['friidrett','løp','hopp','kast'],sporsmal:[
+    'Jeg gjør mitt beste i øvelsene.',
+    'Jeg prøver å forbedre mitt eget resultat.',
+    'Jeg øver på teknikken, ikke bare på å vinne.',
+    'Jeg heier på andre.',
+    'Jeg er med på alle øvelsene, også dem jeg ikke liker så godt.',
+    'Jeg hjelper til med utstyr og måling.']},
+  {ord:['svøm','vann','berging'],sporsmal:[
+    'Jeg er trygg i vannet.',
+    'Jeg øver på det som er vanskelig for meg.',
+    'Jeg følger reglene i svømmehallen.',
+    'Jeg merker at jeg svømmer bedre enn før.',
+    'Jeg tør å prøve nye øvelser i vannet.',
+    'Jeg følger med på dem jeg svømmer sammen med.']},
+  {ord:['styrke','utholdenhet','trening','helse','bevegelighet','egentrening','livsstil','selvbilde'],sporsmal:[
+    'Jeg gjør mitt beste ut fra mine egne forutsetninger.',
+    'Jeg setter meg egne mål for øktene.',
+    'Jeg holder ut, også når det blir tungt.',
+    'Jeg velger øvelser og nivå som passer for meg.',
+    'Jeg oppmuntrer andre i gruppa.',
+    'Jeg vet hvorfor vi trener slik vi gjør.']},
+  {ord:['førstehjelp','skade'],sporsmal:[
+    'Jeg følger med når vi går gjennom nye ferdigheter.',
+    'Jeg øver praktisk, også når det kjennes uvant.',
+    'Jeg tar øvingen på alvor.',
+    'Jeg samarbeider godt med makkeren min.',
+    'Jeg vet hva jeg skal gjøre først hvis noen blir skadet.',
+    'Jeg spør når det er noe jeg er usikker på.']},
+  {ord:['oppstart','samarbeid','samspill','tillit','inkludering','lek'],sporsmal:[
+    'Jeg er med på lekene og aktivitetene.',
+    'Jeg er grei mot alle i gruppa.',
+    'Jeg inviterer andre med.',
+    'Jeg følger reglene vi har blitt enige om.',
+    'Jeg hjelper til med å rydde og finne fram utstyr.',
+    'Jeg føler meg trygg i kroppsøvingstimene.']}
+];
+function sporsmalForTema(tema){
+  const t=String(tema||'').toLowerCase();
+  const treff=SPORSMALSBANK.find(b=>b.ord.some(o=>t.includes(o)));
+  return treff?treff.sporsmal:null;
+}
+
+function oppdaterTopp(){
+  const m=document.getElementById('toppMerke');if(!m)return;
+  m.textContent=[state.trinn,state.skole].map(x=>String(x||'').trim()).filter(Boolean).join(' · ')||'Underveisvurdering';
+  const tips=document.getElementById('hjemTips');
+  if(tips){
+    const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+    tips.hidden=!(ios&&navigator.standalone!==true&&!state.skjulHjemTips);
+  }
+  const k=document.getElementById('kopiPaaminnelse');
+  if(k){
+    const dager=state.sistKopi?Math.round((new Date(idag())-new Date(state.sistKopi))/864e5):null;
+    k.textContent=dager===null?'Du har ikke tatt sikkerhetskopi ennå. Det gjør du under Innstillinger.'
+      :dager>13?`Siste sikkerhetskopi er ${dager} dager gammel. Ta en ny under Innstillinger.`
+      :`Siste sikkerhetskopi: ${datoNorsk(state.sistKopi)}.`;
+  }
+}
+function elevOgGruppe(elevId){
+  for(const g of state.grupper){const e=g.elever.find(x=>x.id===elevId);if(e)return{elev:e,gruppe:g};}
+  return null;
+}
+function temaValgHTML(){
+  return state.plan.perioder.map(p=>`<option value="${esc(p.tema)}">${esc(p.periode?p.periode+' · ':'')}${esc(p.tema)}</option>`).join('');
+}
+
+/* ===================== FANER ===================== */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('aktiv',x===t));
+  ['ark','egen','grupper','aarsplan','rapporter','innstillinger'].forEach(f=>{
+    document.getElementById('fane-'+f).hidden=(f!==t.dataset.fane);
+  });
+  tegnAlt();
+}));
+function tegnAlt(){tegnGrupper();tegnAarsplan();tegnArk();tegnEgen();tegnRapporter();tegnInnstillinger();}
+
+/* ===================== GRUPPER ===================== */
+function tegnGrupper(){
+  const el=document.getElementById('fane-grupper');
+  let html=`<div class="kort">
+    <h2>Ny gruppe</h2>
+    <div class="rad">
+      <div class="felt" style="flex:2"><label for="nyGruppeNavn">Gruppenavn</label>
+        <input type="text" id="nyGruppeNavn" placeholder="F.eks. 6A gruppe 1"></div>
+      <div class="felt" style="align-self:flex-end;flex:0"><button class="btn" onclick="leggTilGruppe()">Opprett gruppe</button></div>
+    </div>
+  </div>`;
+  if(!state.grupper.length){
+    html+=`<div class="tom">Ingen grupper ennå. Opprett en gruppe og lim inn elevnavnene.</div>`;
+  }
+  state.grupper.forEach(g=>{
+    html+=`<div class="kort">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h2>${esc(g.navn)} <span class="merke graa">${g.elever.length} elever</span></h2>
+        <button class="btn fare liten" onclick="slettGruppe('${g.id}')">Slett gruppe</button>
+      </div>
+      <div class="felt" style="margin-top:8px"><label for="lim-${g.id}">Legg til elever (ett navn per linje)</label>
+        <textarea id="lim-${g.id}" placeholder="Ola Nordmann&#10;Kari Nordmann"></textarea></div>
+      <button class="btn sekundaer liten" onclick="limInnElever('${g.id}')">Legg til navnene</button>
+      ${g.elever.length?`<table class="data" style="margin-top:12px"><thead><tr><th>#</th><th>Navn</th><th></th></tr></thead><tbody>
+        ${g.elever.map((e,i)=>`<tr><td>${i+1}</td><td>${esc(e.navn)}</td>
+          <td style="text-align:right"><button class="btn fare liten" onclick="slettElev('${g.id}','${e.id}')">Fjern</button></td></tr>`).join('')}
+      </tbody></table>`:''}
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+function leggTilGruppe(){
+  const inp=document.getElementById('nyGruppeNavn');
+  const navn=inp.value.trim();
+  if(!navn)return;
+  state.grupper.push({id:uid(),navn,elever:[]});
+  lagreState();tegnGrupper();
+}
+function limInnElever(gid){
+  const g=finnGruppe(gid);
+  const ta=document.getElementById('lim-'+gid);
+  const navn=ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
+  navn.forEach(n=>g.elever.push({id:uid(),navn:n}));
+  ta.value='';
+  lagreState();tegnGrupper();
+}
+function slettElev(gid,eid){
+  const g=finnGruppe(gid);
+  g.elever=g.elever.filter(e=>e.id!==eid);
+  lagreState();tegnGrupper();
+}
+function slettGruppe(gid){
+  const g=finnGruppe(gid);
+  const antallArk=state.ark.filter(a=>a.gruppeId===gid).length;
+  if(!confirm(`Slette «${g.navn}»?`+(antallArk?` ${antallArk} vurderingsark for gruppen slettes også.`:'')))return;
+  state.grupper=state.grupper.filter(x=>x.id!==gid);
+  state.ark=state.ark.filter(a=>a.gruppeId!==gid);
+  lagreState();tegnAlt();
+}
+
+/* ===================== ÅRSPLAN ===================== */
+function tegnAarsplan(){
+  const el=document.getElementById('fane-aarsplan');
+  const valgt=AARSPLANER[state.plan.trinn]?state.plan.trinn:'7';
+  let html=`<div class="kort">
+    <h2>Forslag til årsplan</h2>
+    <p class="hjelpetekst">Velg trinn og hent inn et ferdig forslag bygget på kompetansemålene i læreplanen i kroppsøving (KRO01-06). Etterpå kan du endre alt: trykk i en rute i tabellen for å skrive om, fjern perioder du ikke bruker, og legg til egne.</p>
+    <div class="rad">
+      <div class="felt" style="flex:0;min-width:170px"><label for="planTrinn">Trinn</label>
+        <select id="planTrinn">${Object.keys(AARSPLANER).map(t=>`<option value="${t}" ${t===valgt?'selected':''}>${t}. trinn</option>`).join('')}</select></div>
+      <div class="felt" style="align-self:flex-end;flex:0"><button class="btn" onclick="hentInnPlanforslag()">Hent inn forslaget</button></div>
+    </div>
+    <div class="status" id="planStatus"></div>
+  </div>
+  <div class="kort">
+    <h2>Legg til periode manuelt</h2>
+    <div class="rad">
+      <div class="felt"><label for="mPeriode">Periode</label><input type="text" id="mPeriode" placeholder="F.eks. Uke 34–39"></div>
+      <div class="felt"><label for="mTema">Tema</label><input type="text" id="mTema" placeholder="F.eks. Ballspill"></div>
+      <div class="felt" style="flex:2"><label for="mInnhold">Innhold (valgfritt)</label><input type="text" id="mInnhold" placeholder="F.eks. Håndball, basket, samarbeidsøvelser"></div>
+      <div class="felt" style="align-self:flex-end;flex:0"><button class="btn sekundaer" onclick="leggTilPeriode()">Legg til</button></div>
+    </div>
+  </div>`;
+  if(state.plan.perioder.length){
+    const rute=(p,felt,css)=>`<td contenteditable="true" class="redigerbar" style="${css||''}" onblur="endrePeriode('${p.id}','${felt}',this.innerText)">${esc(p[felt]||'')}</td>`;
+    html+=`<div class="kort">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h2>${esc(state.plan.tittel||'Årsplan kroppsøving')}</h2>
+        <div><button class="btn sekundaer liten" onclick="skrivUtAarsplan()">Skriv ut</button>
+        <button class="btn fare liten" onclick="tomAarsplan()">Tøm årsplan</button></div>
+      </div>
+      <div class="grid-omslutning"><table class="data"><thead><tr><th>Periode</th><th>Tema</th><th>Innhold</th><th>Mål</th><th>Vurdering</th><th></th></tr></thead><tbody>
+      ${state.plan.perioder.map(p=>`<tr>
+        ${rute(p,'periode','white-space:nowrap')}
+        ${rute(p,'tema','font-weight:700')}
+        ${rute(p,'innhold')}
+        ${rute(p,'maal','white-space:nowrap')}
+        ${rute(p,'vurdering')}
+        <td style="text-align:right"><button class="btn fare liten" onclick="slettPeriode('${p.id}')">Fjern</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>`;
+  }else{
+    html+=`<div class="tom">Ingen årsplan lagt inn. Hent inn et forslag øverst, eller legg til perioder selv.</div>`;
+  }
+  const km=KOMPETANSEMAAL[planSteg()];
+  html+=`<div class="kort">
+    <h2>${km.tittel}</h2>
+    <p class="hjelpetekst">Kortform av målene i læreplanen i kroppsøving (KRO01-06, gjelder fra august 2026). K-numrene i årsplanen viser til denne lista. Den offisielle ordlyden står på udir.no.</p>
+    <ol class="maalliste">${km.maal.map((m,i)=>`<li><b>K${i+1}</b> ${esc(m)}</li>`).join('')}</ol>
+  </div>`;
+  el.innerHTML=html;
+}
+function planSteg(){
+  const p=AARSPLANER[state.plan.trinn];
+  return p?p.steg:(parseInt(state.plan.trinn)>=8?'10':'7');
+}
+function hentInnPlanforslag(){
+  const trinn=document.getElementById('planTrinn').value;
+  if(state.plan.perioder.length&&!confirm(`Årsplanen du har nå, blir erstattet av forslaget for ${trinn}. trinn. Vurderingsark du allerede har laget, blir ikke endret. Vil du fortsette?`))return;
+  state.plan=hentPlanForslag(trinn);
+  lagreState();tegnAlt();
+  const s=document.getElementById('planStatus');
+  if(s){s.textContent=`Forslaget for ${trinn}. trinn er hentet inn. Tilpass det til skolens egen plan.`;s.className='status ok';}
+}
+function endrePeriode(pid,felt,verdi){
+  const p=state.plan.perioder.find(x=>x.id===pid);
+  if(!p)return;
+  verdi=String(verdi||'').replace(/\s+/g,' ').trim();
+  if(p[felt]===verdi)return;
+  p[felt]=verdi;
+  lagreState();
+}
+function skrivUtAarsplan(){
+  const p=state.plan,km=KOMPETANSEMAAL[planSteg()];
+  document.getElementById('printArea').innerHTML=`<div class="p-rapport">
+    <div class="p-topp"><div><div class="app-navn">${esc(fagTopp())}</div><h2>${esc(p.tittel||'Årsplan kroppsøving')}</h2></div></div>
+    <table class="p-rtabell"><thead><tr><th>Periode</th><th>Tema</th><th>Innhold</th><th>Mål</th><th>Vurdering</th></tr></thead>
+    <tbody>${p.perioder.map(pe=>`<tr><td style="white-space:nowrap">${esc(pe.periode)}</td><td><b>${esc(pe.tema)}</b></td>
+      <td>${esc(pe.innhold||'')}</td><td style="white-space:nowrap">${esc(pe.maal||'')}</td><td>${esc(pe.vurdering||'')}</td></tr>`).join('')}</tbody></table>
+    <div class="p-avsnitt">${km.tittel} (kortform, KRO01-06)</div>
+    <p class="p-brodtekst" style="font-size:9.5pt">${km.maal.map((m,i)=>`<b>K${i+1}</b> ${esc(m)}`).join(' · ')}</p>
+  </div>`;
+  skrivUt();
+}
+function leggTilPeriode(){
+  const periode=document.getElementById('mPeriode').value.trim();
+  const tema=document.getElementById('mTema').value.trim();
+  const innhold=document.getElementById('mInnhold').value.trim();
+  if(!tema)return;
+  state.plan.perioder.push({id:uid(),periode,tema,innhold});
+  lagreState();tegnAarsplan();
+}
+function slettPeriode(pid){
+  state.plan.perioder=state.plan.perioder.filter(p=>p.id!==pid);
+  lagreState();tegnAarsplan();
+}
+function tomAarsplan(){
+  if(!confirm('Tømme hele årsplanen?'))return;
+  state.plan={tittel:'',perioder:[]};
+  lagreState();tegnAarsplan();
+}
+/* ===================== VURDERINGSARK ===================== */
+let aktivtArkId=null;
+
+function tegnArk(){
+  const el=document.getElementById('fane-ark');
+  let html=state.grupper.length?'':`<div class="kort komigang">
+    <h2>Kom i gang</h2>
+    <ol class="steg">
+      <li><b>Lag en gruppe</b><span>Gå til fanen Grupper og lim inn elevnavnene, ett per linje.</span></li>
+      <li><b>Opprett et vurderingsark</b><span>Velg gruppe og tema. Fyll inn på skjermen i salen, eller skriv ut arket, kryss av og skann det i kopimaskinen.</span></li>
+      <li><b>Skriv ut rapporter</b><span>Under Rapporter får hver elev sin egen side til halvårsvurderingen.</span></li>
+    </ol>
+  </div>`;
+  html+=`<div class="kort">
+    <h2>Nytt vurderingsark</h2>
+    <p class="hjelpetekst">Ett ark dekker en hel periode. På utskriften krysser du bare av for det som skiller seg ut. Elever uten kryss i en gjennomført økt får «Deltatt / OK». Du kan sette opptil to tegn per elev i hver økt.</p>
+    <div class="rad">
+      <div class="felt"><label for="nyArkGruppe">Gruppe</label>
+        <select id="nyArkGruppe">${state.grupper.map(g=>`<option value="${g.id}">${esc(g.navn)}</option>`).join('')||'<option value="">Ingen grupper</option>'}</select></div>
+      <div class="felt"><label for="nyArkTema">Tema fra årsplanen</label>
+        <select id="nyArkTema"><option value="">– Velg tema –</option>${temaValgHTML()}<option value="__egen">Eget tema …</option></select></div>
+      <div class="felt" style="flex:0;min-width:120px"><label for="nyArkOkter">Antall økter</label>
+        <input type="number" id="nyArkOkter" value="3" min="1" max="6"></div>
+    </div>
+    <div class="felt" id="egetTemaFelt" hidden><label for="nyArkEgetTema">Eget tema</label><input type="text" id="nyArkEgetTema" placeholder="Skriv tema"></div>
+    <button class="btn" onclick="opprettArk()">Opprett ark</button>
+    <div class="status" id="arkStatus"></div>
+  </div>`;
+
+  if(!state.ark.length){
+    html+=`<div class="tom">Ingen vurderingsark ennå. Opprett et ark og fyll inn på skjermen, eller skriv det ut og skann det når perioden er ferdig.</div>`;
+  }else{
+    html+=`<div class="kort"><h2>Alle ark</h2><table class="data">
+      <thead><tr><th>Opprettet</th><th>Tema</th><th>Gruppe</th><th>Utfylt</th><th></th></tr></thead><tbody>
+      ${[...state.ark].sort((a,b)=>(b.dato||'').localeCompare(a.dato||'')).map(a=>{
+        const g=finnGruppe(a.gruppeId);
+        const antall=g?g.elever.filter(e=>Object.values(a.resultater[e.id]||{}).some(v=>v)).length:0;
+        return `<tr>
+          <td style="white-space:nowrap">${datoNorsk(a.dato)}</td>
+          <td><b>${esc(a.tema)}</b> <span class="merke graa">${a.okter} økter</span></td>
+          <td>${esc(g?g.navn:'(slettet gruppe)')}</td>
+          <td>${g?`<span class="merke ${antall?'':'graa'}">${antall} av ${g.elever.length}</span>`:''}</td>
+          <td style="text-align:right;white-space:nowrap">
+            <button class="btn sekundaer liten" onclick="aapneArk('${a.id}')">Åpne</button>
+            <button class="btn fare liten" onclick="slettArk('${a.id}')">Slett</button>
+          </td></tr>`;
+      }).join('')}
+      </tbody></table></div>`;
+  }
+
+  if(aktivtArkId){
+    const a=state.ark.find(x=>x.id===aktivtArkId);
+    if(a)html+=arkVisning(a);
+  }
+  el.innerHTML=html;
+
+  const temaSelect=document.getElementById('nyArkTema');
+  if(temaSelect)temaSelect.addEventListener('change',()=>{
+    document.getElementById('egetTemaFelt').hidden=(temaSelect.value!=='__egen');
+  });
+}
+
+let pensel=null; // valgt tegn ved utfylling på skjerm. null = bla gjennom tegnene
+
+function symbolLegendeHTML(){
+  return `<div class="symbolforklaring">${Object.entries(SYMBOLFORKLARING).map(([s,t])=>`<span><b class="${symKlasse(s)}">${s}</b> ${t}</span>`).join('')}</div>`;
+}
+function penselHTML(){
+  return `<div class="pensel" role="group" aria-label="Velg tegn">
+    ${Object.entries(SYMBOLFORKLARING).map(([s,t])=>`<button type="button" class="${pensel===s?'valgt':''}" aria-pressed="${pensel===s}" onclick="velgPensel('${s}')"><b class="${symKlasse(s)}">${s}</b> ${t}</button>`).join('')}
+    <button type="button" class="${pensel===''?'valgt':''}" aria-pressed="${pensel===''}" onclick="velgPensel('')"><b>·</b> Visk ut</button>
+  </div>`;
+}
+function velgPensel(s){pensel=(pensel===s?null:s);tegnArk();}
+
+function arkVisning(a){
+  const g=finnGruppe(a.gruppeId);
+  if(!g)return'';
+  const okter=[...Array(a.okter).keys()];
+  return `<div class="kort" id="arkEditor">
+    <h2>${esc(a.tema)} <span class="merke graa">${esc(g.navn)}</span></h2>
+    <div class="verktoylinje">
+      <button class="btn" onclick="skrivUtArk('${a.id}')">Skriv ut avkrysningsark</button>
+      <button class="btn sekundaer" id="skannBtn" onclick="startSkann('${a.id}')">Hent inn skannet ark (PDF eller bilde)</button>
+      <button class="btn sekundaer" onclick="aktivtArkId=null;tegnArk()">Lukk</button>
+    </div>
+    <div class="status" id="skannStatus"></div>
+    <div class="rad">${okter.map(o=>`<div class="felt" style="min-width:135px"><label for="oktdato-${o}">Dato økt ${o+1}</label>
+      <input type="date" id="oktdato-${o}" value="${a.oktDatoer[o]||''}" onchange="settOktDato('${a.id}',${o},this.value)"></div>`).join('')}</div>
+    <p class="hjelpetekst"><b>Fyll ut på skjermen:</b> Velg et tegn under og trykk i rutene til elevene det gjelder. Trykk «Resten OK» for å gi alle andre «Deltatt / OK» i den økta. Uten valgt tegn blar hvert trykk til neste tegn.</p>
+    ${penselHTML()}
+    <div class="grid-omslutning">
+    <table class="vgrid">
+      <thead>
+        <tr><th>#</th><th style="text-align:left">Navn</th>
+          ${okter.map(o=>`<th class="oktgruppe skille" colspan="2">Økt ${o+1}<br><button type="button" class="oktknapp" onclick="restenOk('${a.id}',${o})">Resten OK</button></th>`).join('')}</tr>
+      </thead>
+      <tbody>
+      ${g.elever.map((e,i)=>`<tr><td>${i+1}</td><td class="navn">${esc(e.navn)}</td>
+        ${okter.map(o=>[0,1].map(r=>{
+          const v=(a.resultater[e.id]||{})[o+'-'+r]||'';
+          return `<td class="symbolcelle ${symKlasse(v)} ${r===0?'skille':''}" onclick="syklusCelle('${a.id}','${e.id}',${o},${r})">${v}</td>`;
+        }).join('')).join('')}</tr>`).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+
+function opprettArk(){
+  const status=document.getElementById('arkStatus');
+  const vis=(t,k)=>{status.textContent=t;status.className='status '+k;};
+  const gruppeId=document.getElementById('nyArkGruppe').value;
+  if(!gruppeId||!finnGruppe(gruppeId))return vis('Opprett en gruppe med elever først (fanen Grupper).','feil');
+  let tema=document.getElementById('nyArkTema').value;
+  if(tema==='__egen')tema=document.getElementById('nyArkEgetTema').value.trim();
+  if(!tema)return vis('Velg eller skriv et tema.','feil');
+  const okter=Math.max(1,Math.min(6,parseInt(document.getElementById('nyArkOkter').value)||3));
+  const ark={id:uid(),gruppeId,tema,dato:idag(),okter,oktDatoer:Array(okter).fill(''),resultater:{}};
+  state.ark.push(ark);
+  aktivtArkId=ark.id;
+  lagreState();tegnArk();
+  document.getElementById('arkEditor')?.scrollIntoView({behavior:'smooth'});
+}
+function aapneArk(id){aktivtArkId=id;tegnArk();document.getElementById('arkEditor')?.scrollIntoView({behavior:'smooth'});}
+function slettArk(id){
+  const a=state.ark.find(x=>x.id===id);
+  if(!confirm(`Slette arket «${a.tema}» (${datoNorsk(a.dato)})?`))return;
+  state.ark=state.ark.filter(x=>x.id!==id);
+  if(aktivtArkId===id)aktivtArkId=null;
+  lagreState();tegnArk();
+}
+function settOktDato(arkId,o,verdi){
+  const a=state.ark.find(x=>x.id===arkId);
+  a.oktDatoer[o]=verdi;lagreState();
+}
+function syklusCelle(arkId,elevId,o,r){
+  const a=state.ark.find(x=>x.id===arkId);
+  if(!a.resultater[elevId])a.resultater[elevId]={};
+  const naa=a.resultater[elevId][o+'-'+r]||'';
+  a.resultater[elevId][o+'-'+r]=pensel===null?SYMBOLER[(SYMBOLER.indexOf(naa)+1)%SYMBOLER.length]:(naa===pensel?'':pensel);
+  lagreState();tegnArk();
+}
+function restenOk(arkId,o){
+  const a=state.ark.find(x=>x.id===arkId),g=finnGruppe(a.gruppeId);
+  g.elever.forEach(e=>{
+    if(!a.resultater[e.id])a.resultater[e.id]={};
+    const res=a.resultater[e.id];
+    if(!res[o+'-0']&&!res[o+'-1'])res[o+'-0']='✓';
+  });
+  lagreState();tegnArk();
+}
+
+/* ===================== AVKRYSNINGSARK: FELLES OPPSETT ===================== */
+/* Alle mål er i millimeter på et felt på 186 × 268 mm (A4 med 12 mm marg).
+   Utskriften og leseren bruker de samme tallene, så rutene havner der leseren leter. */
+const OMR={W:186,H:268,FID:8,KX:14,KY:262,KC:4,
+  ARK:{navnX:8,navnB:42,oktX:52,oktB:44.6,pitch:6,boks:4.5,forste:1.6,y0:48,rh:6.8,rader:30,okter:3,gjX:18.5,gjY:36.2},
+  EGEN:{y0:46,rh:14,boks:6,kol:[139,157,175],fritH:26}};
+const SYM7=['+','E','−','P','O','G','F'];
+const MERKE=0.08,USIKKER_FRA=0.035,USIKKER_TIL=0.16;
+
+function crc8(bits){let c=0xA5;for(const b of bits){const m=((c>>7)&1)^b;c=(c<<1)&0xFF;if(m)c^=0x07;}return c;}
+function tallTilBits(v,n){const a=[];for(let i=n-1;i>=0;i--)a.push((v>>i)&1);return a;}
+function kodeBits(type,nr,side,ver){
+  const d=[...tallTilBits(type,2),...tallTilBits(nr%4096,12),...tallTilBits(side,6),...tallTilBits(ver,3)];
+  return [...d,...tallTilBits(crc8(d),8)];
+}
+function tolkKode(bits){
+  if(bits.length!==31)return null;
+  const d=bits.slice(0,23),les=(a,b)=>d.slice(a,b).reduce((s,x)=>s*2+x,0);
+  if(crc8(d)!==bits.slice(23).reduce((s,x)=>s*2+x,0))return null;
+  const type=les(0,2);
+  if(type!==1&&type!==2)return null;
+  return {type,nr:les(2,14),side:les(14,20),ver:les(20,23)};
+}
+/* Hvert ark og hver egenvurdering får et løpenummer, og hver utskrift husker hvilke elever som sto på den.
+   Da kan et ark leses riktig selv om gruppen er endret etter at det ble skrevet ut. */
+function sikreUtskrift(obj,g){
+  if(!obj.nr){state.teller=(state.teller||0)+1;obj.nr=state.teller;}
+  const ids=g.elever.map(e=>e.id);
+  if(!obj.utskrifter)obj.utskrifter={};
+  const naa=obj.utskriftVer;
+  if(naa==null||JSON.stringify(obj.utskrifter[naa])!==JSON.stringify(ids)){
+    obj.utskriftVer=naa==null?0:(naa+1)%8;
+    obj.utskrifter[obj.utskriftVer]=ids;
+  }
+  lagreState();
+}
+function arkSider(a,ids){
+  const nE=Math.max(1,Math.ceil(ids.length/OMR.ARK.rader));
+  const R=Math.max(1,Math.ceil(ids.length/nE));   // jevn fordeling når gruppen går over flere sider
+  const nO=Math.ceil(a.okter/OMR.ARK.okter),perO=Math.ceil(a.okter/nO);
+  const alle=[...Array(a.okter).keys()],sider=[];
+  for(let oc=0;oc<nO;oc++)for(let ec=0;ec<nE;ec++){
+    sider.push({side:oc*nE+ec,okter:alle.slice(oc*perO,(oc+1)*perO),elevIds:ids.slice(ec*R,(ec+1)*R),radStart:ec*R});
+  }
+  return sider;
+}
+function arkBoks(rad,oi,k){const A=OMR.ARK;return {x:A.oktX+oi*A.oktB+A.forste+k*A.pitch,y:A.y0+rad*A.rh+(A.rh-A.boks)/2,s:A.boks};}
+function arkGjBoks(oi){const A=OMR.ARK;return {x:A.oktX+oi*A.oktB+A.gjX,y:A.gjY,s:A.boks};}
+function egenBoks(i,k){const E=OMR.EGEN;return {x:E.kol[k]-E.boks/2,y:E.y0+i*E.rh+(E.rh-E.boks)/2,s:E.boks};}
+function egenFritekstY(v,j){const E=OMR.EGEN;return E.y0+v.sporsmal.length*E.rh+5+j*E.fritH;}
+
+/* ===================== UTSKRIFT AV ARK ===================== */
+function skrivUt(){
+  document.body.classList.add('skriver-ut');
+  window.print();
+  setTimeout(()=>document.body.classList.remove('skriver-ut'),500);
+}
+const mm=n=>(Math.round(n*100)/100)+'mm';
+function pBoks(x,y,w,h,css,inn){
+  return `<div style="position:absolute;left:${mm(x)};top:${mm(y)};${w!=null?`width:${mm(w)};`:''}${h!=null?`height:${mm(h)};`:''}${css||''}">${inn||''}</div>`;
+}
+/* Svarte felt lages med kantlinjer, fordi nettlesere ofte ikke skriver ut bakgrunnsfarger */
+function pSvart(x,y,s){return `<div style="position:absolute;left:${mm(x)};top:${mm(y)};width:0;height:0;border:${mm(s/2)} solid #000;box-sizing:content-box"></div>`;}
+function pRute(b,fylt){
+  return fylt?pSvart(b.x,b.y,b.s)
+    :`<div style="position:absolute;left:${mm(b.x)};top:${mm(b.y)};width:${mm(b.s)};height:${mm(b.s)};border:.25mm solid #000;box-sizing:border-box"></div>`;
+}
+function pRamme(type,nr,side,ver){
+  const W=OMR.W,H=OMR.H,F=OMR.FID;
+  return pSvart(0,0,F)+pSvart(W-F,0,F)+pSvart(0,H-F,F)+pSvart(W-F,H-F,F)
+    +kodeBits(type,nr,side,ver).map((b,i)=>b?pSvart(OMR.KX+i*OMR.KC,OMR.KY,OMR.KC):'').join('');
+}
+function skrivUtArk(id){
+  const a=state.ark.find(x=>x.id===id);
+  const g=finnGruppe(a.gruppeId);
+  if(!g.elever.length){alert('Gruppen har ingen elever ennå.');return;}
+  sikreUtskrift(a,g);
+  document.getElementById('printArea').innerHTML=arkTilPrintHTML(a,g);
+  skrivUt();
+}
+function arkTilPrintHTML(a,g){
+  const A=OMR.ARK,sider=arkSider(a,a.utskrifter[a.utskriftVer]);
+  return sider.map(si=>{
+    const elever=si.elevIds.map(id=>g.elever.find(e=>e.id===id)).filter(Boolean);
+    const bunn=A.y0+elever.length*A.rh;
+    let h=pRamme(1,a.nr,si.side,a.utskriftVer);
+    h+=pBoks(12,0,110,null,'font-size:8pt;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden',esc(fagTopp()));
+    h+=pBoks(12,3.6,112,8,"font-family:'Bricolage Grotesque',sans-serif;font-size:15pt;font-weight:800;white-space:nowrap;overflow:hidden;line-height:8mm",esc(a.tema));
+    h+=pBoks(124,0,50,12,'font-size:8pt;text-align:right;line-height:1.35',`Gruppe: <b>${esc(g.navn)}</b><br>Side ${si.side+1} av ${sider.length} · ark nr. ${a.nr}`);
+    h+=pBoks(12,12.6,162,17,'font-size:7.6pt;line-height:1.38',
+      `Sett kryss for det som skiller seg ut: <b>+</b> God innsats · <b>E</b> Eksemplarisk oppførsel · <b>−</b> Trenger oppfølging · <b>P</b> Passiv, unngår å delta · <b>O</b> Utfordrende oppførsel · <b>G</b> Glemt gymtøy · <b>F</b> Fravær. Kryss av «Gjennomført» for hver økt du har hatt. Elever uten kryss i en gjennomført økt får «Deltatt / OK». Maks to kryss per elev i hver økt.`);
+    h+=pBoks(0,43,7,4,'font-size:7.5pt;font-weight:700;text-align:center','#');
+    h+=pBoks(A.navnX,43,A.navnB,4,'font-size:7.5pt;font-weight:700','Navn');
+    si.okter.forEach((o,oi)=>{
+      const x0=A.oktX+oi*A.oktB;
+      const harVerdi=elever.some(e=>{const r=a.resultater[e.id]||{};return r[o+'-0']||r[o+'-1'];});
+      h+=pBoks(x0-0.6,30,0,bunn-30,'border-left:.35mm solid #000');
+      h+=pBoks(x0+1,30.4,A.oktB-2,5,'font-size:9pt;font-weight:700;white-space:nowrap',`Økt ${o+1} <span style="font-weight:400;font-size:7.5pt">&nbsp;${a.oktDatoer[o]?datoNorsk(a.oktDatoer[o]):'Dato: _________'}</span>`);
+      h+=pBoks(x0+1,A.gjY-0.1,17,4,'font-size:7.5pt;line-height:3.7mm','Gjennomført:');
+      h+=pRute(arkGjBoks(oi),harVerdi);
+      SYM7.forEach((s,k)=>{h+=pBoks(arkBoks(0,oi,k).x-0.5,42.6,A.boks+1,4.4,'font-size:8.5pt;font-weight:700;text-align:center;line-height:4.4mm',s);});
+    });
+    elever.forEach((e,r)=>{
+      const y=A.y0+r*A.rh;
+      h+=pBoks(0,y,OMR.W,0,'border-top:.15mm solid #777');
+      h+=pBoks(0,y,7,A.rh,`font-size:8pt;text-align:center;line-height:${mm(A.rh)}`,String(si.radStart+r+1));
+      h+=pBoks(A.navnX,y,A.navnB,A.rh,`font-size:9.5pt;line-height:${mm(A.rh)};white-space:nowrap;overflow:hidden`,esc(e.navn));
+      si.okter.forEach((o,oi)=>{
+        const res=a.resultater[e.id]||{},verdier=[res[o+'-0'],res[o+'-1']];
+        SYM7.forEach((s,k)=>{h+=pRute(arkBoks(r,oi,k),verdier.includes(s));});
+      });
+    });
+    h+=pBoks(0,bunn,OMR.W,0,'border-top:.3mm solid #000');
+    h+=pBoks(12,253.2,162,8,'font-size:7.4pt;line-height:1.35','Bruk mørk penn og sett krysset inne i ruta. Legg alle arkene i kopimaskinen og skann dem til én PDF (gråtoner eller svart-hvitt, 200–300 dpi). Hent så PDF-en inn i verktøyet. Hold de svarte merkene i hjørnene og nederst frie for skrift og stifter.');
+    return `<div class="p-omr">${h}</div>`;
+  }).join('');
+}
+function skrivUtEgenArk(id){
+  const v=state.egen.find(x=>x.id===id);
+  const g=finnGruppe(v.gruppeId);
+  if(!g.elever.length){alert('Gruppen har ingen elever ennå.');return;}
+  sikreUtskrift(v,g);
+  const ids=v.utskrifter[v.utskriftVer];
+  document.getElementById('printArea').innerHTML=ids.slice(0,64).map((eid,i)=>egenArkHTML(v,g,g.elever.find(e=>e.id===eid),i)).join('');
+  skrivUt();
+}
+function egenArkHTML(v,g,elev,indeks){
+  const E=OMR.EGEN;
+  let h=pRamme(2,v.nr,indeks,v.utskriftVer);
+  h+=pBoks(12,0,110,null,'font-size:8pt;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden','Egenvurdering · '+esc(fagTopp()));
+  h+=pBoks(12,3.6,112,8,"font-family:'Bricolage Grotesque',sans-serif;font-size:15pt;font-weight:800;white-space:nowrap;overflow:hidden;line-height:8mm",esc(v.tema));
+  h+=pBoks(124,0,50,12,'font-size:8pt;text-align:right;line-height:1.35',`${esc(g.navn)}<br>${datoNorsk(v.dato)}`);
+  h+=pBoks(0,17,OMR.W,9,'font-size:13pt;line-height:9mm;white-space:nowrap;overflow:hidden',`Navn: <b>${esc(elev.navn)}</b>`);
+  h+=pBoks(0,36,125,9,'font-size:10.5pt;font-weight:700;line-height:9mm','Slik er det for meg i kroppsøving');
+  SKALA.forEach((s,k)=>{h+=pBoks(E.kol[k]-9,36,18,9,'font-size:8pt;font-weight:700;text-align:center;display:flex;align-items:center;justify-content:center;line-height:1.1',esc(s));});
+  v.sporsmal.forEach((s,i)=>{
+    const y=E.y0+i*E.rh;
+    h+=pBoks(0,y,OMR.W,0,'border-top:.2mm solid #555');
+    h+=pBoks(0,y,126,E.rh,'font-size:10.5pt;line-height:1.25;display:flex;align-items:center;overflow:hidden',`<span>${i+1}. ${esc(s)}</span>`);
+    SKALA.forEach((_,k)=>{h+=pRute(egenBoks(i,k),false);});
+  });
+  h+=pBoks(0,E.y0+v.sporsmal.length*E.rh,OMR.W,0,'border-top:.3mm solid #000');
+  v.fritekst.forEach((f,j)=>{
+    const y=egenFritekstY(v,j);
+    h+=pBoks(0,y,OMR.W,5,'font-size:10pt;font-weight:700;white-space:nowrap;overflow:hidden',esc(f));
+    h+=pBoks(0,y+14,OMR.W,0,'border-top:.2mm solid #333');
+    h+=pBoks(0,y+23,OMR.W,0,'border-top:.2mm solid #333');
+  });
+  h+=pBoks(12,254.5,162,6,'font-size:8pt;line-height:1.35','Sett ett tydelig kryss i én rute for hvert spørsmål. Bruk mørk penn eller blyant.');
+  return `<div class="p-omr">${h}</div>`;
+}
+
+/* ===================== LESING AV SKANNEDE ARK (UTEN AI) ===================== */
+/* Alt skjer i nettleseren: PDF-en gjøres om til bilder, hjørnemerkene finnes, og hver rute måles.
+   Ingenting sendes ut av maskinen. */
+let pdfjsKlar=null;
+function lastPdfjs(){
+  if(pdfjsKlar)return pdfjsKlar;
+  const last=src=>new Promise((res,rej)=>{
+    const s=document.createElement('script');s.src=src;s.onload=res;
+    s.onerror=()=>rej(new Error('PDF-leseren ble ikke funnet (mappen «lib» må ligge sammen med verktøyet)'));
+    document.head.appendChild(s);
+  });
+  pdfjsKlar=last('lib/pdf.min.js').then(()=>last('lib/pdf.worker.min.js')).then(()=>{
+    if(!window.pdfjsLib)throw new Error('PDF-leseren startet ikke');
+    return window.pdfjsLib;
+  });
+  pdfjsKlar.catch(()=>{pdfjsKlar=null;});
+  return pdfjsKlar;
+}
+const LANGSIDE=2340; // ca. 200 punkter per tomme på et A4-ark
+async function filTilSider(fil,forHverSide){
+  if(fil.type==='application/pdf'||/\.pdf$/i.test(fil.name)){
+    const lib=await lastPdfjs();
+    const dok=await lib.getDocument({data:new Uint8Array(await fil.arrayBuffer())}).promise;
+    for(let n=1;n<=dok.numPages;n++){
+      const side=await dok.getPage(n);
+      const v1=side.getViewport({scale:1});
+      const vp=side.getViewport({scale:LANGSIDE/Math.max(v1.width,v1.height)});
+      const c=document.createElement('canvas');c.width=Math.round(vp.width);c.height=Math.round(vp.height);
+      const ctx=c.getContext('2d',{willReadFrequently:true});
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+      await side.render({canvasContext:ctx,viewport:vp}).promise;
+      await forHverSide(c,n,dok.numPages);
+      side.cleanup();c.width=c.height=0;
+    }
+    return;
+  }
+  const img=await new Promise((res,rej)=>{
+    const i=new Image(),url=URL.createObjectURL(fil);
+    i.onload=()=>{URL.revokeObjectURL(url);res(i);};
+    i.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('kunne ikke åpne bildet. Bruk PDF, JPG eller PNG'));};
+    i.src=url;
+  });
+  const f=Math.min(1,LANGSIDE/Math.max(img.width,img.height));
+  const c=document.createElement('canvas');c.width=Math.round(img.width*f);c.height=Math.round(img.height*f);
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+  ctx.drawImage(img,0,0,c.width,c.height);
+  await forHverSide(c,1,1);
+}
+function tilBilde(canvas){
+  const w=canvas.width,h=canvas.height,n=w*h;
+  const d=canvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h).data;
+  const g=new Uint8Array(n),hist=new Uint32Array(256);
+  for(let i=0,j=0;i<n;i++,j+=4){const v=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;g[i]=v;hist[v]++;}
+  let s=0,hvit=255;
+  for(let v=255;v>=0;v--){s+=hist[v];if(s>=n*0.1){hvit=v;break;}}
+  return {w,h,g,hvit:Math.max(hvit,80)};
+}
+function finnHjorner(im){
+  const f=Math.max(1,Math.floor(Math.max(im.w,im.h)/900));
+  const sw=Math.floor(im.w/f),sh=Math.floor(im.h/f),T=im.hvit*0.5*f*f;
+  const mork=new Uint8Array(sw*sh);
+  for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){
+    let s=0;
+    for(let dy=0;dy<f;dy++){const r=(y*f+dy)*im.w+x*f;for(let dx=0;dx<f;dx++)s+=im.g[r+dx];}
+    if(s<T)mork[y*sw+x]=1;
+  }
+  const kort=Math.min(sw,sh),minS=kort*0.024,maxS=kort*0.08;
+  const sett=new Uint8Array(sw*sh),stakk=new Int32Array(sw*sh),kand=[];
+  for(let i=0;i<sw*sh;i++){
+    if(!mork[i]||sett[i])continue;
+    let topp=0,x0=sw,x1=0,y0=sh,y1=0,ar=0,sx=0,sy=0;
+    stakk[topp++]=i;sett[i]=1;
+    while(topp){
+      const p=stakk[--topp],x=p%sw,y=(p-x)/sw;
+      ar++;sx+=x;sy+=y;
+      if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
+      if(x>0&&mork[p-1]&&!sett[p-1]){sett[p-1]=1;stakk[topp++]=p-1;}
+      if(x<sw-1&&mork[p+1]&&!sett[p+1]){sett[p+1]=1;stakk[topp++]=p+1;}
+      if(y>0&&mork[p-sw]&&!sett[p-sw]){sett[p-sw]=1;stakk[topp++]=p-sw;}
+      if(y<sh-1&&mork[p+sw]&&!sett[p+sw]){sett[p+sw]=1;stakk[topp++]=p+sw;}
+    }
+    const w=x1-x0+1,h=y1-y0+1;
+    if(w>=minS&&w<=maxS&&h>=minS&&h<=maxS&&Math.abs(w-h)<=0.3*Math.max(w,h)&&ar>=0.68*w*h)
+      kand.push({x:(sx/ar+0.5)*f,y:(sy/ar+0.5)*f,s:Math.max(w,h)*f});
+  }
+  if(kand.length<4)return null;
+  const hj=[[0,0],[im.w,0],[im.w,im.h],[0,im.h]].map(([cx,cy])=>{
+    let best=null,bd=Infinity;
+    kand.forEach(k=>{const dd=(k.x-cx)**2+(k.y-cy)**2;if(dd<bd){bd=dd;best=k;}});
+    return best;
+  });
+  if(new Set(hj).size<4)return null;
+  // finpuss: tyngdepunktet av de mørke punktene i full oppløsning
+  const Tf=im.hvit*0.5;
+  return hj.map(k=>{
+    const r=Math.round(k.s*0.75);
+    const xa=Math.max(0,Math.round(k.x)-r),xb=Math.min(im.w-1,Math.round(k.x)+r);
+    const ya=Math.max(0,Math.round(k.y)-r),yb=Math.min(im.h-1,Math.round(k.y)+r);
+    let n=0,sx=0,sy=0;
+    for(let y=ya;y<=yb;y++)for(let x=xa;x<=xb;x++){if(im.g[y*im.w+x]<Tf){n++;sx+=x;sy+=y;}}
+    return n?{x:sx/n+0.5,y:sy/n+0.5}:{x:k.x,y:k.y};
+  });
+}
+function homografi(fra,til){
+  const A=[];
+  for(let i=0;i<4;i++){
+    const[x,y]=fra[i],[u,v]=til[i];
+    A.push([x,y,1,0,0,0,-u*x,-u*y,u]);
+    A.push([0,0,0,x,y,1,-v*x,-v*y,v]);
+  }
+  for(let k=0;k<8;k++){
+    let p=k;
+    for(let i=k+1;i<8;i++)if(Math.abs(A[i][k])>Math.abs(A[p][k]))p=i;
+    if(Math.abs(A[p][k])<1e-9)return null;
+    [A[k],A[p]]=[A[p],A[k]];
+    for(let i=0;i<8;i++){
+      if(i===k)continue;
+      const m=A[i][k]/A[k][k];
+      if(m)for(let j=k;j<9;j++)A[i][j]-=m*A[k][j];
+    }
+  }
+  return A.map((r,i)=>r[8]/r[i]);
+}
+function andelMork(im,h,x,y,w,hh,T,ppm){
+  const nx=Math.max(5,Math.min(24,Math.round(w*ppm))),ny=Math.max(5,Math.min(24,Math.round(hh*ppm)));
+  let m=0,t=0;
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const px=x+(i+.5)*w/nx,py=y+(j+.5)*hh/ny,dn=h[6]*px+h[7]*py+1;
+    const u=((h[0]*px+h[1]*py+h[2])/dn)|0,v=((h[3]*px+h[4]*py+h[5])/dn)|0;
+    if(u<0||v<0||u>=im.w||v>=im.h)continue;
+    t++;if(im.g[v*im.w+u]<T)m++;
+  }
+  return t?m/t:0;
+}
+function ringStyrke(im,h,x,y,s,n){
+  let sum=0,t=0;const k=0.125;
+  for(let i=0;i<n;i++){
+    const a=(i+.5)/n*s;
+    for(let q=0;q<4;q++){
+      const px=q===0||q===1?x+a:(q===2?x+k:x+s-k),py=q===0?y+k:(q===1?y+s-k:y+a);
+      const dn=h[6]*px+h[7]*py+1;
+      const u=((h[0]*px+h[1]*py+h[2])/dn)|0,v=((h[3]*px+h[4]*py+h[5])/dn)|0;
+      if(u<0||v<0||u>=im.w||v>=im.h)continue;
+      sum+=255-im.g[v*im.w+u];t++;
+    }
+  }
+  return t?sum/t:0;
+}
+/* Finner ruta nøyaktig ved å lete etter kantlinja i nærheten, og måler så hvor mye mørkt det er inni */
+function lesRute(s,b){
+  const im=s.im,h=s.h,maks=Math.min(1.2,b.s*0.26),n=Math.max(6,Math.round(b.s*s.ppm/1.5));
+  let best=-1,bx=0,by=0;
+  for(let dy=-maks;dy<=maks+1e-6;dy+=0.15)for(let dx=-maks;dx<=maks+1e-6;dx+=0.15){
+    const r=ringStyrke(im,h,b.x+dx,b.y+dy,b.s,n)-1.5*(Math.abs(dx)+Math.abs(dy));
+    if(r>best){best=r;bx=dx;by=dy;}
+  }
+  const marg=Math.max(0.6,b.s*0.16);
+  return andelMork(im,h,b.x+bx+marg,b.y+by+marg,b.s-2*marg,b.s-2*marg,s.T,s.ppm);
+}
+function lesSide(canvas){
+  const im=tilBilde(canvas),hj=finnHjorner(im);
+  if(!hj)return {feil:'fant ikke de svarte hjørnemerkene'};
+  const W=OMR.W,H=OMR.H,c=OMR.FID/2,mmHj=[[c,c],[W-c,c],[W-c,H-c],[c,H-c]];
+  for(let r=0;r<4;r++){
+    const h=homografi(mmHj,mmHj.map((_,i)=>[hj[(i+r)%4].x,hj[(i+r)%4].y]));
+    if(!h)continue;
+    const p0=[h[2],h[5]],dn=h[6]*10+1,p1=[(h[0]*10+h[2])/dn,(h[3]*10+h[5])/dn];
+    const ppm=Math.hypot(p1[0]-p0[0],p1[1]-p0[1])/10;
+    const bits=[];
+    for(let i=0;i<31;i++)bits.push(andelMork(im,h,OMR.KX+i*OMR.KC+0.9,OMR.KY+0.9,OMR.KC-1.8,OMR.KC-1.8,im.hvit*0.55,ppm)>0.5?1:0);
+    const kode=tolkKode(bits);
+    if(kode)return {im,h,ppm,kode,T:im.hvit*0.75};
+  }
+  return {feil:'fant hjørnemerkene, men ikke koden nederst på arket'};
+}
+function klipp(s,x,y,w,hh,bredde){
+  const c=document.createElement('canvas');c.width=bredde;c.height=Math.round(bredde*hh/w);
+  const ctx=c.getContext('2d'),id=ctx.createImageData(c.width,c.height),im=s.im,h=s.h;
+  for(let j=0;j<c.height;j++)for(let i=0;i<c.width;i++){
+    const px=x+(i+.5)*w/c.width,py=y+(j+.5)*hh/c.height,dn=h[6]*px+h[7]*py+1;
+    const u=((h[0]*px+h[1]*py+h[2])/dn)|0,v=((h[3]*px+h[4]*py+h[5])/dn)|0;
+    const g=(u<0||v<0||u>=im.w||v>=im.h)?255:im.g[v*im.w+u],k=(j*c.width+i)*4;
+    id.data[k]=id.data[k+1]=id.data[k+2]=g;id.data[k+3]=255;
+  }
+  ctx.putImageData(id,0,0);
+  return c.toDataURL('image/jpeg',0.8);
+}
+function beskrivKode(k){
+  const o=k.type===1?state.ark.find(a=>a.nr&&a.nr%4096===k.nr):state.egen.find(v=>v.nr&&v.nr%4096===k.nr);
+  return o?`${k.type===1?'vurderingsarket':'egenvurderingen'} «${o.tema}»`:'et ark som ikke finnes i denne nettleseren';
+}
+const pust=()=>new Promise(r=>setTimeout(r,0));
+
+/* ---------- vurderingsark ---------- */
+let skannArkId=null;
+let skannForslag=null;   // {elevId:{'okt-rute':symbol}}
+let skannUsikker={};     // {'elevId|okt':true}
+let skannHoldt={};       // {okt:true}
+let skannMelding='';
+
+function startSkann(arkId){
+  skannArkId=arkId;
+  document.getElementById('skannFil').value='';
+  document.getElementById('skannFil').click();
+}
+document.getElementById('skannFil').addEventListener('change',async ev=>{
+  const fil=ev.target.files[0];
+  if(!fil)return;
+  const status=document.getElementById('skannStatus');
+  const btn=document.getElementById('skannBtn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner moerk"></span> Leser arket …';}
+  if(status){status.textContent='Åpner filen …';status.className='status';}
+  try{
+    const a=state.ark.find(x=>x.id===skannArkId);
+    const g=finnGruppe(a.gruppeId);
+    if(!a.nr)throw new Error('dette arket er ikke skrevet ut med avkrysningsruter ennå. Skriv det ut på nytt først');
+    const lest=[],avvist=[];
+    await filTilSider(fil,async(canvas,n,antall)=>{
+      if(status)status.textContent=`Leser side ${n} av ${antall} …`;
+      await pust();
+      const s=lesSide(canvas);
+      if(s.feil){avvist.push(`Side ${n}: ${s.feil}.`);return;}
+      if(s.kode.type!==1||s.kode.nr!==a.nr%4096){avvist.push(`Side ${n} hører til ${beskrivKode(s.kode)}.`);return;}
+      const ids=(a.utskrifter||{})[s.kode.ver];
+      const si=ids&&arkSider(a,ids).find(x=>x.side===s.kode.side);
+      if(!si){avvist.push(`Side ${n}: kjenner ikke igjen denne utskriften av arket.`);return;}
+      lest.push({si,
+        gj:si.okter.map((o,oi)=>lesRute(s,arkGjBoks(oi))),
+        rader:si.elevIds.map((id,r)=>si.okter.map((o,oi)=>SYM7.map((_,k)=>lesRute(s,arkBoks(r,oi,k)))))});
+    });
+    if(!lest.length)throw new Error(avvist.join(' ')||'fant ingen ark i filen');
+    byggSkannForslag(a,g,lest);
+    skannMelding=`Leste ${lest.length} ${lest.length===1?'side':'sider'}.`+(avvist.length?' Ikke lest: '+avvist.join(' '):'');
+    visSkannModal();
+    if(status)status.textContent='';
+  }catch(e){
+    if(status){status.textContent='Skanningen feilet: '+e.message+'. Du kan også fylle inn direkte i rutene over.';status.className='status feil';}
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Hent inn skannet ark (PDF eller bilde)';}
+  }
+});
+function byggSkannForslag(a,g,lest){
+  skannForslag={};skannUsikker={};skannHoldt={};
+  const iGruppa=new Set(g.elever.map(e=>e.id));
+  lest.forEach(l=>l.si.okter.forEach((o,oi)=>{
+    if(l.gj[oi]>=MERKE||l.rader.some(r=>r[oi].some(f=>f>=MERKE)))skannHoldt[o]=true;
+  }));
+  lest.forEach(l=>l.si.elevIds.forEach((id,r)=>{
+    if(!iGruppa.has(id))return;
+    if(!skannForslag[id])skannForslag[id]={};
+    l.si.okter.forEach((o,oi)=>{
+      if(!skannHoldt[o])return;
+      const f=l.rader[r][oi],kryss=SYM7.filter((_,k)=>f[k]>=MERKE);
+      skannForslag[id][o+'-0']=kryss[0]||'✓';
+      skannForslag[id][o+'-1']=kryss[1]||'';
+      if(kryss.length>2||f.some(x=>x>=USIKKER_FRA&&x<USIKKER_TIL))skannUsikker[id+'|'+o]=true;
+    });
+  }));
+}
+function visSkannModal(){
+  const a=state.ark.find(x=>x.id===skannArkId);
+  const g=finnGruppe(a.gruppeId);
+  const okter=[...Array(a.okter).keys()];
+  const holdt=okter.filter(o=>skannHoldt[o]).map(o=>o+1);
+  const usikre=Object.keys(skannUsikker).length;
+  document.getElementById('skannOppsummering').innerHTML=esc(skannMelding)
+    +(holdt.length?` Gjennomførte økter: <b>${holdt.join(', ')}</b>.`:' Fant ingen gjennomførte økter.')
+    +(usikre?` <b>${usikre}</b> ${usikre===1?'sted er':'steder er'} merket med oransje ramme fordi krysset var svakt eller det var flere enn to kryss. Sjekk dem mot arket.`:'');
+  document.getElementById('skannGrid').innerHTML=
+    `<table class="vgrid">
+      <thead>
+        <tr><th>#</th><th style="text-align:left">Navn</th>
+          ${okter.map(o=>`<th class="oktgruppe skille" colspan="2">Økt ${o+1}</th>`).join('')}</tr>
+      </thead>
+      <tbody>
+    ${g.elever.map((e,i)=>`<tr><td>${i+1}</td><td class="navn">${esc(e.navn)}</td>
+      ${okter.map(o=>[0,1].map(r=>{
+        if(!skannHoldt[o]||!skannForslag[e.id])return `<td class="ikkelest ${r===0?'skille':''}">·</td>`;
+        const v=skannForslag[e.id][o+'-'+r]||'';
+        return `<td class="symbolcelle ${symKlasse(v)} ${r===0?'skille':''} ${skannUsikker[e.id+'|'+o]?'uklar':''}" onclick="syklusForslag('${e.id}',${o},${r})">${v}</td>`;
+      }).join('')).join('')}</tr>`).join('')}
+    </tbody></table>`;
+  document.getElementById('skannModalBak').classList.add('vis');
+}
+function syklusForslag(elevId,o,r){
+  if(!skannForslag[elevId])skannForslag[elevId]={};
+  const naa=skannForslag[elevId][o+'-'+r]||'';
+  skannForslag[elevId][o+'-'+r]=SYMBOLER[(SYMBOLER.indexOf(naa)+1)%SYMBOLER.length];
+  delete skannUsikker[elevId+'|'+o];
+  visSkannModal();
+}
+document.getElementById('skannLagreBtn').addEventListener('click',()=>{
+  const a=state.ark.find(x=>x.id===skannArkId);
+  Object.entries(skannForslag).forEach(([elevId,verdier])=>{
+    if(!a.resultater[elevId])a.resultater[elevId]={};
+    Object.entries(verdier).forEach(([k,v])=>{a.resultater[elevId][k]=v;});
+  });
+  document.getElementById('skannModalBak').classList.remove('vis');
+  lagreState();tegnArk();
+  setTimeout(()=>{
+    const s=document.getElementById('skannStatus');
+    if(s){s.textContent='Skanningen er lagret i arket.';s.className='status ok';}
+  },50);
+});
+document.getElementById('skannAvbrytBtn').addEventListener('click',()=>{
+  document.getElementById('skannModalBak').classList.remove('vis');
+});
+
+
+/* ===================== EGENVURDERING ===================== */
+let aktivEgenId=null,egenForslag=null,egenSkannId=null,csvData=null;
+
+function tegnEgen(){
+  const el=document.getElementById('fane-egen');
+  let html=`<div class="kort">
+    <h2>Ny egenvurdering</h2>
+    <p class="hjelpetekst">Elevene får ett ark hver med navnet ferdig påtrykt. De setter kryss i én rute per spørsmål, og du skanner arkene samlet til én PDF i kopimaskinen. Svarene blir en del av elevrapporten.</p>
+    <div class="rad">
+      <div class="felt"><label for="nyEgenGruppe">Gruppe</label>
+        <select id="nyEgenGruppe">${state.grupper.map(g=>`<option value="${g.id}">${esc(g.navn)}</option>`).join('')||'<option value="">Ingen grupper</option>'}</select></div>
+      <div class="felt"><label for="nyEgenTema">Tema fra årsplanen</label>
+        <select id="nyEgenTema"><option value="">– Velg tema –</option>${temaValgHTML()}<option value="__egen">Eget tema …</option></select></div>
+      <div class="felt" style="flex:0;min-width:160px"><label for="nyEgenDato">Dato</label><input type="date" id="nyEgenDato" value="${idag()}"></div>
+    </div>
+    <div class="felt" id="egenTemaFelt" hidden><label for="nyEgenEgetTema">Eget tema</label><input type="text" id="nyEgenEgetTema" placeholder="Skriv tema"></div>
+    <div class="felt"><label for="nyEgenSporsmal">Spørsmål (ett per linje, maks 8)</label>
+      <textarea id="nyEgenSporsmal" style="min-height:150px">${STANDARDSPORSMAL.join('\n')}</textarea></div>
+    <div class="felt"><label for="nyEgenFritekst">Skrivefelt (ett per linje, maks 3)</label>
+      <textarea id="nyEgenFritekst" style="min-height:70px">${STANDARDFRITEKST.join('\n')}</textarea></div>
+    <div class="verktoylinje">
+      <button class="btn" onclick="opprettEgen()">Opprett egenvurdering</button>
+      <button class="btn sekundaer" id="lagSporsmalBtn" onclick="lagSporsmalForTema()">Foreslå spørsmål for temaet</button>
+    </div>
+    <div class="status" id="egenStatus"></div>
+  </div>`;
+
+  if(!state.egen.length){
+    html+=`<div class="tom">Ingen egenvurderinger ennå. Svarskalaen er fast: ${SKALA.join(' · ')}.</div>`;
+  }else{
+    html+=`<div class="kort"><h2>Alle egenvurderinger</h2><table class="data">
+      <thead><tr><th>Dato</th><th>Tema</th><th>Gruppe</th><th>Besvart</th><th></th></tr></thead><tbody>
+      ${[...state.egen].sort((a,b)=>(b.dato||'').localeCompare(a.dato||'')).map(v=>{
+        const g=finnGruppe(v.gruppeId);
+        const antall=g?g.elever.filter(e=>v.svar[e.id]&&Object.keys(v.svar[e.id]).length).length:0;
+        return `<tr><td style="white-space:nowrap">${datoNorsk(v.dato)}</td>
+          <td><b>${esc(v.tema)}</b> <span class="merke graa">${v.sporsmal.length} spørsmål</span></td>
+          <td>${esc(g?g.navn:'(slettet gruppe)')}</td>
+          <td>${g?`<span class="merke ${antall?'':'graa'}">${antall} av ${g.elever.length}</span>`:''}</td>
+          <td style="text-align:right;white-space:nowrap">
+            <button class="btn sekundaer liten" onclick="aapneEgen('${v.id}')">Åpne</button>
+            <button class="btn fare liten" onclick="slettEgen('${v.id}')">Slett</button></td></tr>`;
+      }).join('')}
+      </tbody></table></div>`;
+  }
+
+  if(aktivEgenId){
+    const v=state.egen.find(x=>x.id===aktivEgenId);
+    if(v)html+=egenVisning(v);
+  }
+  el.innerHTML=html;
+
+  const ts=document.getElementById('nyEgenTema');
+  if(ts)ts.addEventListener('change',()=>{document.getElementById('egenTemaFelt').hidden=(ts.value!=='__egen');});
+}
+
+function egenVisning(v){
+  const g=finnGruppe(v.gruppeId);
+  if(!g)return'';
+  return `<div class="kort" id="egenEditor">
+    <h2>${esc(v.tema)} <span class="merke graa">${esc(g.navn)} · ${datoNorsk(v.dato)}</span></h2>
+    <div class="verktoylinje">
+      <button class="btn" onclick="skrivUtEgenArk('${v.id}')">Skriv ut ark til alle elever</button>
+      <button class="btn sekundaer" id="egenSkannBtn" onclick="startEgenSkann('${v.id}')">Hent inn skannede ark (PDF eller bilde)</button>
+      <button class="btn sekundaer" onclick="startCsvImport('${v.id}')">Importer svar fra Forms (CSV)</button>
+      <button class="btn sekundaer" onclick="aktivEgenId=null;tegnEgen()">Lukk</button>
+    </div>
+    <div class="status" id="egenSkannStatus"></div>
+    <div class="grid-omslutning" style="margin-top:10px">
+    <table class="vgrid sportabell">
+      <thead><tr><th style="text-align:left">Elev</th>
+        ${v.sporsmal.map((s,i)=>`<th title="${esc(s)}">Sp. ${i+1}</th>`).join('')}
+        ${v.fritekst.map((f,i)=>`<th style="min-width:150px">Skrivefelt ${i+1}</th>`).join('')}</tr></thead>
+      <tbody>${g.elever.map(e=>`<tr><td class="navn">${esc(e.navn)}</td>
+        ${v.sporsmal.map((s,i)=>{
+          const val=(v.svar[e.id]||{})[i];
+          return `<td><div class="skala">${SKALA.map((lab,n)=>`<button class="${val===n?'valgt':''}" title="${esc(lab)}" onclick="settEgenSvar('${v.id}','${e.id}',${i},${n})">${lab[0]}${n===1?'n':''}</button>`).join('')}</div></td>`;
+        }).join('')}
+        ${v.fritekst.map((f,i)=>`<td style="text-align:left;font-size:.85rem">${esc(((v.tekst[e.id]||{})[i])||'')||'<span style="color:var(--demp)">–</span>'}</td>`).join('')}
+      </tr>`).join('')}</tbody></table></div>
+    <p class="hjelpetekst" style="margin-top:10px">Skala: ${SKALA.map((s,i)=>`<b>${s[0]}${i===1?'n':''}</b> = ${s}`).join(' · ')}. Spørsmålene: ${v.sporsmal.map((s,i)=>`${i+1}. ${esc(s)}`).join(' ')}</p>
+    <div id="csvOmraade"></div>
+  </div>`;
+}
+
+function opprettEgen(){
+  const status=document.getElementById('egenStatus');
+  const vis=(t,k)=>{status.textContent=t;status.className='status '+k;};
+  const gruppeId=document.getElementById('nyEgenGruppe').value;
+  if(!gruppeId||!finnGruppe(gruppeId))return vis('Opprett en gruppe med elever først (fanen Grupper).','feil');
+  let tema=document.getElementById('nyEgenTema').value;
+  if(tema==='__egen')tema=document.getElementById('nyEgenEgetTema').value.trim();
+  if(!tema)return vis('Velg eller skriv et tema.','feil');
+  const sporsmal=document.getElementById('nyEgenSporsmal').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8);
+  if(!sporsmal.length)return vis('Legg inn minst ett spørsmål.','feil');
+  const fritekst=document.getElementById('nyEgenFritekst').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,3);
+  const v={id:uid(),gruppeId,tema,dato:document.getElementById('nyEgenDato').value||idag(),sporsmal,fritekst,svar:{},tekst:{}};
+  state.egen.push(v);aktivEgenId=v.id;
+  lagreState();tegnEgen();
+  document.getElementById('egenEditor')?.scrollIntoView({behavior:'smooth'});
+}
+function aapneEgen(id){aktivEgenId=id;tegnEgen();document.getElementById('egenEditor')?.scrollIntoView({behavior:'smooth'});}
+function slettEgen(id){
+  const v=state.egen.find(x=>x.id===id);
+  if(!confirm(`Slette egenvurderingen «${v.tema}»?`))return;
+  state.egen=state.egen.filter(x=>x.id!==id);
+  if(aktivEgenId===id)aktivEgenId=null;
+  lagreState();tegnEgen();
+}
+function settEgenSvar(vId,elevId,qi,verdi){
+  const v=state.egen.find(x=>x.id===vId);
+  if(!v.svar[elevId])v.svar[elevId]={};
+  if(v.svar[elevId][qi]===verdi)delete v.svar[elevId][qi];
+  else v.svar[elevId][qi]=verdi;
+  lagreState();tegnEgen();
+}
+
+function lagSporsmalForTema(){
+  const status=document.getElementById('egenStatus');
+  let tema=document.getElementById('nyEgenTema').value;
+  if(tema==='__egen')tema=document.getElementById('nyEgenEgetTema').value.trim();
+  if(!tema){status.textContent='Velg et tema først, så hentes spørsmål som passer til det.';status.className='status feil';return;}
+  const forslag=sporsmalForTema(tema);
+  document.getElementById('nyEgenSporsmal').value=(forslag||STANDARDSPORSMAL).join('\n');
+  status.textContent=forslag?'Spørsmålene er hentet fra spørsmålsbanken for dette temaet. Rediger fritt før du oppretter.'
+    :'Fant ingen egne spørsmål for dette temaet, så standardspørsmålene står i feltet. Rediger fritt før du oppretter.';
+  status.className='status ok';
+}
+
+/* ---------- egenvurdering: lesing av skannede ark (uten AI) ---------- */
+let egenMelding='';
+function startEgenSkann(id){
+  egenSkannId=id;
+  document.getElementById('egenSkannFil').value='';
+  document.getElementById('egenSkannFil').click();
+}
+document.getElementById('egenSkannFil').addEventListener('change',async ev=>{
+  const fil=ev.target.files[0];
+  if(!fil)return;
+  const status=document.getElementById('egenSkannStatus');
+  const btn=document.getElementById('egenSkannBtn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner moerk"></span> Leser arkene …';}
+  if(status){status.textContent='Åpner filen …';status.className='status';}
+  try{
+    const v=state.egen.find(x=>x.id===egenSkannId);
+    const g=finnGruppe(v.gruppeId);
+    if(!v.nr)throw new Error('arkene til denne egenvurderingen er ikke skrevet ut med avkrysningsruter ennå. Skriv dem ut på nytt først');
+    const funn=[],avvist=[];
+    await filTilSider(fil,async(canvas,n,antall)=>{
+      if(status)status.textContent=`Leser side ${n} av ${antall} …`;
+      await pust();
+      const s=lesSide(canvas);
+      if(s.feil){avvist.push(`Side ${n}: ${s.feil}.`);return;}
+      if(s.kode.type!==2||s.kode.nr!==v.nr%4096){avvist.push(`Side ${n} hører til ${beskrivKode(s.kode)}.`);return;}
+      const ids=(v.utskrifter||{})[s.kode.ver],elevId=ids&&ids[s.kode.side];
+      if(!elevId){avvist.push(`Side ${n}: kjenner ikke igjen denne utskriften.`);return;}
+      let usikker=false;
+      const svar=v.sporsmal.map((_,i)=>{
+        const f=[0,1,2].map(k=>lesRute(s,egenBoks(i,k))),maks=Math.max(...f),idx=f.indexOf(maks);
+        const neste=Math.max(...f.filter((_,k)=>k!==idx));
+        if(maks<0.045){if(maks>=0.02)usikker=true;return null;}
+        if(maks<0.08||neste>=Math.max(0.045,maks*0.4))usikker=true;
+        return idx;
+      });
+      const elev=g.elever.find(e=>e.id===elevId);
+      funn.push({elevId:elev?elevId:'',lestNavn:elev?elev.navn:'elev som ikke lenger står i gruppen',svar,usikker,
+        bilder:v.fritekst.map((_,j)=>klipp(s,0,egenFritekstY(v,j)+5,OMR.W,20,560)),
+        tekst:v.fritekst.map((_,j)=>elev?(((v.tekst[elevId]||{})[j])||''):'')});
+    });
+    if(!funn.length)throw new Error(avvist.join(' ')||'fant ingen ark i filen');
+    const plass=id=>{const i=g.elever.findIndex(e=>e.id===id);return i<0?9999:i;};
+    egenForslag=funn.sort((a,b)=>plass(a.elevId)-plass(b.elevId));
+    const usikre=egenForslag.filter(f=>f.usikker).length;
+    egenMelding=`Leste ${funn.length} ark.`+(usikre?` ${usikre} ark har svar som bør sjekkes mot papiret. De er merket med oransje.`:'')
+      +(avvist.length?' Ikke lest: '+avvist.join(' '):'');
+    visEgenModal();
+    if(status)status.textContent='';
+  }catch(e){
+    if(status){status.textContent='Skanningen feilet: '+e.message+'. Du kan også fylle inn direkte i tabellen.';status.className='status feil';}
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Hent inn skannede ark (PDF eller bilde)';}
+  }
+});
+
+function visEgenModal(){
+  const v=state.egen.find(x=>x.id===egenSkannId);
+  const g=finnGruppe(v.gruppeId);
+  document.getElementById('egenOppsummering').textContent=egenMelding;
+  document.getElementById('egenKontroll').innerHTML=`<div class="grid-omslutning">
+    <table class="vgrid sportabell"><thead><tr><th style="text-align:left;min-width:190px">Elev</th>
+      ${v.sporsmal.map((s,i)=>`<th title="${esc(s)}">Sp. ${i+1}</th>`).join('')}
+      ${v.fritekst.map((f,i)=>`<th style="min-width:290px;text-align:left" title="${esc(f)}">Skrivefelt ${i+1}</th>`).join('')}</tr></thead>
+    <tbody>${egenForslag.map((side,si)=>`<tr class="${side.elevId&&!side.usikker?'':'uklar'}">
+      <td class="navn"><select onchange="settEgenTreff(${si},this.value)" style="min-width:180px">
+        <option value="">– Ukjent: ${esc(side.lestNavn)} –</option>
+        ${g.elever.map(e=>`<option value="${e.id}" ${e.id===side.elevId?'selected':''}>${esc(e.navn)}</option>`).join('')}
+      </select></td>
+      ${v.sporsmal.map((s,i)=>`<td><div class="skala">${SKALA.map((lab,n)=>`<button class="${side.svar[i]===n?'valgt':''}" title="${esc(lab)}" onclick="settEgenForslag(${si},${i},${n})">${lab[0]}${n===1?'n':''}</button>`).join('')}</div></td>`).join('')}
+      ${v.fritekst.map((f,i)=>`<td style="text-align:left">
+        ${side.bilder&&side.bilder[i]?`<img class="skriftklipp" src="${side.bilder[i]}" alt="Elevens håndskrevne svar">`:''}
+        <textarea class="skriftfelt" rows="2" placeholder="Skriv av svaret hvis det skal med i rapporten" onchange="egenForslag[${si}].tekst[${i}]=this.value">${esc(side.tekst[i]||'')}</textarea></td>`).join('')}
+    </tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('egenModalBak').classList.add('vis');
+}
+function settEgenTreff(si,elevId){egenForslag[si].elevId=elevId;visEgenModal();}
+function settEgenForslag(si,qi,verdi){
+  egenForslag[si].svar[qi]=(egenForslag[si].svar[qi]===verdi)?null:verdi;
+  visEgenModal();
+}
+document.getElementById('egenLagreBtn').addEventListener('click',()=>{
+  const v=state.egen.find(x=>x.id===egenSkannId);
+  let lagret=0;
+  egenForslag.forEach(side=>{
+    if(!side.elevId)return;
+    if(!v.svar[side.elevId])v.svar[side.elevId]={};
+    if(!v.tekst[side.elevId])v.tekst[side.elevId]={};
+    side.svar.forEach((n,i)=>{if(n===0||n===1||n===2)v.svar[side.elevId][i]=n;});
+    side.tekst.forEach((t,i)=>{if(t)v.tekst[side.elevId][i]=t;});
+    lagret++;
+  });
+  document.getElementById('egenModalBak').classList.remove('vis');
+  lagreState();tegnEgen();
+  setTimeout(()=>{
+    const s=document.getElementById('egenSkannStatus');
+    if(s){s.textContent=`Lagret svar for ${lagret} elever.`;s.className='status ok';}
+  },50);
+});
+document.getElementById('egenAvbrytBtn').addEventListener('click',()=>{
+  document.getElementById('egenModalBak').classList.remove('vis');
+});
+
+/* ---------- CSV-import fra Microsoft Forms ---------- */
+function startCsvImport(id){
+  aktivEgenId=id;
+  document.getElementById('csvFil').value='';
+  document.getElementById('csvFil').click();
+}
+function parseCSV(tekst){
+  const rader=[];let rad=[],felt='',iSitat=false;
+  tekst=tekst.replace(/^\uFEFF/,'');
+  for(let i=0;i<tekst.length;i++){
+    const c=tekst[i];
+    if(iSitat){
+      if(c==='"'&&tekst[i+1]==='"'){felt+='"';i++;}
+      else if(c==='"')iSitat=false;
+      else felt+=c;
+    }else if(c==='"')iSitat=true;
+    else if(c===','||c===';'){rad.push(felt);felt='';}
+    else if(c==='\n'){rad.push(felt);felt='';rader.push(rad);rad=[];}
+    else if(c!=='\r')felt+=c;
+  }
+  if(felt||rad.length){rad.push(felt);rader.push(rad);}
+  return rader.filter(r=>r.some(f=>String(f).trim()!==''));
+}
+document.getElementById('csvFil').addEventListener('change',async ev=>{
+  const fil=ev.target.files[0];
+  if(!fil)return;
+  const tekst=await fil.text();
+  const rader=parseCSV(tekst);
+  if(rader.length<2){alert('Fant ingen svar i CSV-filen.');return;}
+  csvData={hoder:rader[0],rader:rader.slice(1)};
+  tegnCsvKobling();
+});
+function tegnCsvKobling(){
+  const v=state.egen.find(x=>x.id===aktivEgenId);
+  const omr=document.getElementById('csvOmraade');
+  if(!omr||!csvData)return;
+  const kolvalg=(id,forvalg)=>`<select id="${id}">
+    <option value="-1">– Ikke i bruk –</option>
+    ${csvData.hoder.map((h,i)=>`<option value="${i}" ${i===forvalg?'selected':''}>${esc(h.slice(0,60))}</option>`).join('')}</select>`;
+  const gjett=ord=>csvData.hoder.findIndex(h=>h.toLowerCase().includes(ord));
+  omr.innerHTML=`<div class="kort" style="margin-top:14px;border:2px solid var(--fokus)">
+    <h3>Koble kolonnene fra CSV-filen (${csvData.rader.length} svar)</h3>
+    <p class="hjelpetekst">Velg hvilken kolonne som inneholder elevnavnet, og hvilken kolonne som svarer til hvert spørsmål. Svarene må være «${SKALA.join('», «')}» eller tallene 1–3.</p>
+    <div class="felt"><label>Kolonne med elevnavn</label>${kolvalg('csvNavn',gjett('navn'))}</div>
+    ${v.sporsmal.map((s,i)=>`<div class="felt"><label>Spørsmål ${i+1}: ${esc(s)}</label>${kolvalg('csvSp'+i,i+1<csvData.hoder.length?-1:-1)}</div>`).join('')}
+    ${v.fritekst.map((f,i)=>`<div class="felt"><label>Skrivefelt ${i+1}: ${esc(f)}</label>${kolvalg('csvFr'+i,-1)}</div>`).join('')}
+    <div class="verktoylinje">
+      <button class="btn" onclick="importerCsv()">Importer svarene</button>
+      <button class="btn sekundaer" onclick="csvData=null;tegnEgen()">Avbryt</button>
+    </div>
+    <div class="status" id="csvStatus"></div>
+  </div>`;
+}
+function csvVerdiTilTall(raa){
+  const t=String(raa||'').toLowerCase().trim();
+  if(!t)return null;
+  for(let i=0;i<SKALA.length;i++){if(t===SKALA[i].toLowerCase())return i;}
+  if(t==='1')return 0;if(t==='2')return 1;if(t==='3')return 2;
+  for(let i=0;i<SKALA.length;i++){if(t.includes(SKALA[i].toLowerCase()))return i;}
+  return null;
+}
+function importerCsv(){
+  const v=state.egen.find(x=>x.id===aktivEgenId);
+  const g=finnGruppe(v.gruppeId);
+  const status=document.getElementById('csvStatus');
+  const navnKol=parseInt(document.getElementById('csvNavn').value);
+  if(navnKol<0){status.textContent='Velg kolonnen som inneholder elevnavn.';status.className='status feil';return;}
+  const spKol=v.sporsmal.map((s,i)=>parseInt(document.getElementById('csvSp'+i).value));
+  const frKol=v.fritekst.map((f,i)=>parseInt(document.getElementById('csvFr'+i).value));
+  let treff=0;const ukjente=[];
+  csvData.rader.forEach(rad=>{
+    const navn=rad[navnKol];
+    const elev=g.elever.find(e=>normaliserNavn(e.navn)===normaliserNavn(navn));
+    if(!elev){if(String(navn||'').trim())ukjente.push(navn);return;}
+    if(!v.svar[elev.id])v.svar[elev.id]={};
+    if(!v.tekst[elev.id])v.tekst[elev.id]={};
+    spKol.forEach((k,i)=>{
+      if(k<0)return;
+      const n=csvVerdiTilTall(rad[k]);
+      if(n!==null)v.svar[elev.id][i]=n;
+    });
+    frKol.forEach((k,i)=>{if(k>=0&&String(rad[k]||'').trim())v.tekst[elev.id][i]=String(rad[k]).trim();});
+    treff++;
+  });
+  csvData=null;
+  lagreState();tegnEgen();
+  setTimeout(()=>{
+    const s=document.getElementById('egenSkannStatus');
+    if(s){
+      s.textContent=`Importerte svar for ${treff} elever.`+(ukjente.length?` Fant ikke: ${ukjente.slice(0,5).join(', ')}.`:'');
+      s.className='status '+(ukjente.length?'feil':'ok');
+    }
+  },50);
+}
+
+/* ===================== RAPPORTER ===================== */
+let rapportGruppeValg=null;
+let visDetaljer=false;
+let tekstformat='punkter';
+
+function tegnRapporter(){
+  const el=document.getElementById('fane-rapporter');
+  const alleElever=state.grupper.flatMap(g=>g.elever.map(e=>({...e,gruppe:g.navn,gruppeId:g.id})));
+  if(!alleElever.length){
+    el.innerHTML='<div class="tom">Legg til grupper og elever først, så finner du rapportene her.</div>';
+    return;
+  }
+  const g=finnGruppe(rapportGruppeValg)||state.grupper[0];
+  rapportGruppeValg=g.id;
+  const utenTekst=g.elever.filter(e=>!(state.oppsummeringer[e.id]||{}).tekst&&harData(e.id)).length;
+
+  let html=`<div class="kort">
+    <h2>Rapporter</h2>
+    <p class="hjelpetekst">Rapporten beskriver elevens deltakelse og framgang ut fra observasjonene i øktene og elevens egen vurdering. Teksten settes sammen av ferdige setninger ut fra tegnene du har registrert. Velg om den skal stå som punkter eller som sammenhengende tekst. Du kan alltid redigere teksten før du skriver ut.</p>
+    <div class="rad">
+      <div class="felt"><label for="rapportGruppe">Gruppe</label>
+        <select id="rapportGruppe" onchange="byttRapportGruppe(this.value)">
+          ${state.grupper.map(gr=>`<option value="${gr.id}" ${gr.id===rapportGruppeValg?'selected':''}>${esc(gr.navn)}</option>`).join('')}
+        </select></div>
+      <div class="felt"><label for="rapportFormat">Tekstformat</label>
+        <select id="rapportFormat" onchange="byttTekstformat(this.value)">
+          <option value="punkter" ${tekstformat==='punkter'?'selected':''}>Korte punkter + framovermelding</option>
+          <option value="lang" ${tekstformat==='lang'?'selected':''}>Sammenhengende tekst + framovermelding</option>
+        </select></div>
+    </div>
+    <div class="verktoylinje">
+      <button class="btn" onclick="lagAlleUtenAI()">Lag oppsummering for hele gruppen${utenTekst?` (${utenTekst} mangler)`:''}</button>
+      <button class="btn sekundaer" onclick="skrivUtAlleRapporter()">Skriv ut alle rapporter</button>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-weight:400;font-size:.9rem;margin-top:4px">
+      <input type="checkbox" style="width:auto" ${visDetaljer?'checked':''} onchange="visDetaljer=this.checked;state.visDetaljer=visDetaljer;lagreState();tegnRapporter()">
+      Ta med tabellen over økter og tegn i utskriften
+    </label>
+    <div class="status" id="rapportStatus"></div>
+  </div>`;
+
+  html+=`<div class="kort"><h2>${esc(g.navn)}</h2><table class="data">
+    <thead><tr><th>Navn</th><th>Grunnlag</th><th>Oppsummering</th><th></th></tr></thead><tbody>
+    ${g.elever.map(e=>{
+      const antall=elevVurderinger(e.id).length;
+      const egne=elevEgenvurderinger(e.id).length;
+      const opp=state.oppsummeringer[e.id];
+      return `<tr>
+        <td><b>${esc(e.navn)}</b></td>
+        <td><span class="merke ${antall?'':'graa'}">${antall} økter</span>
+            <span class="merke ${egne?'oransje':'graa'}">${egne} egenvurderinger</span></td>
+        <td>${opp&&opp.tekst?`<span class="merke">Laget ${datoNorsk(opp.laget)}</span>`:'<span class="merke graa">Mangler</span>'}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <button class="btn sekundaer liten" onclick="aapneOppsummering('${e.id}')">${opp&&opp.tekst?'Vis og rediger':'Lag tekst'}</button>
+          <button class="btn sekundaer liten" onclick="skrivUtRapport('${e.id}')">Skriv ut</button></td></tr>`;
+    }).join('')}
+    </tbody></table></div>`;
+
+  if(aktivOppsummeringId&&g.elever.some(e=>e.id===aktivOppsummeringId)){
+    const e=g.elever.find(x=>x.id===aktivOppsummeringId);
+    const opp=state.oppsummeringer[e.id]||{};
+    html+=`<div class="kort" id="oppsummeringKort">
+      <h2>${esc(e.navn)}</h2>
+      <p class="hjelpetekst">${grunnlagTekst(e.id)}</p>
+      <div class="verktoylinje">
+        <button class="btn" onclick="lagSetningsbankTekst('${e.id}')">${opp.tekst?'Lag ny tekst':'Lag oppsummering'}</button>
+        <button class="btn sekundaer" onclick="skrivUtRapport('${e.id}')">Skriv ut rapport</button>
+        <button class="btn sekundaer" onclick="aktivOppsummeringId=null;tegnRapporter()">Lukk</button>
+      </div>
+      <div class="felt"><label for="oppTekst">Oppsummering (rediger fritt – teksten lagres når du klikker utenfor feltet)</label>
+        <textarea id="oppTekst" style="min-height:190px" placeholder="Ingen tekst laget ennå."
+          onblur="lagreOppsummeringstekst('${e.id}',this.value)">${esc(opp.tekst||'')}</textarea></div>
+      <div class="status" id="oppStatus"></div>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+function byttTekstformat(v){tekstformat=(v==='lang'?'lang':'punkter');state.tekstformat=tekstformat;lagreState();}
+function byttRapportGruppe(id){rapportGruppeValg=id;aktivOppsummeringId=null;tegnRapporter();}
+function aapneOppsummering(elevId){
+  aktivOppsummeringId=elevId;
+  tegnRapporter();
+  document.getElementById('oppsummeringKort')?.scrollIntoView({behavior:'smooth'});
+}
+function lagreOppsummeringstekst(elevId,tekst){
+  tekst=String(tekst||'').trim();
+  if(!tekst){delete state.oppsummeringer[elevId];}
+  else state.oppsummeringer[elevId]={tekst,laget:(state.oppsummeringer[elevId]||{}).laget||idag()};
+  lagreState();
+}
+let aktivOppsummeringId=null;
+
+function harData(elevId){
+  return elevVurderinger(elevId).length>0||elevEgenvurderinger(elevId).length>0;
+}
+function grunnlagTekst(elevId){
+  const o=elevVurderinger(elevId),e=elevEgenvurderinger(elevId);
+  const temaer=[...new Set(o.map(r=>r.tema))];
+  if(!o.length&&!e.length)return 'Ingen registrerte data for denne eleven ennå.';
+  return `Grunnlag: ${o.length} vurderte økter${temaer.length?` fordelt på ${temaer.length} temaer (${temaer.join(', ')})`:''}${e.length?`, og ${e.length} egenvurdering${e.length>1?'er':''}`:''}.`;
+}
+
+function elevVurderinger(elevId){
+  const rader=[];
+  state.ark.forEach(a=>{
+    const res=a.resultater[elevId];
+    if(!res||!Object.values(res).some(v=>v))return;
+    for(let o=0;o<a.okter;o++){
+      const v1=res[o+'-0']||'',v2=res[o+'-1']||'';
+      if(!v1&&!v2)continue;
+      rader.push({dato:a.oktDatoer[o]||a.dato,tema:a.tema,okt:o+1,verdier:[v1,v2]});
+    }
+  });
+  return rader.sort((x,y)=>(x.dato||'').localeCompare(y.dato||''));
+}
+function elevEgenvurderinger(elevId){
+  return state.egen
+    .filter(v=>(v.svar[elevId]&&Object.keys(v.svar[elevId]).length)||(v.tekst[elevId]&&Object.keys(v.tekst[elevId]).length))
+    .sort((a,b)=>(a.dato||'').localeCompare(b.dato||''));
+}
+
+/* ---------- setningsbank: oppsummerende tekst ---------- */
+/* Teksten settes sammen av ferdige setninger ut fra tegnene i øktene. Ingenting sendes ut av maskinen. */
+function hashTall(s){let h=0;for(const c of String(s)){h=(h*31+c.charCodeAt(0))>>>0;}return h;}
+function setningsbankTekst(elevId){
+  const rader=elevVurderinger(elevId),egne=elevEgenvurderinger(elevId);
+  const basis=hashTall(elevId);let teller=0;
+  const velg=arr=>arr[(basis+(teller++))%arr.length];   // samme elev får samme variant hver gang
+  const tegn=rader.flatMap(r=>r.verdier).filter(Boolean);
+  const ant=t=>tegn.filter(v=>v===t).length;
+  const F=ant('F'),G=ant('G'),E=ant('E'),P=ant('P'),O=ant('O'),minus=ant('−'),pluss=ant('+'),hake=ant('✓');
+  const vurdert=pluss+E+hake+minus+P+O;                 // fravær og glemt gymtøy sier ingenting om innsats
+  const andel=x=>vurdert?x/vurdert:0;
+  const topp=andel(pluss+E),lav=andel(minus+P)>=.4&&topp<.3;
+  const poeng={'+':2,'E':2,'✓':1,'−':0,'P':0,'O':0};
+  const punkter=[];const legg=(pri,t)=>punkter.push({pri,t,nr:punkter.length});
+
+  if(vurdert){
+    if(topp>=.6)legg(10,velg(['Eleven deltar aktivt og viser god innsats i øktene.','Eleven møter øktene med god innsats og deltar aktivt.','Eleven viser jevnt god innsats og er aktivt med.']));
+    else if(topp>=.3)legg(10,velg(['Eleven deltar i øktene og viser ofte god innsats.','Eleven er med i aktivitetene og viser god innsats i mange økter.']));
+    else if(lav)legg(10,velg(['Eleven trenger en del støtte for å komme i gang og holde på innsatsen.','Eleven trenger hjelp til å komme i gang og holde innsatsen oppe.']));
+    else legg(10,velg(['Eleven deltar i øktene og gjør det som forventes.','Eleven er med i aktivitetene og følger opplegget i øktene.']));
+  }
+  if(E>=2&&!O)legg(7,velg(['Eleven er et godt forbilde og bidrar til et trygt miljø i gruppa.','Eleven viser fair play og bidrar til at andre får være med.']));
+  else if(E===1&&!O)legg(5,'Eleven har vist fin oppførsel og godt samspill med andre.');
+  if(O)legg(9,andel(O)>=.25?'Eleven har i flere økter strevd med å følge felles regler, og dette jobber vi med sammen.':'I enkelte økter har det vært vanskelig for eleven å følge felles regler.');
+  if(P)legg(9,andel(P)>=.25?(lav?'Eleven har i flere økter holdt seg i bakgrunnen i aktivitetene.':'Eleven har i flere økter holdt seg i bakgrunnen og trenger hjelp til å finne sin plass i aktivitetene.'):'I enkelte økter har eleven vært lite aktiv.');
+  if(!lav&&andel(minus)>=.25)legg(7,'Eleven trenger i noen økter ekstra oppfølging for å lykkes.');
+
+  // Tema der innsatsen skiller seg positivt ut
+  const perTema={};
+  rader.forEach(r=>r.verdier.forEach(v=>{
+    if(poeng[v]===undefined)return;
+    const d=perTema[r.tema]||(perTema[r.tema]={n:0,pos:0});
+    d.n++;if(v==='+'||v==='E')d.pos++;
+  }));
+  const temaer=Object.entries(perTema).filter(([,d])=>d.n>=2).map(([tema,d])=>({tema,a:d.pos/d.n})).sort((x,y)=>y.a-x.a);
+  if(temaer.length>=2&&temaer[0].a>=.5&&temaer[0].a>temaer[temaer.length-1].a)
+    legg(4,velg([`Eleven har vist særlig god innsats i temaet «${temaer[0].tema}».`,`Innsatsen har vært særlig god i temaet «${temaer[0].tema}».`]));
+
+  // Utvikling: første halvdel mot siste halvdel av øktene eleven var til stede
+  const oktPoeng=rader.map(r=>r.verdier.filter(v=>poeng[v]!==undefined).map(v=>poeng[v])).filter(a=>a.length).map(a=>a.reduce((x,y)=>x+y,0)/a.length);
+  let synkende=false;
+  if(oktPoeng.length>=4){
+    const halv=Math.floor(oktPoeng.length/2),snitt=a=>a.reduce((x,y)=>x+y,0)/a.length;
+    const endring=snitt(oktPoeng.slice(halv))-snitt(oktPoeng.slice(0,halv));
+    if(endring>=.5)legg(6,velg(['Innsatsen har blitt bedre utover i perioden.','Eleven har hatt fin framgang i innsats gjennom perioden.']));
+    else if(endring<=-.7){synkende=true;legg(6,'Innsatsen har vært noe lavere mot slutten av perioden.');}
+    else legg(2,'Innsatsen har vært stabil gjennom perioden.');
+  }
+
+  // Egenvurdering: beskriver bare hva eleven svarer, uten å tolke
+  const svar=egne.flatMap(v=>Object.values(v.svar[elevId]||{})).filter(x=>x===0||x===1||x===2);
+  if(svar.length>=3){
+    const tell=[0,1,2].map(i=>svar.filter(x=>x===i).length),maks=Math.max(...tell);
+    if(tell.filter(x=>x===maks).length===1)legg(5,`I egenvurderingen svarer eleven oftest «${SKALA[tell.indexOf(maks)]}» på utsagnene.`);
+    else legg(5,'I egenvurderingen varierer svarene til eleven fra utsagn til utsagn.');
+  }
+
+  if(G>=2)legg(6,'Gymtøy har manglet noen ganger.');
+  const myeFravaer=F>0&&(!vurdert||(F>=2&&F/(vurdert+F)>=.4));
+  if(myeFravaer)legg(8,'Eleven har vært borte i en del økter, så vurderingsgrunnlaget er mindre.');
+  if(!punkter.length)legg(1,'Det er foreløpig for lite grunnlag til å beskrive elevens deltakelse.');
+
+  // Fravær gir aldri et råd om å delta mer
+  let framover;
+  if(O>=2||andel(O)>=.25)framover='Øv på å følge felles regler og bidra til godt samspill i gruppa.';
+  else if(P>=2||andel(P)>=.25)framover='Prøv å bli med fra start i aktivitetene, og si fra om hva som gjør det lettere å delta.';
+  else if(lav||andel(minus)>=.25)framover='Sett deg ett lite mål for hver økt, og be om hjelp når noe er vanskelig.';
+  else if(G>=2)framover='Husk gymtøy til hver økt.';
+  else if(synkende)framover='Hold innsatsen oppe helt til perioden er over.';
+  else if(!vurdert)framover='Vi ser videre på deltakelse og mestring i øktene som kommer.';
+  else if(myeFravaer)framover='Ta med deg den innsatsen du har vist, videre i øktene.';
+  else if(topp>=.6)framover=velg(['Fortsett slik, og hjelp gjerne andre med å lykkes.','Fortsett den gode innsatsen, og utfordre deg selv i nye aktiviteter.']);
+  else framover='Fortsett å delta aktivt, og prøv å utfordre deg selv litt i hver økt.';
+
+  let valgt=punkter.slice();
+  while(valgt.length>5){const svakest=valgt.reduce((a,b)=>b.pri<a.pri?b:a);valgt=valgt.filter(x=>x!==svakest);}
+  valgt.sort((a,b)=>a.nr-b.nr);
+  return tekstformat==='punkter'
+    ?valgt.map(x=>'- '+x.t).join('\n')+'\n\nFramover: '+framover
+    :valgt.map(x=>x.t).join(' ')+'\n\nFramover: '+framover;
+}
+function lagSetningsbankTekst(elevId,stille){
+  if(!harData(elevId)){
+    const st=document.getElementById('oppStatus');
+    if(st&&!stille){st.textContent='Det finnes ingen registrerte økter eller egenvurderinger for denne eleven ennå.';st.className='status feil';}
+    return false;
+  }
+  state.oppsummeringer[elevId]={tekst:setningsbankTekst(elevId),laget:idag()};
+  lagreState();
+  if(!stille){
+    tegnRapporter();
+    setTimeout(()=>{
+      const st=document.getElementById('oppStatus');
+      if(st){st.textContent='Teksten er satt sammen fra setningsbanken. Les gjennom og tilpass den før du skriver ut – det er din vurdering som gjelder.';st.className='status ok';}
+    },50);
+  }
+  return true;
+}
+function lagAlleUtenAI(){
+  const g=finnGruppe(rapportGruppeValg)||state.grupper[0];
+  if(!g)return;
+  const mangler=g.elever.filter(e=>harData(e.id)&&!(state.oppsummeringer[e.id]||{}).tekst);
+  mangler.forEach(e=>lagSetningsbankTekst(e.id,true));
+  tegnRapporter();
+  const st=document.getElementById('rapportStatus');
+  if(st){
+    st.textContent=mangler.length?`Laget ${mangler.length} tekster fra setningsbanken. Husk å lese gjennom hver enkelt før utskrift.`
+      :'Alle elever med registrerte data har allerede en oppsummering. Åpne en elev for å lage ny tekst.';
+    st.className='status '+(mangler.length?'ok':'');
+  }
+}
+
+/* ---------- utskrift av rapport ---------- */
+function oppsummeringPrintHTML(tekst){
+  const linjer=String(tekst||'').split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(!linjer.length)return '<p class="p-brodtekst"><i>Ingen oppsummering er laget for denne eleven ennå.</i></p>';
+  let html='',iListe=false;
+  linjer.forEach(l=>{
+    const erPunkt=/^[-–—•*]\s+/.test(l);
+    if(erPunkt){
+      if(!iListe){html+='<ul class="p-punktliste">';iListe=true;}
+      html+=`<li>${esc(l.replace(/^[-–—•*]\s+/,''))}</li>`;
+    }else{
+      if(iListe){html+='</ul>';iListe=false;}
+      const m=l.match(/^(Framover|Framovermelding|Videre)\s*:\s*(.*)$/i);
+      html+=m?`<p class="p-brodtekst"><b>${esc(m[1])}:</b> ${esc(m[2])}</p>`
+            :`<p class="p-brodtekst">${esc(l)}</p>`;
+    }
+  });
+  if(iListe)html+='</ul>';
+  return html;
+}
+function rapportHTML(elev,gruppenavn){
+  const rader=elevVurderinger(elev.id);
+  const egne=elevEgenvurderinger(elev.id);
+  const opp=state.oppsummeringer[elev.id]||{};
+  const temaer=[...new Set(rader.map(r=>r.tema))];
+  const oppHTML=oppsummeringPrintHTML(opp.tekst);
+  return `<div class="p-rapport">
+    <div class="p-topp" style="border-bottom:3px solid #000;padding-bottom:6px;margin-bottom:8px">
+      <div><div class="app-navn" style="font-size:9pt;letter-spacing:.12em;text-transform:uppercase">${esc(fagTopp())}</div>
+      <h2>${esc(elev.navn)}</h2>
+      <div class="p-under">Gruppe: ${esc(gruppenavn)} · Skrevet ut ${datoNorsk(idag())}</div></div>
+    </div>
+    ${temaer.length?`<div class="p-under" style="font-size:10pt;margin-bottom:8px"><b>Perioder:</b> ${esc(temaer.join(' · '))}</div>`:''}
+    <div class="p-avsnitt">Vurdering uten karakter</div>
+    ${oppHTML}
+    ${egne.length?`<div class="p-avsnitt">Elevens egne ord</div>
+      ${egne.map(v=>v.fritekst.map((f,i)=>{
+        const t=((v.tekst[elev.id]||{})[i])||'';
+        return t?`<div class="p-sitat"><b>${esc(f)}</b><br>${esc(t)}</div>`:'';
+      }).join('')).join('')||'<p class="p-brodtekst" style="font-size:10pt"><i>Ingen skrevne svar registrert.</i></p>'}`:''}
+    ${visDetaljer?detaljerHTML(rader,egne,elev):''}
+    <div class="p-signatur"><div>Lærer</div><div>Foresatt</div></div>
+  </div>`;
+}
+function detaljerHTML(rader,egne,elev){
+  return `<div class="p-avsnitt">Registreringer i øktene</div>
+    ${rader.length?`<table class="p-rtabell">
+      <thead><tr><th>Dato</th><th>Tema</th><th class="midt" style="width:16mm">Økt</th><th class="midt" style="width:30mm">Tegn</th></tr></thead>
+      <tbody>${rader.map(r=>`<tr>
+        <td style="white-space:nowrap">${datoNorsk(r.dato)}</td><td>${esc(r.tema)}</td>
+        <td class="midt">${r.okt}</td>
+        <td class="midt"><b>${esc(r.verdier[0])||'·'}</b> &nbsp; <b>${esc(r.verdier[1])||'·'}</b></td>
+      </tr>`).join('')}</tbody></table>`:'<p class="p-brodtekst" style="font-size:10pt">Ingen observasjoner registrert.</p>'}
+    ${egne.map(v=>`<div class="p-avsnitt">Egenvurdering: ${esc(v.tema)} (${datoNorsk(v.dato)})</div>
+      <table class="p-rtabell"><thead><tr><th>Spørsmål</th><th class="midt" style="width:32mm">Svar</th></tr></thead>
+      <tbody>${v.sporsmal.map((s,i)=>{
+        const n=(v.svar[elev.id]||{})[i];
+        return `<tr><td>${esc(s)}</td><td class="midt"><b>${n===0||n===1||n===2?esc(SKALA[n]):'–'}</b></td></tr>`;
+      }).join('')}</tbody></table>`).join('')}`;
+}
+function skrivUtRapport(elevId){
+  const g=state.grupper.find(gr=>gr.elever.some(e=>e.id===elevId));
+  const elev=g.elever.find(e=>e.id===elevId);
+  document.getElementById('printArea').innerHTML=rapportHTML(elev,g.navn);
+  skrivUt();
+}
+function skrivUtAlleRapporter(){
+  const g=finnGruppe(rapportGruppeValg)||state.grupper[0];
+  if(!g)return;
+  document.getElementById('printArea').innerHTML=g.elever.map(e=>rapportHTML(e,g.navn)).join('');
+  skrivUt();
+}
+
+/* ===================== INNSTILLINGER ===================== */
+function tegnInnstillinger(){
+  const el=document.getElementById('fane-innstillinger');
+  el.innerHTML=`<div class="kort">
+    <h2>Skole og trinn</h2>
+    <p class="hjelpetekst">Vises øverst på utskriftene. Begge feltene er valgfrie.</p>
+    <div class="rad">
+      <div class="felt"><label for="skoleInput">Skole</label><input type="text" id="skoleInput" placeholder="F.eks. Solbakken skole" value="${esc(state.skole||'')}"></div>
+      <div class="felt"><label for="trinnInput">Trinn</label><input type="text" id="trinnInput" placeholder="F.eks. 7. trinn" value="${esc(state.trinn||'')}"></div>
+      <div class="felt" style="align-self:flex-end;flex:0"><button class="btn" onclick="lagreSkoleinfo()">Lagre</button></div>
+    </div>
+    <div class="status" id="skoleStatus"></div>
+  </div>
+  <div class="kort">
+    <h2>Sikkerhetskopi</h2>
+    <p class="hjelpetekst">Alt du registrerer ligger bare i denne nettleseren på denne maskinen. Last ned en sikkerhetskopi jevnlig, og bruk den når du bytter maskin eller nettleser. Filen inneholder elevnavn og vurderinger, så lagre den et trygt sted.</p>
+    <div class="verktoylinje">
+      <button class="btn" onclick="eksporterData()">Last ned sikkerhetskopi</button>
+      <button class="btn sekundaer" onclick="document.getElementById('kopiFil').value='';document.getElementById('kopiFil').click()">Hent inn sikkerhetskopi</button>
+      <input type="file" id="kopiFil" accept=".json,application/json" hidden onchange="if(this.files[0])importerData(this.files[0])">
+    </div>
+    <div class="status" id="kopiStatus"></div>
+  </div>
+  <div class="kort">
+    <h2>Verdt å vite</h2>
+    <p class="hjelpetekst" style="margin-bottom:6px">• Ingen elevdata sendes ut av maskinen. Grupper, ark og rapporter lagres bare i nettleseren du bruker, og skannede ark leses her i nettleseren.</p>
+    <p class="hjelpetekst" style="margin-bottom:6px">• Tømmer du nettleserdata eller bytter maskin, er innholdet borte. Ta derfor sikkerhetskopi jevnlig. I Safari på iPad, iPhone og Mac slettes det nettsider har lagret, når siden ikke har vært åpnet på sju dager med Safari-bruk. Legger du verktøyet til på Hjem-skjermen og åpner det derfra, gjelder ikke den grensen.</p>
+    <p class="hjelpetekst" style="margin-bottom:0">• Skriv ut avkrysningsarkene i full størrelse (100 %), og skann dem i gråtoner eller svart-hvitt. Leseren tåler at arkene ligger litt skjevt eller opp ned.</p>
+  </div>`;
+}
+function lagreSkoleinfo(){
+  state.skole=document.getElementById('skoleInput').value.trim();
+  state.trinn=document.getElementById('trinnInput').value.trim();
+  lagreState();oppdaterTopp();
+  const st=document.getElementById('skoleStatus');
+  if(st){st.textContent='Lagret.';st.className='status ok';}
+}
+function eksporterData(){
+  state.sistKopi=idag();lagreState();oppdaterTopp();
+  const innhold=JSON.stringify({app:'kroppsoving-vurdering',versjon:2,eksportert:new Date().toISOString(),state},null,1);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([innhold],{type:'application/json'}));
+  a.download='kroppsoving-vurdering-sikkerhetskopi-'+idag()+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  const st=document.getElementById('kopiStatus');
+  if(st){st.textContent='Sikkerhetskopien er lastet ned.';st.className='status ok';}
+}
+async function importerData(fil){
+  const st=document.getElementById('kopiStatus');
+  try{
+    const d=JSON.parse(await fil.text());
+    const ny=d&&d.state;
+    if(!ny||!Array.isArray(ny.grupper)||!Array.isArray(ny.ark))throw new Error('filen er ikke en sikkerhetskopi fra dette verktøyet');
+    if(!confirm(`Sikkerhetskopien inneholder ${ny.grupper.length} grupper og ${ny.ark.length} vurderingsark. Alt som ligger i verktøyet nå, blir erstattet. Vil du fortsette?`))return;
+    clearTimeout(lagreTimer);
+    const json=JSON.stringify(ny);
+    if(harWindowStorage){await window.storage.set(LAGRINGSNOKKEL,json);}
+    else{localStorage.setItem(LAGRINGSNOKKEL,json);}
+    location.reload();
+  }catch(e){
+    if(st){st.textContent='Klarte ikke å hente inn sikkerhetskopien: '+e.message+'.';st.className='status feil';}
+  }
+}
+/* ===================== OPPSTART ===================== */
+(async function(){
+  const lagret=await lastState();
+  if(lagret)state=Object.assign(state,lagret);
+  if(!Array.isArray(state.egen))state.egen=[];
+  if(!Array.isArray(state.ark))state.ark=[];
+  if(!Array.isArray(state.grupper))state.grupper=[];
+  // Forslaget for 7. trinn legges inn første gang
+  if(!state.plan||!Array.isArray(state.plan.perioder))state.plan=hentPlanForslag('7');
+  // Eldre ark med kolonner gjøres om til økt-format
+  state.ark.forEach(a=>{
+    if(a.okter)return;
+    const antall=(a.kolonner&&a.kolonner.length)||4;
+    a.okter=Math.max(1,Math.ceil(antall/2));
+    a.oktDatoer=Array(a.okter).fill('');
+    const gamle=a.resultater||{};
+    a.resultater={};
+    Object.entries(gamle).forEach(([elevId,verdier])=>{
+      a.resultater[elevId]={};
+      Object.entries(verdier).forEach(([ki,v])=>{
+        const i=parseInt(ki);
+        if(!isNaN(i))a.resultater[elevId][Math.floor(i/2)+'-'+(i%2)]=v;
+      });
+    });
+    delete a.kolonner;
+  });
+  state.egen.forEach(v=>{if(!v.tekst)v.tekst={};if(!v.svar)v.svar={};if(!v.fritekst)v.fritekst=[];});
+  if(!state.oppsummeringer||typeof state.oppsummeringer!=='object')state.oppsummeringer={};
+  visDetaljer=!!state.visDetaljer;
+  tekstformat=state.tekstformat==='lang'?'lang':'punkter';
+  if(state.grupper.length)rapportGruppeValg=state.grupper[0].id;
+  lagreState();
+  oppdaterTopp();
+  tegnAlt();
+})();
+</script>
+
+
+
+<script>
+/* ===================== INNLOGGING ===================== */
+/* Samme lærerkonto som i Krøniken (Firebase-prosjektet krle-sim). Innloggingen åpner bare døra:
+   elevnavn og vurderinger ligger i nettleseren og sendes aldri til kontoen. */
+document.addEventListener('DOMContentLoaded',function(){
+  const $=id=>document.getElementById(id);
+  const inn=inne=>{document.body.classList.toggle('ute',!inne);$('port').hidden=inne;};
+  const st=(t,ok)=>{const e=$('authStatus');e.textContent=t||'';e.className='status '+(t?(ok?'ok':'feil'):'');};
+  const lokal=location.protocol==='file:';
+  let auth=null;
+  if(!lokal){
+    try{
+      if(typeof firebase!=='undefined'){
+        if(!firebase.apps.length)firebase.initializeApp({
+          apiKey:"AIzaSyDazYM5XDIABscMaDFgJ1IEco0du4JAN4w",authDomain:"krle-sim.firebaseapp.com",projectId:"krle-sim",
+          storageBucket:"krle-sim.firebasestorage.app",messagingSenderId:"1073291328318",appId:"1:1073291328318:web:2fa3d0e862ed8e25d24a6f"});
+        auth=firebase.auth();
+      }
+    }catch(e){}
+  }
+  if(!auth){
+    /* Åpnet rett fra en mappe, eller innloggingstjenesten er ikke tilgjengelig: slipp inn (som i Krøniken) */
+    inn(true);
+    $('hvem').textContent=lokal?'Lokal testversjon uten innlogging':'Innloggingen er ikke tilgjengelig akkurat nå.';
+    return;
+  }
+  let nyKonto=false;
+  auth.onAuthStateChanged(u=>{
+    if(u){
+      inn(true);
+      $('hvem').innerHTML='<span></span><button type="button" id="utBtn">Logg ut</button>';
+      $('hvem').firstChild.textContent=u.email||'Innlogget';
+      $('utBtn').addEventListener('click',()=>auth.signOut());
+    }else{
+      inn(false);$('hvem').textContent='';
+    }
+  });
+  const feil=e=>({
+    'auth/invalid-credential':'Feil e-post eller passord.','auth/wrong-password':'Feil e-post eller passord.',
+    'auth/user-not-found':'Fant ingen konto med den e-postadressen.',
+    'auth/email-already-in-use':'Det finnes allerede en konto med den e-postadressen. Prøv å logge inn.',
+    'auth/weak-password':'Passordet må ha minst seks tegn.','auth/invalid-email':'E-postadressen ser ikke riktig ut.',
+    'auth/popup-closed-by-user':'Innloggingsvinduet ble lukket før du var ferdig.',
+    'auth/popup-blocked':'Nettleseren stoppet innloggingsvinduet. Tillat sprettoppvinduer for siden, eller logg inn med e-post.',
+    'auth/network-request-failed':'Fikk ikke kontakt med innloggingstjenesten. Sjekk nettet og prøv igjen.',
+    'auth/too-many-requests':'For mange forsøk. Vent litt og prøv igjen.'
+  }[e&&e.code]||'Noe gikk galt med innloggingen. Prøv igjen.');
+  $('googleBtn').addEventListener('click',()=>{st('');auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>st(feil(e)));});
+  $('epostSkjema').addEventListener('submit',ev=>{
+    ev.preventDefault();st('');
+    const e=$('epost').value.trim(),p=$('passord').value;
+    (nyKonto?auth.createUserWithEmailAndPassword(e,p):auth.signInWithEmailAndPassword(e,p)).catch(x=>st(feil(x)));
+  });
+  $('nyBtn').addEventListener('click',()=>{
+    nyKonto=!nyKonto;st('');
+    $('portTittel').textContent=nyKonto?'Lag konto':'Logg inn';
+    $('epostBtn').textContent=nyKonto?'Lag konto':'Logg inn';
+    $('nyBtn').textContent=nyKonto?'Jeg har allerede konto':'Lag ny konto';
+    $('passord').autocomplete=nyKonto?'new-password':'current-password';
+  });
+  $('glemtBtn').addEventListener('click',()=>{
+    const e=$('epost').value.trim();
+    if(!e)return st('Skriv e-postadressen din i feltet over først.');
+    auth.sendPasswordResetEmail(e).then(()=>st('Vi har sendt en e-post med lenke til å lage nytt passord.',true)).catch(x=>st(feil(x)));
+  });
+});
+</script>
+</body></html>
