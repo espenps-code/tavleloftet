@@ -47,7 +47,7 @@
   .tk .gaa{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--gold-soft);margin-top:6px}
   /* Verktøy */
   .verktoyliste{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  @media (min-width:1101px){.verktoyliste{grid-template-columns:repeat(4,1fr)}}   /* sju kort: fire og tre */
+  /* ni kort: tre og tre og tre */
   .verktoy{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--night-2);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:18px;padding:22px;text-decoration:none;color:var(--parchment);transition:transform .15s,border-color .15s,box-shadow .2s}
   .verktoy:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 16px 40px rgba(0,0,0,.35)}
   .verktoy:focus-visible{outline:3px solid var(--parchment);outline-offset:3px}
@@ -220,6 +220,18 @@
         <div class="v-ikon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.2C10 4.9 7.2 4.4 4 4.6v13.6c3.2-.2 6 .3 8 1.6 2-1.3 4.8-1.8 8-1.6V4.6c-3.2-.2-6 .3-8 1.6z"/><path d="M12 6.2v13.6"/></svg></div>
         <h3>Elevbok</h3>
         <p>Hele leseboka for elevene, med kapitler man blar i, fagord å trykke på og «Sjekk deg selv».</p>
+        <span class="v-gaa">Åpne →</span>
+      </a>
+      <a class="verktoy" href="../innhold/veiledning.html" style="--c:var(--peri)">
+        <div class="v-ikon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h11.5a2.5 2.5 0 0 1 2.5 2.5v12.5H7.5A2.5 2.5 0 0 1 5 17z"/><path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H19"/><path d="M9 8.3h6M9 11.3h4"/></svg></div>
+        <h3>Lærerveiledning</h3>
+        <p>Slik bruker du Krøniken, med mål, tips og ting å passe på i hvert tema. Kan skrives ut.</p>
+        <span class="v-gaa">Åpne →</span>
+      </a>
+      <a class="verktoy" href="../innhold/aarsplan.html" style="--c:var(--crimson)">
+        <div class="v-ikon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.8" y="5" width="16.4" height="15.2" rx="2.2"/><path d="M3.8 9.6h16.4M8 3.2v3.4M16 3.2v3.4M7.6 13.2h2M11 13.2h2M14.4 13.2h2M7.6 16.6h2M11 16.6h2"/></svg></div>
+        <h3>Årsplaner</h3>
+        <p>Forslag til årsplan for 5., 6. og 7. trinn, uke for uke, med kompetansemål. Kan skrives ut.</p>
         <span class="v-gaa">Åpne →</span>
       </a>
   </div>
