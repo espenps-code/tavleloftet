@@ -921,7 +921,7 @@ const MUNN = { // generelle tips. Har eleven logoped eller spesialpedagog, er de
   L:'Tungespissen opp bak tennene og stemmen på: lllll.',
 };
 const SISETN = {
-  P:['Per pakker en pakke.','Pappa plukker poteter.','Pus passer på pila.'],
+  P:['Pia pakker en pakke.','Pappa plukker poteter.','Pus passer på pila.'],
   B:['Bo baker boller.','Bamsen bor i bilen.','Bestemor bader.'],
   T:['Tor teller ti tær.','Tigeren tar toget.','Tante tegner et telt.'],
   D:['Dina danser i dusjen.','Dinoen deler druer.','Du og Dina danser.'],
@@ -997,7 +997,7 @@ const FØLELSER = [
   { id:'overrasket', navn:'overrasket', forklar:'Øynene og munnen er helt åpne. Mio er overrasket.' },
 ];
 const SCENER = [ // ikke = følelser som lett kan forveksles med den riktige (brukes ikke som feilsvar)
-  { id:'is', tekst:'Mio får en stor is.', f:'glad', ikke:[] },
+  { id:'is', tekst:'Mio får en stor iskrem.', f:'glad', ikke:[] },
   { id:'mistet-is', tekst:'Isen til Mio faller i bakken.', f:'lei', ikke:['sint'] },
   { id:'taarn', tekst:'Noen river ned klossetårnet til Mio med vilje.', f:'sint', ikke:['lei'] },
   { id:'torden', tekst:'Det tordner og lyner høyt.', f:'redd', ikke:['overrasket'] },
