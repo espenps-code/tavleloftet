@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin · Tavleloftet</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="js/tavleloftet-firebase.js"></script>
+<style>
+@font-face{font-family:'Fredoka';font-weight:600;font-display:swap;src:url(fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fredoka';font-weight:700;font-display:swap;src:url(fonts/fredoka-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:400;font-display:swap;src:url(fonts/nunito-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
+:root{--tavle:#102224;--kort:#1D3A3A;--linje:#2c4b49;--papir:#FFF7E6;--blekk:#1B2B27;--lys:#F3EFE4;--dempet:#C9D3CC;--rav:#F4B942;--rav-s:#B9861F;--gronn:#0F6E63;--rod:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--tavle);color:var(--lys);font:400 17px/1.5 'Nunito',system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+h1,h2{font-family:'Fredoka',system-ui,sans-serif;font-weight:700;margin:0}
+h1{font-size:1.9rem} h1 span{color:var(--rav)}
+h2{font-size:1.3rem;margin-bottom:12px}
+a{color:var(--rav)}
+.boks{background:var(--kort);border:1px solid var(--linje);border-radius:20px;padding:22px;margin-bottom:20px}
+label{display:block;font-weight:800;font-size:.9rem;margin:0 0 6px;color:var(--dempet)}
+input,select{width:100%;font:700 1rem 'Nunito',system-ui,sans-serif;padding:12px 14px;border-radius:12px;border:2px solid var(--linje);background:#0f2a2b;color:var(--lys)}
+input:focus,select:focus{outline:none;border-color:var(--rav)}
+.felt{margin-bottom:14px}
+.rad{display:grid;grid-template-columns:2fr 1.3fr auto;gap:12px;align-items:end}
+@media (max-width:640px){.rad{grid-template-columns:1fr}}
+button{font:700 1rem 'Fredoka',system-ui,sans-serif;border:0;border-radius:12px;padding:12px 18px;cursor:pointer}
+.hoved{background:var(--rav);color:var(--blekk);box-shadow:0 4px 0 var(--rav-s)}
+.hoved:active{transform:translateY(3px);box-shadow:0 1px 0 var(--rav-s)}
+.sek{background:transparent;color:var(--lys);border:2px solid var(--linje)}
+.fare{background:transparent;color:#ff9c8f;border:2px solid #6b3a35}
+.liten{font-size:.88rem;color:var(--dempet)}
+.melding{min-height:1.4em;margin:10px 0 0;font-weight:700}
+.feil{color:#ff9c8f} .ok{color:#8fe3c9}
+.nykode{display:none;margin-top:16px;padding:16px;border-radius:16px;background:#0f2a2b;border:2px dashed var(--rav);text-align:center}
+.nykode b{display:block;font:700 2.4rem 'Fredoka',sans-serif;letter-spacing:.14em;color:var(--rav)}
+.elev{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:10px 14px;align-items:center;padding:14px 0;border-top:1px solid var(--linje)}
+.elev:first-child{border-top:0}
+.elev .navn{font-weight:800;font-size:1.05rem}
+.elev .kode{font:700 1.15rem 'Fredoka',sans-serif;letter-spacing:.1em;color:var(--rav)}
+.elev .knapper{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.elev .knapper button{padding:8px 12px;font-size:.88rem}
+.rapportlenke{font:700 .88rem 'Fredoka',system-ui,sans-serif;padding:8px 12px;border-radius:12px;background:var(--rav);color:var(--blekk);text-decoration:none}
+@media (max-width:760px){.elev{grid-template-columns:1fr 1fr}.elev .knapper{grid-column:1/-1;justify-content:flex-start}}
+.merke{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:800;background:#0f2a2b;border:1px solid var(--linje)}
+.tom{color:var(--dempet);padding:10px 0}
+code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-break:break-all}
+/* Innloggingslapp (utskrift) */
+#lapp,#brev{display:none}
+@page{size:A4;margin:14mm}
+@media print{
+  body{background:#fff;color:#000}
+  .wrap{display:none}
+  body.p-lapp #lapp{display:block;font-family:'Nunito',sans-serif;color:#000;text-align:center;padding:0}
+  /* Velkomstbrevet (skrives ut eller lagres som PDF) */
+  body.p-brev #brev{display:block;font:400 11pt/1.45 'Nunito',sans-serif;color:#1B2B27}
+  #brev *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #brev .topp{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid #1B2B27;padding-bottom:6px;margin-bottom:12px}
+  #brev .logo{font:700 15pt 'Fredoka',sans-serif}#brev .logo span{color:#B9861F}
+  #brev h1{font:700 22pt 'Fredoka',sans-serif;margin:0 0 4px}#brev h1 span{color:inherit}
+  #brev h2{font:700 13pt 'Fredoka',sans-serif;margin:0 0 4px}
+  #brev p{margin:0 0 7px}
+  #brev ol,#brev ul{margin:0 0 6px;padding-left:1.2em}#brev li{margin-bottom:2px}
+  #brev .kort{display:grid;grid-template-columns:1fr 34mm;gap:6mm;align-items:center;border:1.5px solid #cfd6cf;border-radius:14px;padding:11px 14px;margin:10px 0;break-inside:avoid}
+  #brev .kort.elevkort{background:#FFF7E6;border-color:#F4B942}
+  #brev .kode{font:700 22pt 'Fredoka',sans-serif;letter-spacing:.12em;margin:3px 0 5px}
+  #brev .adr{font-weight:800}
+  #brev svg{width:34mm;height:34mm;display:block}
+  #brev .to{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-top:10px}
+  #brev .fot{margin-top:10px;padding-top:7px;border-top:1px solid #cfd6cf;font-size:9pt;color:#5b6763}
+  #lapp .ramme{border:3px dashed #999;border-radius:24px;padding:30px;max-width:520px;margin:0 auto}
+  #lapp h1{font:700 2.2rem 'Fredoka',sans-serif;margin:0 0 6px}
+  #lapp .kode{font:700 3.2rem 'Fredoka',sans-serif;letter-spacing:.14em;margin:8px 0}
+  #lapp svg{width:150px;height:150px}
+  #lapp p{margin:6px 0}
+  #lapp .klipp{color:#999;margin:14px 0;font-size:.9rem;white-space:nowrap;overflow:hidden}
+  #lapp .voksen h2{font:700 1.4rem 'Fredoka',sans-serif;margin:0 0 6px}
+  #lapp .liten-kode{font-size:2.2rem}
+  #lapp .voksen svg{width:120px;height:120px}
+  #lapp .ramme{padding:20px 26px;break-inside:avoid}
+}
+.henv{padding:16px 0;border-top:1px solid var(--linje)}
+.henv:first-child{border-top:0}
+.henv .topp{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.henv .hvem{font-weight:800;font-size:1.05rem}
+.henv dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0}
+.henv dt{color:var(--dempet);font-weight:800;font-size:.88rem}
+.henv dd{margin:0;white-space:pre-wrap;word-break:break-word}
+.henv .knapper{display:flex;gap:8px;flex-wrap:wrap}
+.henv .knapper button,.henv .knapper a{padding:8px 12px;font-size:.88rem}
+.merke.ny{background:var(--rav);color:var(--blekk);border-color:var(--rav)}
+.henv.arkivert{opacity:.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Tavle<span>loftet</span> · admin</h1>
+    <div id="hvem" hidden><span class="liten" id="epost"></span> <button class="sek" id="loggUt">Logg ut</button></div>
+  </header>
+
+  <section class="boks" id="ikkeOppsett" hidden>
+    <h2>Skylagring er ikke slått på ennå</h2>
+    <p>Fyll ut Firebase-oppsettet i <code>js/tavleloftet-firebase.js</code> først. Se <code>OPPSETT-ELEVINNLOGGING.md</code> i Tavleloftet-mappa.</p>
+  </section>
+
+  <section class="boks" id="innlogging" hidden>
+    <h2>Logg inn</h2>
+    <p class="liten">Bare for Tavleloftet. Elevene bruker elevkoden sin inne i verdenen, og voksne åpner rapporten med voksenkoden.</p>
+    <button class="hoved" type="button" id="google" style="display:inline-flex;align-items:center;gap:10px;margin:6px 0 4px"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Logg inn med Google</button>
+    <p class="liten" style="margin:16px 0 10px">eller med e-post og passord:</p>
+    <form id="loggInnSkjema">
+      <div class="felt"><label for="ep">E-post</label><input id="ep" type="email" autocomplete="username" required></div>
+      <div class="felt"><label for="pw">Passord</label><input id="pw" type="password" autocomplete="current-password" required></div>
+      <button class="sek" type="submit">Logg inn</button>
+      <button class="sek" type="button" id="glemt">Glemt passord?</button>
+    </form>
+    <p class="melding" id="innMld"></p>
+  </section>
+
+  <section class="boks" id="ikkeGodkjent" hidden>
+    <h2>Kontoen er ikke godkjent ennå</h2>
+    <p>Du er logget inn, men kontoen må godkjennes før du kan lage elevkoder. Send denne ID-en til Espen:</p>
+    <p><code id="uid"></code></p>
+  </section>
+
+  <div id="hoved" hidden>
+    <section class="boks">
+      <h2>Ny elev</h2>
+      <form id="nyElev" class="rad">
+        <div><label for="navn">Navn (bare for deg)</label><input id="navn" maxlength="40" placeholder="Fornavn eller kallenavn" required></div>
+        <div><label for="verden">Verden</label><select id="verden"><option value="dinoparken">Dinoparken</option><option value="dinoparken2">Dinoparken – lyder, venner og klosser</option><option value="lyslaget">Lyslaget</option></select></div>
+        <button class="hoved" type="submit">Lag elevkode</button>
+      </form>
+      <p class="liten" style="margin:10px 0 0">Navnet lagres bare på din konto, og eleven ser det aldri. Bruk gjerne kallenavn eller fornavn. Framgangen lagres under koden, uten navn.</p>
+      <div class="nykode" id="nyKode"><span class="liten">Ny elevkode til <span id="nyNavn"></span>:</span><b id="nyKodeTekst"></b><span class="liten">Eleven går til <b id="elevAdr"></b> og skriver inn koden.</span><span class="liten" style="display:block;margin-top:8px">Voksenkode til rapporten: <b id="nyVk" style="display:inline;font-size:1.1rem;letter-spacing:.08em"></b></span></div>
+      <p class="melding" id="nyMld"></p>
+    </section>
+
+    <section class="boks">
+      <h2>Elevene dine</h2>
+      <div id="liste"><p class="tom">Laster …</p></div>
+    </section>
+    <section class="boks" id="henvBoks" hidden>
+      <h2>Henvendelser <span class="merke ny" id="henvAntall" hidden></span></h2>
+      <p class="liten" style="margin-top:-6px">Fra skjemaet på Skreddersydd-siden. Bare du ser dem. Slett henvendelser senest 12 måneder etter siste kontakt.</p>
+      <label class="liten" style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" id="visArkiv" style="width:auto"> Vis arkiverte</label>
+      <div id="henvListe"><p class="tom">Laster …</p></div>
+    </section>
+  </div>
+</div>
+
+<div id="brev">
+  <div class="topp"><span class="logo">Tavle<span>loftet</span></span><span id="brevDato"></span></div>
+  <h1>Velkommen til <span class="bVerden"></span>!</h1>
+  <p id="brevIntro"></p>
+  <div class="kort elevkort">
+    <div>
+      <h2>1. Slik kommer eleven i gang</h2>
+      <ol>
+        <li>Åpne <span class="adr" id="brevElevAdr"></span> på nettbrett eller PC, eller skann QR-koden.</li>
+        <li>Skriv inn elevkoden:</li>
+      </ol>
+      <div class="kode" id="brevKode"></div>
+      <p>Koden skrives bare inn første gang på hver enhet. Alt eleven gjør, lagres automatisk. Bytter dere nettbrett, skriver eleven inn den samme koden, så er alt på plass.</p>
+    </div>
+    <div id="brevQr"></div>
+  </div>
+  <div class="kort" id="brevRapport">
+    <div>
+      <h2>2. Følg med på framgangen (for deg som er voksen)</h2>
+      <p>Åpne <span class="adr" id="brevRapAdr"></span>, eller skann QR-koden, og skriv inn voksenkoden:</p>
+      <div class="kode" id="brevVk"></div>
+      <p>Rapporten viser hvilke mål eleven har nådd og hvilken dato, hva eleven er på vei mot, og hva som trenger mer øving. Du kan skrive den ut eller lagre den som PDF, for eksempel til en samtale. Voksenkoden er til deg, ikke til eleven.</p>
+    </div>
+    <div id="brevQr2"></div>
+  </div>
+  <div class="to">
+    <div><h2>Slik virker verdenen</h2><div id="brevOm"></div></div>
+    <div>
+      <h2>Greit å vite</h2>
+      <ul>
+        <li>Verdenen trenger nett og virker i nettleseren. Ingenting skal installeres.</li>
+        <li>Korte økter flere dager i uka gir mer enn én lang.</li>
+        <li>Ta vare på dette brevet. Kodene er nøkkelen til verdenen.</li>
+      </ul>
+      <h2 style="margin-top:8px">Personvern</h2>
+      <p>Eleven registreres ikke med navn. Under koden lagres bare framgangen i verdenen, i et datasenter i Belgia. Ingen reklame og ingen sporing.</p>
+    </div>
+  </div>
+  <div class="fot">Spørsmål, eller har en kode kommet på avveie? Send e-post til kontakt@tavleloftet.no, så hjelper vi deg.<br>Tavleloftet Skjelstad · Org.nr. 838 831 702 · tavleloftet.no</div>
+</div>
+
+<div id="lapp"><div class="ramme">
+  <h1 id="lappVerden"></h1>
+  <p id="lappNavn"></p>
+  <p>Åpne <b id="lappAdr"></b> og skriv inn koden:</p>
+  <div class="kode" id="lappKode"></div>
+  <div id="lappQr"></div>
+  <p style="font-size:.9rem;color:#555">…eller skann QR-koden med iPaden.</p>
+</div>
+<p class="klipp">✂ – – – – – – – – – – – – – – – – – – – – – – – – – – – – –</p>
+<div class="ramme voksen">
+  <h2>Til den voksne: framgangsrapport</h2>
+  <p>Se hvilke mål <span id="lappNavn2"></span> har nådd, og skriv ut en rapport.<br>Åpne <b id="lappAdr2"></b> og skriv inn voksenkoden:</p>
+  <div class="kode liten-kode" id="lappVk"></div>
+  <div id="lappQr2"></div>
+  <p style="font-size:.9rem;color:#555">Voksenkoden viser bare framgangen til denne ene eleven. Ikke del den med eleven.</p>
+</div></div>
+
+<script>
+(function(){
+'use strict';
+var CFG = window.TAVLELOFTET_FIREBASE;
+var FB = '10.12.2';
+var VERDENER = { dinoparken: 'Dinoparken', dinoparken2: 'Dinoparken – lyder, venner og klosser', lyslaget: 'Lyslaget' };
+/* Oppgavepakke for verdener som har det. Lagres sammen med elevens framgang rett etter at koden er laget. */
+var PAKKE = { dinoparken2: { nokkel: 'dp2-pakke', verdi: 'lyd-venner-klosser' } };
+var ALFABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+/* Tekst til velkomstbrevet, per verden. «rapport» = verdenen er koblet til framgangsrapporten. */
+var BREV = {
+  dinoparken: { rapport: true,
+    intro: 'Dinoparken er en læringsverden der eleven bygger sin egen dinosaurpark. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien.',
+    om: '<p>I hver innhegning står fem stasjoner med oppgaver: klokka, penger, 10-er-venner, lyder i ord og å lese ord. Oppgavene leses opp.</p><p>Riktige svar gir mynter. Myntene brukes til nye områder og egg som klekkes. Når eleven har 8 riktige av de 10 siste på et nivå, kommer en stjerne og et nytt nivå. Det er det samme som et nådd mål i rapporten.</p><p>Voksenmenyen i verdenen åpnes med voksenkoden over, og lar deg velge startnivå for hvert tema.</p>' },
+  dinoparken2: { rapport: true,
+    intro: 'Dinoparken er en læringsverden der eleven bygger sin egen dinosaurpark. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien. Denne parken har oppgaver som er valgt ut for akkurat denne eleven.',
+    om: '<p>I hver innhegning står fem stasjoner: Lyttetårnet (høre forskjell på lyder som ligner, som P og B), Bokstavreiret (bokstavlyder), Brøleskolen (si lyder, ord og setninger), Vennekroken (følelser og hvordan vi er mot hverandre) og Klosseverkstedet (mønster og logikk). Alt leses opp, og eleven svarer ved å trykke på bilder.</p><p><b>Brøleskolen trenger en voksen.</b> En iPad kan ikke høre om en lyd blir sagt riktig. Derfor holder en voksen inne en knapp for å starte, hører på, og trykker «Bra sagt» eller «Øv en gang til».</p><p>Riktige svar gir mynter. Myntene brukes til nye områder og egg som klekkes. Når eleven har 8 riktige av de 10 siste på et nivå, kommer en stjerne og et nytt nivå. Det er det samme som et nådd mål i rapporten.</p><p>Voksenmenyen i verdenen åpnes med voksenkoden over, og lar deg velge startnivå for hvert tema.</p>' },
+  lyslaget: { rapport: false,
+    intro: 'Lyslaget er en læringsverden med roboter, der eleven øver på matte, lesing, skriving og klokka.',
+    om: '<p>Eleven velger selv hva som skal øves på, og robotene forklarer underveis. Alt eleven gjør, lagres under elevkoden.</p>' }
+};
+function ryddUtskrift(){ document.body.classList.remove('p-lapp', 'p-brev'); if (ryddUtskrift.tittel) { document.title = ryddUtskrift.tittel; ryddUtskrift.tittel = null; } }
+addEventListener('afterprint', ryddUtskrift);
+var $ = function(id){ return document.getElementById(id); };
+var vis = function(id, ja){ $(id).hidden = !ja; };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+var fmt = function(k){ return k.slice(0,3) + '-' + k.slice(3); };
+function mld(id, t, type){ var e = $(id); e.textContent = t; e.className = 'melding' + (type ? ' ' + type : ''); }
+function last(src){ return new Promise(function(ok, feil){ var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = feil; document.head.appendChild(s); }); }
+
+if (!CFG || !CFG.databaseURL) { vis('ikkeOppsett', true); return; }
+
+var auth, db, bruker = null;
+last('https://www.gstatic.com/firebasejs/' + FB + '/firebase-app-compat.js')
+  .then(function(){ return Promise.all([last('https://www.gstatic.com/firebasejs/' + FB + '/firebase-auth-compat.js'), last('https://www.gstatic.com/firebasejs/' + FB + '/firebase-database-compat.js')]); })
+  .then(start)
+  .catch(function(){ vis('innlogging', true); mld('innMld', 'Klarte ikke å laste Firebase. Sjekk nettet.', 'feil'); });
+
+function start(){
+  firebase.initializeApp(CFG);
+  auth = firebase.auth(); db = firebase.database();
+  auth.onAuthStateChanged(function(u){
+    bruker = u;
+    vis('hvem', !!u); vis('innlogging', !u); vis('hoved', false); vis('ikkeGodkjent', false);
+    if (!u) return;
+    $('epost').textContent = u.email || '';
+    // Godkjent = databasereglene lar oss skrive på vår egen voksen-node.
+    db.ref('voksne/' + u.uid + '/sist_innlogget').set(firebase.database.ServerValue.TIMESTAMP)
+      .then(function(){ vis('hoved', true); lastListe(); lastHenv(); })
+      .catch(function(){ $('uid').textContent = u.uid; vis('ikkeGodkjent', true); });
+  });
+}
+
+$('loggInnSkjema').addEventListener('submit', function(e){
+  e.preventDefault(); mld('innMld', 'Logger inn …');
+  auth.signInWithEmailAndPassword($('ep').value.trim(), $('pw').value)
+    .then(function(){ mld('innMld', ''); $('pw').value = ''; })
+    .catch(function(){ mld('innMld', 'Feil e-post eller passord.', 'feil'); });
+});
+$('glemt').addEventListener('click', function(){
+  var ep = $('ep').value.trim(); if (!ep) { mld('innMld', 'Skriv inn e-posten din først.', 'feil'); return; }
+  auth.sendPasswordResetEmail(ep).then(function(){ mld('innMld', 'Sjekk e-posten din for en lenke.', 'ok'); }, function(){ mld('innMld', 'Det gikk ikke. Sjekk e-postadressen.', 'feil'); });
+});
+$('loggUt').addEventListener('click', function(){ auth.signOut(); });
+$('google').addEventListener('click', function(){
+  mld('innMld', 'Åpner Google-innlogging …');
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(function(){ mld('innMld', ''); })
+    .catch(function(e){ mld('innMld', e && e.code === 'auth/unauthorized-domain' ? 'Denne adressen er ikke godkjent i Firebase ennå.' : 'Google-innloggingen ble avbrutt.', 'feil'); });
+});
+
+function nyKode(lengde){
+  lengde = lengde || 6;
+  var a = new Uint32Array(lengde); crypto.getRandomValues(a);
+  var k = ''; for (var i = 0; i < lengde; i++) k += ALFABET[a[i] % ALFABET.length];
+  return k;
+}
+/* Voksenkoden (10 tegn) åpner rapporten for én elev. Den sendes til den voksne sammen med elevkoden. */
+var fmtVk = function(k){ return k ? k.slice(0,5) + '-' + k.slice(5) : ''; };
+function husk(vk, navn){            // så rapport.html på denne maskinen kjenner eleven ved navn
+  try { var l = JSON.parse(localStorage.getItem('tl-voksenkoder')) || {}; l[vk] = { navn: navn }; localStorage.setItem('tl-voksenkoder', JSON.stringify(l)); } catch (e) {}
+}
+function ledigKode(forsok){
+  var k = nyKode();
+  return db.ref('elever/' + k + '/info').get().then(function(s){
+    if (!s.exists()) return k;
+    if (forsok > 8) throw new Error('fant ingen ledig kode');
+    return ledigKode(forsok + 1);
+  });
+}
+$('nyElev').addEventListener('submit', function(e){
+  e.preventDefault();
+  var navn = $('navn').value.trim(), verden = $('verden').value;
+  if (!navn) return;
+  mld('nyMld', 'Lager kode …'); $('nyKode').style.display = 'none';
+  ledigKode(0).then(function(k){
+    var nå = firebase.database.ServerValue.TIMESTAMP, opp = {}, vk = nyKode(10);
+    opp['elever/' + k + '/info'] = { eier: bruker.uid, verden: verden, opprettet: nå };
+    opp['voksenkoder/' + vk + '/info'] = { elev: k, eier: bruker.uid, opprettet: nå };
+    opp['voksne/' + bruker.uid + '/elever/' + k] = { navn: navn, verden: verden, opprettet: nå, voksenkode: vk };
+    return db.ref().update(opp).then(function(){
+      var P = PAKKE[verden];   // oppgavepakken må skrives etter at koden finnes (regelen krever det)
+      if (!P) return;
+      var d = {}; d[P.nokkel] = P.verdi;
+      return db.ref('elever/' + k + '/data').update(d).catch(function(){});   // mangler den, bruker verdenen standardpakken
+    }).then(function(){ $('nyVk').textContent = fmtVk(vk); return k; });
+  }).then(function(k){
+    $('nyNavn').textContent = navn + ' (' + VERDENER[verden] + ')';
+    $('nyKodeTekst').textContent = fmt(k); $('nyKode').style.display = 'block';
+    $('elevAdr').textContent = (location.href.replace(/[^/]*([?#].*)?$/, '') + 'elev').replace(/^https?:\/\//, '');
+    $('navn').value = ''; mld('nyMld', '');
+    lastListe();
+  }).catch(function(err){ mld('nyMld', 'Det gikk ikke å lage kode (' + err.message + ').', 'feil'); });
+});
+
+function sammendrag(verden, data){
+  if (!data) return 'Ikke startet ennå';
+  var n = Object.keys(data).length;
+  if (verden === 'dinoparken' || verden === 'dinoparken2') {
+    try { var st = JSON.parse(data[verden === 'dinoparken2' ? 'dp2-v8' : 'dinoparken-v8']); if (st) return '🪙 ' + (st.coins || 0) + ' · områder ' + ((st.owned || []).length) + ' av 6'; } catch (e) {}
+  }
+  return n + ' lagrede ting';
+}
+function tid(ms){
+  if (!ms) return 'aldri';
+  var d = new Date(ms), i = new Date();
+  var dag = d.toDateString() === i.toDateString() ? 'i dag' : d.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short' });
+  return dag + ' ' + d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
+}
+
+var elever = {};
+/* ---------- Henvendelser fra skjemaet (bare for Espen) ---------- */
+var ADMIN_EPOST = 'espenps@gmail.com', henvData = {};
+var HENV_TYPE = { niva1: 'Nivå 1 – tilpasset verden', niva2: 'Nivå 2 – eget tema', kurs: 'Kurs', annet: 'Noe annet' };
+function lastHenv(){
+  if (!bruker || bruker.email !== ADMIN_EPOST) { vis('henvBoks', false); return; }
+  vis('henvBoks', true);
+  db.ref('henvendelser').orderByChild('tid').once('value').then(function(s){
+    henvData = s.val() || {}; tegnHenv();
+  }).catch(function(){ $('henvListe').innerHTML = '<p class="tom">Fikk ikke lest henvendelsene. Er databasereglene oppdatert?</p>'; });
+}
+function tegnHenv(){
+  var visArkiv = $('visArkiv').checked;
+  var ider = Object.keys(henvData).sort(function(a, b){ return (henvData[b].tid || 0) - (henvData[a].tid || 0); });
+  var nye = ider.filter(function(id){ return henvData[id].status === 'ny'; }).length;
+  $('henvAntall').hidden = !nye; $('henvAntall').textContent = nye + ' ny' + (nye === 1 ? '' : 'e');
+  var vises = ider.filter(function(id){ return visArkiv || henvData[id].status !== 'arkivert'; });
+  if (!vises.length) { $('henvListe').innerHTML = '<p class="tom">Ingen henvendelser ennå.</p>'; return; }
+  $('henvListe').innerHTML = vises.map(function(id){
+    var h = henvData[id], dato = h.tid ? new Date(h.tid).toLocaleString('nb-NO', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    var felt = [['Trinn', h.trinn], ['Eleven elsker', h.liker], ['Skal øve på', h.ove], ['Rolle', h.rolle], ['Skole', h.skole], ['Melding', h.melding]]
+      .filter(function(f){ return f[1]; }).map(function(f){ return '<dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd>'; }).join('');
+    var emne = encodeURIComponent('Sv: Henvendelse til Tavleloftet (' + (HENV_TYPE[h.type] || h.type) + ')');
+    return '<div class="henv ' + esc(h.status) + '"><div class="topp"><span class="hvem">' + esc(h.navn) + ' · <a href="mailto:' + esc(h.epost) + '?subject=' + emne + '">' + esc(h.epost) + '</a></span>'
+      + '<span><span class="merke' + (h.status === 'ny' ? ' ny' : '') + '">' + esc(h.status) + '</span> <span class="liten">' + esc(dato) + '</span></span></div>'
+      + '<p class="liten" style="margin:4px 0 0"><b>' + esc(HENV_TYPE[h.type] || h.type) + '</b></p><dl>' + felt + '</dl>'
+      + '<div class="knapper"><a class="rapportlenke" href="mailto:' + esc(h.epost) + '?subject=' + emne + '">Svar på e-post</a>'
+      + (h.status !== 'besvart' ? '<button class="sek" data-henv="besvart" data-id="' + id + '">Merk som besvart</button>' : '')
+      + (h.status !== 'arkivert' ? '<button class="sek" data-henv="arkivert" data-id="' + id + '">Arkiver</button>' : '<button class="sek" data-henv="ny" data-id="' + id + '">Hent fra arkiv</button>')
+      + '<button class="fare" data-henv="slett" data-id="' + id + '">Slett</button></div></div>';
+  }).join('');
+}
+$('visArkiv').addEventListener('change', tegnHenv);
+$('henvListe').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-henv]'); if (!b) return;
+  var id = b.dataset.id, h = b.dataset.henv;
+  if (h === 'slett') {
+    if (!confirm('Slette henvendelsen fra ' + (henvData[id] || {}).navn + ' for godt?')) return;
+    db.ref('henvendelser/' + id).remove().then(lastHenv);
+  } else {
+    db.ref('henvendelser/' + id + '/status').set(h).then(lastHenv);
+  }
+});
+
+function lastListe(){
+  db.ref('voksne/' + bruker.uid + '/elever').get().then(function(s){
+    elever = s.val() || {};
+    // Elever som ble laget før voksenkoden fantes, får en nå.
+    var opp = {}, mangler = Object.keys(elever).filter(function(k){ return !elever[k].voksenkode; });
+    mangler.forEach(function(k){
+      var vk = nyKode(10); elever[k].voksenkode = vk;
+      opp['voksenkoder/' + vk + '/info'] = { elev: k, eier: bruker.uid, opprettet: firebase.database.ServerValue.TIMESTAMP };
+      opp['voksne/' + bruker.uid + '/elever/' + k + '/voksenkode'] = vk;
+    });
+    return mangler.length ? db.ref().update(opp).catch(function(){ mangler.forEach(function(k){ delete elever[k].voksenkode; }); }) : null;
+  }).then(function(){
+    var koder = Object.keys(elever).sort(function(a, b){ return (elever[a].navn || '').localeCompare(elever[b].navn || '', 'nb'); });
+    if (!koder.length) { $('liste').innerHTML = '<p class="tom">Ingen elever ennå. Lag den første over.</p>'; return; }
+    return Promise.all(koder.map(function(k){ return db.ref('elever/' + k).get().then(function(x){ return [k, x.val()]; }, function(){ return [k, null]; }); }))
+      .then(function(rader){
+        $('liste').innerHTML = rader.map(function(r){
+          var k = r[0], sky = r[1] || {}, e = elever[k];
+          return '<div class="elev" data-kode="' + k + '">' +
+            '<div><div class="navn">' + esc(e.navn) + '</div><span class="merke">' + esc(VERDENER[e.verden] || e.verden) + '</span></div>' +
+            '<div><div class="kode">' + fmt(k) + '</div><div class="liten">' + (e.voksenkode ? 'Voksenkode: ' + fmtVk(e.voksenkode) : 'Voksenkode mangler') + '</div></div>' +
+            '<div class="liten">Sist aktiv: ' + tid(sky.oppdatert) + '<br>' + esc(sammendrag(e.verden, sky.data)) + '</div>' +
+            '<div class="knapper">' + (e.voksenkode ? '<a class="rapportlenke" href="rapport.html?v=' + e.voksenkode + '">Rapport</a>' : '') + '<button class="sek" data-g="brev">Velkomstbrev</button><button class="sek" data-g="lapp">Innloggingslapp</button><button class="sek" data-g="kopi">Sikkerhetskopi</button><button class="fare" data-g="null">Nullstill</button><button class="fare" data-g="slett">Slett</button></div>' +
+          '</div>';
+        }).join('');
+      });
+  }).catch(function(){ $('liste').innerHTML = '<p class="tom feil">Klarte ikke å hente elevene.</p>'; });
+}
+
+$('liste').addEventListener('click', function(e){
+  var lenke = e.target.closest('a.rapportlenke');
+  if (lenke) { var ek = lenke.closest('.elev').dataset.kode; husk(elever[ek].voksenkode, elever[ek].navn); return; }
+  var b = e.target.closest('button[data-g]'); if (!b) return;
+  var k = b.closest('.elev').dataset.kode, el = elever[k], g = b.dataset.g;
+  if ((g === 'null' || g === 'slett') && !b.dataset.sikker) {
+    b.dataset.sikker = 1; b.textContent = g === 'null' ? 'Sikker? Trykk igjen' : 'Slette for godt?';
+    setTimeout(function(){ if (b.isConnected) { delete b.dataset.sikker; b.textContent = g === 'null' ? 'Nullstill' : 'Slett'; } }, 4000);
+    return;
+  }
+  if (g === 'null') {
+    db.ref('elever/' + k).update({ data: null, oppdatert: firebase.database.ServerValue.TIMESTAMP }).then(lastListe);
+  } else if (g === 'slett') {
+    var opp = {}; opp['elever/' + k] = null; opp['voksne/' + bruker.uid + '/elever/' + k] = null;
+    if (el.voksenkode) opp['voksenkoder/' + el.voksenkode] = null;
+    db.ref().update(opp).then(lastListe);
+  } else if (g === 'kopi') {
+    db.ref('elever/' + k).get().then(function(s){
+      var blob = new Blob([JSON.stringify({ kode: k, navn: el.navn, verden: el.verden, hentet: new Date().toISOString(), elev: s.val() }, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = el.verden + '-' + (el.navn || k).replace(/[^\wæøåÆØÅ-]+/g, '_') + '-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  } else if (g === 'lapp') {
+    var base = location.href.replace(/[^/]*([?#].*)?$/, '') + 'elev/';
+    $('lappVerden').textContent = VERDENER[el.verden]; $('lappNavn').textContent = el.navn;
+    $('lappAdr').textContent = base.replace(/^https?:\/\//, ''); $('lappKode').textContent = fmt(k);
+    var qrUrl = base + '?kode=' + k;
+    var rapAdr = base.replace(/elev\/$/, 'rapport.html');
+    $('lappNavn2').textContent = el.navn; $('lappAdr2').textContent = rapAdr.replace(/^https?:\/\//, ''); $('lappVk').textContent = fmtVk(el.voksenkode);
+    var qr = function(id, adr){ try { var q = qrcode(0, 'M'); q.addData(adr); q.make(); $(id).innerHTML = q.createSvgTag({ scalable: true, margin: 2 }); } catch (x) { $(id).textContent = ''; } };
+    var skriv = function(){ qr('lappQr', qrUrl); qr('lappQr2', rapAdr + '?v=' + el.voksenkode); ryddUtskrift(); document.body.classList.add('p-lapp'); setTimeout(function(){ print(); }, 150); };
+    window.qrcode ? skriv() : last('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js').then(skriv, skriv);
+  } else if (g === 'brev') {
+    // Velkomstbrev til den som har kjøpt verdenen. Uten elevens navn, så det trygt kan sendes på e-post.
+    var B = BREV[el.verden] || { rapport: false, intro: '', om: '' };
+    var rot = location.href.replace(/[^/]*([?#].*)?$/, ''), utenHttp = function(a){ return a.replace(/^https?:\/\//, ''); };
+    [].forEach.call(document.querySelectorAll('#brev .bVerden'), function(x){ x.textContent = VERDENER[el.verden] || el.verden; });
+    $('brevDato').textContent = new Date().toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' });
+    $('brevIntro').textContent = B.intro + ' Her er kodene og det du trenger for å komme i gang.';
+    $('brevElevAdr').textContent = utenHttp(rot + 'elev'); $('brevKode').textContent = fmt(k);
+    $('brevRapport').style.display = B.rapport && el.voksenkode ? '' : 'none';
+    $('brevRapAdr').textContent = utenHttp(rot + 'rapport.html'); $('brevVk').textContent = fmtVk(el.voksenkode);
+    $('brevOm').innerHTML = B.om;
+    var qrB = function(id, adr){ try { var q = qrcode(0, 'M'); q.addData(adr); q.make(); $(id).innerHTML = q.createSvgTag({ scalable: true, margin: 0 }); } catch (x) { $(id).textContent = ''; } };
+    var skrivBrev = function(){
+      qrB('brevQr', rot + 'elev/?kode=' + k); if (el.voksenkode) qrB('brevQr2', rot + 'rapport.html?v=' + el.voksenkode);
+      ryddUtskrift(); ryddUtskrift.tittel = document.title; document.title = 'Velkommen til ' + (VERDENER[el.verden] || el.verden) + ' – Tavleloftet';   // blir filnavnet på PDF-en
+      document.body.classList.add('p-brev'); setTimeout(function(){ print(); }, 150);
+    };
+    window.qrcode ? skrivBrev() : last('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js').then(skrivBrev, skrivBrev);
+  }
+});
+})();
+</script>
+</body>
+</html>

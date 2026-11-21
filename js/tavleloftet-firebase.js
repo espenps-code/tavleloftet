@@ -6,7 +6,7 @@
        Gjett hvem) – «Mot en venn»
      • dinoparken/ og lyslaget/ – innlogging med elevkode og lagring av
        framgang i skyen
-     • voksen.html – voksensiden der du lager elevkoder
+     • admin.html – adminsiden der du lager elevkoder
 
    SLIK FYLLER DU UT (bare én gang):
      1. Firebase-konsollen → prosjektet «tavleloftet» → tannhjulet

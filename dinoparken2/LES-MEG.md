@@ -23,9 +23,9 @@ spesialpedagog, er det deres råd som gjelder.
 - `oppgaver.js` – oppgavemotoren. Øverst står `PAKKER`: hvilke stasjoner en pakke har, og hvilke lyder og bokstaver som øves.
   Vil du lage en pakke til en ny elev (f.eks. K/G og R), kopierer du en pakke der og bytter lydene. Ordene står i `ORD2` og ordparene i `LYDPAR`.
 - Pakken eleven har, lagres under nøkkelen `dp2-pakke` sammen med framgangen (følger elevkoden). Mangler den, brukes `lyd-venner-klosser`.
-  `voksen.html` skriver den når koden lages. Den kan også byttes i voksenmenyen inne i parken.
+  `admin.html` skriver den når koden lages. Den kan også byttes i voksenmenyen inne i parken.
 - Lagringsnøklene starter med `dp2-` (ikke `dinoparken-`), så de to parkene aldri blander framgang.
-- Verden-ID er `dinoparken2`. Den står i `js/tavleloftet-elev.js`, `elev/index.html`, `voksen.html`, `rapport.html` (målfil `js/maal-dinoparken2.js`)
+- Verden-ID er `dinoparken2`. Den står i `js/tavleloftet-elev.js`, `elev/index.html`, `admin.html`, `rapport.html` (målfil `js/maal-dinoparken2.js`)
   og i `database-regler.json`. **Regelen må publiseres i Firebase før det kan lages elevkoder til denne verdenen.**
 - Bilder: `bilder/ord/` (ordbilder) og `bilder/sosial/` (Mio: følelser `fol-…`, situasjoner `sc-…`, oppførsel `at-…`). Laget med Higgsfield (nano_banana_2).
 - Lyd: `lyd/ord-<ord>.mp3`, `lyd/dino/<klipp>.mp3`, `lyd/tall-<n>.mp3`. Lest inn med ElevenLabs (stemmen Kristine, modell eleven_v4).

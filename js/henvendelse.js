@@ -1,7 +1,7 @@
 /* =========================================================================
    TAVLELOFTET – henvendelsesskjema (skreddersydd.html#henvendelse)
    Lagrer henvendelsen i Firebase under «henvendelser/». Bare Espen kan lese
-   dem (voksen.html → Henvendelser). Etterpå sendes et kort varsel (fast tekst,
+   dem (admin.html → Henvendelser). Etterpå sendes et kort varsel (fast tekst,
    uten innholdet) til kontakt@tavleloftet.no og en bekreftelse til avsenderen,
    via varsel.tavleloftet.no (webhotellet hos Gigahost).
    ========================================================================= */

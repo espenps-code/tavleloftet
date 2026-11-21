@@ -9,7 +9,8 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 - `skreddersydd.html` – skreddersydde verdener (lenker til elevinnloggingen og rapporten; bestillingsskjemaet er ikke laget ennå)
 - `elev/` – felles elevinnlogging: eleven skriver koden og sendes til riktig verden (`dinoparken/`, `lyslaget/`)
 - `dinoparken2/` – Dinoparken med oppgavepakker (egne oppgaver per elev). Første pakke: lyder, venner og klosser. Se `dinoparken2/LES-MEG.md`
-- `voksen.html` – bare for Espen: lager elevkode og voksenkode, og skriver ut innloggingslapp
+- `admin.html` – bare for Espen (het `voksen.html` til 21.11.2026): lager elevkode og voksenkode, og skriver ut innloggingslapp
+- `voksen.html` – sender videre til `rapport.html`. «Voksensiden» er nå det kjøperen ser: rapporten, som åpnes med voksenkoden eller fra hengelåsmenyen i verdenen («Se rapporten»)
 - `rapport.html` – framgangsrapporten kjøperen åpner med voksenkoden (se `maler/laererrapport/LES-MEG.md`)
 - `kroniken/` – Krøniken, KRLE-verktøyet. Mappa er en kopi av `innhold/`, `portal/` og `religionsprove/` fra
   `Tavleloftet\Krøniken` i Dropbox (uten LES-MEG-filene). Kilden er Dropbox-mappa: endringer gjøres der og kopieres hit.

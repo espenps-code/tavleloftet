@@ -159,6 +159,8 @@ else {
   try { kjente = JSON.parse(localStorage.getItem(LSK)) || {}; } catch (e) { kjente = {}; }
   // Kommer vi fra QR-koden på lappen (…/rapport.html?v=KODE)? Ta vare på koden og fjern den fra adressen.
   var fraAdr = rens((location.search.match(/[?&]v=([^&]+)/) || [])[1]);
+  // Kommer vi fra «Se rapporten» i voksenmenyen i en verden? Da ligger koden i nettleserens lager (brukes én gang).
+  try { var fraVerden = rens(localStorage.getItem('tl-rapport-apne')); localStorage.removeItem('tl-rapport-apne'); if (!fraAdr && VK_RE.test(fraVerden)) fraAdr = fraVerden; } catch (e) {}
   if (fraAdr) history.replaceState(null, '', location.pathname);
   if (VK_RE.test(fraAdr) && !kjente[fraAdr]) { kjente[fraAdr] = { navn: '' }; lagreKjente(); }
   fyllVelger(VK_RE.test(fraAdr) ? fraAdr : null);

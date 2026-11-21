@@ -1276,6 +1276,7 @@ function lukk(){
 /* ==========================================================================
    VOKSENMENY (læringsfremgang)
    ========================================================================== */
+let voksenVk='';   // voksenkoden som åpnet menyen – brukes av «Se rapporten»
 function voksen(){
   lagOverlay();
   R=null;   // egen kodeboks (ingen nettleserdialoger)
@@ -1286,12 +1287,13 @@ function voksen(){
   $d('doFot').innerHTML='';
   rot.classList.add('vis'); document.body.classList.add('do-åpen');
   const kodeOk=v=>(window.TL&&TL.sjekkVoksenkode&&TL.kode)?TL.sjekkVoksenkode(v):Promise.resolve(v===LÆRING.voksenKode);
-  const sjekk=()=>{ $d('doTekst').textContent='Sjekker …'; kodeOk($d('doKode').value).then(ok=>{ if(ok) visVoksen(); else { $d('doKode').value=''; $d('doTekst').textContent='Feil kode – prøv igjen:'; } }); };
+  const sjekk=()=>{ $d('doTekst').textContent='Sjekker …'; kodeOk($d('doKode').value).then(ok=>{ if(ok){ voksenVk=String($d('doKode').value).toUpperCase().replace(/[^0-9A-Z]/g,''); visVoksen(); } else { $d('doKode').value=''; $d('doTekst').textContent='Feil kode – prøv igjen:'; } }); };
   $d('doKodeOk').onclick=sjekk; $d('doKode').onkeydown=e=>{ if(e.key==='Enter') sjekk(); };
   setTimeout(()=>$d('doKode').focus(),50);
 }
 function visVoksen(){
   const L=lesLæring();
+  const harRapport=!!(window.TL&&TL.kode&&/^[A-HJ-NP-Z2-9]{10}$/.test(voksenVk));   // bare når eleven er logget inn med kode
   $d('doTekst').innerHTML='Velg startnivå for hvert tema og se hvordan det går. Tallene er de siste 10 oppgavene på hvert nivå (første forsøk).';
   let h=`<p class="do-pakke">Oppgavepakke: <select id="doPakke" class="do-input">${Object.entries(PAKKER).map(([id,p])=>`<option value="${id}" ${id===PAKKEID?'selected':''}>${p.navn}</option>`).join('')}</select></p>`;
   h+='<table class="do-tabell"><tr><th>Stasjon</th><th>Nivå nå</th><th>Siste resultater</th><th>Repetisjon</th></tr>';
@@ -1306,7 +1308,12 @@ function visVoksen(){
   $d('doBoks').innerHTML=h;
   $d('doPakke').onchange=()=>{ try{ localStorage.setItem(PKEY, $d('doPakke').value); }catch(e){} location.reload(); };
   $d('doBoks').querySelectorAll('select[data-tema]').forEach(s=>s.onchange=()=>{ const L2=lesLæring(); L2.tema[s.dataset.tema].nivå=+s.value; lagreLæring(L2); });
-  $d('doFot').innerHTML=`<div class="do-valg"><button class="do-knapp" id="doNull">Nullstill læringsfremgang</button><button class="do-knapp go" id="doVLukk">Lukk</button></div>`;
+  $d('doFot').innerHTML=`<div class="do-valg"><button class="do-knapp" id="doNull">Nullstill læringsfremgang</button>${harRapport?'<button class="do-knapp" id="doRapport">📊 Se rapporten</button>':''}<button class="do-knapp go" id="doVLukk">Lukk</button></div>`;
+  if(harRapport) $d('doRapport').onclick=()=>{   // koden legges i nettleserens lager (ikke i adressen), og rapporten henter den derfra
+    try{ localStorage.setItem('tl-rapport-apne', voksenVk); }catch(e){}
+    const gå=()=>{ location.href='../rapport.html'; };
+    if(window.TL&&TL.synkNå) TL.synkNå().then(gå,gå); else gå();
+  };
   $d('doVLukk').onclick=()=>{ lukk(); if(window.DinoParkHUD) window.DinoParkHUD(); };
   $d('doNull').onclick=()=>{ const b=$d('doNull'); if(b.dataset.sikker){ try{ localStorage.removeItem(LKEY); }catch(e){} visVoksen(); } else { b.dataset.sikker=1; b.textContent='Trykk igjen for å bekrefte'; } };
 }
