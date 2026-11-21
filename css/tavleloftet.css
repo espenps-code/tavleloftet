@@ -239,8 +239,9 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 @media print{.topp,.bunn{display:none}.tekstside{color:#000}.tekstside p,.tekstside li,.tekstside table,.tekstside h1,.tekstside h2,.tekstside h3,.tekstside th{color:#000;background:none}}
 
 /* Nyhetsbrev */
-.nyhetsbrev-band{background:var(--kort);padding:56px 24px;border-top:1px solid var(--linje)}
-.nyhetsbrev-indre{display:flex;flex-wrap:wrap;gap:28px 56px;align-items:center;justify-content:space-between}
+.nyhetsbrev-band{background:var(--tavle-mork);padding:0 24px 64px}
+.nyhetsbrev-indre{display:flex;flex-wrap:wrap;gap:28px 56px;align-items:center;justify-content:space-between;background:var(--kort);border:1px solid var(--linje);border-radius:24px;padding:36px 40px}
+@media (max-width:600px){.nyhetsbrev-indre{padding:28px 22px}}
 .nyhetsbrev-tekst{flex:1 1 320px;max-width:520px}
 .nyhetsbrev-tekst h2{margin:0 0 8px;font-family:var(--display);font-size:clamp(24px,3vw,32px);line-height:1.2}
 .nyhetsbrev-tekst p{margin:0;color:var(--lys-dempet)}
