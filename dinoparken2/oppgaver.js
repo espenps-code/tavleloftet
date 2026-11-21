@@ -929,10 +929,22 @@ const SISETN = {
   S:['Sola synker sakte.','Seks sultne seler.','Sara synger en sang.'],
   L:['Lille Lise ler.','Løven liker lam.','Lars leker med lego.'],
 };
+const HOLDTID = 2000;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.
+function holdeknapp(b, ferdig){
+  b.classList.add('do-hold');
+  b.innerHTML=`<span class="do-holdfyll"></span><span class="do-holdtekst">${b.innerHTML}</span>`;
+  b.style.setProperty('--hold', HOLDTID+'ms');
+  let t=null;
+  const slutt=()=>{ b.classList.remove('holder'); if(t){ clearTimeout(t); t=null; } };
+  b.addEventListener('pointerdown',e=>{ if(b.disabled) return; e.preventDefault(); slutt(); b.classList.add('holder'); t=setTimeout(()=>{ t=null; ferdig(); },HOLDTID); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,slutt));
+  b.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(!b.disabled) ferdig(); } });   // tastatur
+  b.addEventListener('contextmenu',e=>e.preventDefault());
+}
 function voksenknapper(boks,svar){
-  const rad=el('div','do-voksenrad','<small>Til den voksne: Ble det riktig sagt?</small>');
+  const rad=el('div','do-voksenrad','<small>Til den voksne: Ble det riktig sagt? Hold «Bra sagt» inne i 2 sekunder.</small>');
   const kn=el('div','do-valg'), ja=el('button','do-knapp go','👍 Bra sagt'), nei=el('button','do-knapp','🔁 Øv en gang til');
-  ja.onclick=()=>{ ja.disabled=nei.disabled=true; ja.classList.add('rett'); svar(true); };
+  holdeknapp(ja, ()=>{ ja.disabled=nei.disabled=true; ja.classList.add('rett'); svar(true); });
   nei.onclick=()=>{ ja.disabled=nei.disabled=true; svar(false); };
   kn.appendChild(nei); kn.appendChild(ja); rad.appendChild(kn); boks.appendChild(rad);
 }
@@ -968,14 +980,9 @@ function voksenport(videre){
   $d('doPrikker').innerHTML=''; $d('doFot').innerHTML='';
   $d('doTekst').innerHTML='<b>Hent en voksen!</b> Her øver vi på å si lyder, og en voksen må høre på.';
   const boks=$d('doBoks'); boks.className='do-boks';
-  boks.innerHTML=`<div class="do-midt"><button class="do-knapp go do-hold" id="doHold"><span class="do-holdfyll"></span><span class="do-holdtekst">🧑 Voksen: hold knappen inne</span></button></div>
+  boks.innerHTML=`<div class="do-midt"><button class="do-knapp go do-port" id="doHold">🧑 Voksen: hold knappen inne</button></div>
     <p class="do-tips">Oppgavene her gir bare mynter når en voksen hører på og godkjenner.</p>`;
-  const b=$d('doHold'); let t=null;
-  const slutt=()=>{ b.classList.remove('holder'); if(t){ clearTimeout(t); t=null; } };
-  b.addEventListener('pointerdown',e=>{ e.preventDefault(); slutt(); b.classList.add('holder'); t=setTimeout(()=>{ t=null; videre(); },1300); });
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,slutt));
-  b.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); videre(); } });
-  b.addEventListener('contextmenu',e=>e.preventDefault());
+  holdeknapp($d('doHold'), videre);
   Lyd.spill([k('ut-hent-voksen')]);
 }
 
@@ -1409,9 +1416,11 @@ const css=`
 .do-kjempe.liten{font-size:64px;padding:2px 20px;border-radius:18px;border-width:3px}
 .do-voksenrad{border:3px dashed #9a6a3e;border-radius:18px;background:#fbf0de;padding:8px 10px;margin-top:10px;text-align:center}
 .do-voksenrad small{font:600 16px Fredoka,sans-serif;color:#7a4a2a}.do-voksenrad .do-valg{margin:6px 0 2px}
-.do-hold{position:relative;overflow:hidden;min-width:min(380px,90%);min-height:96px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
+.do-port{min-width:min(380px,90%);min-height:96px}
+.do-hold{position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
 .do-holdfyll{position:absolute;inset:0;background:#5cc46a;transform:scaleX(0);transform-origin:left;transition:transform .15s}
-.do-hold.holder .do-holdfyll{transform:scaleX(1);transition:transform 1.3s linear}.do-holdtekst{position:relative}
+.do-hold.holder .do-holdfyll{transform:scaleX(1);transition:transform var(--hold,2000ms) linear}.do-holdtekst{position:relative;display:inline-flex;align-items:center;gap:8px}
+.do-knapp.rett .do-holdfyll{display:none}
 .do-sisetning{font:700 clamp(28px,4.4vw,44px) 'Atkinson Hyperlegible',sans-serif;background:#fff3cf;border:3px solid #1f3b2c;border-radius:20px;padding:14px 24px;margin:0;text-align:center}
 .do-eggbilde{display:inline-block;padding:14px 20px 18px;background:radial-gradient(circle at 35% 30%,#fff,#f6ecd0 55%,#d9c79a);border:3px solid #1f3b2c;border-radius:50% 50% 50% 50%/60% 60% 40% 40%}
 .do-eggbilde .do-pic{width:min(160px,30vw);border-radius:50%}
