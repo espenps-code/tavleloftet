@@ -1093,7 +1093,7 @@ const LOGIKK = {
   },
   tell(){
     const f=pick(KFARGER), n=2+rnd(5), valg=shuffle([n,...shuffle([1,2,3,4,5,6].filter(x=>x!==n)).slice(0,2)]);
-    return { tekst:`Hvilken kloss har <b>${n}</b> knotter?`, si:[k('lo-hvilken-kloss-har'),{tall:n},k('lo-knotter')],
+    return { tekst:`Hvilken kloss har <b>${n}</b> knotter?`, si:[k('lo-har-'+n)],   // hele setningen i ett klipp, så tonefallet blir naturlig
       tegn(boks,svar){ klossknapper(boks,valg,v=>v===n,svar,v=>kloss(f,v,1.1)); },
       forklar(boks){ boks.innerHTML=`<div class="do-midt"><span class="do-fasit">${kloss(f,n,1.4)}</span></div><p class="do-tips">Tell knottene på toppen: ${Array.from({length:n},(_,i)=>i+1).join(', ')}.</p>`; Lyd.leggTil(Array.from({length:n},(_,i)=>[{tall:i+1},{pause:150}]).flat()); } };
   },
@@ -1106,7 +1106,7 @@ const LOGIKK = {
   },
   toRegler(){
     const [f,f2]=shuffle(KFARGER), [n,n2]=shuffle([2,3,4]), mål=[f,n], valg=shuffle([[f,n],[f,n2],[f2,n],[f2,n2]]);
-    return { tekst:`Finn den <b>${KF[f].best}</b> klossen med <b>${n}</b> knotter.`, si:[k('lo-finn-den'),k('fa-'+f),k('lo-klossen-med'),{tall:n},k('lo-knotter-punktum')],
+    return { tekst:`Finn den <b>${KF[f].best}</b> klossen med <b>${n}</b> knotter.`, si:[k(`lo-finn-${f}-${n}`)],
       tegn(boks,svar){ klossknapper(boks,valg,v=>sammeKloss(v,mål),svar,v=>kloss(v[0],v[1],1.2)); },
       forklar(boks){ boks.innerHTML=`<div class="do-midt"><span class="do-fasit">${kloss(f,n,1.4)}</span></div><p class="do-tips">To ting må stemme: fargen er ${KF[f].navn}, og klossen har ${n} knotter.</p>`; Lyd.leggTil([k('lo-to-ting')]); } };
   },
@@ -1523,11 +1523,13 @@ const ROS = ['Riktig!','Kjempebra!','Supert!','Ja, sånn!','Du fikk det til!'];
   ATFERD.forEach(a=>{ reg(g,'at-'+a.id,a.tekst); reg(g,`at-${a.id}-f`,a.f); });
   g=gruppe('Klosseverkstedet','Logikk med klosser.');
   [['lo-monster','Se på mønsteret. Hvilken kloss mangler?'],['lo-gjentar','Mønsteret gjentar seg. Se her.'],['lo-lik','Finn klossen som er helt lik.'],['lo-lik-forklar','Den riktige klossen har samme farge og like mange knotter.'],
-   ['lo-hvilken-kloss-har','Hvilken kloss har'],['lo-knotter','knotter?'],['lo-taarn','Hvilket tårn er helt likt?'],['lo-taarn-forklar','Se på én kloss om gangen, nedenfra og opp.'],
-   ['lo-finn-den','Finn den'],['lo-klossen-med','klossen med'],['lo-knotter-punktum','knotter.'],['lo-to-ting','To ting må stemme: fargen og hvor mange knotter klossen har.'],
+   ['lo-taarn','Hvilket tårn er helt likt?'],['lo-taarn-forklar','Se på én kloss om gangen, nedenfra og opp.'],
+   ['lo-to-ting','To ting må stemme: fargen og hvor mange knotter klossen har.'],
    ['lo-speil','Se på klossene. Hvordan ser de ut i speilet?'],['lo-speil-forklar','I speilet bytter klossene plass.'],
    ['lo-matrise','Én kloss mangler i ruta. Hvilken passer?'],['lo-matrise-forklar','Bortover er fargen lik. Nedover er klossene like lange.']].forEach(([n,t])=>reg(g,n,t));
-  for(const [id,c] of Object.entries(KF)) reg(g,'fa-'+id,c.best);
+  const TALLORD={2:'to',3:'tre',4:'fire',5:'fem',6:'seks'};
+  for(let n=2;n<=6;n++) reg(g,'lo-har-'+n,`Hvilken kloss har ${TALLORD[n]} knotter?`);
+  for(const [id,c] of Object.entries(KF)) for(const n of [2,3,4]) reg(g,`lo-finn-${id}-${n}`,`Finn den ${c.best} klossen med ${TALLORD[n]} knotter.`);
 }
 function klippListe(){ return KLIPPGRUPPER.map(g=>({navn:g.navn, ingress:g.ingress, klipp:g.klipp.map(x=>({...x, fins:g.fins?g.fins(x.navn):false}))})); }
 
