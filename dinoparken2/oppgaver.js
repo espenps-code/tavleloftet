@@ -929,7 +929,7 @@ const SISETN = {
   S:['Sola synker sakte.','Seks sultne seler.','Sara synger en sang.'],
   L:['Lille Lise ler.','Løven liker lam.','Lars leker med lego.'],
 };
-const HOLDTID = 2000;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.
+const HOLDTID = 1300;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.
 function holdeknapp(b, ferdig){
   b.classList.add('do-hold');
   b.innerHTML=`<span class="do-holdfyll"></span><span class="do-holdtekst">${b.innerHTML}</span>`;
@@ -942,7 +942,7 @@ function holdeknapp(b, ferdig){
   b.addEventListener('contextmenu',e=>e.preventDefault());
 }
 function voksenknapper(boks,svar){
-  const rad=el('div','do-voksenrad','<small>Til den voksne: Ble det riktig sagt? Hold «Bra sagt» inne i 2 sekunder.</small>');
+  const rad=el('div','do-voksenrad','<small>Til den voksne: Ble det riktig sagt? Hold «Bra sagt» inne et lite øyeblikk.</small>');
   const kn=el('div','do-valg'), ja=el('button','do-knapp go','👍 Bra sagt'), nei=el('button','do-knapp','🔁 Øv en gang til');
   holdeknapp(ja, ()=>{ ja.disabled=nei.disabled=true; ja.classList.add('rett'); svar(true); });
   nei.onclick=()=>{ ja.disabled=nei.disabled=true; svar(false); };
@@ -1419,7 +1419,7 @@ const css=`
 .do-port{min-width:min(380px,90%);min-height:96px}
 .do-hold{position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
 .do-holdfyll{position:absolute;inset:0;background:#5cc46a;transform:scaleX(0);transform-origin:left;transition:transform .15s}
-.do-hold.holder .do-holdfyll{transform:scaleX(1);transition:transform var(--hold,2000ms) linear}.do-holdtekst{position:relative;display:inline-flex;align-items:center;gap:8px}
+.do-hold.holder .do-holdfyll{transform:scaleX(1);transition:transform var(--hold,1300ms) linear}.do-holdtekst{position:relative;display:inline-flex;align-items:center;gap:8px}
 .do-knapp.rett .do-holdfyll{display:none}
 .do-sisetning{font:700 clamp(28px,4.4vw,44px) 'Atkinson Hyperlegible',sans-serif;background:#fff3cf;border:3px solid #1f3b2c;border-radius:20px;padding:14px 24px;margin:0;text-align:center}
 .do-eggbilde{display:inline-block;padding:14px 20px 18px;background:radial-gradient(circle at 35% 30%,#fff,#f6ecd0 55%,#d9c79a);border:3px solid #1f3b2c;border-radius:50% 50% 50% 50%/60% 60% 40% 40%}
