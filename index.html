@@ -311,6 +311,61 @@
   </div>
 </section>
 
+<section class="nyhetsbrev-band" aria-labelledby="nyhetsbrev-tittel">
+  <div class="wrap nyhetsbrev-indre">
+    <div class="nyhetsbrev-tekst">
+      <h2 id="nyhetsbrev-tittel">Få beskjed når det kommer noe nytt</h2>
+      <p>Noen få e-poster i året om nye verdener, verktøy og opplegg. Du kan melde deg av når som helst.</p>
+    </div>
+    <form class="nyhetsbrev-skjema" id="nyhetsbrev-skjema" method="POST" action="https://b0969130.sibforms.com/serve/MUIFAIcssprLOngsdt2nv-LV59ws1sYEoTJeKbXCtCx7RO9SlMcumcsFvY2WrniU3u4CJfCqJbtynsX1QvZUqplfM1KnXBxFDteRRxFgbrv7V-f3q-GsxWvtRTnlTDRes6zB_RGRBeML2xNzLr5txBX-kMIicsJn2LlVgX8l-nntuiL83s871KSH8PW8MjOKzpZRnW7m34UnYhxmkQ==" target="nyhetsbrev-svar" novalidate>
+      <label for="nyhetsbrev-epost">Din e-postadresse</label>
+      <div class="nyhetsbrev-rad">
+        <input type="email" id="nyhetsbrev-epost" name="EMAIL" autocomplete="email" placeholder="navn@skole.no" required>
+        <button class="btn btn-amber" type="submit">Meld meg på</button>
+      </div>
+      <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" class="nyhetsbrev-felle">
+      <input type="hidden" name="locale" value="en">
+      <input type="hidden" name="html_type" value="simple">
+      <p class="nyhetsbrev-melding" id="nyhetsbrev-melding" role="status" aria-live="polite"></p>
+      <p class="nyhetsbrev-liten">Du får en e-post der du bekrefter påmeldingen. Adressen brukes bare til nyhetsbrevet. <a href="personvern.html#nyhetsbrev">Les om personvern</a>.</p>
+    </form>
+    <iframe name="nyhetsbrev-svar" title="Svar fra påmeldingen" hidden></iframe>
+  </div>
+</section>
+<script>
+// Nyhetsbrev: påmeldingen sendes til Brevo i en skjult ramme, så siden blir stående
+(function () {
+  var skjema = document.getElementById('nyhetsbrev-skjema');
+  if (!skjema) return;
+  var felt = document.getElementById('nyhetsbrev-epost');
+  var melding = document.getElementById('nyhetsbrev-melding');
+  var ramme = document.querySelector('iframe[name="nyhetsbrev-svar"]');
+  var sendt = false;
+  skjema.addEventListener('submit', function (e) {
+    var verdi = felt.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(verdi)) {
+      e.preventDefault();
+      melding.textContent = verdi ? 'Det ser ikke ut som en gyldig e-postadresse. Sjekk og prøv igjen.' : 'Skriv inn e-postadressen din.';
+      melding.className = 'nyhetsbrev-melding feil';
+      felt.focus();
+      return;
+    }
+    felt.value = verdi;
+    sendt = true;
+    melding.textContent = 'Sender …';
+    melding.className = 'nyhetsbrev-melding';
+  });
+  ramme.addEventListener('load', function () {
+    if (!sendt) return;
+    sendt = false;
+    skjema.querySelector('.nyhetsbrev-rad').hidden = true;
+    skjema.querySelector('label').hidden = true;
+    melding.textContent = 'Takk! Sjekk e-posten din og trykk på lenken for å bekrefte påmeldingen. Finner du den ikke, se i søppelposten.';
+    melding.className = 'nyhetsbrev-melding ok';
+  });
+})();
+</script>
+
 <footer class="bunn">
   <div class="wrap">
     <div class="navn">Tavleloftet</div>

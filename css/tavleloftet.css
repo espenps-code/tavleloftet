@@ -237,3 +237,21 @@ a.hylle:hover img{transform:translateY(-10px) rotate(-6deg) scale(1.08)}
 .tekstside .boks{background:var(--kort);border-radius:16px;padding:16px 20px;margin:18px 0}
 .tekstside .felt{background:#2c4a49;border-radius:4px;padding:0 4px}
 @media print{.topp,.bunn{display:none}.tekstside{color:#000}.tekstside p,.tekstside li,.tekstside table,.tekstside h1,.tekstside h2,.tekstside h3,.tekstside th{color:#000;background:none}}
+
+/* Nyhetsbrev */
+.nyhetsbrev-band{background:var(--kort);padding:56px 24px;border-top:1px solid var(--linje)}
+.nyhetsbrev-indre{display:flex;flex-wrap:wrap;gap:28px 56px;align-items:center;justify-content:space-between}
+.nyhetsbrev-tekst{flex:1 1 320px;max-width:520px}
+.nyhetsbrev-tekst h2{margin:0 0 8px;font-family:var(--display);font-size:clamp(24px,3vw,32px);line-height:1.2}
+.nyhetsbrev-tekst p{margin:0;color:var(--lys-dempet)}
+.nyhetsbrev-skjema{flex:1 1 380px;max-width:520px;display:flex;flex-direction:column;gap:8px}
+.nyhetsbrev-skjema label{font-weight:800}
+.nyhetsbrev-rad{display:flex;flex-wrap:wrap;gap:12px}
+.nyhetsbrev-rad input{flex:1 1 220px;min-height:52px;padding:0 18px;border-radius:999px;border:2px solid var(--linje);background:var(--tavle);color:var(--lys);font:inherit}
+.nyhetsbrev-rad input::placeholder{color:var(--lys-dempet);opacity:.7}
+.nyhetsbrev-rad input:focus{border-color:var(--rav);outline:none}
+.nyhetsbrev-felle{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.nyhetsbrev-melding{margin:0;min-height:1.5em;font-weight:700}
+.nyhetsbrev-melding.feil{color:#FFB4A8}
+.nyhetsbrev-melding.ok{color:var(--lys);background:rgba(15,110,99,.35);border-radius:14px;padding:14px 16px}
+.nyhetsbrev-liten{margin:0;font-size:14px;color:var(--lys-dempet)}
