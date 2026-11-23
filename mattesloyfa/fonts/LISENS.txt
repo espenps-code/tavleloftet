@@ -1,0 +1,2 @@
+Lexend og Fredoka er lisensiert under SIL Open Font License 1.1 (https://openfontlicense.org).
+Filene er hentet fra Fontsource (@fontsource/lexend, @fontsource/fredoka).

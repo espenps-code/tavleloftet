@@ -62,6 +62,7 @@ button{font:700 1rem 'Fredoka',system-ui,sans-serif;border:0;border-radius:12px;
 .elev .knapper button{padding:8px 12px;font-size:.88rem}
 .rapportlenke{font:700 .88rem 'Fredoka',system-ui,sans-serif;padding:8px 12px;border-radius:12px;background:var(--rav);color:var(--blekk);text-decoration:none}
 @media (max-width:760px){.elev{grid-template-columns:1fr 1fr}.elev .knapper{grid-column:1/-1;justify-content:flex-start}.mer .meny{left:0;right:auto}}
+.dellinje{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.dellinje .knapper{display:flex;gap:8px;flex-wrap:wrap}.dellinje button,.dellinje .rapportlenke{padding:8px 12px;font-size:.88rem}.dellinje code{color:var(--rav)}
 .merke{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:800;background:#0f2a2b;border:1px solid var(--linje)}
 .tom{color:var(--dempet);padding:10px 0}
 code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-break:break-all}
@@ -145,6 +146,19 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
   </section>
 
   <div id="hoved" hidden>
+    <section class="boks" id="delBoks">
+      <h2>Prøveversjoner å dele</h2>
+      <p class="liten" style="margin-top:-6px">Skjulte sider som ikke er lenket fra forsiden. Alle med lenken kan prøve. Ingenting lagres hos oss.</p>
+      <div class="dellinje">
+        <div><b>Mattesløyfa</b> <span class="liten">matteapp for 1.–7. trinn (prototype)</span><br><code id="mlLenke">https://tavleloftet.no/mattesloyfa/</code></div>
+        <div class="knapper">
+          <a class="rapportlenke" href="/mattesloyfa/" target="_blank" rel="noopener">Åpne</a>
+          <button type="button" class="sek" data-kopier="mlLenke">Kopier lenke</button>
+          <button type="button" class="sek" data-del="mlLenke" data-tittel="Prøv Mattesløyfa" hidden>Del …</button>
+        </div>
+      </div>
+      <p class="melding" id="delMld"></p>
+    </section>
     <section class="boks">
       <h2>Ny elev</h2>
       <form id="nyElev" class="rad">
@@ -497,6 +511,24 @@ $('liste').addEventListener('click', function(e){
     window.qrcode ? skrivBrev() : last('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js').then(skrivBrev, skrivBrev);
   }
 });
+})();
+</script>
+<script>
+(function(){
+  var mld=document.getElementById('delMld');
+  function vis(t){ if(mld){ mld.textContent=t; setTimeout(function(){ if(mld.textContent===t) mld.textContent=''; },3000);} }
+  document.querySelectorAll('[data-kopier]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=document.getElementById(b.dataset.kopier).textContent.trim();
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){vis('Lenken er kopiert.');},function(){
+        var r=document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.kopier)); var s=getSelection(); s.removeAllRanges(); s.addRange(r); vis('Lenken er merket. Kopier med Ctrl+C.');
+      });
+    });
+  });
+  if(navigator.share){ document.querySelectorAll('[data-del]').forEach(function(b){
+    b.hidden=false;
+    b.addEventListener('click',function(){ navigator.share({title:b.dataset.tittel,url:document.getElementById(b.dataset.del).textContent.trim()}).catch(function(){}); });
+  }); }
 })();
 </script>
 </body>
