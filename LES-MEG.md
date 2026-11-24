@@ -8,6 +8,12 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 - `spill.html` – spillrommet (lenker til spillene i `spill/`)
 - `skreddersydd.html` – skreddersydde verdener (lenker til elevinnloggingen og rapporten; bestillingsskjemaet er ikke laget ennå)
 - `elev/` – felles elevinnlogging: eleven skriver koden og sendes til riktig verden (`dinoparken/`, `lyslaget/`)
+- `lyslaget/basen.html` – Lyslaget-basen: 3D-verdenen der eleven tjener skruer og bygger ut basen (lagt ut 24.11.2026). Eleven kommer hit etter
+  innlogging (`elev/` og `lyslaget/logginn.html` sender til `basen.html`). Den gamle forsiden ligger fortsatt på `lyslaget/index.html`.
+  Verden-ID er fortsatt `lyslaget`. Lagring: `lysbase-spill` og `lysbase-jegser-v1` (prefikset `lysbase-` står i `js/tavleloftet-elev.js`).
+  Oppgavene i verdenen ligger i `lyslaget/basen-oppgaver.js`: Vennekroken (sosiale ferdigheter med roboten Bit, tre nivåer) og
+  «Jeg ser» (fem setninger til et myldrebilde, en voksen holder «Godkjenn» inne). Bilder og lyd: `lyslaget/basen/`.
+  Hør gjennom klippene på `lyslaget/lydsjekk-basen.html`. Kilden er `Skole\Robotmatte` (frittstående utgave uten innlogging). Se `maler/lyslagetverden/LES-MEG.md`.
 - `dinoparken2/` – Dinoparken med oppgavepakker (egne oppgaver per elev). Første pakke: lyder, venner og klosser. Se `dinoparken2/LES-MEG.md`
 - `dinodalen/` – Dinodalen: Dinoparken i ny drakt (elvedal, seks andre dinoer, samme oppgaver). Verden-ID `dinodalen`, lagring `dinodalen-…`. Kilden til kart og dinoer: `Skole\Dinodalen` (frittstående utgave uten innlogging)
 - `js/tavleloftet-apningstid.js` – åpningstid for alle verdenene (30 min per dag som standard). Styres fra `rapport.html`. Se toppen av fila

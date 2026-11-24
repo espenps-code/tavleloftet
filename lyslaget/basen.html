@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<script src="../js/tavleloftet-firebase.js"></script>
+<script src="../js/tavleloftet-elev.js" data-verden="lyslaget"></script>
+<script src="../js/maal-lyslaget.js"></script>
+<script src="../js/tavleloftet-framgang.js" data-verden="lyslaget"></script>
+<script src="../js/tavleloftet-apningstid.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Lyslaget-basen: eleven løser oppgaver, tjener skruer og bygger ut basen til robotene i Lyslaget.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tavleloftet">
+<meta property="og:title" content="Lyslaget-basen – en læringsverden fra Tavleloftet">
+<meta property="og:description" content="Eleven bygger ut basen til robotene i Lyslaget. Basen vokser bare når eleven løser oppgaver i matte, lesing, skriving, klokka og sosiale ferdigheter.">
+<meta property="og:url" content="https://tavleloftet.no/lyslaget/basen.html">
+<meta property="og:image" content="https://tavleloftet.no/lyslaget/del.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Skjermbilde av Lyslaget-basen: en 3D-dal ved kysten med hovedkvarteret og områdene til robotene">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#133a6b">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lyslaget">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Lyslaget-basen</title>
+<link rel="stylesheet" href="../fonts/skrifter.css">
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<style>
+:root{--hoved:#2C4A9A;--ink:#1c2a4a;--kort:#fbfcff;--gull:#F2C14E;--rod:#D3302C;--kant:#d5dcec;--dus:#4a5878}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--ink);font-size:18px;line-height:1.4;background:linear-gradient(#cdeefa,#eef6ff)}
+h1,h2,h3{font-family:Fredoka,sans-serif;margin:0 0 8px;line-height:1.15}
+h2{font-size:1.4rem}h3{font-size:1.1rem}
+p{margin:0 0 10px}
+canvas#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 18px;font-weight:700;min-height:48px;background:var(--hoved);color:#fff}
+button:disabled{background:#c2c9d8;color:#f2f4f8;cursor:not-allowed}
+button.sek{background:#e4e9f5;color:var(--ink)}
+button.gull{background:var(--gull);color:#3a2a00}
+button.rod{background:var(--rod)}
+button:focus-visible{outline:4px solid #ffb300;outline-offset:2px}
+header{position:fixed;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:8px;z-index:5;pointer-events:none;flex-wrap:wrap}
+header>*{pointer-events:auto}
+.skilt{background:var(--kort);border:3px solid var(--ink);border-radius:16px;padding:6px 12px;display:flex;align-items:center;gap:8px;min-width:0}
+.skilt .navn{font-family:Fredoka,sans-serif;font-weight:700;font-size:1.1rem;line-height:1.1}
+.skilt .under{display:block;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:400;font-size:.8rem}
+.brikke{background:var(--kort);border:3px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:700;white-space:nowrap}
+header .luft{flex:1}
+#gir{background:var(--kort);color:var(--ink);border:3px solid var(--ink);border-radius:50%;width:48px;padding:0;font-size:1.3rem}
+#tags button{position:absolute;left:0;top:0;transform:translate(-50%,-100%);background:var(--kort);color:var(--ink);border:3px solid var(--ink);border-radius:14px;padding:6px 12px;min-height:44px;white-space:nowrap;font-size:.95rem;z-index:2;box-shadow:0 3px 0 rgba(28,42,74,.25)}
+#tags button.last{background:#e9edf5;border-style:dashed}
+#tags button.kommer{background:#f1f3f7;border-style:dotted;font-size:.85rem;min-height:38px;padding:4px 10px;opacity:.9}
+@media(max-width:600px){#tags:not(.liste) .t{display:none}#tags:not(.liste) button{padding:6px 10px;font-size:1.05rem}}
+#tags.liste{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;z-index:2}
+#tags.liste button{position:static;transform:none}
+#panel{position:fixed;left:0;right:0;bottom:0;max-height:62vh;overflow:auto;background:var(--kort);border:3px solid var(--ink);border-bottom:0;border-radius:22px 22px 0 0;padding:16px;z-index:8;display:none}
+#panel.apen{display:block}
+@media(min-width:800px){#panel{left:auto;top:76px;right:12px;bottom:12px;width:410px;max-height:none;border-bottom:3px solid var(--ink);border-radius:22px}}
+.del{border-top:2px solid var(--kant);padding-top:12px;margin-top:12px}
+.rad{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.liten{font-size:.9rem;color:var(--dus)}
+.proeve{background:#fff6d6;border:2px dashed #c99700;border-radius:12px;padding:8px 12px;font-size:.9rem;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stasjon{text-align:left;background:#fff;color:var(--ink);border:2px solid var(--kant);border-radius:16px;padding:12px;display:block;width:100%}
+.stasjon .ik{font-size:1.9rem;display:block}
+.stasjon small{display:block;font-weight:400;color:var(--dus);font-size:.8rem}
+.stasjon small.status{margin-top:4px;color:#1d5c33;font-weight:700}
+.linje{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--kant)}
+.linje:last-child{border-bottom:0}
+.linje .voks{flex:1;min-width:0}
+.linje button{padding:8px 12px;font-size:.95rem}
+.rkort{display:flex;gap:12px;align-items:center;background:#fff;border:2px solid var(--kant);border-left:10px solid var(--c);border-radius:16px;padding:10px 12px;margin-bottom:12px}
+.rkort strong{font-family:Fredoka,sans-serif;font-size:1.15rem}
+.merke{display:inline-block;background:#dff3e4;color:#1d5c33;border-radius:999px;padding:1px 9px;font-size:.78rem;font-weight:700}
+.merke.vent{background:#eceff5;color:var(--dus)}
+.overlegg{position:fixed;inset:0;background:rgba(15,23,45,.6);display:grid;place-items:center;padding:16px;z-index:20}
+.dialog{background:#fff;border-radius:22px;padding:22px;max-width:480px;width:100%;max-height:90vh;overflow:auto}
+.svar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.svar button{font-size:1.5rem;min-height:68px;background:#e4e9f5;color:var(--ink)}
+.svar button.feil{background:#f6c9c4}
+.stort{font-size:2.2rem;font-weight:700;text-align:center;margin:10px 0;font-family:Fredoka,sans-serif}
+.nivaa{display:inline-flex;gap:4px;vertical-align:middle}
+.nivaa i{width:14px;height:14px;border-radius:50%;background:#dbe1ee;display:inline-block}
+.nivaa i.pa{background:var(--hoved)}
+#toppv,#topph{display:flex;gap:8px;align-items:center}
+/* Robotene på rad øverst – samme som på forsiden til Lyslaget */
+.lag{display:flex;gap:6px;flex-wrap:wrap}
+.lag button{padding:0;border:0;background:none;border-radius:50%;min-height:0;transition:transform .15s ease}
+.lag button:hover{transform:translateY(-3px) scale(1.06)}
+.lag button:active{transform:scale(.95)}
+.lag img,.lag svg{width:46px;height:46px;border-radius:50%;object-fit:cover;border:3px solid var(--c);background:#1b2230;display:block;box-shadow:0 3px 0 rgba(28,42,74,.35)}
+.lag svg{background:#fff;padding:3px}
+/* Robotkortet – samme oppbygging som de utskrivbare kortene */
+.kortdlg{border:0;padding:0;background:transparent;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:visible;color:#14213d}
+.kortdlg::backdrop{background:rgba(5,15,35,.72)}
+.kort{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 14px 0 rgba(5,20,45,.45),0 30px 60px -20px rgba(0,0,0,.6);max-height:calc(100dvh - 32px);overflow-y:auto}
+.khode{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px 12px 20px;background:var(--k);color:var(--kt)}
+.khode h2{font-family:Bangers,Fredoka,sans-serif;font-weight:400;font-size:46px;line-height:1;margin:0;letter-spacing:.04em}
+.khoyre{display:flex;align-items:center;gap:8px}
+.lagchip{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:99px;border:2px solid currentColor;white-space:nowrap}
+.kort .lukk{width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;background:rgba(255,255,255,.92);color:#14213d;font-size:26px;line-height:1;display:grid;place-items:center}
+.kbilde{position:relative;aspect-ratio:900/604;background:#111;border-bottom:5px solid var(--k)}
+.kbilde img{width:100%;height:100%;object-fit:cover;display:block}
+.blirpil{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--k);color:var(--kt);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:99px;white-space:nowrap}
+.kbody{padding:14px 20px 18px}
+.kbody .blir{font-size:19px;margin:0 0 10px}
+.rader{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:17px}
+.rader dt{color:#56647d;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;padding-top:2px}
+.rader dd{margin:0;font-weight:700}
+.prikker{display:inline-flex;gap:5px;vertical-align:middle}
+.prikker i{width:15px;height:15px;border-radius:50%;border:2px solid var(--kp)}
+.prikker i.p{background:var(--kp)}
+.kbody .valg{margin-top:12px;padding:10px 12px;border-radius:10px;background:#fff3e6;border-left:5px solid #e0731f;font-size:17px}
+.kbody .valg p{margin:0}.kbody .valg p+p{margin-top:4px}
+.kbody .sier{margin:14px 0 0;font-size:21px;font-weight:700;color:var(--kp)}
+.kbody .hit{margin-top:14px;width:100%}
+.bla{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.bla button{font-size:17px;padding:10px 16px;min-height:44px;border-radius:12px;border:2px solid #d4dbe7;background:#f7f9fc;color:#14213d;box-shadow:0 4px 0 #c9d3e3}
+/* Oppgavesiden som legger seg oppå verdenen */
+#side{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;background:#0d2b52}
+#side.apen{display:flex}
+.sidetopp{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--kort);border-bottom:3px solid var(--ink)}
+.sidetopp strong{font-family:Fredoka,sans-serif;font-size:1.15rem}
+.sidetopp .luft{flex:1}
+#side iframe{flex:1;width:100%;border:0;background:#fff}
+#sideskruer{position:relative;transition:transform .2s}
+#sideskruer.hopp{transform:scale(1.25);background:var(--gull)}
+#sideskruer b{position:absolute;right:8px;top:100%;color:#1d5c33;background:#dff3e4;border-radius:999px;padding:2px 10px;margin-top:4px;animation:opp 1.4s ease-out forwards}
+@keyframes opp{from{opacity:0;transform:translateY(8px)}20%{opacity:1}to{opacity:0;transform:translateY(-6px)}}
+#laster{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-family:Fredoka,sans-serif;font-size:1.3rem;z-index:1}
+@media (prefers-reduced-motion:no-preference){.dialog{animation:inn .18s ease-out}@keyframes inn{from{transform:translateY(12px);opacity:0}}}
+</style>
+</head>
+<body>
+<div id="laster">Bygger basen …</div>
+<canvas id="scene" aria-label="3D-oversikt over Lyslagets base"></canvas>
+<header id="topp"><div id="toppv"></div><div class="lag" id="robotrad" aria-label="Robotene. Trykk på en robot for å se kortet."></div><span class="luft"></span><div id="topph"></div></header>
+<div id="tags" class="liste"></div>
+<aside id="panel" aria-live="polite"></aside>
+<div id="lag"></div>
+<div id="side"></div>
+<dialog class="kortdlg" id="kortdlg" aria-labelledby="kortnavn"></dialog>
+
+<script>
+/* =====================================================================
+   LYSLAGET-BASEN – ramme for en robotverden (prøveversjon)
+   Del 1: regler og sider (denne blokka). Del 2: 3D-verdenen (lenger ned).
+   Alt som har med OPPGAVER å gjøre går gjennom ett sted: startOppgave().
+   Lagring bruker nøkler som starter med «lysbase-», slik at Tavleloftets
+   elevinnlogging kan ta sikkerhetskopi på samme måte som i Dinoparken.
+   ===================================================================== */
+
+/* ---------- Tall du kan skru på (balansen i spillet) ---------- */
+var NOKKEL = 'lysbase-spill';
+var SIDER = true;   // true = stasjonene åpner de ekte Lyslaget-sidene (må ligge i samme mappe). false = bare prøveoppgaver.
+var OPPSETT = {
+  skruerPerOppgave: 5,   // skruer for én løst oppgave
+  startskruer: 0         // ingen gratis skruer. Alt må tjenes på oppgaver.
+};
+/* Pris for å bygge ut hovedkvarteret til nivå 2, 3, 4 og 5 */
+/* Pris for hvert trinn i et robotområde: bygge området, kalle inn roboten, utbygging 1, utbygging 2 */
+var PRIS = { hk:[30,60,100,150], omr:[25,15,40,70] };
+
+/* Nivåene i hovedkvarteret. Hvert nivå gir én ladeplass, altså plass til ett robotområde til. */
+var HK = [
+  {navn:'Lite verksted',   hva:'Én port, en arbeidsbenk og én ladeplass.'},
+  {navn:'Større hall',     hva:'To porter, sidebygg og én ladeplass til.'},
+  {navn:'Kommandosentral', hva:'Volts planrom på taket, med parabol.'},
+  {navn:'Tårnet',          hva:'Et høyt tårn med lyssignal og antenne.'},
+  {navn:'Full base',       hva:'Porter til alle robotene, flomlys og asfalterte veier.'}
+];
+
+/* Robotene – samme fakta som på robotkortene. k = kortfarge, kt = tekst på kortfarge, kp = lesbar farge på hvitt,
+   ring = ringen rundt ansiktet øverst. c1, c2 og s (størrelse) brukes til 3D-figuren. */
+var ROBOTER = {
+  volt:  {navn:'Volt',  lag:'Lyslaget', ring:'#2C4A9A', k:'#2C4A9A', kt:'#fff', kp:'#2C4A9A', blir:'buss',        farger:'blå og sølv',      hoyde:'8 meter',  fart:3, styrke:4, klok:5, liker:'å lage en plan',       ikke:'rot',              sier:'Først tenker vi. Så gjør vi.', c1:'#2C4A9A', c2:'#c9d1d8', s:1.15},
+  pil:   {navn:'Pil',   lag:'Lyslaget', ring:'#D3302C', k:'#D3302C', kt:'#fff', kp:'#C42A26', blir:'sportsbil',   farger:'rød og hvit',      hoyde:'5 meter',  fart:5, styrke:2, klok:3, liker:'å kjøre fort',         ikke:'å vente',          sier:'Klar, ferdig, kjør!',          c1:'#D3302C', c2:'#ffffff', s:.9},
+  brum:  {navn:'Brum',  lag:'Lyslaget', ring:'#A87A00', k:'#F2B705', kt:'#1d1a10', kp:'#8F6800', blir:'gravemaskin', farger:'gul og svart',  hoyde:'9 meter',  fart:1, styrke:5, klok:3, liker:'å bygge',              ikke:'høye lyder',       sier:'Jeg fikser det.',              c1:'#F2B705', c2:'#1d1a10', s:1.2},
+  sky:   {navn:'Sky',   lag:'Lyslaget', ring:'#2E9C7C', k:'#2E9C7C', kt:'#fff', kp:'#22795F', blir:'helikopter',  farger:'hvit og grønn',    hoyde:'6 meter',  fart:4, styrke:2, klok:4, liker:'å se langt',           ikke:'tåke',             sier:'Jeg ser alt fra lufta.',       c1:'#ffffff', c2:'#2E9C7C', s:1},
+  bolge: {navn:'Bølge', lag:'Lyslaget', ring:'#13889A', k:'#13889A', kt:'#fff', kp:'#0F6E7D', blir:'redningsbåt', farger:'turkis og blå',    hoyde:'7 meter',  fart:4, styrke:3, klok:4, liker:'havet og store bølger',ikke:'å gi opp',         sier:'Ingen blir igjen!',            c1:'#13889A', c2:'#ffffff', s:1.1},
+  spor:  {navn:'Spor',  lag:'Lyslaget', ring:'#9A7414', k:'#1d1d1f', kt:'#F2C14E', kp:'#7A5C0E', blir:'tog',      farger:'svart og gull',    hoyde:'10 meter', fart:3, styrke:5, klok:4, liker:'rutetider og planer',  ikke:'når planen endres',sier:'Alt i rute!',                  c1:'#1d1d1f', c2:'#F2C14E', s:1.3},
+  bit:   {navn:'Bit',   lag:'Lyslaget', ring:'#5E9E12', k:'#7BC41C', kt:'#16210a', kp:'#4C7F0E', blir:'drone',    farger:'limegrønn og sølv',hoyde:'2 meter',  fart:4, styrke:1, klok:3, liker:'å fly inn i trange steder', ikke:'å bli kalt liten', sier:'Liten, men smart!',        c1:'#7BC41C', c2:'#c9d1d8', s:.6},
+  knas:  {navn:'Knas',  lag:'Rust-gjengen', ring:'#56368A', k:'#56368A', kt:'#fff', kp:'#56368A', blir:'monstertruck', farger:'lilla og svart', hoyde:'9 meter', fart:3, styrke:5, klok:1, liker:'å knuse ting',   ikke:'å tape',     sier:'Knas! Knas! Knas!', valg:'Knas blir sint fort.',            laere:'å telle til fem.',   c1:'#56368A', c2:'#1d1d1f'},
+  snik:  {navn:'Snik',  lag:'Rust-gjengen', ring:'#D9661A', k:'#E0731F', kt:'#fff', kp:'#B4560F', blir:'motorsykkel',  farger:'grå og oransje', hoyde:'5 meter', fart:5, styrke:1, klok:4, liker:'å lure andre',   ikke:'å bli sett', sier:'Ingen så meg.',     valg:'Snik lurer andre.',               laere:'å si sannheten.',    c1:'#8a8f98', c2:'#E0731F'},
+  skrot: {navn:'Skrot', lag:'Rust-gjengen', ring:'#7A4A26', k:'#6E4424', kt:'#C9F24A', kp:'#6E4424', blir:'bergingsbil', farger:'rustbrun og grønn', hoyde:'8 meter', fart:2, styrke:4, klok:3, liker:'å samle ting', ikke:'å dele', sier:'Mitt! Alt er mitt!', valg:'Skrot tar ting som ikke er hans.', laere:'å spørre først.',     c1:'#6E4424', c2:'#C9F24A'}
+};
+var REKKE = ['volt','pil','brum','sky','bolge','spor','bit','knas','snik','skrot'];   // rekkefølgen øverst på siden
+
+/* Områdene i verdenen. x og z er plasseringen i 3D. h = hvor høyt merkelappen står.
+   y = høyden over bakken (fjellet). sving = punkter veien svinger innom på vei fra hovedkvarteret
+   (målt som [mot høyre, mot sjøen]). bru = 'elv' (bru der veien krysser elva) eller 'rampe' (bru opp på fjellet).
+   rot = området er vridd (stasjonen ligger langs jernbanen).
+   «fri:true» = stedet er åpent fra start og koster ingenting (AR-plattformen).
+   «kommer:true» = tomta er satt av, men ikke bygd ennå. Slik legger du til flere roboter senere:
+   fjern «kommer», lag trinn og stasjoner under, og en byggefunksjon i BYGGERE (del 2). */
+var OMRADER = [
+  {id:'hk',    robot:'volt',  ik:'⚡', navn:'Hovedkvarteret',    x:0,     z:0,     h:6,   om:'Her bor Volt, og her lades robotene.'},
+  {id:'pil',   robot:'pil',   ik:'🏁', navn:'Pils racerbane',    x:42.4,  z:-5.7,  h:5.5, sving:[[20,6]], om:'En bane på sletta der Pil kan kjøre så fort han vil.'},
+  {id:'spor',  robot:'spor',  ik:'🚉', navn:'Spors stasjon',     x:-45.3, z:-17,   h:6.5, rot:Math.PI/4, sving:[[-2,-26]], om:'En stasjon ved jernbanen som går gjennom dalen.'},
+  {id:'brum',  robot:'brum',  ik:'🏗️', navn:'Brums byggeplass',  x:-26.9, z:43.8,  h:6,   sving:[[-20,9]], bru:'elv', om:'Her bygger Brum nye ting til basen, på andre siden av elva.'},
+  {id:'sky',   robot:'sky',   ik:'🚁', navn:'Skys landingsplass',x:25.5,  z:-45.3, h:6.5, y:6, sving:[[24,2]], bru:'rampe', luft:18.5, om:'Et fjell med landingsplass og god utsikt.'},
+  {id:'ar',    robot:null,    ik:'📷', navn:'AR-plattformen',    x:-7.1,  z:-29.7, h:4.6, fri:true, side:'ar.html', om:'Ta med et robotkort. Pek iPaden mot kortet, så står roboten på det – og du kan forvandle den.'},
+  {id:'bolge', robot:'bolge', ik:'⚓', navn:'Bølges havn',       x:33.2,  z:27.6,  h:4, kommer:true, om:'Her kommer det en havn med redningsbåt.'},
+  {id:'bit',   robot:'bit',   ik:'🛸', navn:'Bits dronereir',    x:-19.8, z:67.9,  h:4, kommer:true, om:'Her kommer det et dronereir.'},
+  {id:'rust',  robot:null,    ik:'🧲', navn:'Skrotplassen',      x:67.9,  z:-19.8, h:4, kommer:true, om:'Her kan Rust-gjengen flytte inn senere.'}
+];
+/* Hva de fire trinnene heter i hvert robotområde (samme rekkefølge som PRIS.omr) */
+var TRINN = {
+  pil:  ['Bane og garasje',        'Pil flytter inn',  'Startportal, tribune og dekkstabler', 'Seierspall, flomlys og en bil til'],
+  spor: ['Perrong og stasjonshus ved jernbanen', 'Spor flytter inn', 'Tak over perrongen, klokke, signal og sidespor', 'Vanntårn, flere vogner og lykter'],
+  brum: ['Tomt, brakke og sperringer', 'Brum flytter inn', 'Stålskjelett og materialer',       'Byggekran og en etasje til'],
+  sky:  ['Høyde med landingsplass', 'Sky flytter inn',  'Kontrolltårn og landingslys',         'Hangar, radar og drivstofftank']
+};
+/* Oppgavestasjonene. Har stasjonen «side», åpnes den Lyslaget-siden oppå verdenen, og hver jobb
+   eleven fullfører der gir skruer (se KILDER lenger ned). Har stasjonen «oppg», kommer oppgaven fra
+   basen-oppgaver.js: 'venner' = sosiale ferdigheter med Bit, 'jegser' = fem setninger til et myldrebilde.
+   Uten noen av delene vises en prøveoppgave. */
+var STASJONER = {
+  hk:   [{id:'benk',  ik:'🔧', navn:'Arbeidsbenken', fag:'Verkstedet: ukas jobber i matte', side:'verksted.html'},
+         {id:'plan',  ik:'💛', navn:'Vennekroken',   fag:'Venner og følelser', oppg:'venner'},
+         {id:'kikk',  ik:'🔭', navn:'Kikkerten',     fag:'Jeg ser: skriv fem setninger', oppg:'jegser'}],
+  pil:  [{id:'start', ik:'🚦', navn:'Startstreken',  fag:'Utrykning: matte, lesing og skriving', side:'utrykning.html'},
+         {id:'depot', ik:'🛞', navn:'Depotet',       fag:'Fag 2 (f.eks. gangetabellen)'}],
+  spor: [{id:'rute',  ik:'🕒', navn:'Rutetavla',     fag:'Lær klokka sammen med Spor', side:'klokka.html'},
+         {id:'luke',  ik:'🎫', navn:'Billettluka',   fag:'Fag 2 (f.eks. penger)'}],
+  brum: [{id:'pause', ik:'💛', navn:'Pausebrakka',   fag:'Venner og følelser', oppg:'venner'},
+         {id:'tegn',  ik:'📐', navn:'Tegnebordet',   fag:'Fag 1 (f.eks. måling og former)'},
+         {id:'lager', ik:'🧱', navn:'Materiallageret', fag:'Fag 2 (f.eks. pluss og minus)'}],
+  sky:  [{id:'utkikk',ik:'🔭', navn:'Utkikken',      fag:'Jeg ser: skriv fem setninger', oppg:'jegser'},
+         {id:'vaer',  ik:'🌦️', navn:'Værstasjonen',  fag:'Fag 2 (f.eks. tabeller og tall)'}]
+};
+/* Stasjoner uten «side» og uten «oppg» har bare en prøveoppgave. De er skjult for eleven.
+   Sett VIS_PROEVE = true for å se dem igjen mens du lager nye oppgaver. */
+var VIS_PROEVE = false;
+function harEkte(st){return !!((st.side && SIDER) || (st.oppg && window.LysOppgaver && LysOppgaver.har(st)))}
+function synlige(id){return STASJONER[id].filter(function(st){return VIS_PROEVE || harEkte(st)})}
+
+/* ---------- Små hjelpere ---------- */
+function rnd(n){return Math.floor(Math.random()*n)}
+function klem(x,a,b){return Math.max(a,Math.min(b,x))}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function omr(id){return OMRADER.filter(function(o){return o.id===id})[0]}
+function robotomr(){return OMRADER.filter(function(o){return o.id!=='hk' && !o.kommer && !o.fri})}
+
+/* ---------- Spillet (lagres på enheten) ---------- */
+var S = null, apen = null, DEMO = false;
+function lagre(){if(DEMO) return; try{localStorage.setItem(NOKKEL, JSON.stringify(S))}catch(e){}}
+function fyllUt(t){robotomr().forEach(function(o){if(t.omr[o.id]==null) t.omr[o.id]=0}); return t}   // nye områder får plass i gamle lagringer
+function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;return t&&t.v===1?fyllUt(t):null}catch(e){return null}}
+function nyttSpill(){S = fyllUt({v:1, skruer:OPPSETT.startskruer, hk:1, omr:{}, form:{}, oppg:0, lost:{}}); sjekkJobber(); lagre()}
+/* ?demo i adressen viser basen fullt utbygd uten å lagre noe. ?demo=3 viser nivå 3. */
+function demoSpill(d){
+  DEMO = true; nyttSpill(); S.hk = klem(d||5,1,5); S.skruer = 999;
+  robotomr().forEach(function(o,i){S.omr[o.id] = S.hk>=5 ? 4 : (i<S.hk ? klem(S.hk-i+1,0,4) : 0)});
+}
+
+/* ---------- Regler ---------- */
+function eier(id){return id==='hk' || !!omr(id).fri || S.omr[id]>=1}
+function antallEid(){return robotomr().filter(function(o){return S.omr[o.id]>=1}).length}
+function ledigePlasser(){return S.hk - antallEid()}          // nivået på hovedkvarteret = antall ladeplasser
+function bonus(id){return id==='hk' ? 0 : Math.max(0, S.omr[id]-2)}   // utbygde områder gir +1 og +2 skruer
+function belonning(id, grunn){   // kalles når en oppgave er løst. grunn = skruer før bonus (standard: skruerPerOppgave)
+  var m = (grunn || OPPSETT.skruerPerOppgave) + bonus(id);
+  S.skruer += m; S.oppg++; S.lost[id] = (S.lost[id]||0)+1; lagre();
+  return m;
+}
+/* ---------- Jobber gjort på Lyslaget-sidene ----------
+   Sidene lagrer selv hvor langt eleven er kommet. Verdenen leser det samme lageret og gir skruer
+   for hver ny jobb. Ingenting er endret i selve sidene. */
+var KILDER = [
+  {prefiks:'rv-ferdig-', omr:'hk',   tell:function(v){var n = 0; for(var k in v) if(v[k]) n++; return n}},                    // Verkstedet: én per ferdig jobb
+  {prefiks:'ru-frem-',   omr:'pil',  tell:function(v){return v.ferdig ? 15 : (v.stadium||0)*3 + (v.oppg||0)}},                 // Utrykning: 5 steg med 3 oppgaver
+  {prefiks:'kl-ferdig',  omr:'spor', tell:function(v){return Array.isArray(v) ? v.length : 0}}                                 // Spors stasjon: én per ferdig stasjon
+];
+function tellJobber(){
+  var ut = {};
+  try{ for(var i=0;i<localStorage.length;i++){ var k = localStorage.key(i);
+    KILDER.forEach(function(kilde){ if(k.indexOf(kilde.prefiks)===0){ try{ ut[k] = {n:kilde.tell(JSON.parse(localStorage.getItem(k))||{})||0, omr:kilde.omr} }catch(e){} } }); } }catch(e){}
+  return ut;
+}
+function sjekkJobber(){   // gir skruer for jobber som er gjort siden sist. Returnerer hvor mange skruer det ble.
+  if(!S) return 0;
+  var na = tellJobber(), fikk = 0, k;
+  if(!S.sett){ S.sett = {}; for(k in na) S.sett[k] = na[k].n; return 0 }   // første gang: jobber som var gjort fra før gir ikke skruer
+  for(k in na){ var ny = na[k].n - (S.sett[k]||0); for(var j=0;j<ny;j++) fikk += belonning(na[k].omr); S.sett[k] = na[k].n }
+  if(fikk) lagre();
+  return fikk;
+}
+function byggHK(){
+  var p = PRIS.hk[S.hk-1];
+  if(S.hk>=5 || S.skruer<p) return false;
+  S.skruer -= p; S.hk++; lagre(); return true;
+}
+function byggOmr(id){
+  var n = S.omr[id], p = PRIS.omr[n];
+  if(n>=4 || S.skruer<p || (n===0 && ledigePlasser()<1)) return false;
+  S.skruer -= p; S.omr[id]++; lagre(); return true;
+}
+
+/* =====================================================================
+   OPPGAVER – ETT STED Å BYTTE UT
+   startOppgave(stasjon, ferdig) viser én oppgave og kaller ferdig() når
+   eleven har svart riktig. Nå ligger det en enkel prøveoppgave her.
+   ===================================================================== */
+function startOppgave(stasjon, ferdig){
+  var a = 1+rnd(9), b = 1+rnd(9), riktig = a+b, valg = [riktig];
+  while(valg.length<4){var v = klem(riktig + rnd(7)-3, 1, 20); if(valg.indexOf(v)<0) valg.push(v)}
+  valg.sort(function(){return Math.random()-.5});
+  dialog('<p class="proeve">Prøveoppgave. De ekte oppgavene for «'+esc(stasjon.navn)+'» kommer senere.</p>'+
+    '<h2>'+stasjon.ik+' '+esc(stasjon.navn)+'</h2><p class="stort">'+a+' + '+b+' = ?</p>'+
+    '<div class="svar">'+valg.map(function(v){return '<button data-svar="'+v+'">'+v+'</button>'}).join('')+'</div>'+
+    '<p style="margin-top:14px"><button class="sek" data-a="lukk">Avbryt</button></p>',
+    function(el){
+      el.addEventListener('click', function(e){
+        var k = e.target.closest('[data-svar]'); if(!k) return;
+        if(+k.dataset.svar === riktig) ferdig(); else {k.classList.add('feil'); k.disabled = true}
+      });
+    });
+}
+
+/* ---------- Småtegninger ---------- */
+function fjes(id,str){
+  var r = ROBOTER[id], i = '#1c2a4a';
+  return '<svg viewBox="0 0 60 60" width="'+(str||52)+'" height="'+(str||52)+'" aria-hidden="true" style="flex:none"><line x1="30" y1="5" x2="30" y2="15" stroke="'+i+'" stroke-width="3"/><circle cx="30" cy="6" r="4" fill="'+r.c2+'" stroke="'+i+'" stroke-width="2"/>'+
+    '<rect x="8" y="14" width="44" height="38" rx="9" fill="'+r.c1+'" stroke="'+i+'" stroke-width="3"/><rect x="15" y="24" width="30" height="13" rx="5" fill="#1b2430" stroke="'+r.c2+'" stroke-width="1.5"/>'+
+    '<circle cx="23" cy="30.5" r="3.4" fill="#ffe27a"/><circle cx="37" cy="30.5" r="3.4" fill="#ffe27a"/><rect x="22" y="43" width="16" height="4" rx="2" fill="'+r.c2+'"/></svg>';
+}
+function nivaa(n,maks){var s='<span class="nivaa" role="img" aria-label="Trinn '+n+' av '+maks+'">';for(var i=0;i<maks;i++)s+='<i class="'+(i<n?'pa':'')+'"></i>';return s+'</span>'}
+function robotKort(id){
+  var r = ROBOTER[id];
+  return '<div class="rkort" style="--c:'+(r.c1==='#ffffff'?r.c2:r.c1)+'">'+fjes(id)+'<div><strong>'+r.navn+'</strong> blir til '+r.blir+'<br><span class="liten">«'+esc(r.sier)+'» Liker '+esc(r.liker)+'.</span></div></div>';
+}
+function ansikt(id){
+  var r = ROBOTER[id];
+  return '<button type="button" data-kort="'+id+'" aria-label="Vis kortet til '+r.navn+'" style="--c:'+r.ring+'"><img src="media/ansikt/'+id+'.jpg" alt="" onerror="this.outerHTML=fjes(\''+id+'\',46)"></button>';
+}
+function tegnRad(){document.getElementById('robotrad').innerHTML = REKKE.map(ansikt).join('')}
+var aktivtKort = 0;
+function visKort(id){
+  var dlg = document.getElementById('kortdlg'), r = ROBOTER[id], n = REKKE.length; aktivtKort = REKKE.indexOf(id);
+  var forrige = ROBOTER[REKKE[(aktivtKort+n-1)%n]], neste = ROBOTER[REKKE[(aktivtKort+1)%n]];
+  var prikker = function(a, tittel){var h = '<span class="prikker" role="img" aria-label="'+tittel+': '+a+' av 5">'; for(var i=1;i<=5;i++) h += '<i class="'+(i<=a?'p':'')+'"></i>'; return h+'</span>'};
+  var sted = OMRADER.filter(function(o){return o.robot===id})[0], hit = '';
+  if(S && sted && !sted.kommer) hit = '<button class="hit" data-omr="'+sted.id+'">'+sted.ik+' Gå til '+sted.navn+'</button>';
+  else if(sted && sted.kommer) hit = '<p class="liten" style="margin-top:12px">'+sted.navn+' kommer senere.</p>';
+  else if(r.lag==='Rust-gjengen') hit = '<p class="liten" style="margin-top:12px">Rust-gjengen kan flytte inn på skrotplassen senere.</p>';
+  dlg.innerHTML = '<div class="kort" style="--k:'+r.k+';--kt:'+r.kt+';--kp:'+r.kp+'">'+
+    '<div class="khode"><h2 id="kortnavn">'+r.navn+'</h2><div class="khoyre"><span class="lagchip">'+r.lag+'</span><button type="button" class="lukk" data-a="lukkkort" aria-label="Lukk kortet">×</button></div></div>'+
+    '<div class="kbilde"><img src="media/kort/'+id+'.jpg" alt="'+r.navn+' som robot og som '+r.blir+'" onerror="this.parentNode.style.display=\'none\'"><span class="blirpil">blir til</span></div>'+
+    '<div class="kbody"><p class="blir">'+r.navn+' blir til: <b>'+r.blir+'</b></p><dl class="rader">'+
+    '<dt>Farge</dt><dd>'+r.farger+'</dd><dt>Høyde</dt><dd>'+r.hoyde+'</dd><dt>Fart</dt><dd>'+prikker(r.fart,'Fart')+'</dd><dt>Styrke</dt><dd>'+prikker(r.styrke,'Styrke')+'</dd><dt>Klok</dt><dd>'+prikker(r.klok,'Klok')+'</dd>'+
+    '<dt>Liker</dt><dd>'+r.liker+'</dd><dt>Liker ikke</dt><dd>'+r.ikke+'</dd></dl>'+
+    (r.valg ? '<div class="valg"><p><b>Dårlig valg:</b> '+r.valg+'</p><p><b>Kan lære:</b> '+r.laere+'</p></div>' : '')+
+    '<p class="sier">«'+r.sier+'»</p>'+hit+
+    '<div class="bla"><button type="button" data-bla="-1">← '+forrige.navn+'</button><button type="button" data-bla="1">'+neste.navn+' →</button></div></div></div>';
+  if(!dlg.open){ if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','') }
+  dlg.querySelector('.kort').scrollTop = 0;
+}
+function lukkKort(){var dlg = document.getElementById('kortdlg'); if(dlg.open) dlg.close(); else dlg.removeAttribute('open')}
+
+/* Oppgavesiden: en Lyslaget-side som legger seg oppå verdenen. Skruene telles mens eleven jobber. */
+var sideTimer = null;
+function apneSide(url, tittel, kamera){
+  var l = document.getElementById('side');
+  l.innerHTML = '<div class="sidetopp"><button data-a="lukkside">← Tilbake til basen</button><strong>'+esc(tittel)+'</strong><span class="luft"></span><span class="brikke" id="sideskruer">🔩 '+S.skruer+'</span></div>'+
+    '<iframe src="'+url+'" title="'+esc(tittel)+'"'+(kamera?' allow="camera; microphone; gyroscope; accelerometer"':'')+'></iframe>';
+  l.className = 'apen';
+  var f = l.querySelector('iframe'), forste = true;
+  f.addEventListener('load', function(){   // trykker eleven «tilbake til forsiden» inne på siden, lukkes den i stedet
+    try{ var sti = f.contentWindow.location.pathname; if(!forste && sti.slice(-url.length) !== url) lukkSide(); }catch(e){} forste = false; });
+  clearInterval(sideTimer); sideTimer = setInterval(oppdaterSide, 1500);
+}
+function oppdaterSide(){
+  var fikk = sjekkJobber(), el = document.getElementById('sideskruer'); if(!fikk || !el) return;
+  el.innerHTML = '🔩 '+S.skruer+'<b>+'+fikk+'</b>'; el.classList.add('hopp'); setTimeout(function(){el.classList.remove('hopp')}, 500);
+}
+function lukkSide(){clearInterval(sideTimer); sideTimer = null; sjekkJobber(); var l = document.getElementById('side'); l.className = ''; l.innerHTML = ''; tegn()}
+
+function stasjonsKnapper(o){
+  var liste = synlige(o.id), grunn = OPPSETT.skruerPerOppgave + bonus(o.id);
+  if(!liste.length) return '<p class="liten">Oppgavene her kommer senere.</p>';
+  return '<div class="grid">'+liste.map(function(st){
+    var under = st.oppg && window.LysOppgaver ? LysOppgaver.under(st) : '';
+    return '<button class="stasjon" data-stasjon="'+o.id+':'+st.id+'"><span class="ik">'+st.ik+'</span>'+st.navn+'<small>'+st.fag+'</small>'+(under?'<small class="status">'+esc(under)+'</small>':'')+'</button>'}).join('')+'</div>'+
+    '<p class="liten" style="margin-top:8px">Hver riktig oppgave her gir 🔩 '+grunn+' skruer.'+
+      (liste.some(function(st){return st.oppg==='jegser'}) ? ' Et godkjent «Jeg ser»-bilde gir 🔩 '+(15+bonus(o.id))+'.' : '')+'</p>';
+}
+function formKnapp(o){
+  var r = ROBOTER[o.robot];
+  return '<button class="sek" data-form="'+o.id+'">🔁 '+(S.form[o.id] ? 'Forvandle tilbake til robot' : 'Forvandle til '+r.blir)+'</button>';
+}
+
+/* ---------- Topplinje og merkelapper ---------- */
+function tegnTopp(){
+  document.getElementById('toppv').innerHTML = '<div class="skilt">'+fjes('volt',36)+
+    '<span class="navn">Lyslaget-basen<span class="under">Nivå '+S.hk+' · '+HK[S.hk-1].navn+'</span></span></div>';
+  document.getElementById('topph').innerHTML = '<span class="brikke" title="Skruer">🔩 '+S.skruer+'</span><span class="brikke" title="Ladeplasser i bruk">🔋 '+antallEid()+'/'+S.hk+'</span>'+
+    '<button id="gir" data-a="voksen" aria-label="Voksenmeny">⚙️</button>';
+}
+function tegnTags(){
+  document.getElementById('tags').innerHTML = OMRADER.map(function(o){
+    if(o.kommer) return '<button class="kommer" data-omr="'+o.id+'" aria-label="'+o.navn+', kommer senere">🚧<span class="t"> Kommer</span></button>';
+    return eier(o.id) ? '<button data-omr="'+o.id+'" aria-label="'+o.navn+'">'+o.ik+'<span class="t"> '+o.navn+'</span></button>'
+                      : '<button class="last" data-omr="'+o.id+'" aria-label="'+o.navn+', til salgs for '+PRIS.omr[0]+' skruer">🔒<span class="t"> Til salgs ·</span> 🔩'+PRIS.omr[0]+'</button>'}).join('');
+}
+
+/* ---------- Panelet for hvert område ---------- */
+function panelHK(o){
+  var n = S.hk, p = PRIS.hk[n-1], h = robotKort('volt');
+  h += '<p><strong>Nivå '+n+' av 5: '+HK[n-1].navn+'.</strong> '+nivaa(n,5)+'<br><span class="liten">'+HK[n-1].hva+'</span></p>';
+  if(n<5) h += '<button data-hk="1"'+(S.skruer<p?' disabled':'')+'>Bygg ut til «'+HK[n].navn+'» 🔩'+p+'</button>'+
+    '<p class="liten" style="margin-top:8px">Du får: '+HK[n].hva+(S.skruer<p?' Du mangler '+(p-S.skruer)+' skruer.':'')+'</p>';
+  else h += '<span class="merke">Ferdig utbygd</span>';
+  h += '<div class="rad" style="margin-top:10px">'+formKnapp(o)+'</div>';
+  h += '<div class="del"><h3>Oppgaver</h3>'+stasjonsKnapper(o)+'</div>';
+  h += '<div class="del"><h3>Ladeplasser</h3><p class="liten">Hovedkvarteret har '+n+' '+(n===1?'ladeplass':'ladeplasser')+'. Hvert robotområde trenger én. Bygg ut hovedkvarteret for å få flere.</p>'+
+    robotomr().map(function(a){var k = S.omr[a.id];
+      return '<div class="linje"><span class="voks">'+a.ik+' '+a.navn+'</span>'+(k>=2?'<span class="merke">'+ROBOTER[a.robot].navn+' er på plass</span>':k===1?'<span class="merke vent">Bygd, venter på robot</span>':'<span class="merke vent">Ikke bygd</span>')+'</div>'}).join('')+'</div>';
+  h += '<div class="del"><h3>Kommer senere</h3><p class="liten">❓ Ukens robotquiz · 📖 Bøkene om Lyslaget · flere roboter på de ledige tomtene</p></div>';
+  return h;
+}
+function panelOmr(o){
+  var n = S.omr[o.id], r = ROBOTER[o.robot], p = PRIS.omr[n], t = TRINN[o.id], h = '';
+  if(n===0){
+    var full = ledigePlasser()<1;
+    return '<p><strong>Til salgs.</strong> '+o.om+'</p><p class="liten">Du får: '+t[0]+'.</p><p class="stort">🔩 '+p+'</p>'+
+      '<button data-bygg="'+o.id+'"'+(S.skruer<p||full?' disabled':'')+'>Bygg området</button>'+
+      (full ? '<p class="liten" style="margin-top:8px">Hovedkvarteret har ingen ledig ladeplass. Bygg ut hovedkvarteret først.</p>'
+            : S.skruer<p ? '<p class="liten" style="margin-top:8px">Du mangler '+(p-S.skruer)+' skruer. Løs oppgaver i hovedkvarteret.</p>' : '');
+  }
+  if(n===1){
+    return '<p><strong>Området er bygd,</strong> men '+r.navn+' har ikke flyttet inn ennå.</p>'+robotKort(o.robot)+
+      '<button class="gull" data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Kall inn '+r.navn+' 🔩'+p+'</button>'+
+      (S.skruer<p?'<p class="liten" style="margin-top:8px">Du mangler '+(p-S.skruer)+' skruer.</p>':'')+
+      '<p class="liten" style="margin-top:8px">Oppgavene her åpner når '+r.navn+' er på plass.</p>';
+  }
+  h += robotKort(o.robot)+'<div class="rad">'+formKnapp(o)+'</div>';
+  h += '<div class="del"><h3>Oppgaver hos '+r.navn+'</h3>'+stasjonsKnapper(o)+'</div>';
+  h += '<div class="del"><h3>Bygg ut</h3><div class="linje"><span class="voks"><strong>'+o.navn+'</strong> '+nivaa(n,4)+'<br><span class="liten">'+(n<4?'Neste: '+t[n]+'. Gir én skrue ekstra per oppgave her.':'Alt er bygd.')+'</span></span>'+
+    (n>=4?'<span class="merke">Ferdig</span>':'<button data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Bygg ut 🔩'+p+'</button>')+'</div></div>';
+  return h;
+}
+function panelFri(o){
+  return '<p>'+o.om+'</p><button class="gull" data-side="'+o.id+'">📷 Start kameraet</button>'+
+    '<p class="liten" style="margin-top:10px">iPaden spør om lov til å bruke kameraet. Bildet blir på iPaden og sendes ikke noe sted.</p>'+
+    '<div class="del"><h3>Mangler du robotkort?</h3><p class="liten">Kortene kan skrives ut.</p><a href="robotkort/Robotkort-utskrift.pdf" target="_blank" rel="noopener">Åpne robotkortene til utskrift</a></div>'+
+    '<div class="del"><h3>Robotene</h3><p class="liten">Trykk på en robot for å se kortet.</p><div class="lag">'+REKKE.map(ansikt).join('')+'</div></div>';
+}
+function tegnPanel(){
+  var p = document.getElementById('panel');
+  if(!apen){p.className=''; p.innerHTML=''; return}
+  var o = omr(apen), topp = '<div class="rad" style="margin-bottom:8px"><h2 style="flex:1;margin:0">'+o.ik+' '+o.navn+'</h2><button class="sek" data-a="tilbake">✕ Lukk</button></div>';
+  p.className = 'apen';
+  p.innerHTML = topp + (o.kommer ? '<p><strong>Kommer senere.</strong> '+o.om+'</p>'+(o.robot?robotKort(o.robot):'')+'<p class="liten">Tomta er satt av. Når området er laget, kan det kjøpes på samme måte som de andre.</p>'
+    : o.fri ? panelFri(o) : o.id==='hk' ? panelHK(o) : panelOmr(o));
+}
+function tegn(){tegnTopp(); tegnTags(); tegnPanel(); if(window.sync3D) window.sync3D()}
+function apne(id){apen = id; tegnPanel(); document.getElementById('panel').scrollTop = 0; if(window.fokus3D) window.fokus3D(id)}
+
+/* ---------- Dialoger (bygd inn i siden) ---------- */
+function dialog(html, etter){
+  var l = document.getElementById('lag');
+  l.innerHTML = '<div class="overlegg"><div class="dialog" role="dialog" aria-modal="true">'+html+'</div></div>';
+  var d = l.querySelector('.dialog'); if(etter) etter(d);
+  var f = d.querySelector('button'); if(f) f.focus();
+}
+function lukk(){document.getElementById('lag').innerHTML=''; tegn()}
+function velkommen(){
+  dialog('<div class="rad" style="margin-bottom:8px">'+fjes('volt',64)+'<h2 style="margin:0">Velkommen, mekaniker!</h2></div>'+
+    '<p>Lyslaget trenger en base. Du starter med et lite verksted og roboten Volt.</p>'+
+    '<p>Løs oppgaver og tjen skruer. Bruk skruene til å bygge ut hovedkvarteret og lage egne områder til robotene.</p>'+
+    '<button data-a="start">Start</button>');
+}
+
+/* ---------- Voksenmenyen ----------
+   På Tavleloftet (eleven er logget inn med kode) åpnes menyen med voksenkoden fra velkomstbrevet.
+   I den frittstående utgaven åpnes den rett fra tannhjulet. */
+function voksenPort(){
+  if(!(window.TL && TL.kode && TL.sjekkVoksenkode)) return voksenMeny();
+  dialog('<h2>For voksne</h2><p>Skriv voksenkoden. Den står i velkomstbrevet.</p>'+
+    '<input id="vkinn" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="14" placeholder="Voksenkode" aria-label="Voksenkode" style="font:inherit;font-weight:700;padding:10px 12px;border:2px solid var(--ink);border-radius:12px;width:100%;text-align:center;text-transform:uppercase">'+
+    '<p class="liten" id="vkfb" style="min-height:1.4em;margin-top:8px"></p>'+
+    '<div class="rad"><button data-a="vk-ok">Åpne</button><button class="sek" data-a="lukk">Avbryt</button></div>',
+    function(el){var inn = el.querySelector('#vkinn'); inn.addEventListener('keydown', function(e){if(e.key==='Enter') provVoksenkode()}); setTimeout(function(){inn.focus()}, 60)});
+}
+function provVoksenkode(){
+  var inn = document.getElementById('vkinn'), fb = document.getElementById('vkfb'); if(!inn) return;
+  fb.textContent = 'Sjekker …';
+  TL.sjekkVoksenkode(inn.value).then(function(ja){ if(ja) voksenMeny(); else {fb.textContent = 'Feil kode. Voksenkoden står i velkomstbrevet.'; inn.select()} });
+}
+function voksenMeny(){
+  var o = window.LysOppgaver ? LysOppgaver.status() : null, inne = !!(window.TL && TL.kode);
+  dialog('<h2>Voksenmeny</h2><p>Løste oppgaver totalt: <strong>'+S.oppg+'</strong></p>'+
+    OMRADER.filter(function(a){return !a.kommer && !a.fri}).map(function(a){return '<div class="linje"><span class="voks">'+a.ik+' '+a.navn+'</span><strong>'+(S.lost[a.id]||0)+'</strong></div>'}).join('')+
+    (o ? '<div class="del"><div class="linje"><span class="voks">💛 Venner og følelser</span><strong>Nivå '+o.venner.apnet+' av 3</strong></div>'+
+         '<div class="linje"><span class="voks">🔭 Jeg ser'+(o.jegser.venter?' <span class="merke vent">venter på godkjenning</span>':'')+'</span><strong>'+o.jegser.godkjent+' av '+o.jegser.av+' bilder</strong></div></div>' : '')+
+    '<div id="vtid"></div>'+
+    (inne ? '<p style="margin-top:10px"><a href="../rapport.html" target="_blank" rel="noopener">Se rapporten</a> (åpnes med voksenkoden)</p>' : '')+
+    '<div class="rad" style="margin-top:14px"><button class="sek" data-a="lukk">Lukk</button>'+(inne ? '<button class="sek" data-a="loggut">Bytt elev (logg ut)</button>' : '')+'<button class="rod" data-a="nullstill">Nullstill spillet</button></div>',
+    function(el){ if(window.TLTid) TLTid.panel(el.querySelector('#vtid')) });
+}
+
+/* ---------- Klikk ---------- */
+function klikk(e){
+  var t = e.target.closest('button'); if(!t || t.disabled) return; var d = t.dataset;
+  if(d.a==='start'){nyttSpill(); return lukk()}
+  if(d.kort) return visKort(d.kort);
+  if(d.bla) return visKort(REKKE[(aktivtKort + +d.bla + REKKE.length) % REKKE.length]);
+  if(d.a==='lukkkort') return lukkKort();
+  if(!S) return;
+  if(d.a==='lukkside') return lukkSide();
+  if(d.side){var so = omr(d.side); return apneSide(so.side, so.navn, true)}
+  if(d.omr){document.getElementById('lag').innerHTML=''; lukkKort(); return apne(d.omr)}
+  if(d.a==='tilbake'){apen = null; tegnPanel(); if(window.fokus3D) window.fokus3D(null); return}
+  if(d.a==='lukk') return lukk();
+  if(d.a==='voksen') return voksenPort();
+  if(d.a==='vk-ok') return provVoksenkode();
+  if(d.a==='loggut'){ if(t.dataset.sikker){ if(window.TL && TL.loggUt) TL.loggUt(); } else { t.dataset.sikker = 1; t.textContent = 'Trykk igjen for å logge ut'; } return }
+  if(d.a==='nullstill') return dialog('<h2>Nullstille alt?</h2><p>Skruene, hovedkvarteret og robotområdene blir borte. Dette kan ikke angres.</p><div class="rad"><button class="rod" data-a="nullstill-ja">Ja, nullstill</button><button class="sek" data-a="lukk">Nei, behold</button></div>');
+  if(d.a==='nullstill-ja'){if(!DEMO){try{localStorage.removeItem(NOKKEL)}catch(x){} if(window.LysOppgaver) LysOppgaver.nullstill()} DEMO=false; S=null; apen=null; document.getElementById('panel').className=''; if(window.fokus3D) window.fokus3D(null); return velkommen()}
+  if(d.stasjon){var del = d.stasjon.split(':'), st = STASJONER[del[0]].filter(function(s){return s.id===del[1]})[0];
+    if(st.side && SIDER) return apneSide(st.side, st.navn);
+    if(st.oppg && window.LysOppgaver && LysOppgaver.har(st)) return LysOppgaver.start(st, del[0]);
+    return startOppgave(st, function(){var m = belonning(del[0]);
+      dialog('<h2>✅ Riktig!</h2><p class="stort">+'+m+' 🔩</p><p style="text-align:center">Du har nå '+S.skruer+' skruer.</p>'+
+        '<div class="rad"><button data-stasjon="'+d.stasjon+'">En til</button><button class="sek" data-a="lukk">Ferdig</button></div>');
+      tegnTopp();
+    })}
+  if(d.hk){if(byggHK()){if(window.sprett3D) window.sprett3D('hk'); tegn()} return}
+  if(d.bygg){if(byggOmr(d.bygg)){if(window.sprett3D) window.sprett3D(d.bygg); tegn()} return}
+  if(d.form){S.form[d.form] = !S.form[d.form]; lagre(); if(window.sprett3D) window.sprett3D(d.form); tegn(); return}
+}
+
+if(typeof document !== 'undefined'){
+  document.addEventListener('click', klikk);
+  document.getElementById('kortdlg').addEventListener('click', function(e){if(e.target === this) lukkKort()});
+  tegnRad();
+  var dm = /[?&]demo(?:=(\d))?/.exec(location.search);
+  if(dm) demoSpill(+dm[1]||5); else S = hent();
+  if(S){sjekkJobber(); tegn()} else velkommen();
+}
+</script>
+<script src="basen-oppgaver.js"></script>
+
+<script type="module">
+/* =====================================================================
+   Del 2: 3D-verdenen. Samme oppskrift som Dinoparken og fotballverdenen:
+   low poly, flate farger, skråkamera uten perspektiv, og merkelapper som
+   ligger oppå. Hvert område tegnes på nytt når trinnet endrer seg (BYGGERE).
+   ===================================================================== */
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const PI4 = Math.PI/4;
+const canvas = document.getElementById('scene'), laster = document.getElementById('laster');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); }
+catch(e){ laster.textContent = ''; throw e; }   // uten 3D vises områdene som vanlige knapper
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,900);
+const HJEM = { x:-8, z:-8 };   // midten av bildet når ingenting er valgt
+camera.position.set(120+HJEM.x,114,120+HJEM.z);   // langt unna, så ingenting havner bak kameraet
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = .08;
+controls.enablePan = false;
+controls.minZoom = .8; controls.maxZoom = 3.6;
+controls.minPolarAngle = .5; controls.maxPolarAngle = 1.15;
+controls.target.set(HJEM.x,0,HJEM.z); controls.minAzimuthAngle = PI4-.55; controls.maxAzimuthAngle = PI4+.55;   // kan ikke snu helt rundt, for landet har en bakside
+
+function resize(){
+  const w = innerWidth, h = innerHeight, a = w/h;
+  const v = a<1 ? Math.max(76, 98/a) : Math.max(76, 146/a);
+  camera.left = -v*a/2; camera.right = v*a/2; camera.top = v/2; camera.bottom = -v/2;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);
+}
+addEventListener('resize', resize); resize();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8fae7a, 1.2));
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.5);
+sun.position.set(34,56,20); sun.castShadow = true; sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera, { left:-80, right:80, top:80, bottom:-80, near:1, far:210 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+scene.add(sun);
+
+/* ---------- Hjelpere ---------- */
+let seed = 7;
+const rand = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed);
+  t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14) >>> 0) / 4294967296; };
+const R = (a,b) => a + rand()*(b-a), en = a => a[Math.floor(rand()*a.length)];
+const PI = Math.PI, mats = {};
+const M = c => mats[c] || (mats[c] = new THREE.MeshStandardMaterial({ color:c, flatShading:true, roughness:.85 }));
+const lysMat = new THREE.MeshStandardMaterial({ color:0xfff7c2, emissive:0xffe08a, emissiveIntensity:.8, flatShading:true });
+const rodLys = new THREE.MeshStandardMaterial({ color:0xff5a4d, emissive:0xd3302c, emissiveIntensity:.8, flatShading:true });
+const gronnLys = new THREE.MeshStandardMaterial({ color:0x7dffa0, emissive:0x2e9c5c, emissiveIntensity:.8, flatShading:true });
+const glassMat = new THREE.MeshStandardMaterial({ color:0x9fd8f2, transparent:true, opacity:.55, roughness:.3 });
+const straleMat = new THREE.MeshBasicMaterial({ color:0xffe27a, transparent:true, opacity:.22, side:THREE.DoubleSide, depthWrite:false });
+function legg(p, geo, c, x, y, z){ const m = new THREE.Mesh(geo, c.isMaterial ? c : M(c)); m.position.set(x,y,z); m.castShadow = m.receiveShadow = true; p.add(m); return m; }
+const box  = (p,w,h,d,c,x,y,z) => legg(p, new THREE.BoxGeometry(w,h,d), c, x, y, z);
+const cyl  = (p,rt,rb,h,s,c,x,y,z) => legg(p, new THREE.CylinderGeometry(rt,rb,h,s), c, x, y, z);
+const kule = (p,r,c,x,y,z) => legg(p, new THREE.IcosahedronGeometry(r,0), c, x, y, z);
+const flat = m => { m.castShadow = false; return m; };
+const gruppe = (p,x,z,rot) => { const g = new THREE.Group(); g.position.set(x,0,z); g.rotation.y = rot||0; p.add(g); return g; };
+const hex = s => parseInt(s.slice(1),16);
+/* Saltak: møne langs lengden. l = lengde, d = dybde, rh = høyde på taket */
+function saltak(p, l, d, rh, c, x, y, z, rot){
+  const s = new THREE.Shape(); s.moveTo(-d/2-.45,0); s.lineTo(d/2+.45,0); s.lineTo(0,rh); s.closePath();
+  const geo = new THREE.ExtrudeGeometry(s, { depth:l+.7, bevelEnabled:false }); geo.translate(0,0,-(l+.7)/2);
+  const m = legg(p, geo, c, x, y, z); m.rotation.y = PI/2 + (rot||0); return m;
+}
+/* Skilt med tekst (tegnet på et lite lerret) */
+function skilt(p, tekst, w, h, x, y, z, rot, bg, fg){
+  const c = document.createElement('canvas'); c.width = 512; c.height = Math.max(32, Math.round(512*h/w));
+  const k = c.getContext('2d'); k.fillStyle = bg||'#fff7d6'; k.fillRect(0,0,c.width,c.height);
+  k.fillStyle = fg||'#1c2a4a'; k.textAlign = 'center'; k.textBaseline = 'middle';
+  let fs = c.height*.6; k.font = '700 '+fs+'px Fredoka, Arial, sans-serif';
+  const tw = k.measureText(tekst).width; if(tw > c.width*.88){ fs *= c.width*.88/tw; k.font = '700 '+fs+'px Fredoka, Arial, sans-serif'; }
+  k.fillText(tekst, c.width/2, c.height/2 + fs*.05);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshStandardMaterial({ map:t, roughness:.8 }));
+  m.position.set(x,y,z); m.rotation.y = rot||0; p.add(m); return m;
+}
+const GRESS = 0x8fcf6a, STI = 0xead6a0, LAAS = 0xb9bd8f, BETONG = 0xa7afb8, VEGG = 0xe4e7ea, TRE = 0x8a5a33, MORK = 0x3d4650, ASF = 0x4b5560, SVART = 0x1b1b1d;
+const BL = 0x2C4A9A, GUL = 0xF2C14E, ROD = 0xD3302C;
+const HUD = [0xf2c9a0,0xd9a273,0x8d5a3b,0xf7dcc0], HAAR = [0x3b2a1a,0x6b4423,0xd9b45a,0x1c1c1c,0xa5522a];
+let flaggene = [], snurr = [], kjorer = [];   // ting som vaier, ting som går rundt og ting som kjører fram og tilbake
+
+/* ---------- Natur ---------- */
+function gran(p, x, z, s){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  cyl(g, .2, .32, 1.3, 6, 0x7a4f2d, 0, .65, 0);
+  [0x2f7a45,0x3a8a4c,0x4a9b55,0x5aab5e].forEach((c,i) => { const m = legg(g, new THREE.ConeGeometry(1.75-i*.38, 1.7, 7), c, R(-.07,.07), 1.75+i*.92, R(-.07,.07)); m.rotation.y = rand()*PI; });
+}
+function lauv(p, x, z, s){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  cyl(g, .18, .3, 2.2, 6, TRE, 0, 1.1, 0);
+  const gr = legg(g, new THREE.CylinderGeometry(.08,.12,1.1,5), TRE, .45, 2, .1); gr.rotation.z = -.8;
+  const pal = en([[0x6fbf5a,0x58a94c,0x86cc66],[0x58a94c,0x4a9b55,0x79c468],[0x8cc95f,0x6fbf5a,0xa3d977]]);
+  [[0,3.1,0,1.45],[.95,2.6,.3,1],[-.8,2.7,-.35,1.1],[.15,3.9,-.2,.95],[-.2,2.6,.8,.85]].forEach((b,i) => {
+    const m = kule(g, b[3], pal[i%3], b[0], b[1], b[2]); m.scale.y = .86; m.rotation.set(rand()*3, rand()*3, 0); });
+}
+function busk(p, x, z){ const c = en([0x58a94c,0x4a9b55,0x6fbf5a]); kule(p, R(.55,.8), c, x, .4, z).scale.y = .7; kule(p, R(.35,.5), c, x+R(-.6,.6), .3, z+R(-.6,.6)).scale.y = .7; }
+function stein(p, x, z){ const m = legg(p, new THREE.DodecahedronGeometry(R(.4,.85),0), en([0xa9adb0,0x9a9fa3,0xb8bbb9]), x, .25, z); m.scale.y = .6; m.rotation.y = rand()*PI; }
+function blomster(p, x, z){ const c = en([0xff8fb1,0xffd84d,0xffffff,0xc79bff]); for(let i=0;i<6;i++) flat(kule(p, .16, c, x+R(-.9,.9), .16, z+R(-.9,.9))); }
+function lykt(p, x, z, y){ y = y||0; cyl(p,.08,.13,3.2,5,MORK,x,y+1.6,z); box(p,.6,.12,.6,MORK,x,y+3.3,z); flat(legg(p,new THREE.BoxGeometry(.4,.3,.4),lysMat,x,y+3.1,z)); }
+
+/* ---------- Landskapet: en dal ved kysten, med fjell bak, elv, jernbane og et fyr ----------
+   Her brukes to retninger: u = mot høyre på skjermen, w = mot kameraet (og sjøen). */
+const S2 = Math.SQRT2, UW = (u,w) => [(u+w)/S2, (w-u)/S2], tilUW = (x,z) => [(x-z)/S2, (x+z)/S2];
+const O = id => OMRADER.find(o => o.id===id);
+const KYST = [[-320,72],[-110,66],[-80,62],[-60,50],[-45,57],[-30,48],[-18,46],[-8,53],[10,51],[25,56],[45,48],[60,53],[80,45],[110,42],[320,34]];   // kystlinja
+const kyst = u => { for(let i=1;i<KYST.length;i++) if(u <= KYST[i][0]){ const a = KYST[i-1], b = KYST[i]; return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0]); } return 34; };
+const ELV = [[-52,-58],[-45,-44],[-38,-24],[-31,-8],[-30,10],[-25,28],[-18,45.5]], ELVB = 5;   // elva fra fjellet til sjøen
+const avstElv = (u,w) => { let m = 1e9; for(let i=1;i<ELV.length;i++){ const a = ELV[i-1], b = ELV[i], dx = b[0]-a[0], dy = b[1]-a[1], t = Math.max(0, Math.min(1, ((u-a[0])*dx+(w-a[1])*dy)/(dx*dx+dy*dy))); m = Math.min(m, Math.hypot(u-a[0]-dx*t, w-a[1]-dy*t)); } return m; };
+/* Svingete linjer: en myk kurve gjennom noen punkter, delt opp i korte rette biter */
+function bane(punkter){ const c = new THREE.CatmullRomCurve3(punkter.map(p => new THREE.Vector3(p[0],0,p[1])), false, 'centripetal'), ps = c.getSpacedPoints(Math.ceil(c.getLength()/1.2)); let d = 0;
+  const pts = ps.map((p,i) => { if(i) d += p.distanceTo(ps[i-1]); return { x:p.x, z:p.z, d }; }); pts.lengde = d; return pts; }
+function paa(pts, d){ d = Math.max(0, Math.min(pts.lengde, d)); let i = 1; while(i < pts.length-1 && pts[i].d < d) i++;
+  const a = pts[i-1], b = pts[i], t = (d-a.d)/((b.d-a.d)||1), l = Math.hypot(b.x-a.x,b.z-a.z)||1; return { x:a.x+(b.x-a.x)*t, z:a.z+(b.z-a.z)*t, tx:(b.x-a.x)/l, tz:(b.z-a.z)/l }; }
+function biter(pts, dA, dB, fn){ const n = Math.max(1, Math.round((dB-dA)/1.2)); for(let i=0;i<n;i++){ const da = dA+(dB-dA)*i/n, db = dA+(dB-dA)*(i+1)/n; fn(paa(pts,da), paa(pts,db), da, db); } }
+function bit(par, a, b, yA, yB, w, t, c, lift, side){   // én rett bit fra a til b. side = flyttet ut til siden
+  const dx = b.x-a.x, dz = b.z-a.z, L = Math.hypot(dx,dz)||1, g = new THREE.Group(); side = side||0;
+  g.position.set((a.x+b.x)/2-dz/L*side, (yA+yB)/2+lift, (a.z+b.z)/2+dx/L*side); g.rotation.y = -Math.atan2(dz,dx); par.add(g);
+  const m = box(g, Math.hypot(L,yB-yA)+.3, t, w, c, 0, 0, 0); m.rotation.z = Math.atan2(yB-yA, L); return m; }
+const SP = O('spor'), [SU, SW] = tilUW(SP.x, SP.z), ZS = 3.6;
+/* Jernbanen, målt fra stasjonen: [langs sporet, mot sjøen]. Rett forbi perrongen, svinger på begge sider. */
+const SKINNER = bane([[-54,15],[-40,12.5],[-26,7],[-14,ZS],[-7,ZS],[7,ZS],[14,ZS],[30,6],[48,3],[66,-3],[82,-4.5],[96,-2]]);
+const avstBane = (u,w) => { let m = 1e9; for(const p of SKINNER) m = Math.min(m, Math.hypot(p.x-(u-SU), p.z-(w-SW))); return m; };
+const FJELL = [];
+function flate(pts, topp, tykk, farge){ const s = new THREE.Shape(); pts.forEach((p,i) => { const [x,z] = UW(p[0],p[1]); i ? s.lineTo(x,z) : s.moveTo(x,z); });
+  const geo = new THREE.ExtrudeGeometry(s, { depth:tykk, bevelEnabled:false }); geo.rotateX(PI/2); return flat(legg(scene, geo, farge, 0, topp, 0)); }
+function band(pts, bredde, y, farge){ pts.forEach((p,i) => { const [x,z] = UW(p[0],p[1]); flat(cyl(scene,bredde/2,bredde/2,.02,10,farge,x,y,z));
+  if(i){ const [x0,z0] = UW(pts[i-1][0],pts[i-1][1]); flat(box(scene,Math.hypot(x-x0,z-z0),.02,bredde,farge,(x+x0)/2,y,(z+z0)/2)).rotation.y = -Math.atan2(z-z0,x-x0); } }); }
+function fjell(u, w, r, h, farge, sno){ const [x,z] = UW(u,w), rot = rand()*PI; cyl(scene, r*.12, r, h, 7, farge, x, h/2-.1, z).rotation.y = rot;
+  if(sno) flat(cyl(scene, r*.12+.03, r*.42+.03, h*.34, 7, 0xf4f6f8, x, h*.83-.1, z)).rotation.y = rot; FJELL.push({u,w,r}); }
+function blob(x, z, r, o){ o = o||{}; const N = o.n||12, f = []; for(let i=0;i<N;i++) f.push(R(.88,1.12));   // ujevn klump: fjellet til Sky og skjæret til fyret
+  const topp = o.topp||0, geo = new THREE.CylinderGeometry(r, r+3.5, 3+topp, N), p = geo.attributes.position;
+  for(let i=0;i<p.count;i++){ const px = p.getX(i), pz = p.getZ(i); if(Math.abs(px)+Math.abs(pz) < .01) continue;
+    const k = ((Math.round(Math.atan2(px,pz)/(2*PI/N)) % N) + N) % N; p.setX(i, px*f[k]); p.setZ(i, pz*f[k]); }
+  return flat(legg(scene, geo, o.farge, x, topp-(3+topp)/2, z)); }
+{ const hav = legg(scene, new THREE.CylinderGeometry(420,420,.4,28), new THREE.MeshStandardMaterial({color:0x7ecbea,roughness:.35,flatShading:true}), 0, -5, 0); hav.castShadow = hav.receiveShadow = false;
+  const bak = [[320,-300],[-320,-300]];
+  flate(KYST.concat(bak), 0, 3, GRESS); flate(KYST.map(p => [p[0], p[1]+4.5]).concat(bak), -2.8, 2.2, 0xe6d6a0);
+  band(ELV, ELVB+2.4, .015, 0xe3d6a2); band(ELV, ELVB, .03, 0x7ecbea);
+  for(let u=-125;u<=125;u+=21){ const h = R(11,19); fjell(u+R(-4,4), -70+R(-3,3), R(15,19), h, en([0x9a9d93,0xa9a79b,0x8f948a]), h>14.5); }   // fjellkjeden bak
+  for(let u=-110;u<=110;u+=36) fjell(u+R(-6,6), -98, R(22,28), R(22,30), en([0x8f948a,0x9a9d93]), true);
+  [[0,-1],[SKINNER.lengde,1]].forEach(k => { const e = paa(SKINNER,k[0]); fjell(SU+e.x+e.tx*8*k[1], SW+e.z+e.tz*8*k[1], 15, 11, 0x86b070); });                                                               // åsene med tunnelene
+  fjell(-100,-36,14,7,0x7fbf5f); fjell(104,-18,16,8,0x7fbf5f); fjell(-98,22,13,6,0x86c463); fjell(100,20,12,6,0x86c463); fjell(-72,1,12,8,0xa9a79b);   // åser, og berget bak byggeplassen
+  const s = O('sky'); blob(s.x, s.z, 12.5, {n:10, topp:s.y, farge:0xb9b6a8});
+  [[-11,5,2.4],[9,-9,2],[12,4,1.8],[-4,13,2.2]].forEach(k => { const m = legg(scene, new THREE.DodecahedronGeometry(k[2],0), 0xa9a79b, s.x+k[0], .6, s.z+k[1]); m.rotation.set(rand(),rand(),0); });
+  [[-72,72,2.2],[-8,68,1.4],[30,72,2],[78,62,1.8],[52,66,1.3],[-100,80,2.4]].forEach(k => { const [x,z] = UW(k[0],k[1]), m = flat(legg(scene, new THREE.DodecahedronGeometry(k[2],0), 0x9a9fa3, x, -4.3, z)); m.rotation.set(rand(),rand(),0); });
+}
+/* Fyret – Lyslaget må jo ha et lys */
+{ const [x,z] = UW(-42,69); blob(x, z, 5.5, {n:8, farge:0xa9adb0});
+  const rad = y => 1.75 - .55*y/7; cyl(scene, rad(7), rad(0), 7, 10, 0xf4f6f8, x, 3.5, z);
+  [1.6,4.4].forEach(y => flat(cyl(scene, rad(y+.6)+.03, rad(y-.6)+.03, 1.2, 10, ROD, x, y, z)));
+  cyl(scene,1.8,1.8,.2,10,MORK,x,7.1,z); flat(cyl(scene,.9,.9,1.1,8,lysMat,x,7.75,z)); legg(scene,new THREE.ConeGeometry(1.3,1,8),ROD,x,8.8,z); flat(box(scene,.7,1.3,.1,ROD,x,.75,z+1.72));
+  const fy = new THREE.Group(); fy.position.set(x,7.75,z); scene.add(fy);
+  [1,-1].forEach(s => { const st = new THREE.Mesh(new THREE.ConeGeometry(1.6,9,8,1,true), straleMat); st.position.set(s*5,0,0); st.rotation.z = s*PI/2; fy.add(st); });
+  fy.userData.fart = .9; snurr.push(fy); }
+
+/* Veiene: fra hovedkvarteret, innom svingene, til hvert område */
+const VEIMAL = OMRADER.filter(o => o.id!=='hk' && !o.kommer);
+VEIMAL.forEach(o => { o.vei = bane([[0,0]].concat((o.sving||[]).map(p => UW(p[0],p[1])), [[o.x,o.z]]));
+  if(o.bru==='elv'){ const pa = o.vei.filter(p => { const [u,w] = tilUW(p.x,p.z); return avstElv(u,w) < ELVB/2+1.6; }); o.bd = [pa[0].d-2, pa[pa.length-1].d+2]; }
+  if(o.bru==='rampe'){ const inn = o.vei.find(p => Math.hypot(p.x-o.x,p.z-o.z) < 11.2); o.bd = [inn.d-19, inn.d]; } });
+const yVed = (o, d) => o.y && o.bd ? Math.max(0, Math.min(1, (d-o.bd[0])/(o.bd[1]-o.bd[0])))*o.y : 0;
+
+/* Jernbanen. Den ligger der hele tiden og går inn i en tunnel i hver ende. Stasjonen bygges av eleven. */
+{ const g = gruppe(scene, SP.x, SP.z, SP.rot), L = SKINNER.lengde;
+  biter(SKINNER, 0, L, (a,b) => { flat(bit(g,a,b,0,0,2,.14,0x9a8f80,.09)); [-.55,.55].forEach(s => bit(g,a,b,0,0,.12,.12,0x6c7680,.3,s)); });
+  const sv = new THREE.InstancedMesh(new THREE.BoxGeometry(.3,.1,1.7), M(TRE), Math.floor(L)), d = new THREE.Object3D();
+  for(let i=0;i<Math.floor(L);i++){ const p = paa(SKINNER,i+.5); d.position.set(p.x,.2,p.z); d.rotation.y = -Math.atan2(p.tz,p.tx); d.updateMatrix(); sv.setMatrixAt(i,d.matrix); } sv.receiveShadow = true; sv.frustumCulled = false; g.add(sv);
+  [[5.8,1],[L-5.8,-1]].forEach(k => { const p = paa(SKINNER,k[0]), t = gruppe(g, p.x, p.z, -Math.atan2(p.tz,p.tx));   // tunnelportaler
+    box(t,4.5,4.2,4.6,0x9a9d93,0,2.1,0); box(t,4.9,.4,5,0x8a8d85,0,4.3,0); flat(box(t,.12,3.1,2.7,0x15181c,k[1]*2.26,1.7,0)); flat(box(t,.2,.4,3.3,0xd5d8d0,k[1]*2.3,3.45,0)); });
+  const over = SKINNER.filter(p => avstElv(SU+p.x, SW+p.z) < ELVB/2+1.4);   // der linja krysser elva: jernbanebru
+  if(over.length){ const d1 = over[0].d-1.5, d2 = over[over.length-1].d+1.5; biter(SKINNER, d1, d2, (a,b) => { [-1.15,1.15].forEach(s => bit(g,a,b,0,0,.18,.9,0x8f4a3a,.6,s)); });
+    [d1,d2].forEach(dd => { const p = paa(SKINNER,dd); box(g,.8,.5,3,0x9aa3ad,p.x,.2,p.z).rotation.y = -Math.atan2(p.tz,p.tx); }); }
+  const lok = SP.vei.map(p => { const [u,w] = tilUW(p.x,p.z); return [u-SU, w-SW]; }), ki = lok.findIndex(p => p[1] < ZS), ka = lok[ki-1], kb = lok[ki];
+  const xk = ka[0]+(kb[0]-ka[0])*(ka[1]-ZS)/(ka[1]-kb[1]);   // der veien fra hovedkvarteret krysser sporet: planovergang
+  flat(box(g,3.8,.1,2.4,0x8a6a45,xk,.33,ZS)); [-2.9,2.9].forEach(a => { cyl(g,.07,.09,2.4,5,0xdfe3e6,xk+a,1.2,ZS+1.9); [-.6,.6].forEach(v => { flat(box(g,1.3,.2,.06,0xffffff,xk+a,2.3,ZS+1.9)).rotation.z = v; }); flat(box(g,.24,.24,.08,ROD,xk+a,2.3,ZS+1.9)); }); }
+
+/* Bruer: følger veien der den krysser elva, eller stiger opp på fjellet */
+function bru(o){ const [d1,d2] = o.bd, loft = o.y ? 0 : .075;
+  biter(o.vei, d1, d2, (a,b,da,db) => { const yA = yVed(o,da), yB = yVed(o,db), dx = b.x-a.x, dz = b.z-a.z, l = Math.hypot(dx,dz)||1;
+    bit(scene,a,b,yA,yB,5,.5,0xbfc5cc,-.27+loft);
+    [-1,1].forEach(s => { bit(scene,a,b,yA,yB,.14,.14,0xf4f6f8,.95+loft,s*2.35); box(scene,.14,1,.14,0xf4f6f8,a.x-dz/l*2.35*s,yA+.45+loft,a.z+dx/l*2.35*s); }); });
+  if(o.y) for(let d=d1+2.5; d<d2-1; d+=5){ const p = paa(o.vei,d), y = yVed(o,d); [-1,1].forEach(s => cyl(scene,.45,.6,y,6,0x9aa3ad,p.x-p.tz*1.7*s,y/2-.3,p.z+p.tx*1.7*s)); box(scene,4.6,.5,.6,0x9aa3ad,p.x,y-.8,p.z).rotation.y = -Math.atan2(p.tx,-p.tz); } }
+VEIMAL.forEach(o => { if(o.bd) bru(o); });
+
+const luftRundt = o => o.luft || (o.id==='hk' ? 21 : o.kommer ? 6 : o.fri ? 7.5 : 13.5);
+const ledig = (x, z, luft) => !OMRADER.some(o => Math.hypot(o.x-x,o.z-z) < luftRundt(o)+luft) && !VEIMAL.some(o => o.vei.some(p => Math.hypot(p.x-x,p.z-z) < 2.9+luft));
+/* fri = fast grunn der det ikke står noe: ikke sjø, elv, jernbane, fjell, vei eller område */
+const fri = (x, z, luft) => { const [u,w] = tilUW(x,z); return w < kyst(u)-3-luft && avstElv(u,w) > ELVB/2+2.5+luft && avstBane(u,w) > 3+luft && !FJELL.some(f => Math.hypot(f.u-u,f.w-w) < f.r*.95+luft) && ledig(x,z,luft); };
+function stro(antall, luft, lag){ for(let i=0, n=0; i<antall*40 && n<antall; i++){
+  const [x,z] = UW(R(-74,74), R(-60,58)); if(!fri(x,z,luft)) continue; n++; lag(x,z); } }
+stro(44, 1.2, (x,z) => rand()<.5 ? gran(scene,x,z,R(.8,1.35)) : lauv(scene,x,z,R(.85,1.3)));
+stro(26, .4, (x,z) => busk(scene,x,z));
+stro(14, .4, (x,z) => stein(scene,x,z));
+stro(18, .3, (x,z) => blomster(scene,x,z));
+for(let i=0;i<14;i++){ const [x,z] = UW(R(-90,90), R(-55,45)); if(fri(x,z,5)){ const m = flat(cyl(scene, R(3,6), R(3,6), .06, 7, en([0x86c863,0x98d672]), x, .03, z)); m.rotation.y = rand(); } }
+/* Skogen rundt: mange like grantrær tegnes samlet, så iPad-en ikke får for mye å gjøre */
+{ const pts = []; for(let i=0; i<9000 && pts.length<430; i++){ const [x,z] = UW(R(-150,150), R(-68,64)); if(fri(x,z,1.5)) pts.push([x,z,R(.8,1.45),rand()*PI]); }
+  const mange = (geo, farge, y) => { const m = new THREE.InstancedMesh(geo, M(farge), pts.length), d = new THREE.Object3D();
+    pts.forEach((p,i) => { d.position.set(p[0], y*p[2], p[1]); d.scale.setScalar(p[2]); d.rotation.y = p[3]; d.updateMatrix(); m.setMatrixAt(i, d.matrix); }); m.castShadow = m.receiveShadow = true; m.frustumCulled = false; scene.add(m); };
+  mange(new THREE.CylinderGeometry(.2,.32,1.3,6), 0x7a4f2d, .65); [0x2f7a45,0x3a8a4c,0x4a9b55].forEach((c,i) => mange(new THREE.ConeGeometry(1.8-i*.5,1.9,7), c, 1.9+i*1.05)); }
+
+/* ---------- Veiene ut til robotområdene. Blir asfalt når hovedkvarteret er fullt utbygd ---------- */
+const VEI = new THREE.Group(); scene.add(VEI);
+function langs(o, dA, dB, w, t, c, lift){ biter(o.vei, dA, dB, (a,b,da,db) => flat(bit(VEI, a, b, yVed(o,da), yVed(o,db), w, t, c, lift))); }
+function byggVeier(asfalt){
+  VEIMAL.forEach(o => { const L = o.vei.lengde;
+    langs(o, 0, L, asfalt?4.2:3.1, .06, asfalt?0xdcd6c6:0xd9c48c, .03); langs(o, 0, L, asfalt?3.4:2.6, .1, asfalt?0x666d75:STI, .05);
+    if(asfalt) for(let d=21; d<L-11; d+=3) langs(o, d, d+1, .16, .02, 0xffffff, .11);
+    const a = paa(o.vei,22.5), b = paa(o.vei,L-11.8);
+    [-1,1].forEach(s => { if(asfalt || s>0) lykt(VEI, a.x-a.tz*2.7*s, a.z+a.tx*2.7*s); }); lykt(VEI, b.x-b.tz*2.6, b.z+b.tx*2.6, o.y||0);
+  });
+}
+
+/* ---------- Byggeklosser ---------- */
+function tomt(g, r, farge){ const t = flat(cyl(g, r, r+.4, .14, 10, farge, 0, .07, 0)); t.rotation.y = rand()*PI; flat(cyl(g, r+.7, r+1, .08, 10, 0xd9c48c, 0, .04, 0)).rotation.y = t.rotation.y; }
+function sperrering(g, r, n){ for(let i=0;i<n;i++){ const a = i*2*PI/n, b = a+PI/n, l = 2*r*Math.sin(PI/n)*.95; cyl(g,.1,.1,.9,5,TRE,Math.cos(a)*r,.45,Math.sin(a)*r);
+  const t = flat(box(g,l,.07,.07,0xf28c28,Math.cos(b)*r*Math.cos(PI/n),.75,Math.sin(b)*r*Math.cos(PI/n))); t.rotation.y = -b+PI/2; } }
+function tavle(g, tekst, bg, fg, rot){ const s = gruppe(g, 0, 0, rot==null?PI/4:rot); box(s,.2,2.4,.2,TRE,-1.5,1.2,0); box(s,.2,2.4,.2,TRE,1.5,1.2,0); box(s,3.9,1.7,.16,bg,0,2.5,0);
+  const b = '#'+bg.toString(16).padStart(6,'0'); skilt(s,tekst,3.6,1.4,0,2.5,.09,0,b,fg); skilt(s,tekst,3.6,1.4,0,2.5,-.09,PI,b,fg); return s; }
+function tilSalgs(g){
+  tomt(g, 6.5, LAAS); sperrering(g, 5.6, 10); tavle(g, 'TIL SALGS', ROD, '#ffffff');
+  [0,.24,.48].forEach((y,i) => { box(g,2.6,.2,.5,0xc79a5b,-2.6,.25+y,-2+i*.12).rotation.y = .3; });
+  legg(g, new THREE.ConeGeometry(1.3,1,7), 0xe3cf95, 2.8, .5, -2.6); box(g,.12,1.3,.12,TRE,3.4,.65,-1.6).rotation.z = .5;
+}
+function reservert(g, o){
+  const f = o.robot ? hex(ROBOTER[o.robot].c1) : 0x6E4424;
+  tomt(g, 4.6, LAAS); sperrering(g, 3.9, 8); const s = tavle(g, 'KOMMER', 0x4a5878, '#ffffff'); s.scale.setScalar(.72);
+  box(g,.9,.8,.9,0xc79a5b,2.2,.4,-1.6); box(g,.7,.6,.7,0xb98a4b,2.3,1.1,-1.7); flagg(g,-2.4,0,1.6,f,2.6);
+  if(o.id==='bolge'){ const k = gruppe(g, 0, 0, -Math.atan2(o.z,o.x)); box(k,9,.2,1.8,0xc79a5b,9,.3,0); for(let a=5.5;a<=13.5;a+=2) [-.8,.8].forEach(s => cyl(k,.14,.14,4.6,5,TRE,a,-1.9,s)); flat(kule(k,.45,0xf28c28,15,-4.5,2.4)); flat(kule(k,.45,ROD,12.5,-4.5,-3)); }
+  if(o.id==='rust'){ [[-5.5,2,1.5],[5.6,1.5,1.2],[4.2,-4.6,1]].forEach(k => legg(g,new THREE.ConeGeometry(k[2]*1.3,k[2],6),en([0x6E4424,0x7b5a3a,0x6c7680]),k[0],k[2]/2,k[1])); dekk(g,-4.4,-3.6,3); box(g,1.6,.5,.9,0x56368A,5,.25,3.6).rotation.y = .4; }
+}
+function vindu(g, x, y, z, rot, w, h){ const v = gruppe(g, x, z, rot); v.position.y = y; w = w||.95; h = h||.95;
+  flat(box(v,w+.24,h+.24,.1,0xffffff,0,0,0)); flat(box(v,w,h,.14,0x7fc4e6,0,0,0)); flat(box(v,.07,h,.17,0xffffff,0,0,0)); flat(box(v,w+.36,.1,.24,0xffffff,0,-h/2-.14,.05)); }
+function dor(g, x, z, rot, c, w){ const d = gruppe(g, x, z, rot); w = w||1.15;
+  flat(box(d,w+.26,2.13,.1,0xffffff,0,1.07,0)); flat(box(d,w,2,.14,c||0x6b4f2c,0,1,0)); flat(kule(d,.07,GUL,w/2-.2,1,.1)); box(d,w+.7,.16,.8,BETONG,0,.08,.45); }
+function hus(g, x, z, l, h, d, vegg, sokkel){ box(g,l+.3,.3,d+.3,BETONG,x,.15,z); box(g,l,h,d,vegg,x,h/2+.2,z); if(sokkel) box(g,l+.08,.7,d+.08,sokkel,x,.6,z); }
+function figur(g, x, z, f, y){ const p = gruppe(g, x, z, rand()*PI*2); p.position.y = y||0;
+  box(p,.5,.72,.34,f,0,.92,0); box(p,.5,.26,.36,0x2b3a4a,0,.5,0); box(p,.17,.42,.2,0x2b3a4a,-.14,.2,0); box(p,.17,.42,.2,0x2b3a4a,.14,.2,0);
+  box(p,.14,.5,.18,f,-.33,.98,0); box(p,.14,.5,.18,f,.33,.98,0);
+  box(p,.36,.36,.36,en(HUD),0,1.47,0); flat(box(p,.42,.16,.42,GUL,0,1.7,0)); }   // mekaniker med gul hjelm
+function flagg(g, x, y, z, f, h){ h = h||3.4; cyl(g,.07,.09,h,5,0xdfe3e6,x,y+h/2,z); kule(g,.12,GUL,x,y+h+.08,z); const d = box(g,1.8,1.05,.07,f,x+.95,y+h-.6,z); flaggene.push(d); }
+function benk(g, x, z, rot, l, y){ const b = gruppe(g, x, z, rot); b.position.y = y||0; box(b,l,.12,.5,0xc79a5b,0,.55,0); box(b,l,.4,.1,0xc79a5b,0,.95,-.22); box(b,.12,.55,.45,MORK,-l/2+.3,.27,0); box(b,.12,.55,.45,MORK,l/2-.3,.27,0); }
+function lysmast(g, x, z, h){ cyl(g,.16,.26,h,6,0x6c7680,x,h/2,z); const l = gruppe(g, x, z, Math.atan2(-x,-z)); l.position.y = h; box(l,1.6,.7,.3,MORK,0,.2,.2); flat(legg(l,new THREE.BoxGeometry(1.4,.5,.1),lysMat,0,.2,.38)); }
+function port(g, x, z, c, w, h){ flat(box(g,w+.5,h+.3,.12,0xffffff,x,h/2+.45,z+.08)); flat(box(g,w,h,.16,0x8f9aa6,x,h/2+.3,z+.1));
+  for(let y=.7;y<h;y+=.6) flat(box(g,w,.06,.2,0x6c7680,x,y+.3,z+.1)); flat(box(g,w+.5,.32,.22,c,x,h+.75,z+.1)); flat(legg(g,new THREE.BoxGeometry(.3,.16,.16),lysMat,x,h+1.05,z+.16)); }
+function lade(g, x, z, rot){ const l = gruppe(g, x, z, rot||0); box(l,.7,1.7,.5,0xf4f6f8,0,.85,0); flat(box(l,.5,.5,.06,0x1b2430,0,1.25,.27)); flat(legg(l,new THREE.BoxGeometry(.2,.3,.04),gronnLys,0,1.25,.31)); flat(box(l,.74,.2,.54,GUL,0,1.75,0)); cyl(l,.05,.05,.9,5,MORK,.45,.75,0).rotation.z = .4; }
+function parabol(g, x, y, z){ cyl(g,.1,.14,1.2,6,0x6c7680,x,y+.6,z); const d = legg(g, new THREE.ConeGeometry(1.2,.5,10), 0xf4f6f8, x, y+1.5, z); d.rotation.x = -2.1; d.rotation.y = .6; kule(g,.14,MORK,x+.25,y+1.75,z+.45); }
+function dekk(g, x, z, n){ for(let i=0;i<n;i++) cyl(g,.42,.42,.28,9,0x22262b,x,.16+i*.3,z); }
+function sperre(g, x, z, rot){ const s = gruppe(g, x, z, rot); box(s,.1,.9,.4,0x6c7680,-.8,.45,0); box(s,.1,.9,.4,0x6c7680,.8,.45,0); for(let i=0;i<5;i++) flat(box(s,.4,.3,.08,i%2?0xffffff:0xf28c28,-.8+i*.4,.8,0)); }
+function hjul(b, r, x, y, z, nav){ cyl(b,r,r,.26,10,SVART,x,y,z).rotation.x = PI/2; flat(cyl(b,r*.45,r*.45,.3,8,nav,x,y,z)).rotation.x = PI/2; }
+
+/* ---------- Robotene. Forsiden vender mot +z. Høyden er ca. 4,6 × størrelsen ---------- */
+function robot(g, x, z, rot, id, y){
+  const r = ROBOTER[id], c1 = hex(r.c1), c2 = hex(r.c2), p = gruppe(g, x, z, rot); p.position.y = y||0; p.scale.setScalar(r.s);
+  [-.45,.45].forEach(s => { box(p,.72,.3,1,c2,s,.15,.1); box(p,.5,1.1,.5,c1,s,.85,0); });
+  box(p,1.5,.4,.8,c2,0,1.55,0); box(p,1.9,1.5,1.1,c1,0,2.5,0);
+  flat(box(p,1.1,.7,.1,c2,0,2.6,.56)); flat(legg(p,new THREE.BoxGeometry(.36,.36,.1),lysMat,0,2.6,.62));
+  [-1.3,1.3].forEach(s => { box(p,.7,.6,.9,c2,s,3,0); box(p,.45,1.3,.5,c1,s,2.1,0); if(!(id==='brum' && s>0)) box(p,.5,.4,.55,MORK,s,1.3,0); });
+  cyl(p,.25,.3,.2,6,MORK,0,3.33,0); box(p,.9,.8,.85,c1,0,3.8,0);
+  flat(box(p,.72,.27,.1,0x1b2430,0,3.85,.43)); [-.18,.18].forEach(s => flat(legg(p,new THREE.BoxGeometry(.16,.12,.05),lysMat,s,3.85,.49)));
+  cyl(p,.04,.04,.5,4,MORK,.3,4.45,0); flat(kule(p,.1,c2,.3,4.75,0));
+  if(id==='volt'){ flat(box(p,1.94,.32,1.14,0x9fd8f2,0,2.95,0)); [-1,1].forEach(s => cyl(p,.36,.36,.16,9,SVART,s*1.72,3,0).rotation.z = PI/2); }
+  if(id==='pil'){ box(p,2,.1,.4,c2,0,3.35,-.8); [-.6,.6].forEach(s => box(p,.1,.4,.1,MORK,s,3.15,-.7)); [-.78,.78].forEach(s => cyl(p,.3,.3,.14,9,SVART,s,.8,0).rotation.z = PI/2); }
+  if(id==='brum'){ [-.45,.45].forEach(s => box(p,.8,.42,1.3,0x22262b,s,.21,.1)); box(p,.8,.7,.8,0x3d4650,1.3,1.2,.15); for(let i=0;i<3;i++) flat(box(p,.2,.72,.12,0x1d1a10,-.42+i*.42,2.05,.56)); }
+  if(id==='sky'){ cyl(p,.07,.07,.9,5,MORK,0,3.6,-.7); const ro = new THREE.Group(); ro.position.set(0,4.1,-.7); p.add(ro); box(ro,3.6,.05,.24,MORK,0,0,0); box(ro,.24,.05,3.6,MORK,0,0,0); ro.userData.fart = 7; snurr.push(ro); box(p,.12,.8,.7,c2,0,2.6,-.9); }
+  if(id==='spor'){ cyl(p,.2,.26,.8,7,0x2b2f36,-1.3,3.7,-.1); cyl(p,.3,.22,.16,7,c2,-1.3,4.15,-.1); flat(box(p,1.94,.14,1.14,c2,0,1.95,0)); flat(box(p,1.94,.14,1.14,c2,0,3.1,0)); }
+  return p;
+}
+
+/* ---------- Kjøretøyene robotene blir til. Fronten vender mot +x ---------- */
+function buss(g, x, z, rot, f, f2){ const b = gruppe(g, x, z, rot); box(b,5.4,1.9,2,f,0,1.35,0); flat(box(b,5.44,.3,2.04,f2,0,.9,0)); flat(box(b,4.4,.7,2.06,0x2b3a4a,-.2,1.75,0)); flat(box(b,.1,.9,1.7,0x2b3a4a,2.7,1.65,0)); box(b,5.5,.14,2.1,f2,0,2.37,0);
+  [[-1.7,1],[1.7,1],[-1.7,-1],[1.7,-1]].forEach(p => hjul(b,.42,p[0],.42,p[1],f2)); [-.6,.6].forEach(s => flat(legg(b,new THREE.BoxGeometry(.06,.2,.3),lysMat,2.72,.75,s))); }
+function sportsbil(g, x, z, rot, c1, c2, y){ const b = gruppe(g, x, z, rot); b.position.y = y||0;
+  box(b,3.4,.45,1.6,c1,0,.55,0); box(b,.7,.3,1.5,c1,1.85,.46,0); box(b,1.5,.42,1.3,0x1b2430,-.25,.98,0); box(b,1.3,.08,1.2,c1,-.25,1.22,0);
+  flat(box(b,3.42,.03,.36,c2,0,.79,0)); flat(box(b,1.32,.03,.36,c2,-.25,1.27,0));
+  [-.6,.6].forEach(s => box(b,.1,.34,.1,MORK,-1.5,.94,s)); box(b,.4,.07,1.7,c2,-1.5,1.13,0);
+  [[1.05,.82],[1.05,-.82],[-1.05,.82],[-1.05,-.82]].forEach(p => hjul(b,.36,p[0],.36,p[1],0xc9d1d8)); [-.5,.5].forEach(s => flat(legg(b,new THREE.BoxGeometry(.06,.14,.3),lysMat,2.2,.5,s))); }
+function tog(g, x, z, rot, c1, c2){ const t = gruppe(g, x, z, rot); t.position.y = .36;
+  box(t,4.6,.35,1.5,0x2b2f36,0,.55,0); cyl(t,.75,.75,2.8,10,c1,.7,1.5,0).rotation.z = PI/2;
+  [-.2,.9,1.9].forEach(a => { flat(cyl(t,.79,.79,.12,10,c2,a,1.5,0)).rotation.z = PI/2; });
+  cyl(t,.2,.28,.9,7,c1,1.6,2.5,0); cyl(t,.34,.24,.2,7,c2,1.6,3,0); kule(t,.3,c2,.5,2.3,0);
+  box(t,1.5,2,1.7,c1,-1.5,1.7,0); box(t,1.8,.18,1.9,c2,-1.5,2.8,0); flat(box(t,.9,.6,1.74,0x9fd8f2,-1.5,2.1,0));
+  [-1.5,-.2,1.1].forEach(a => [-.78,.78].forEach(s => hjul(t,.45,a,.45,s,c2)));
+  box(t,.5,.5,1.5,c2,2.45,.5,0).rotation.z = .5; flat(legg(t,new THREE.BoxGeometry(.12,.3,.3),lysMat,2.14,1.5,0)); return t; }
+function vogn(g, x, z, c, c2){ const t = gruppe(g, x, z, 0); t.position.y = .36; box(t,3.2,.3,1.5,0x2b2f36,0,.55,0); box(t,3,1.3,1.5,c,0,1.35,0); box(t,3.2,.14,1.6,0x2b2f36,0,2.07,0);
+  flat(box(t,3.02,.16,1.52,c2,0,1.75,0)); [-1,1].forEach(a => [-.78,.78].forEach(s => hjul(t,.4,a,.4,s,c2))); }
+function gravemaskin(g, x, z, rot, c1, c2){ const b = gruppe(g, x, z, rot);
+  [-.85,.85].forEach(s => box(b,3.2,.6,.55,0x22262b,0,.3,s)); box(b,2.4,.3,1.7,MORK,0,.7,0);
+  box(b,2.3,1.1,1.7,c1,-.2,1.4,0); flat(box(b,2.32,.25,1.72,c2,-.2,.98,0)); box(b,1.1,1.1,.8,0x2b3a4a,.5,2.45,.42); box(b,1.2,.12,.9,c1,.5,3.05,.42);
+  box(b,2.8,.36,.36,c1,1.7,2.7,-.35).rotation.z = .75; box(b,2.2,.3,.3,c1,3.31,2.72,-.35).rotation.z = -1;
+  box(b,.8,.6,.7,MORK,3.95,1.5,-.35).rotation.z = -.3; cyl(b,.12,.12,.5,6,0x22262b,-1.1,2.2,-.5); }
+function helikopter(g, x, y, z, rot, c1, c2){ const b = gruppe(g, x, z, rot); b.position.y = y;
+  kule(b,1.05,c1,0,1.4,0).scale.set(1.5,1,1); kule(b,.8,0x35475a,.8,1.5,0).scale.set(1.1,.9,.95); box(b,2.4,.25,1.5,c2,-.1,.95,0);
+  box(b,2.6,.3,.3,c1,-2.4,1.6,0); box(b,.3,.9,.12,c2,-3.6,2,0);
+  [-.7,.7].forEach(s => { box(b,2.6,.08,.12,MORK,0,.1,s); box(b,.08,.5,.08,MORK,-.7,.35,s); box(b,.08,.5,.08,MORK,.7,.35,s); });
+  cyl(b,.1,.1,.5,6,MORK,0,2.6,0);
+  const ro = new THREE.Group(); ro.position.set(0,2.9,0); b.add(ro); box(ro,5.6,.06,.3,MORK,0,0,0); box(ro,.3,.06,5.6,MORK,0,0,0); ro.userData.fart = 9; snurr.push(ro);
+  const tr = new THREE.Group(); tr.position.set(-3.6,2,.14); b.add(tr); box(tr,.9,.14,.04,MORK,0,0,0); tr.userData.fart = 14; tr.userData.akse = 'z'; snurr.push(tr); }
+
+/* ---------- Ett byggverk per område. n = trinnet, bil = roboten er forvandlet ---------- */
+const BYGGERE = {
+  /* Hovedkvarteret: n = 1 til 5 */
+  hk(g, n, bil){
+    const W = [0,8,13,16,16,21][n], D = [0,6,8,9,9,10][n], H = [0,3.4,4.4,4.8,4.8,5.2][n], r = [0,9,12,14,15,19][n];
+    const VG = 0xdfe5ec, TAK = 0x56606b, zc = -1, zf = zc+D/2;
+    flat(cyl(g,r+.8,r+1.1,.08,12,0xb4bac2,0,.04,0)); flat(cyl(g,r,r+.3,.14,12,0xcdd3da,0,.07,0));
+    box(g,W+.4,.3,D+.4,BETONG,0,.15,zc); box(g,W,H,D,VG,0,H/2+.3,zc); flat(box(g,W+.1,.7,D+.1,BL,0,.75,zc)); flat(box(g,W+.1,.22,D+.1,GUL,0,H+.05,zc)); box(g,W+.6,.3,D+.6,TAK,0,H+.45,zc);
+    const np = [0,1,2,3,3,5][n], PC = [BL,ROD,0x1d1d1f,0xF2B705,0x2E9C7C], ph = Math.min(3.1,H-1.3);
+    for(let i=0;i<np;i++){ const px = (i-(np-1)/2)*(W/np); port(g,px,zf,PC[i],2.5,ph); if(n>=2) flat(legg(g,new THREE.BoxGeometry(1.6,.25,2.2),glassMat,px,H+.7,zc+1.2)); }
+    const sx = n>=3 ? W/2-4 : 0, sw = n===1 ? 5 : 6.4;
+    box(g,sw+.3,1.3,.3,BL,sx,H+1.25,zf-.5); skilt(g,'LYSLAGET',sw,1.05,sx,H+1.25,zf-.34,0,'#2C4A9A','#F2C14E');
+    for(let i=0;i<Math.min(n,3);i++) lade(g,W/2+.9,zf-1.4-i*1.8,PI/2);
+    box(g,2,.9,.9,TRE,-W/2-1.9,.45,zc+2.6); box(g,.5,.35,.35,ROD,-W/2-2.2,1.08,zc+2.6); box(g,.12,.5,.12,0x6c7680,-W/2-1.4,1.15,zc+2.6);
+    dekk(g,-W/2-1.2,zc+4,3); dekk(g,-W/2-2.2,zc+4.3,2); figur(g,-1.6,zf+2.2,BL);
+    if(n >= 2){ hus(g,-W/2-1.95,zc-.5,3.4,2.6,4,0xc9d1d8,BL); box(g,3.8,.22,4.4,TAK,-W/2-1.95,2.95,zc-.5); vindu(g,-W/2-1.95,1.8,zc+1.53,0);
+      vindu(g,W/2+.03,H-.9,zc-2,PI/2); flagg(g,-W/2-4.2,0,zc+4.5,GUL); box(g,.8,.7,.8,0xc79a5b,W/2+1.2,.35,zc-D/2+.8); }
+    if(n >= 3){ const kx = -W/2+4, ky = H+.6, kz = zc-1.5;
+      box(g,7,2.4,5,0xeef2f6,kx,ky+1.2,kz); flat(box(g,7.06,.9,5.06,0x35475a,kx,ky+1.45,kz)); box(g,7.4,.25,5.4,BL,kx,ky+2.52,kz);
+      [-2.3,0,2.3].forEach(a => flat(box(g,.14,.9,5.1,0xeef2f6,kx+a,ky+1.45,kz)));
+      parabol(g,W/2-2.5,H+.6,zc-2.5); cyl(g,.05,.05,2,5,MORK,kx+2.8,ky+3.6,kz-1.8); flat(kule(g,.12,ROD,kx+2.8,ky+4.65,kz-1.8)); figur(g,2.6,zf+3,ROD); }
+    if(n >= 4){ const tx = -W/2-2.2, tz = zc-D/2-1.2;
+      box(g,3.6,.4,3.6,BETONG,tx,.2,tz); box(g,3,12,3,VG,tx,6.4,tz); [3,6,9].forEach(y => flat(box(g,3.06,.35,3.06,BL,tx,y,tz)));
+      [1.6,4.6,7.6,10.4].forEach(y => { vindu(g,tx,y,tz+1.53,0,.7,.9); vindu(g,tx+1.53,y,tz,PI/2,.7,.9); });
+      box(g,4.2,.3,4.2,TAK,tx,12.55,tz); box(g,3.8,1.6,3.8,0x35475a,tx,13.5,tz); [-1,1].forEach(s => { flat(box(g,.16,1.6,.16,VG,tx+s*1.9,13.5,tz+1.9)); flat(box(g,.16,1.6,.16,VG,tx+1.9,13.5,tz+s*1.9)); });
+      box(g,4.4,.3,4.4,BL,tx,14.45,tz); cyl(g,.4,.5,.4,8,MORK,tx,14.8,tz);
+      const fy = new THREE.Group(); fy.position.set(tx,15.3,tz); g.add(fy); flat(legg(fy,new THREE.BoxGeometry(.7,.6,.7),lysMat,0,0,0));
+      [1,-1].forEach(s => { const st = new THREE.Mesh(new THREE.ConeGeometry(.9,3.4,8,1,true), straleMat); st.position.set(s*1.9,0,0); st.rotation.z = s*PI/2; fy.add(st); });
+      fy.userData.fart = 1.2; snurr.push(fy);
+      cyl(g,.06,.06,3,5,MORK,tx+1.5,16.1,tz-1.5); flat(kule(g,.16,ROD,tx+1.5,17.7,tz-1.5)); }
+    if(n >= 5){ lysmast(g,-15,9,9); lysmast(g,16,-8,9); lysmast(g,3,-16.5,9);
+      for(let i=0;i<3;i++) flat(box(g,2.2,.1,1.5,0x24427a,W/2-9+i*2.5,H+.95,zc-2.6)).rotation.x = -.35;
+      for(let i=0;i<24;i++){ const a = i*PI/12; flat(legg(g,new THREE.BoxGeometry(.3,.2,.3),lysMat,Math.cos(a)*(r-.5),.24,Math.sin(a)*(r-.5))); }
+      PC.forEach((c,i) => flagg(g,-8+i*3.4,0,zf+7.5,c,2.6)); lade(g,W/2+.9,zf-6.8,PI/2); lade(g,W/2+.9,zf-8.6,PI/2); figur(g,6,zf+4.5,0x2E9C7C); dekk(g,W/2+1.6,zf+.4,2); }
+    const vx = W/2+(n>=5?4:3.2), vz = zf+2.6;
+    if(bil) buss(g,vx,vz+.4,-PI/4,BL,0xc9d1d8); else robot(g,vx,vz,PI/4,'volt');
+  },
+
+  /* AR-plattformen: et lite sted som er åpent fra start */
+  ar(g){
+    tomt(g, 5.2, 0xcdd3da); cyl(g,3.4,3.7,.5,12,0x3d4650,0,.25,0); flat(cyl(g,3,3,.1,12,0x24427a,0,.52,0));
+    const ring = flat(legg(g,new THREE.TorusGeometry(2.6,.12,5,24),lysMat,0,.62,0)); ring.rotation.x = PI/2;
+    const k = new THREE.Group(); k.position.set(0,2.6,0); g.add(k); box(k,1.5,2.1,.1,0xffffff,0,0,0); flat(box(k,1.3,1,.12,BL,0,.4,0)); flat(box(k,1.1,.14,.12,MORK,0,-.35,0)); flat(box(k,.8,.14,.12,MORK,0,-.62,0)); k.userData.fart = 1.1; snurr.push(k);
+    [0,1,2,3].forEach(i => { const a = i*PI/2+PI/4, s = flat(legg(g,new THREE.ConeGeometry(.5,2.2,4,1,true),straleMat,Math.cos(a)*1.2,1.5,Math.sin(a)*1.2)); s.rotation.x = PI; });
+    const st = gruppe(g,3.9,2.6,-.9); [-.35,.35].forEach(s => { box(st,.08,1.5,.08,MORK,s,.75,.2).rotation.z = s*.5; }); box(st,.08,1.5,.08,MORK,0,.75,-.3).rotation.x = -.4; box(st,.7,.5,.5,0x22262b,0,1.7,0); flat(cyl(st,.16,.16,.3,8,0x9fd8f2,0,1.7,.35)).rotation.x = PI/2;
+    figur(g,-3.6,2.4,ROD); flagg(g,-3.4,0,-3,BL,2.6);
+  },
+
+  /* Pils racerbane */
+  pil(g, n, bil){ if(!n) return tilSalgs(g);
+    const c1 = ROD, c2 = 0xffffff, zm = .5;
+    tomt(g, 10, 0xa8d77e);
+    flat(box(g,10,.12,8,ASF,0,.1,zm)); [-5,5].forEach(x => flat(cyl(g,4,4,.12,18,ASF,x,.1,zm)));
+    flat(box(g,10,.16,3.4,0x6dbd5c,0,.12,zm)); [-5,5].forEach(x => flat(cyl(g,1.7,1.7,.16,12,0x6dbd5c,x,.12,zm)));
+    for(let i=0;i<6;i++) for(let j=0;j<2;j++) flat(box(g,.3,.02,.38,(i+j)%2?0xffffff:SVART,-.15+j*.3,.17,2.4+i*.38));
+    for(let x=-4;x<=4;x+=2){ if(x) flat(box(g,1,.02,.1,0xffffff,x,.17,zm+2.85)); flat(box(g,1,.02,.1,0xffffff,x,.17,zm-2.85)); }
+    [-1,1].forEach(s => { for(let k=0;k<9;k++){ const a = -PI/2+k*PI/8, b = flat(box(g,1.1,.12,.32,k%2?0xffffff:ROD,s*(5+Math.cos(a)*4.1),.14,zm+Math.sin(a)*4.1)); b.rotation.y = s>0 ? -a+PI/2 : a+PI/2; } });
+    hus(g,0,-6.3,5,2.4,2.6,0xf4f4f4,c1); box(g,5.4,.25,3,c1,0,2.75,-6.3); port(g,0,-5,c1,2.2,1.7); box(g,2.4,.7,.14,c1,0,3.3,-5.2); skilt(g,'PIL',2.2,.6,0,3.3,-5.12,0,'#D3302C','#ffffff');
+    dekk(g,3.2,-4.8,2); busk(g,-3.4,-6.6);
+    if(n >= 2){ if(bil) sportsbil(g,2.2,zm+2.85,0,c1,c2,.16); else robot(g,-6.4,-5.6,PI/4,'pil'); }
+    if(n >= 3){ [2.05,4.65].forEach(z => box(g,.2,3.2,.2,MORK,0,1.6,z)); box(g,.4,.5,3,MORK,0,3.2,3.35); [-.9,-.3,.3,.9].forEach((d,i) => flat(kule(g,.2,i<2?rodLys:gronnLys,.22,3.2,3.35+d)));
+      for(let i=0;i<3;i++){ box(g,4.6,.5+i*.5,.8,BETONG,5.6,(.5+i*.5)/2,-5.3-i*.8); for(let k=0;k<6;k++) flat(box(g,.5,.28,.4,[c1,0xffffff,BL,GUL][(i+k)%4],3.7+k*.76,.64+i*.5,-5.3-i*.8)); }
+      dekk(g,9.3,-1.8,3); dekk(g,-9.2,3.2,3); dekk(g,9.4,2.8,2); figur(g,-1.2,-4.2,c1); }
+    if(n >= 4){ [[-6.2,.5,0xc9d1d8],[-5.4,.8,GUL],[-4.6,.35,0xb5702c]].forEach(k => box(g,.8,k[1],.8,k[2],k[0],k[1]/2,6.6)); figur(g,-5.4,6.6,GUL,.8);
+      sportsbil(g,-2.4,zm-2.85,PI,0xffffff,BL,.16); lysmast(g,8.9,-4,8); lysmast(g,-8.6,-2.6,8); lade(g,3.2,-6.2,0);
+      const fl = gruppe(g,1.6,5.1,0); cyl(fl,.06,.08,2.6,5,0xdfe3e6,0,1.3,0); const d = new THREE.Group(); d.position.set(.75,2.1,0); fl.add(d); for(let i=0;i<4;i++) for(let j=0;j<3;j++) flat(box(d,.36,.3,.05,(i+j)%2?0xffffff:SVART,-.54+i*.36,-.3+j*.3,0)); }
+  },
+
+  /* Spors stasjon */
+  spor(g, n, bil){ if(!n) return tilSalgs(g);
+    const c1 = 0x1d1d1f, c2 = GUL, zs = ZS, zv = 6.3;   // zs = hovedsporet (ligger i landskapet), zv = sidesporet
+    tomt(g, 10, STI);
+    box(g,13,.6,2.6,0xbfc5cc,0,.3,1.2); flat(box(g,13,.04,.25,c2,0,.62,2.35));
+    hus(g,-2,-1.6,6,2.8,3,0xf0d48a,c1); saltak(g,6,3,1.5,0x2b2f36,-2,3,-1.6); dor(g,-2,-.06,0,c1); vindu(g,-4,1.8,-.07,0); vindu(g,0,1.8,-.07,0);
+    box(g,4.4,.7,.12,c1,-2,2.72,-.04); skilt(g,'SPORS STASJON',4.2,.56,-2,2.72,.03,0,'#1d1d1f','#F2C14E'); box(g,.5,1,.5,0xb5523b,-.5,4.3,-2);
+    if(n >= 2){ if(bil){ const t = tog(g,1.5,zs,0,c1,c2); const st = SKINNER.reduce((m,p) => Math.abs(p.x-1.5) < Math.abs(m.x-1.5) ? p : m).d; t.userData.bane = [2, st, SKINNER.lengde-2]; kjorer.push(t); } else robot(g,5.3,-2.6,0,'spor'); }   // toget kjører ut gjennom tunnelene og kommer tilbake
+    if(n >= 3){ [-4.5,-1.5,1.5,4.5].forEach(x => box(g,.18,2.7,.18,c1,x,1.95,1.2)); box(g,11,.18,3,0x2b2f36,0,3.38,1.2); flat(box(g,11.1,.1,3.1,c2,0,3.26,1.2));
+      cyl(g,.08,.1,3.2,5,MORK,6,2.2,.6); const u = gruppe(g,6,.6,0); u.position.y = 4.1; flat(cyl(u,.62,.62,.2,14,c2,0,0,0)).rotation.x = PI/2; flat(cyl(u,.52,.52,.24,14,0xffffff,0,0,0)).rotation.x = PI/2;
+      flat(box(u,.07,.4,.04,c1,0,.18,.14)); flat(box(u,.3,.07,.04,c1,.13,0,.14));
+      cyl(g,.08,.1,3.4,5,MORK,8.2,1.7,1.9); box(g,.4,1,.3,0x22262b,8.2,3.6,1.9); flat(kule(g,.15,rodLys,8.2,3.85,2.07)); flat(kule(g,.15,gronnLys,8.2,3.4,2.07));
+      benk(g,-3.2,.7,0,2.2,.6); benk(g,2.6,.7,0,2.2,.6);
+      flat(box(g,9.4,.14,2,0x9a8f80,-4.3,.09,zv)); for(let x=-8.5;x<.4;x++) flat(box(g,.3,.1,1.7,TRE,x,.2,zv)); [-.55,.55].forEach(s => box(g,9.4,.12,.12,0x6c7680,-4.3,.3,zv+s)); box(g,.3,.9,1.6,ROD,-8.9,.6,zv); vogn(g,-6.2,zv,0x8f4a3a,c2); figur(g,.2,1.4,BL,.6); }
+    if(n >= 4){ [[-.9,-.9],[.9,-.9],[-.9,.9],[.9,.9]].forEach(k => box(g,.18,3,.18,TRE,-7.6+k[0],1.5,-4.2+k[1])); cyl(g,1.4,1.4,1.8,9,c1,-7.6,3.9,-4.2); flat(cyl(g,1.44,1.44,.2,9,c2,-7.6,3.9,-4.2)); legg(g,new THREE.ConeGeometry(1.6,.9,9),0x2b2f36,-7.6,5.25,-4.2);
+      vogn(g,-2.6,zv,0x2f6b4f,c2); lykt(g,-6,2,.6); lykt(g,5,2,.6); flagg(g,7.2,0,-5.4,c2); busk(g,2.4,-4.6); busk(g,-5.8,-4.4);
+      box(g,1.2,.5,.8,TRE,4.2,.85,.6); box(g,.6,.5,.6,0xb5523b,4.1,1.35,.6); }
+  },
+
+  /* Brums byggeplass */
+  brum(g, n, bil){ if(!n) return tilSalgs(g);
+    const c1 = 0xF2B705, c2 = 0x1d1a10, ST = 0xb5523b;
+    tomt(g, 10, 0xc9a66b);
+    legg(g,new THREE.ConeGeometry(1.7,1.5,7),0xb08a52,-6.6,.75,-3.8); legg(g,new THREE.ConeGeometry(1.1,1,6),0xb9965e,-5,.5,-5.6); legg(g,new THREE.ConeGeometry(1.2,.9,6),0x9a9fa3,-7,.45,-.8);
+    sperre(g,-3.2,8.2,.15); sperre(g,.6,8.6,0); sperre(g,4.4,7.9,-.2);
+    box(g,4.2,2.2,2.2,c1,4.8,1.3,-5.8); flat(box(g,4.24,.3,2.24,c2,4.8,.5,-5.8)); box(g,4.4,.16,2.4,0xf4f6f8,4.8,2.48,-5.8); vindu(g,3.8,1.6,-4.67,0,.8,.7); dor(g,5.9,-4.68,0,0x6c7680,.8);
+    box(g,7,.3,5,0xb9bcc0,0,.15,.5);
+    const tv = gruppe(g,-1.5,-6.6,0); box(tv,.16,2,.16,TRE,-1.4,1,0); box(tv,.16,2,.16,TRE,1.4,1,0); box(tv,3.4,1.1,.14,c1,0,2,0); skilt(tv,'BRUM BYGGER',3.2,.9,0,2,.08,0,'#F2B705','#1d1a10');
+    if(n >= 2){ if(bil) gravemaskin(g,-5.6,3.6,-.35,c1,c2); else robot(g,-5.9,3.4,PI/4,'brum'); }
+    const stolper = h => { [-3,0,3].forEach(x => [-1.5,2.5].forEach(z => box(g,.24,h,.24,ST,x,h/2+.3,z))); };
+    const dragere = y => { [-1.5,2.5].forEach(z => box(g,6.4,.26,.26,ST,0,y,z)); [-3,0,3].forEach(x => box(g,.26,.26,4.2,ST,x,y,.5)); };
+    if(n >= 3){ stolper(n>=4?6.2:3.1); dragere(3.3);
+      [0,.22,.44].forEach((y,i) => box(g,2.8,.2,.6,0xc79a5b,6.2,.12+y,2.6+i*.1)); [0,.5,.25].forEach((d,i) => { cyl(g,.24,.24,2.6,8,0x8f9aa6,5.6+(i===2?.25:d),.26+(i===2?.42:0),5.2).rotation.x = PI/2; });
+      const bl = gruppe(g,-2.4,6,.4); box(bl,.9,.12,.7,MORK,0,.5,0); box(bl,.1,.5,.1,MORK,-.35,.25,0); box(bl,.1,.5,.1,MORK,.35,.25,0); cyl(bl,.45,.6,.9,8,0xf28c28,0,1.05,0).rotation.z = .5;
+      figur(g,2,4.2,c1); }
+    if(n >= 4){ dragere(6.4); box(g,6.2,.2,4,0xd9dce0,0,3.52,.5); figur(g,-1.5,.6,0xf28c28,3.62);
+      const kx = 6.9, kz = -1.2; box(g,1.6,.5,1.6,BETONG,kx,.25,kz); box(g,.7,14,.7,c1,kx,7.5,kz); for(let y=1.6;y<14;y+=1.5) flat(box(g,.76,.12,.76,c2,kx,y,kz));
+      box(g,1.2,1.1,1.2,0xf4f6f8,kx,14.2,kz+.3); flat(box(g,1.24,.5,.9,0x2b3a4a,kx,14.3,kz+.6));
+      box(g,13,.4,.5,c1,kx-3.6,15.1,kz); box(g,1.6,1,1,MORK,kx+2.2,14.7,kz); legg(g,new THREE.ConeGeometry(.6,1.6,4),c1,kx,16.1,kz).rotation.y = PI/4;
+      cyl(g,.04,.04,6.6,4,SVART,kx-7,11.6,kz); box(g,.3,.3,.3,MORK,kx-7,8.3,kz); box(g,2.2,.5,1,0xc79a5b,kx-7,7.8,kz); flagg(g,-8,0,6,c1,2.8); }
+  },
+
+  /* Skys landingsplass */
+  sky(g, n, bil){ if(!n) return tilSalgs(g);
+    const c1 = 0xffffff, c2 = 0x2E9C7C, t = 1.6;
+    tomt(g, 10, 0xa8d77e);
+    cyl(g,5.6,6.3,t,9,0xb9b6a8,0,t/2,0); flat(cyl(g,5.5,5.5,.08,9,0x9fcf78,0,t+.03,0));
+    flat(cyl(g,4.3,4.3,.16,18,ASF,0,t+.1,0)); const ring = flat(legg(g,new THREE.RingGeometry(3.2,3.5,26),0xffffff,0,t+.2,0)); ring.rotation.x = -PI/2;
+    [-.75,.75].forEach(x => flat(box(g,.36,.03,2.1,0xffffff,x,t+.2,0))); flat(box(g,1.5,.03,.36,0xffffff,0,t+.2,0));
+    [[6.2,1.2],[6.9,.8],[7.6,.4]].forEach(k => box(g,2.2,k[1],.7,BETONG,0,k[1]/2,k[0]));
+    cyl(g,.07,.09,3,5,0xdfe3e6,-3.6,t+1.5,-3.6); const ps = legg(g,new THREE.ConeGeometry(.3,1.3,7),0xf28c28,-2.9,t+2.8,-3.6); ps.rotation.z = PI/2; flaggene.push(ps);
+    stein(g,6.6,-3); stein(g,-6.4,3.4); busk(g,4.8,6.4);
+    if(n >= 2){ if(bil) helikopter(g,0,t+.18,0,-PI/4,c1,c2); else robot(g,7.2,3.2,PI/4,'sky'); }
+    if(n >= 3){ const tx = -7.2, tz = 2.6; cyl(g,1.1,1.4,6.5,8,VEGG,tx,3.25,tz); flat(cyl(g,1.16,1.16,.3,8,c2,tx,4.5,tz)); cyl(g,2,1.6,1.5,8,0x35475a,tx,7.2,tz); cyl(g,2.3,2.3,.25,8,c2,tx,8.1,tz);
+      cyl(g,.05,.05,1.6,4,MORK,tx,9,tz); flat(kule(g,.14,ROD,tx,9.85,tz)); dor(g,tx+.75,tz+1.02,.6,c2,.8);
+      for(let i=0;i<10;i++){ const a = i*PI/5; flat(legg(g,new THREE.BoxGeometry(.26,.16,.26),lysMat,Math.cos(a)*4.7,t+.14,Math.sin(a)*4.7)); } figur(g,2.4,2.6,c2,t+.18); }
+    if(n >= 4){ hus(g,-6.4,-5.8,4.2,2.4,3.6,0xf4f6f8,c2); saltak(g,4.2,3.6,1.4,c2,-6.4,2.6,-5.8); port(g,-6.4,-4,c2,2.4,1.7);
+      cyl(g,.12,.16,4,6,0x6c7680,6,2,-6); const rd = new THREE.Group(); rd.position.set(6,4.2,-6); g.add(rd); box(rd,2.4,.9,.14,0xf4f6f8,0,.3,0); box(rd,.2,.3,.5,MORK,0,.1,.2); rd.userData.fart = 1.6; snurr.push(rd);
+      const tk = cyl(g,.8,.8,2.6,10,0xf4f6f8,8,1,-1.6); tk.rotation.x = PI/2; flat(cyl(g,.83,.83,.5,10,c2,8,1,-1.6)).rotation.x = PI/2; [-.8,.8].forEach(s => box(g,.9,.3,.2,MORK,8,.15,-1.6+s));
+      flagg(g,3.4,0,8.2,c2,2.8); const kik = cyl(g,.16,.22,1.2,7,MORK,-7.2,8.7,3.4); kik.rotation.x = 1.1; }
+  }
+};
+
+/* ---------- Grupper, treffbokser og merkelapper ---------- */
+const G = {}, treff = [], signatur = {}, sprett = {};
+OMRADER.forEach(o => {
+  const g = G[o.id] = new THREE.Group(); g.position.set(o.x,o.y||0,o.z); scene.add(g);
+  if(o.rot) g.rotation.y = o.rot;   // stasjonen ligger langs jernbanen
+  const hk = o.id==='hk', s = hk ? 30 : (o.kommer || o.fri) ? 11 : 19, b = new THREE.Mesh(new THREE.BoxGeometry(s, hk?10:6, hk?26:s));
+  b.position.set(o.x, (hk?5:3)+(o.y||0), o.z); b.visible = false; b.userData.id = o.id; scene.add(b); treff.push(b);
+});
+function tom(g){ g.traverse(o => { if(o.geometry) o.geometry.dispose(); if(o.material && o.material.map){ o.material.map.dispose(); o.material.dispose(); } }); g.clear(); }
+const iScenen = f => { let p = f; while(p.parent) p = p.parent; return p === scene; };
+window.sync3D = function(){
+  if(!S) return;
+  OMRADER.forEach((o,i) => {
+    const n = o.id==='hk' ? S.hk : o.kommer ? 0 : o.fri ? 1 : S.omr[o.id], sig = n+'|'+(S.form[o.id]?1:0);
+    if(signatur[o.id] === sig) return;
+    signatur[o.id] = sig; seed = 100 + i*17; tom(G[o.id]);
+    if(o.kommer) reservert(G[o.id], o); else BYGGERE[o.id](G[o.id], n, !!S.form[o.id]);
+  });
+  const v = S.hk>=5 ? 'asfalt' : 'sti';
+  if(signatur.vei !== v){ signatur.vei = v; seed = 55; tom(VEI); byggVeier(v==='asfalt'); }
+  flaggene = flaggene.filter(iScenen); snurr = snurr.filter(iScenen); kjorer = kjorer.filter(iScenen);
+};
+window.sprett3D = id => { sprett[id] = performance.now(); };
+const HKH = [0,6.2,7.4,10,16.5,17];   // hvor høyt merkelappen til hovedkvarteret står på hvert nivå
+let maal3 = { x:HJEM.x, z:HJEM.z, zoom:1 }, flytter = false;
+window.fokus3D = id => { const o = id && OMRADER.find(o => o.id===id);
+  maal3 = o ? { x:o.x, z:o.z, zoom:o.id==='hk'?1.7:2.3 } : { x:HJEM.x, z:HJEM.z, zoom:1 };
+  if(o && o.y){   // området ligger høyt: flytt siktepunktet så det likevel havner midt i bildet
+    const dx = camera.position.x-controls.target.x, dz = camera.position.z-controls.target.z, l = Math.hypot(dx,dz)||1, d = o.y*Math.tan(controls.getPolarAngle());
+    maal3.x -= dx/l*d; maal3.z -= dz/l*d;
+  }
+  if(o && innerWidth < 800){   // på smal skjerm dekker panelet nedre del: løft området opp i den synlige delen
+    const dx = camera.position.x-controls.target.x, dz = camera.position.z-controls.target.z, l = Math.hypot(dx,dz)||1;
+    const d = .23*(camera.top-camera.bottom)/maal3.zoom/Math.cos(controls.getPolarAngle());
+    maal3.x += dx/l*d; maal3.z += dz/l*d;
+  }
+  flytter = true; };
+controls.addEventListener('start', () => { flytter = false; });
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let ned = null;
+canvas.addEventListener('pointerdown', ev => { ned = { x:ev.clientX, y:ev.clientY }; });
+canvas.addEventListener('pointerup', ev => {
+  if(ned && S && Math.hypot(ev.clientX-ned.x, ev.clientY-ned.y) < 6){
+    ndc.set(ev.clientX/innerWidth*2-1, -(ev.clientY/innerHeight)*2+1); ray.setFromCamera(ndc, camera);
+    const h = ray.intersectObjects(treff, false)[0];
+    if(h) apne(h.object.userData.id);
+  }
+  ned = null;
+});
+
+const tags = document.getElementById('tags'); tags.className = ''; laster.remove();
+const v3 = new THREE.Vector3();
+function plasserTags(){
+  const kn = tags.children;
+  for(let i=0;i<kn.length;i++){ const o = OMRADER[i]; if(!o) continue;
+    const h = o.id==='hk' ? HKH[S.hk] : (o.kommer ? 3.4 : eier(o.id) ? o.h + (S.omr[o.id]>=3 ? 2.5 : 0) : 4.6);
+    v3.set(o.x, h+(o.y||0), o.z).project(camera);
+    kn[i].style.transform = 'translate(-50%,-100%) translate('+((v3.x+1)/2*innerWidth).toFixed(1)+'px,'+((1-v3.y)/2*innerHeight).toFixed(1)+'px)';
+  }
+}
+window.sync3D();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { for(const k in signatur) delete signatur[k]; window.sync3D(); });   // tegn skiltene på nytt når skriften er lastet
+const rolig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let forrige = 0;
+function bilde(t){
+  requestAnimationFrame(bilde);
+  const dt = Math.min(.1,(t-forrige)/1000), k = 1 - Math.exp(-dt*5); forrige = t;   // lik fart uansett hvor rask enheten er
+  if(flytter){
+    const fx = (maal3.x-controls.target.x)*k, fz = (maal3.z-controls.target.z)*k;   // flytt kamera og siktepunkt like mye
+    controls.target.x += fx; controls.target.z += fz; camera.position.x += fx; camera.position.z += fz;
+    camera.zoom += (maal3.zoom-camera.zoom)*k; camera.updateProjectionMatrix();
+    if(Math.abs(maal3.x-controls.target.x)+Math.abs(maal3.z-controls.target.z)+Math.abs(maal3.zoom-camera.zoom) < .01) flytter = false;
+  }
+  for(const id in sprett){ const d = (t-sprett[id])/450; if(d >= 1){ G[id].scale.setScalar(1); delete sprett[id]; } else G[id].scale.setScalar(1 + Math.sin(d*PI)*.1); }
+  if(!rolig){ flaggene.forEach((f,i) => { f.rotation.y = Math.sin(t/380+i)*.25; }); snurr.forEach(s => { s.rotation[s.userData.akse||'y'] += dt*s.userData.fart; });
+    kjorer.forEach(k => { const [A, St, B] = k.userData.bane, T = [4,5,6,3,6,5,5,3]; let s = (t/1000) % 37, i = 0; while(s > T[i]){ s -= T[i]; i++; }   // stasjon – tunnel – stasjon – tunnel
+      const e = s/T[i], m = e*e*(3-2*e), p = [[St,St],[St,B],[B,B],[B,St],[St,St],[St,A],[A,A],[A,St]][i]; const q = paa(SKINNER, p[0]+(p[1]-p[0])*m); k.position.x = q.x; k.position.z = q.z; k.rotation.y = -Math.atan2(q.tz,q.tx) + ((i===3 || i===4 || i===5) ? PI : 0); }); }
+  controls.update(); renderer.render(scene, camera);
+  if(S) plasserTags();
+}
+requestAnimationFrame(bilde);
+</script>
+</body>
+</html>

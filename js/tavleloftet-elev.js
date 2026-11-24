@@ -22,7 +22,7 @@
     dinoparken: { navn: 'Dinoparken', prefikser: ['dinoparken-'] },
     dinoparken2: { navn: 'Dinoparken', prefikser: ['dp2-'] },      // Dinoparken med oppgavepakker (egne oppgaver per elev)
     dinodalen:  { navn: 'Dinodalen',  prefikser: ['dinodalen-'] },   // Dinoparken i ny drakt: elvedal og seks andre dinoer
-    lyslaget:   { navn: 'Lyslaget',   prefikser: ['kl-', 'rv-', 'ru-'] }
+    lyslaget:   { navn: 'Lyslaget',   prefikser: ['kl-', 'rv-', 'ru-', 'lysbase-'] }   // lysbase- = selve verdenen (basen.html)
   };
   var me = document.currentScript;
   var verden = me && me.getAttribute('data-verden');

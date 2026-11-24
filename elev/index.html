@@ -83,7 +83,7 @@
     dinoparken: { navn: 'Dinoparken', emoji: '🦕', farge: '#5fd35a', farge2: '#e8c24a' },
     dinoparken2: { navn: 'Dinoparken', emoji: '🦕', farge: '#5fd35a', farge2: '#e8c24a' },
     dinodalen: { navn: 'Dinodalen', emoji: '🦕', farge: '#5fd35a', farge2: '#4fb4dd' },
-    lyslaget:   { navn: 'Lyslaget',   emoji: '🤖', farge: '#3aa8ff', farge2: '#7af0ff' }
+    lyslaget:   { navn: 'Lyslaget',   emoji: '🤖', farge: '#3aa8ff', farge2: '#7af0ff', start: 'basen.html' }   // start = siden eleven kommer til (ellers forsiden)
   };
   var KODE_RE = /^[A-HJ-NP-Z2-9]{6}$/;
   var CFG = window.TAVLELOFTET_FIREBASE;
@@ -110,7 +110,7 @@
       noen = true;
       var b = document.createElement('button'); b.type = 'button';
       b.textContent = VERDENER[v].emoji + ' ' + VERDENER[v].navn + ' (' + fmt(okt.kode) + ')';
-      b.onclick = function(){ reis(v, '../' + v + '/'); };
+      b.onclick = function(){ reis(v, '../' + v + '/' + (VERDENER[v].start || '')); };
       knapper.appendChild(b);
     }
   });
@@ -135,7 +135,7 @@
         var v = info && VERDENER[info.verden];
         if (!v) { start.disabled = false; Diorama.farge('#ff7a6b', '#ffb36b'); vis('Fant ikke den koden. Sjekk at den er riktig.', 'feil'); snakk('Fant ikke den koden. Prøv igjen.'); return; }
         vis(v.emoji + ' Til ' + v.navn + '!', 'ok');
-        reis(info.verden, '../' + info.verden + '/logginn.html?kode=' + kode);
+        reis(info.verden, '../' + info.verden + '/logginn.html?kode=' + kode + (VERDENER[info.verden].start ? '&til=' + VERDENER[info.verden].start : ''));
       })
       .catch(function(){ start.disabled = false; vis('Får ikke kontakt med nettet. Prøv igjen om litt.', 'feil'); });
   });

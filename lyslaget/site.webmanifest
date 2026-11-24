@@ -3,7 +3,7 @@
   "short_name": "Lyslaget",
   "description": "Matte, lesing og skriving med robotene.",
   "lang": "nb",
-  "start_url": "./",
+  "start_url": "basen.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#133a6b",

@@ -33,7 +33,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var inn = $('kode'), melding = $('melding'), start = $('start');
   var q = new URLSearchParams(location.search);
-  var til = q.get('til') || 'index.html';
+  var til = q.get('til') || 'basen.html';   // eleven starter i basen (verdenen). Den gamle forsiden ligger fortsatt på index.html
   if (!/^[a-z0-9-]+\.html([?#].*)?$/i.test(til)) til = 'index.html';   // bare sider i denne mappa
   function vis(t, type){ melding.textContent = t; melding.className = 'melding' + (type ? ' ' + type : ''); }
   function snakk(t){ try{ var u = new SpeechSynthesisUtterance(t); u.lang = 'nb-NO'; u.rate = .95; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }

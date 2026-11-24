@@ -27,6 +27,8 @@
   'use strict';
   var TL = window.TL;
   if (!TL || !TL.verden || !(TL.kode || TL.testmodus)) return;     // ikke logget inn (sendes til logginn) eller ukjent verden
+  // Vises siden inne i verdenen (Lyslaget-basen åpner Verkstedet osv. i en ramme), teller den ytre siden tiden. Ellers ville tiden gått dobbelt.
+  try { if (window.top !== window.self && window.parent.TLTid && window.parent.TL && window.parent.TL.verden === TL.verden) return; } catch (e) {}
 
   var STANDARD = 30, VALG = [10, 15, 20, 30, 45, 60, 90, 0], VARSEL = 5 * 60, NAADE = 4 * 60, UTEN_SJEKK = 60;
   /* Tekst per verden. «opptatt» sier om eleven er midt i en runde – da får runden bli ferdig før det stenges. */
@@ -35,7 +37,8 @@
     dinoparken:  { navn: 'Dinoparken', sover: 'Dinoene skal sove nå.', opptatt: dinoOpptatt },
     dinoparken2: { navn: 'Dinoparken', sover: 'Dinoene skal sove nå.', opptatt: dinoOpptatt },
     dinodalen:   { navn: 'Dinodalen',  sover: 'Dinoene skal sove nå.', opptatt: dinoOpptatt },
-    lyslaget:    { navn: 'Lyslaget',   sover: 'Robotene skal lade batteriene nå.' }
+    // I basen (basen.html) får en åpen oppgave bli ferdig før det stenges. De andre Lyslaget-sidene varsler og stenger som før.
+    lyslaget:    { navn: 'Lyslaget',   sover: 'Robotene skal lade batteriene nå.', opptatt: /basen\.html$/.test(location.pathname) ? function () { return !!document.querySelector('#lag .overlegg, #side.apen'); } : undefined }
   };
   var T = TEKST[TL.verden] || { navn: TL.verdenNavn || 'Verdenen', sover: 'Nå er det pause.' };
   var CFG = window.TAVLELOFTET_FIREBASE, DB = CFG && CFG.databaseURL ? CFG.databaseURL.replace(/\/$/, '') : null;

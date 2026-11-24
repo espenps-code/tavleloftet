@@ -29,6 +29,15 @@
     grupper.push({ id: 'utrykning-' + n[0], navn: 'Utrykning – ' + n[1], ikon: '🚨', skjulTom: n[0] !== 'middels', maal: [
       { id: 'u-matte-' + n[0], navn: 'Matte' }, { id: 'u-lesing-' + n[0], navn: 'Lesing' }, { id: 'u-skriving-' + n[0], navn: 'Skriving' } ] });
   });
+  /* Basen (basen.html): Vennekroken og «Jeg ser». */
+  grupper.push({ id: 'venner', navn: 'Vennekroken (venner og følelser)', ikon: '💛', skjulTom: true, maal: [
+    { id: 'venn-1', navn: 'Kjenn igjen følelser' }, { id: 'venn-2', navn: 'Hva føler Bit nå?' }, { id: 'venn-3', navn: 'Lurt eller ikke lurt?' } ] });
+  /* «Jeg ser»: eleven skriver fem setninger til et myldrebilde, og en voksen godkjenner dem.
+     Hver godkjente setning teller som én riktig oppgave, så 5 setninger = ett bilde. */
+  grupper.push({ id: 'jegser', navn: 'Skrive setninger («Jeg ser»)', ikon: '🔭', skjulTom: true, maal: [
+    { id: 'jegser-1', navn: 'Første bilde godkjent (5 setninger)', krav: { oppgaver: 5, andel: 1, dager: 1 } },
+    { id: 'jegser-5', navn: 'Fem bilder godkjent', krav: { oppgaver: 20, andel: 1, dager: 1 } },
+    { id: 'jegser-10', navn: 'Alle ti bildene godkjent', krav: { oppgaver: 25, andel: 1, dager: 1 } } ] });
   (window.TL_MAAL = window.TL_MAAL || {}).lyslaget = {
     navn: 'Lyslaget',
     nokkel: 'rv-framgang-v1',                  // må starte med et av verdenens prefikser (kl-, rv-, ru-)
