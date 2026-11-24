@@ -73,22 +73,23 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
   body{background:#fff;color:#000}
   .wrap{display:none}
   body.p-lapp #lapp{display:block;font-family:'Nunito',sans-serif;color:#000;text-align:center;padding:0}
-  /* Velkomstbrevet (skrives ut eller lagres som PDF) */
-  body.p-brev #brev{display:block;font:400 11pt/1.45 'Nunito',sans-serif;color:#1B2B27}
+  /* Velkomstbrevet (skrives ut eller lagres som PDF). Størrelsene er satt slik at brevet får plass på ÉN A4-side i alle verdenene (24.11.2026). */
+  body.p-brev #brev{display:block;font:400 10.2pt/1.38 'Nunito',sans-serif;color:#1B2B27}
   #brev *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  #brev .topp{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid #1B2B27;padding-bottom:6px;margin-bottom:12px}
+  #brev .topp{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid #1B2B27;padding-bottom:4px;margin-bottom:8px}
   #brev .logo{font:700 15pt 'Fredoka',sans-serif}#brev .logo span{color:#B9861F}
-  #brev h1{font:700 22pt 'Fredoka',sans-serif;margin:0 0 4px}#brev h1 span{color:inherit}
-  #brev h2{font:700 13pt 'Fredoka',sans-serif;margin:0 0 4px}
-  #brev p{margin:0 0 7px}
-  #brev ol,#brev ul{margin:0 0 6px;padding-left:1.2em}#brev li{margin-bottom:2px}
-  #brev .kort{display:grid;grid-template-columns:1fr 34mm;gap:6mm;align-items:center;border:1.5px solid #cfd6cf;border-radius:14px;padding:11px 14px;margin:10px 0;break-inside:avoid}
+  #brev h1{font:700 20pt 'Fredoka',sans-serif;margin:0 0 3px}#brev h1 span{color:inherit}
+  #brev h2{font:700 12pt 'Fredoka',sans-serif;margin:0 0 3px}
+  #brev p{margin:0 0 5px}
+  #brev ol,#brev ul{margin:0 0 4px;padding-left:1.2em}#brev li{margin-bottom:1px}
+  #brev .kort{display:grid;grid-template-columns:1fr 26mm;gap:5mm;align-items:center;border:1.5px solid #cfd6cf;border-radius:12px;padding:7px 12px;margin:7px 0;break-inside:avoid}
+  #brev .kort p:last-child{margin-bottom:0}
   #brev .kort.elevkort{background:#FFF7E6;border-color:#F4B942}
-  #brev .kode{font:700 22pt 'Fredoka',sans-serif;letter-spacing:.12em;margin:3px 0 5px}
+  #brev .kode{font:700 18pt 'Fredoka',sans-serif;letter-spacing:.12em;margin:1px 0 3px}
   #brev .adr{font-weight:800}
-  #brev svg{width:34mm;height:34mm;display:block}
-  #brev .to{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-top:10px}
-  #brev .fot{margin-top:10px;padding-top:7px;border-top:1px solid #cfd6cf;font-size:9pt;color:#5b6763}
+  #brev svg{width:26mm;height:26mm;display:block}
+  #brev .to{display:grid;grid-template-columns:1.55fr 1fr;gap:7mm;margin-top:8px}
+  #brev .fot{margin-top:7px;padding-top:5px;border-top:1px solid #cfd6cf;font-size:8.5pt;color:#5b6763}
   #lapp .ramme{border:3px dashed #999;border-radius:24px;padding:30px;max-width:520px;margin:0 auto}
   #lapp h1{font:700 2.2rem 'Fredoka',sans-serif;margin:0 0 6px}
   #lapp .kode{font:700 3.2rem 'Fredoka',sans-serif;letter-spacing:.14em;margin:8px 0}
