@@ -45,7 +45,7 @@
 <main class="tekstside">
   <a class="tilbake" href="index.html">← Til forsiden</a>
   <h1>Personvernerklæring</h1>
-  <p class="liten">Versjon 1.2 · Gjelder fra 21. november 2026</p>
+  <p class="liten">Versjon 1.3 · Gjelder fra 24. november 2026</p>
   <p class="ingress">Tavleloftet samler så få personopplysninger som mulig. De fleste spillene lagrer ingenting om deg, og elevene logger inn med koder, ikke navn. Navn finnes bare der en lærer selv skriver dem inn i Krøniken.</p>
   <p>Tavleloftet er en samling spill, klasseprosjekter, lærerverktøy og skreddersydde læringsverdener for barneskolen. Tjenestene drives av <strong>Tavleloftet Skjelstad</strong>, et enkeltpersonforetak med org.nr. 838 831 702, Porsmyrvegen 16D, 4250 Kopervik. Erklæringen gjelder tavleloftet.no med Krøniken (kroniken.no), læringsverdenene og spillene, og Jorda rundt-spillene (jorda-rundt.no). Den forklarer hva som lagres, hvorfor, hvor lenge og hvilke rettigheter du har.</p>
   <p><a href="https://myntland.no">Myntland</a> og <a href="https://erobrenabolaget.no/personvern.html">Erobre nabolaget</a> har egne personvernerklæringer. Skoler som bruker tjenestene med elever, kan inngå <a href="databehandleravtale.html">databehandleravtale</a> med oss.</p>
@@ -56,7 +56,7 @@
     <tr><th>Situasjon</th><th>Behandlingsansvarlig</th><th>Tavleloftets rolle</th></tr>
     <tr><td>Besøk på nettstedet og henvendelser til oss</td><td>Tavleloftet</td><td>Behandlingsansvarlig</td></tr>
     <tr><td>Lærerkonto i Krøniken og Jorda rundt-spillene</td><td>Tavleloftet</td><td>Behandlingsansvarlig for selve kontoen</td></tr>
-    <tr><td>Elevdata når en skole bruker tjenestene i undervisningen (læringsverdener, Krøniken-grupper og -prøver, Jorda rundt)</td><td>Skoleeier (kommunen eller den private skolen)</td><td>Databehandler, etter databehandleravtale</td></tr>
+    <tr><td>Elevdata når en skole bruker tjenestene i undervisningen (læringsverdener, Krøniken-grupper og -prøver, Jorda rundt, sjakkturneringer)</td><td>Skoleeier (kommunen eller den private skolen)</td><td>Databehandler, etter databehandleravtale</td></tr>
     <tr><td>Spill uten innlogging</td><td>Ingen – ingenting lagres hos oss</td><td>–</td></tr>
   </table></div>
 
@@ -66,8 +66,9 @@
     <tr><th>Tjeneste</th><th>Hva som lagres</th><th>Hvor</th></tr>
     <tr><td>Nettstedet</td><td>Ingen konto. Vertsleverandøren fører en teknisk logg med IP-adresse, tidspunkt og side.</td><td>GitHub Pages</td></tr>
     <tr><td>Spill uten innlogging (for eksempel Labyrinten, Myldrejakt, Pizzabutikken)</td><td>Bare innstillinger og framgang i nettleseren på enheten. Sendes ikke til oss.</td><td>På enheten</td></tr>
-    <tr><td>Spill «mot en venn» (Fire på rad, Fyrstikkspillet, Gjett hvem, Slagskip)</td><td>En tilfeldig romkode, spilltilstanden og et valgfritt kallenavn mens dere spiller.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Spill «mot en venn» (Fire på rad, Fyrstikkspillet, Gjett hvem, Slagskip, Sjakkloftet)</td><td>En tilfeldig romkode, spilltilstanden og et valgfritt kallenavn mens dere spiller.</td><td>Firebase, Belgia</td></tr>
     <tr><td>Skreddersydde læringsverdener (Dinoparken, Lyslaget)</td><td>Elevkode og voksenkode, mynter og framgang i verdenen: antall oppgaver, riktige svar og datoen hvert mål ble nådd. Ingen navn eller diagnoser. Navnet den voksne eventuelt skriver i rapporten, lagres bare i nettleseren på den voksnes egen enhet.</td><td>Firebase, Belgia</td></tr>
+    <tr><td>Sjakkloftet – turnering</td><td>Kallenavn og påloggingskode som læreren lager, gruppa eleven hører til, trekkene i partiene, resultater og sammenlagtliste. Ingen ekte navn. Bruk kallenavn som ikke røper hvem eleven er. Elevens enhet får en anonym innlogging uten navn eller e-post. Læreren får en lærernøkkel i stedet for konto. Sjakknøtter, øvelser og spill mot datamaskinen lagrer bare framgang i nettleseren på enheten.</td><td>Firebase, Belgia. Den anonyme innloggingen: Firebase-innlogging (se under)</td></tr>
     <tr><td>Krøniken – lærer</td><td>E-postadresse og innloggingsmetode (Google eller e-post og passord).</td><td>Firebase-innlogging (se under)</td></tr>
     <tr><td>Krøniken – Mine grupper og arbeidsark</td><td>Gruppenavn og elevenes navn slik læreren skriver dem, hvilke oppgaver hver elev har gjort, og hvilke timer en elev er markert borte. Bare læreren som eier gruppa, kan se dette. Bruk gjerne fornavn eller kallenavn.</td><td>Firebase, EU</td></tr>
     <tr><td>Krøniken – prøver</td><td>Prøvekoder og elevens svar. Svarene lagres bare med koden. Hvem koden tilhører, ser bare læreren.</td><td>Firebase, EU</td></tr>
@@ -98,7 +99,7 @@
   <div class="tabell"><table>
     <tr><th>Leverandør</th><th>Hva de gjør for oss</th><th>Hvor</th></tr>
     <tr><td>Google Ireland Ltd. (Firebase)</td><td>Database og skyfunksjoner</td><td>EU: Belgia (europe-west1). Krøniken: EU, Belgia og Nederland (eur3)</td></tr>
-    <tr><td>Google (Firebase Authentication)</td><td>Innlogging for lærere og anonyme elevkontoer i Jorda rundt</td><td>Globalt, med EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
+    <tr><td>Google (Firebase Authentication)</td><td>Innlogging for lærere og anonyme elevkontoer i Jorda rundt og Sjakkloftet</td><td>Globalt, med EU-kommisjonens standardkontrakter og Googles databehandlervilkår</td></tr>
     <tr><td>GitHub, Inc. (GitHub Pages og Actions)</td><td>Leverer selve nettsidene, kjører den nattlige slettingen og lagrer krypterte sikkerhetskopier som GitHub ikke kan lese</td><td>USA, med grunnlag i EU–US Data Privacy Framework og EU-kommisjonens standardkontrakter</td></tr>
     <tr><td>Gigahost AS</td><td>E-post, bekreftelse og varsel om henvendelser</td><td>Norge</td></tr>
     <tr><td>Brevo SAS</td><td>Påmelding til og utsending av nyhetsbrevet</td><td>EU: Frankrike, Tyskland og Belgia</td></tr>
@@ -115,6 +116,7 @@
     <tr><td>Framgang i læringsverdenene, med voksenkode</td><td>Når den voksne eller vi sletter koden, innen 30 dager etter at avtalen med skolen er avsluttet, og senest 12 måneder etter siste aktivitet</td></tr>
     <tr><td>Krøniken: grupper, arbeidsark og prøver</td><td>Når læreren sletter dem, og senest 12 måneder etter siste endring</td></tr>
     <tr><td>Spill i Jorda rundt, Europa rundt og Norge rundt</td><td>Når læreren sletter spillet, og senest 12 måneder etter siste aktivitet</td></tr>
+    <tr><td>Sjakkturneringer i Sjakkloftet: serier med kallenavn, koder, partier og resultater</td><td>Når læreren sletter serien under Innstillinger, og senest 12 måneder etter siste aktivitet</td></tr>
     <tr><td>Lærerkontoer og anonyme elevkontoer</td><td>Når læreren ber om det. Ellers lærerkontoer 24 måneder og anonyme elevkontoer 12 måneder etter siste innlogging</td></tr>
     <tr><td>Henvendelser via skjemaet</td><td>12 måneder etter at de kom inn</td></tr>
     <tr><td>Nyhetsbrev</td><td>Når du melder deg av. Brevo beholder adressen på en sperreliste, så du ikke får flere e-poster fra oss.</td></tr>
@@ -133,7 +135,7 @@
   <p>Tavleloftet bruker ingen informasjonskapsler for sporing, analyse eller reklame, og viser derfor ingen samtykkeboks. Noen tjenester lagrer litt i nettleseren på enheten:</p>
   <ul>
     <li><strong>Innstillinger og framgang i spill</strong>, for eksempel lyd av eller på og hvilke baner som er løst. Dette blir på enheten.</li>
-    <li><strong>Innlogging</strong>: elevkoden i læringsverdenene og innloggingsnøkkelen fra Firebase, slik at lærere og elever holdes innlogget.</li>
+    <li><strong>Innlogging</strong>: elevkoden i læringsverdenene, turneringskoden i Sjakkloftet og innloggingsnøkkelen fra Firebase, slik at lærere og elever holdes innlogget.</li>
     <li><strong>Navn i rapporten</strong>: navnet den voksne skriver i framgangsrapporten.</li>
   </ul>
   <p>Denne lagringen er nødvendig for at tjenesten du har bedt om skal virke, og krever derfor ikke samtykke etter ekomloven. Du kan slette den når som helst i nettleserens innstillinger.</p>
