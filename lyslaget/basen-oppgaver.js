@@ -281,7 +281,7 @@
     NA.si = ['js-intro'];
     var boks = $('loBoks');
     boks.innerHTML = '<div class="lo-js">' + jsBildeknapp(a.bilde) + '<ol class="lo-jsliste">' + a.setn.map(function (t, i) {
-      return '<li><input class="lo-jsinn" data-i="' + i + '" value="' + esc(t || 'Jeg ser ') + '" maxlength="90" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" enterkeyhint="' +
+      return '<li><input class="lo-jsinn" data-i="' + i + '" value="' + esc(t || '') + '" maxlength="90" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" enterkeyhint="' +
         (i < a.setn.length - 1 ? 'next' : 'done') + '" aria-label="Setning ' + (i + 1) + '"><span class="lo-jsok" aria-hidden="true"></span></li>'; }).join('') + '</ol></div>';
     $('loFot').innerHTML = '<p class="lo-dom" id="jsMld"></p><div class="rad lo-knapper"><button id="jsFerdig">Ferdig – vis til en voksen ▶</button></div>';
     $('jsBilde').onclick = function () { jsStortBilde(a.bilde); };
