@@ -78,7 +78,7 @@ const SPILL={
       const S=this,SY=KSamler.SYMBOLER,valg=stokk(kort.map((_,i)=>i)).slice(0,3).map(i=>{const t=Math.random();return{i,e:t<.6?0:t<.9?1:2,s:rand(SY.length)};});
       opptatt=true;
       const lag=document.createElement('div');lag.className='kortlag';
-      lag.innerHTML=`<p class="hjultxt">Riktig! Velg et kort.</p><div class="bakrad">${valg.map((v,n)=>`<button class="bak" data-n="${n}" aria-label="Kort med ${SY[v.s].n}"><span class="hj">${SY[v.s].svg}</span><span class="spm">?</span><span class="gt">Du har ${stat.sy[v.s]||0}</span></button>`).join('')}</div><p class="muted" style="margin:0;text-align:center;max-width:520px">Tre like symboler kan byttes inn i ${KSamler.BYTTEBONUS} poeng.</p>`;
+      lag.innerHTML=`<p class="hjultxt">Riktig! Velg et kort.</p><div class="bakrad">${valg.map((v,n)=>`<button class="bak" data-n="${n}" aria-label="Kort ${n+1}"><span class="spm">?</span></button>`).join('')}</div><p class="muted" style="margin:0;text-align:center;max-width:520px">Tre like symboler kan byttes inn i ${KSamler.BYTTEBONUS} poeng.</p>`;
       app.appendChild(lag);
       lag.querySelectorAll('.bak').forEach(b=>b.onclick=()=>{
         if(!lag.isConnected||lag.dataset.valgt)return;lag.dataset.valgt=1;
