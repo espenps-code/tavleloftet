@@ -141,6 +141,79 @@ header .luft{flex:1}
 @keyframes opp{from{opacity:0;transform:translateY(8px)}20%{opacity:1}to{opacity:0;transform:translateY(-6px)}}
 #laster{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-family:Fredoka,sans-serif;font-size:1.3rem;z-index:1}
 @media (prefers-reduced-motion:no-preference){.dialog{animation:inn .18s ease-out}@keyframes inn{from{transform:translateY(12px);opacity:0}}}
+/* ===== Nytt utseende på menyene (november 2026): mørk blå «robotflate», ekte bilder og egne ikoner ===== */
+:root{--natt:#0e1a36;--natt2:#1b2f66;--lys:#5fd4ff;--flate:#f1f4fb}
+.ikon{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;flex:none}
+span.ikon.tegn{width:auto;height:auto;vertical-align:0}
+.flis{display:grid;place-items:center;flex:none;width:62px;height:62px;border-radius:18px;background:radial-gradient(circle at 50% 30%,#2a4a94,#0e1a36 78%);box-shadow:inset 0 0 0 2px rgba(95,212,255,.28)}
+.flis .ikon{width:80%;height:80%;vertical-align:0}
+.flis span.ikon.tegn{width:auto;height:auto;font-size:1.9rem;line-height:1}
+.flis.liten{width:36px;height:36px;border-radius:11px}
+.flis.liten span.ikon.tegn{font-size:1.15rem}
+.flis.stor{width:72px;height:72px;border-radius:20px}
+.pris{display:inline-flex;align-items:center;gap:3px;font-family:Fredoka,sans-serif;font-weight:700;white-space:nowrap;vertical-align:middle}
+.pris .ikon{width:1.35em;height:1.35em;vertical-align:0}
+/* Topplinja */
+.skilt,.brikke,#gir{background:linear-gradient(180deg,var(--natt2),var(--natt));color:#fff;border:0;box-shadow:0 4px 0 rgba(8,16,38,.4),inset 0 0 0 2px rgba(95,212,255,.32)}
+.skilt{border-radius:999px;padding:5px 20px 5px 5px;gap:10px}
+.skilt img.volt{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--lys);display:block;flex:none}
+.skilt .navn{font-size:1.15rem}
+.skilt .under{color:#b9c8ea}
+.brikke{display:inline-flex;align-items:center;gap:6px;padding:6px 16px 6px 8px;font-family:Fredoka,sans-serif;font-size:1.15rem;min-height:46px}
+.brikke .ikon{width:32px;height:32px;vertical-align:0}
+#gir{display:grid;place-items:center;height:48px;font-size:1.3rem}
+#gir .ikon{width:32px;height:32px;vertical-align:0}
+/* Merkelappene i verdenen */
+#tags button{display:inline-flex;align-items:center;gap:8px;background:#fff;border:0;border-radius:999px;padding:4px 16px 4px 4px;font-family:Fredoka,sans-serif;font-weight:600;font-size:1.02rem;box-shadow:0 4px 0 rgba(8,16,38,.3),0 0 0 2.5px var(--natt)}
+#tags button.last{background:linear-gradient(180deg,var(--natt2),var(--natt));color:#fff;border-style:none;box-shadow:0 4px 0 rgba(8,16,38,.3),inset 0 0 0 2px rgba(95,212,255,.32)}
+#tags button.last .flis{background:none;box-shadow:none}
+#tags button.kommer{background:rgba(255,255,255,.82);border-style:none;box-shadow:0 0 0 2px rgba(14,26,54,.35);padding:3px 12px 3px 3px;font-size:.9rem}
+#tags button.kommer .flis{background:#dfe5f2;box-shadow:none;width:30px;height:30px}
+@media(max-width:600px){#tags:not(.liste) button{padding:4px;font-size:1rem}#tags:not(.liste) button.last{padding:4px 12px 4px 4px}}
+#tags.liste button{justify-content:flex-start}
+/* Panelet */
+#panel{background:var(--flate);border:0;padding:0;box-shadow:0 0 0 3px var(--natt),0 -8px 30px rgba(8,16,38,.35)}
+@media(min-width:800px){#panel{border-bottom:0;width:430px;box-shadow:0 0 0 3px var(--natt),0 12px 34px rgba(8,16,38,.4)}}
+.phode{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:center;padding:12px 12px 12px 14px;background:linear-gradient(135deg,var(--natt2),var(--natt));color:#fff}
+.phode h2{margin:0;color:#fff;font-size:1.5rem}
+.phode .under{display:block;font-size:.92rem;color:#c3d0ee;margin-top:2px}
+.phode .midt{flex:1;min-width:0}
+.phode .x{flex:none;width:48px;height:48px;min-height:48px;border-radius:50%;padding:0;background:rgba(255,255,255,.16);font-size:1.35rem}
+.pkropp{padding:14px 14px 22px}
+.pkropp .del{border-top:0;padding-top:0;margin-top:20px}
+.pkropp .del>h3{font-size:.86rem;letter-spacing:.09em;text-transform:uppercase;color:var(--dus);margin:0 0 8px 4px}
+.stasjoner{display:grid;gap:10px}
+.stasjon,.rkort{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;color:var(--ink);border:0;border-radius:20px;padding:9px 12px 9px 9px;min-height:80px;font-weight:400;box-shadow:0 4px 0 #c9d3e8,0 0 0 2px #dbe2f1;transition:transform .08s}
+button.stasjon:active,button.rkort:active{transform:translateY(3px);box-shadow:0 1px 0 #c9d3e8,0 0 0 2px #dbe2f1}
+.stasjon .tekst,.rkort .tekst{flex:1;min-width:0;display:block}
+.stasjon .navn{display:block;font-family:Fredoka,sans-serif;font-weight:600;font-size:1.22rem;line-height:1.15}
+.stasjon small{display:block;font-weight:400;color:var(--dus);font-size:.88rem;line-height:1.25;margin-top:1px}
+.stasjon small.status{margin-top:4px;color:#1d5c33;font-weight:700}
+.stasjon small.status.las{color:var(--dus);display:flex;align-items:center;gap:4px}
+.stasjon small.status.las .ikon{width:1.5em;height:1.5em}
+.gaa{flex:none;font-family:Fredoka,sans-serif;font-size:2rem;line-height:1;color:var(--hoved);padding:0 2px 4px}
+.stasjon.last{background:#e7ebf5;box-shadow:0 0 0 2px #d5dcec;min-height:72px}
+.stasjon.last .flis{opacity:.75;filter:saturate(.5)}
+.rkort{border-left:0;margin-bottom:0;box-shadow:0 4px 0 #c9d3e8,0 0 0 2px #dbe2f1,inset 7px 0 0 var(--c);padding-left:16px}
+.rkort img,.rkort svg{width:66px;height:66px;border-radius:50%;object-fit:cover;border:3px solid var(--c);background:#1b2230;flex:none}
+.rkort strong{display:block;font-size:1.3rem;line-height:1.1}
+.rkort .blirtil{display:block;font-size:.95rem}
+.rkort .liten{display:block;margin-top:2px}
+.bygg{background:#fff;border-radius:20px;padding:14px;box-shadow:0 0 0 2px #dbe2f1}
+.bygg p:last-child{margin-bottom:0}
+.bygg .neste{background:var(--flate);border-radius:12px;padding:8px 12px;font-size:.95rem}
+.kjop{display:flex;justify-content:center;align-items:center;gap:6px;width:100%;min-height:58px;font-family:Fredoka,sans-serif;font-size:1.2rem;font-weight:600;background:var(--gull);color:#3a2a00;box-shadow:0 4px 0 #b98a17}
+.kjop:active{transform:translateY(3px);box-shadow:0 1px 0 #b98a17}
+.kjop:disabled{background:#cfd5e2;color:#5b6680;box-shadow:0 4px 0 #b3bbcc}
+.kjop .pris{background:rgba(58,42,0,.14);border-radius:999px;padding:2px 12px 2px 6px;margin-left:6px}
+.kjop:disabled .pris .ikon{filter:grayscale(1);opacity:.7}
+.mangler{margin:10px 0 0;text-align:center}
+.bred{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;min-height:54px;background:#fff;box-shadow:0 4px 0 #c9d3e8,0 0 0 2px #dbe2f1}
+.bred .ikon{width:34px;height:34px;vertical-align:0}
+.pkropp .linje{background:#fff;border:0;border-radius:14px;padding:6px 10px 6px 6px;margin-bottom:6px;box-shadow:0 0 0 2px #dbe2f1}
+.nivaa i{width:22px;height:9px;border-radius:5px}
+.dialog .helt{display:block;width:calc(100% + 44px);max-width:none;margin:-22px -22px 16px;aspect-ratio:900/520;object-fit:cover;object-position:50% 30%;border-radius:22px 22px 0 0}
+.sidetopp .brikke{min-height:44px}
 </style>
 </head>
 <body>
@@ -229,16 +302,16 @@ var TRINN = {
    Uten noen av delene vises en prøveoppgave. */
 var STASJONER = {
   hk:   [{id:'benk',  ik:'🔧', navn:'Arbeidsbenken', fag:'Verkstedet: ukas jobber i matte', side:'verksted.html'},
-         {id:'plan',  ik:'💛', navn:'Vennekroken',   fag:'Venner og følelser', oppg:'venner'},
+         {id:'plan',  ik:'💛', b:'venner', navn:'Vennekroken',   fag:'Venner og følelser', oppg:'venner'},
          {id:'kikk',  ik:'🔭', navn:'Kikkerten',     fag:'Jeg ser: skriv fem setninger', oppg:'jegser'}],
   pil:  [{id:'start', ik:'🚦', navn:'Startstreken',  fag:'Utrykning: matte, lesing og skriving', side:'utrykning.html'},
          {id:'depot', ik:'🛞', navn:'Depotet',       fag:'Fag 2 (f.eks. gangetabellen)'}],
   spor: [{id:'rute',  ik:'🕒', navn:'Rutetavla',     fag:'Lær klokka sammen med Spor', side:'klokka.html'},
          {id:'luke',  ik:'🎫', navn:'Billettluka',   fag:'Fag 2 (f.eks. penger)'}],
-  brum: [{id:'pause', ik:'💛', navn:'Pausebrakka',   fag:'Venner og følelser', oppg:'venner'},
+  brum: [{id:'pause', ik:'💛', b:'venner', navn:'Pausebrakka',   fag:'Venner og følelser', oppg:'venner'},
          {id:'tegn',  ik:'📐', navn:'Tegnebordet',   fag:'Fag 1 (f.eks. måling og former)'},
          {id:'lager', ik:'🧱', navn:'Materiallageret', fag:'Fag 2 (f.eks. pluss og minus)'}],
-  sky:  [{id:'utkikk',ik:'🔭', navn:'Utkikken',      fag:'Jeg ser: skriv fem setninger', oppg:'jegser'},
+  sky:  [{id:'utkikk',ik:'🔭', b:'kikk', navn:'Utkikken',      fag:'Jeg ser: skriv fem setninger', oppg:'jegser'},
          {id:'vaer',  ik:'🌦️', navn:'Værstasjonen',  fag:'Fag 2 (f.eks. tabeller og tall)'}]
 };
 /* Stasjoner uten «side» og uten «oppg» har bare en prøveoppgave. De er skjult for eleven.
@@ -337,10 +410,17 @@ function fjes(id,str){
     '<rect x="8" y="14" width="44" height="38" rx="9" fill="'+r.c1+'" stroke="'+i+'" stroke-width="3"/><rect x="15" y="24" width="30" height="13" rx="5" fill="#1b2430" stroke="'+r.c2+'" stroke-width="1.5"/>'+
     '<circle cx="23" cy="30.5" r="3.4" fill="#ffe27a"/><circle cx="37" cy="30.5" r="3.4" fill="#ffe27a"/><rect x="22" y="43" width="16" height="4" rx="2" fill="'+r.c2+'"/></svg>';
 }
+/* Ikonene er laget i Higgsfield og ligger i basen/ikon/ (ett bilde per ikon, gjennomsiktig bakgrunn).
+   Mangler et bilde, vises tegnet i stedet – så nye stasjoner virker før ikonet er laget. */
+function ikon(navn, tegn){return '<img class="ikon" src="basen/ikon/'+navn+'.webp" alt="" data-tegn="'+tegn+'" onerror="ikonFeil(this)">'}
+function ikonFeil(el){var s = document.createElement('span'); s.className = 'ikon tegn'; s.setAttribute('aria-hidden','true'); s.textContent = el.getAttribute('data-tegn'); el.replaceWith(s)}
+function pris(p){return '<span class="pris">'+ikon('skrue','🔩')+p+'</span>'}
 function nivaa(n,maks){var s='<span class="nivaa" role="img" aria-label="Trinn '+n+' av '+maks+'">';for(var i=0;i<maks;i++)s+='<i class="'+(i<n?'pa':'')+'"></i>';return s+'</span>'}
-function robotKort(id){
+function robotKort(id){   // ekte bilde av roboten. Trykk på kortet for å se hele robotkortet.
   var r = ROBOTER[id];
-  return '<div class="rkort" style="--c:'+(r.c1==='#ffffff'?r.c2:r.c1)+'">'+fjes(id)+'<div><strong>'+r.navn+'</strong> blir til '+r.blir+'<br><span class="liten">«'+esc(r.sier)+'» Liker '+esc(r.liker)+'.</span></div></div>';
+  return '<button type="button" class="rkort" data-kort="'+id+'" style="--c:'+r.ring+'" aria-label="'+r.navn+'. Vis robotkortet.">'+
+    '<img src="media/ansikt/'+id+'.jpg" alt="" onerror="this.outerHTML=fjes(\''+id+'\',66)">'+
+    '<span class="tekst"><strong>'+r.navn+'</strong><span class="blirtil">blir til '+r.blir+'</span><span class="liten">«'+esc(r.sier)+'»</span></span><span class="gaa" aria-hidden="true">›</span></button>';
 }
 function ansikt(id){
   var r = ROBOTER[id];
@@ -353,7 +433,7 @@ function visKort(id){
   var forrige = ROBOTER[REKKE[(aktivtKort+n-1)%n]], neste = ROBOTER[REKKE[(aktivtKort+1)%n]];
   var prikker = function(a, tittel){var h = '<span class="prikker" role="img" aria-label="'+tittel+': '+a+' av 5">'; for(var i=1;i<=5;i++) h += '<i class="'+(i<=a?'p':'')+'"></i>'; return h+'</span>'};
   var sted = OMRADER.filter(function(o){return o.robot===id})[0], hit = '';
-  if(S && sted && !sted.kommer) hit = '<button class="hit" data-omr="'+sted.id+'">'+sted.ik+' Gå til '+sted.navn+'</button>';
+  if(S && sted && !sted.kommer) hit = '<button class="hit" data-omr="'+sted.id+'">Gå til '+sted.navn+'</button>';
   else if(sted && sted.kommer) hit = '<p class="liten" style="margin-top:12px">'+sted.navn+' kommer senere.</p>';
   else if(r.lag==='Rust-gjengen') hit = '<p class="liten" style="margin-top:12px">Rust-gjengen kan flytte inn på skrotplassen senere.</p>';
   dlg.innerHTML = '<div class="kort" style="--k:'+r.k+';--kt:'+r.kt+';--kp:'+r.kp+'">'+
@@ -374,7 +454,7 @@ function lukkKort(){var dlg = document.getElementById('kortdlg'); if(dlg.open) d
 var sideTimer = null;
 function apneSide(url, tittel, kamera){
   var l = document.getElementById('side');
-  l.innerHTML = '<div class="sidetopp"><button data-a="lukkside">← Tilbake til basen</button><strong>'+esc(tittel)+'</strong><span class="luft"></span><span class="brikke" id="sideskruer">🔩 '+S.skruer+'</span></div>'+
+  l.innerHTML = '<div class="sidetopp"><button data-a="lukkside">← Tilbake til basen</button><strong>'+esc(tittel)+'</strong><span class="luft"></span><span class="brikke" id="sideskruer">'+ikon('skrue','🔩')+S.skruer+'</span></div>'+
     '<iframe src="'+url+'" title="'+esc(tittel)+'"'+(kamera?' allow="camera; microphone; gyroscope; accelerometer"':'')+'></iframe>';
   l.className = 'apen';
   var f = l.querySelector('iframe'), forste = true;
@@ -384,87 +464,102 @@ function apneSide(url, tittel, kamera){
 }
 function oppdaterSide(){
   var fikk = sjekkJobber(), el = document.getElementById('sideskruer'); if(!fikk || !el) return;
-  el.innerHTML = '🔩 '+S.skruer+'<b>+'+fikk+'</b>'; el.classList.add('hopp'); setTimeout(function(){el.classList.remove('hopp')}, 500);
+  el.innerHTML = ikon('skrue','🔩')+S.skruer+'<b>+'+fikk+'</b>'; el.classList.add('hopp'); setTimeout(function(){el.classList.remove('hopp')}, 500);
 }
 function lukkSide(){clearInterval(sideTimer); sideTimer = null; sjekkJobber(); var l = document.getElementById('side'); l.className = ''; l.innerHTML = ''; tegn()}
 
+/* Ett kort per oppgavestasjon. last = 1: stasjonen ligger hos en robot som ikke har flyttet inn (kortet tar deg dit).
+   last = 2: samme, men vist inne på området selv (bare til å se på). */
+function stasjonKort(o, st, last){
+  var flis = '<span class="flis">'+ikon(st.b||st.id, st.ik)+'</span>', tekst = '<span class="navn">'+st.navn+'</span><small>'+st.fag+'</small>';
+  if(last){
+    var inn = flis+'<span class="tekst">'+tekst+'<small class="status las">'+ikon('las','🔒')+'Åpner når '+ROBOTER[o.robot].navn+' flytter inn</small></span>';
+    return last===2 ? '<div class="stasjon last">'+inn+'</div>' : '<button class="stasjon last" data-omr="'+o.id+'">'+inn+'<span class="gaa" aria-hidden="true">›</span></button>';
+  }
+  var under = st.oppg && window.LysOppgaver ? LysOppgaver.under(st) : '';
+  return '<button class="stasjon" data-stasjon="'+o.id+':'+st.id+'">'+flis+'<span class="tekst">'+tekst+(under?'<small class="status">'+esc(under)+'</small>':'')+'</span><span class="gaa" aria-hidden="true">›</span></button>';
+}
 function stasjonsKnapper(o){
   var liste = synlige(o.id), grunn = OPPSETT.skruerPerOppgave + bonus(o.id);
   if(!liste.length) return '<p class="liten">Oppgavene her kommer senere.</p>';
-  return '<div class="grid">'+liste.map(function(st){
-    var under = st.oppg && window.LysOppgaver ? LysOppgaver.under(st) : '';
-    return '<button class="stasjon" data-stasjon="'+o.id+':'+st.id+'"><span class="ik">'+st.ik+'</span>'+st.navn+'<small>'+st.fag+'</small>'+(under?'<small class="status">'+esc(under)+'</small>':'')+'</button>'}).join('')+'</div>'+
-    '<p class="liten" style="margin-top:8px">Hver riktig oppgave her gir 🔩 '+grunn+' skruer.'+
-      (liste.some(function(st){return st.oppg==='jegser'}) ? ' Et godkjent «Jeg ser»-bilde gir 🔩 '+(15+bonus(o.id))+'.' : '')+'</p>';
+  return '<div class="stasjoner">'+liste.map(function(st){return stasjonKort(o, st)}).join('')+'</div>'+
+    '<p class="liten" style="margin:10px 4px 0">Hver riktig oppgave her gir '+pris(grunn)+' skruer.'+
+      (liste.some(function(st){return st.oppg==='jegser'}) ? ' Et godkjent «Jeg ser»-bilde gir '+pris(15+bonus(o.id))+'.' : '')+'</p>';
+}
+function andreStasjoner(){   // vises i hovedkvarteret: oppgaver som venter hos roboter som ikke har flyttet inn ennå
+  var h = robotomr().filter(function(a){return S.omr[a.id] < 2}).map(function(a){return synlige(a.id).map(function(st){return stasjonKort(a, st, 1)}).join('')}).join('');
+  return h ? '<div class="del"><h3>Flere oppgaver hos robotene</h3><div class="stasjoner">'+h+'</div></div>' : '';
 }
 function formKnapp(o){
   var r = ROBOTER[o.robot];
-  return '<button class="sek" data-form="'+o.id+'">🔁 '+(S.form[o.id] ? 'Forvandle tilbake til robot' : 'Forvandle til '+r.blir)+'</button>';
+  return '<button class="sek bred" data-form="'+o.id+'">'+ikon('forvandle','🔁')+(S.form[o.id] ? 'Forvandle tilbake til robot' : 'Forvandle til '+r.blir)+'</button>';
 }
+function mangler(p){return S.skruer<p ? '<p class="liten mangler">Du mangler '+(p-S.skruer)+' skruer. Løs oppgaver for å tjene flere.</p>' : ''}
 
 /* ---------- Topplinje og merkelapper ---------- */
 function tegnTopp(){
-  document.getElementById('toppv').innerHTML = '<div class="skilt">'+fjes('volt',36)+
+  document.getElementById('toppv').innerHTML = '<div class="skilt"><img class="volt" src="media/ansikt/volt.jpg" alt="" onerror="this.outerHTML=fjes(\'volt\',40)">'+
     '<span class="navn">Lyslaget-basen<span class="under">Nivå '+S.hk+' · '+HK[S.hk-1].navn+'</span></span></div>';
-  document.getElementById('topph').innerHTML = '<span class="brikke" title="Skruer">🔩 '+S.skruer+'</span><span class="brikke" title="Ladeplasser i bruk">🔋 '+antallEid()+'/'+S.hk+'</span>'+
-    '<button id="gir" data-a="voksen" aria-label="Voksenmeny">⚙️</button>';
+  document.getElementById('topph').innerHTML = '<span class="brikke" title="Skruer">'+ikon('skrue','🔩')+S.skruer+'</span><span class="brikke" title="Ladeplasser i bruk">'+ikon('lader','🔋')+antallEid()+'/'+S.hk+'</span>'+
+    '<button id="gir" data-a="voksen" aria-label="Voksenmeny">'+ikon('tannhjul','⚙️')+'</button>';
 }
 function tegnTags(){
   document.getElementById('tags').innerHTML = OMRADER.map(function(o){
-    if(o.kommer) return '<button class="kommer" data-omr="'+o.id+'" aria-label="'+o.navn+', kommer senere">🚧<span class="t"> Kommer</span></button>';
-    return eier(o.id) ? '<button data-omr="'+o.id+'" aria-label="'+o.navn+'">'+o.ik+'<span class="t"> '+o.navn+'</span></button>'
-                      : '<button class="last" data-omr="'+o.id+'" aria-label="'+o.navn+', til salgs for '+PRIS.omr[0]+' skruer">🔒<span class="t"> Til salgs ·</span> 🔩'+PRIS.omr[0]+'</button>'}).join('');
+    if(o.kommer) return '<button class="kommer" data-omr="'+o.id+'" aria-label="'+o.navn+', kommer senere"><span class="flis liten">'+ikon('kommer','🚧')+'</span><span class="t">Kommer</span></button>';
+    return eier(o.id) ? '<button data-omr="'+o.id+'" aria-label="'+o.navn+'"><span class="flis liten">'+ikon(o.id,o.ik)+'</span><span class="t">'+o.navn+'</span></button>'
+                      : '<button class="last" data-omr="'+o.id+'" aria-label="'+o.navn+', til salgs for '+PRIS.omr[0]+' skruer"><span class="flis liten">'+ikon('las','🔒')+'</span><span class="t">Til salgs</span>'+pris(PRIS.omr[0])+'</button>'}).join('');
 }
 
-/* ---------- Panelet for hvert område ---------- */
+/* ---------- Panelet for hvert område ----------
+   Hver panel-funksjon gir [linja under navnet i toppfeltet, innholdet]. */
 function panelHK(o){
   var n = S.hk, p = PRIS.hk[n-1], h = robotKort('volt');
-  h += '<p><strong>Nivå '+n+' av 5: '+HK[n-1].navn+'.</strong> '+nivaa(n,5)+'<br><span class="liten">'+HK[n-1].hva+'</span></p>';
-  if(n<5) h += '<button data-hk="1"'+(S.skruer<p?' disabled':'')+'>Bygg ut til «'+HK[n].navn+'» 🔩'+p+'</button>'+
-    '<p class="liten" style="margin-top:8px">Du får: '+HK[n].hva+(S.skruer<p?' Du mangler '+(p-S.skruer)+' skruer.':'')+'</p>';
-  else h += '<span class="merke">Ferdig utbygd</span>';
-  h += '<div class="rad" style="margin-top:10px">'+formKnapp(o)+'</div>';
-  h += '<div class="del"><h3>Oppgaver</h3>'+stasjonsKnapper(o)+'</div>';
-  h += '<div class="del"><h3>Ladeplasser</h3><p class="liten">Hovedkvarteret har '+n+' '+(n===1?'ladeplass':'ladeplasser')+'. Hvert robotområde trenger én. Bygg ut hovedkvarteret for å få flere.</p>'+
+  h += '<div class="del"><h3>Oppgaver</h3>'+stasjonsKnapper(o)+'</div>'+andreStasjoner();
+  h += '<div class="del"><h3>Bygg ut hovedkvarteret</h3><div class="bygg"><p><strong>Nivå '+n+' av 5: '+HK[n-1].navn+'</strong> '+nivaa(n,5)+'<br><span class="liten">'+HK[n-1].hva+'</span></p>'+
+    (n<5 ? '<p class="neste"><strong>Neste: '+HK[n].navn+'.</strong> '+HK[n].hva+'</p><button class="kjop" data-hk="1"'+(S.skruer<p?' disabled':'')+'>Bygg ut'+pris(p)+'</button>'+mangler(p)
+         : '<span class="merke">Ferdig utbygd</span>')+'</div>'+
+    '<div style="margin-top:10px">'+formKnapp(o)+'</div></div>';
+  h += '<div class="del"><h3>Ladeplasser</h3><p class="liten" style="margin:0 4px 8px">Hovedkvarteret har '+n+' '+(n===1?'ladeplass':'ladeplasser')+'. Hvert robotområde trenger én. Bygg ut hovedkvarteret for å få flere.</p>'+
     robotomr().map(function(a){var k = S.omr[a.id];
-      return '<div class="linje"><span class="voks">'+a.ik+' '+a.navn+'</span>'+(k>=2?'<span class="merke">'+ROBOTER[a.robot].navn+' er på plass</span>':k===1?'<span class="merke vent">Bygd, venter på robot</span>':'<span class="merke vent">Ikke bygd</span>')+'</div>'}).join('')+'</div>';
-  h += '<div class="del"><h3>Kommer senere</h3><p class="liten">❓ Ukens robotquiz · 📖 Bøkene om Lyslaget · flere roboter på de ledige tomtene</p></div>';
-  return h;
+      return '<div class="linje"><span class="flis liten">'+ikon(a.id,a.ik)+'</span><span class="voks">'+a.navn+'</span>'+(k>=2?'<span class="merke">'+ROBOTER[a.robot].navn+' er på plass</span>':k===1?'<span class="merke vent">Bygd, venter på robot</span>':'<span class="merke vent">Ikke bygd</span>')+'</div>'}).join('')+'</div>';
+  h += '<div class="del"><h3>Kommer senere</h3><p class="liten" style="margin:0 4px">Ukens robotquiz · Bøkene om Lyslaget · flere roboter på de ledige tomtene</p></div>';
+  return ['Nivå '+n+' av 5 · '+HK[n-1].navn, h];
 }
 function panelOmr(o){
   var n = S.omr[o.id], r = ROBOTER[o.robot], p = PRIS.omr[n], t = TRINN[o.id], h = '';
+  var venter = function(){var l = synlige(o.id); return l.length ? '<div class="del"><h3>Oppgaver som venter her</h3><div class="stasjoner">'+l.map(function(st){return stasjonKort(o, st, 2)}).join('')+'</div></div>' : ''};
   if(n===0){
     var full = ledigePlasser()<1;
-    return '<p><strong>Til salgs.</strong> '+o.om+'</p><p class="liten">Du får: '+t[0]+'.</p><p class="stort">🔩 '+p+'</p>'+
-      '<button data-bygg="'+o.id+'"'+(S.skruer<p||full?' disabled':'')+'>Bygg området</button>'+
-      (full ? '<p class="liten" style="margin-top:8px">Hovedkvarteret har ingen ledig ladeplass. Bygg ut hovedkvarteret først.</p>'
-            : S.skruer<p ? '<p class="liten" style="margin-top:8px">Du mangler '+(p-S.skruer)+' skruer. Løs oppgaver i hovedkvarteret.</p>' : '');
+    return ['Til salgs', '<div class="bygg"><p>'+o.om+'</p><p class="neste"><strong>Du får:</strong> '+t[0]+'.</p>'+
+      '<button class="kjop" data-bygg="'+o.id+'"'+(S.skruer<p||full?' disabled':'')+'>Bygg området'+pris(p)+'</button>'+
+      (full ? '<p class="liten mangler">Hovedkvarteret har ingen ledig ladeplass. Bygg ut hovedkvarteret først.</p>' : mangler(p))+'</div>'+venter()];
   }
   if(n===1){
-    return '<p><strong>Området er bygd,</strong> men '+r.navn+' har ikke flyttet inn ennå.</p>'+robotKort(o.robot)+
-      '<button class="gull" data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Kall inn '+r.navn+' 🔩'+p+'</button>'+
-      (S.skruer<p?'<p class="liten" style="margin-top:8px">Du mangler '+(p-S.skruer)+' skruer.</p>':'')+
-      '<p class="liten" style="margin-top:8px">Oppgavene her åpner når '+r.navn+' er på plass.</p>';
+    return ['Bygd – venter på '+r.navn, robotKort(o.robot)+'<div class="bygg" style="margin-top:12px"><p><strong>Området er bygd,</strong> men '+r.navn+' har ikke flyttet inn ennå. Oppgavene åpner når '+r.navn+' er på plass.</p>'+
+      '<button class="kjop" data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Kall inn '+r.navn+pris(p)+'</button>'+mangler(p)+'</div>'+venter()];
   }
-  h += robotKort(o.robot)+'<div class="rad">'+formKnapp(o)+'</div>';
+  h += robotKort(o.robot);
   h += '<div class="del"><h3>Oppgaver hos '+r.navn+'</h3>'+stasjonsKnapper(o)+'</div>';
-  h += '<div class="del"><h3>Bygg ut</h3><div class="linje"><span class="voks"><strong>'+o.navn+'</strong> '+nivaa(n,4)+'<br><span class="liten">'+(n<4?'Neste: '+t[n]+'. Gir én skrue ekstra per oppgave her.':'Alt er bygd.')+'</span></span>'+
-    (n>=4?'<span class="merke">Ferdig</span>':'<button data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Bygg ut 🔩'+p+'</button>')+'</div></div>';
-  return h;
+  h += '<div class="del"><h3>Bygg ut området</h3><div class="bygg"><p><strong>Trinn '+n+' av 4</strong> '+nivaa(n,4)+'</p>'+
+    (n<4 ? '<p class="neste"><strong>Neste:</strong> '+t[n]+'. Gir én skrue ekstra per oppgave her.</p><button class="kjop" data-bygg="'+o.id+'"'+(S.skruer<p?' disabled':'')+'>Bygg ut'+pris(p)+'</button>'+mangler(p)
+         : '<span class="merke">Alt er bygd</span>')+'</div>'+
+    '<div style="margin-top:10px">'+formKnapp(o)+'</div></div>';
+  return [r.navn+' bor her · trinn '+n+' av 4', h];
 }
 function panelFri(o){
-  return '<p>'+o.om+'</p><button class="gull" data-side="'+o.id+'">📷 Start kameraet</button>'+
-    '<p class="liten" style="margin-top:10px">iPaden spør om lov til å bruke kameraet. Bildet blir på iPaden og sendes ikke noe sted.</p>'+
-    '<div class="del"><h3>Mangler du robotkort?</h3><p class="liten">Kortene kan skrives ut.</p><a href="robotkort/Robotkort-utskrift.pdf" target="_blank" rel="noopener">Åpne robotkortene til utskrift</a></div>'+
-    '<div class="del"><h3>Robotene</h3><p class="liten">Trykk på en robot for å se kortet.</p><div class="lag">'+REKKE.map(ansikt).join('')+'</div></div>';
+  return ['Åpent for alle', '<div class="bygg"><p>'+o.om+'</p><button class="kjop" data-side="'+o.id+'">Start kameraet</button>'+
+    '<p class="liten mangler">iPaden spør om lov til å bruke kameraet. Bildet blir på iPaden og sendes ikke noe sted.</p></div>'+
+    '<div class="del"><h3>Mangler du robotkort?</h3><p class="liten" style="margin:0 4px">Kortene kan skrives ut. <a href="robotkort/Robotkort-utskrift.pdf" target="_blank" rel="noopener">Åpne robotkortene til utskrift</a></p></div>'+
+    '<div class="del"><h3>Robotene</h3><p class="liten" style="margin:0 4px 8px">Trykk på en robot for å se kortet.</p><div class="lag">'+REKKE.map(ansikt).join('')+'</div></div>'];
 }
 function tegnPanel(){
   var p = document.getElementById('panel');
   if(!apen){p.className=''; p.innerHTML=''; return}
-  var o = omr(apen), topp = '<div class="rad" style="margin-bottom:8px"><h2 style="flex:1;margin:0">'+o.ik+' '+o.navn+'</h2><button class="sek" data-a="tilbake">✕ Lukk</button></div>';
+  var o = omr(apen), d = o.kommer ? ['Kommer senere', '<div class="bygg"><p>'+o.om+'</p><p class="liten">Tomta er satt av. Når området er laget, kan det kjøpes på samme måte som de andre.</p></div>'+(o.robot?'<div style="margin-top:12px">'+robotKort(o.robot)+'</div>':'')]
+    : o.fri ? panelFri(o) : o.id==='hk' ? panelHK(o) : panelOmr(o);
   p.className = 'apen';
-  p.innerHTML = topp + (o.kommer ? '<p><strong>Kommer senere.</strong> '+o.om+'</p>'+(o.robot?robotKort(o.robot):'')+'<p class="liten">Tomta er satt av. Når området er laget, kan det kjøpes på samme måte som de andre.</p>'
-    : o.fri ? panelFri(o) : o.id==='hk' ? panelHK(o) : panelOmr(o));
+  p.innerHTML = '<div class="phode"><span class="flis stor">'+ikon(o.kommer?'kommer':o.id, o.ik)+'</span><div class="midt"><h2>'+o.navn+'</h2><span class="under">'+d[0]+'</span></div>'+
+    '<button class="x" data-a="tilbake" aria-label="Lukk">✕</button></div><div class="pkropp">'+d[1]+'</div>';
 }
 function tegn(){tegnTopp(); tegnTags(); tegnPanel(); if(window.sync3D) window.sync3D()}
 function apne(id){apen = id; tegnPanel(); document.getElementById('panel').scrollTop = 0; if(window.fokus3D) window.fokus3D(id)}
@@ -478,12 +573,12 @@ function dialog(html, etter){
 }
 function lukk(){document.getElementById('lag').innerHTML=''; tegn()}
 function velkommen(){
-  dialog('<div class="rad" style="margin-bottom:8px">'+fjes('volt',64)+'<h2 style="margin:0">Velkommen, mekaniker!</h2></div>'+
+  dialog('<img class="helt" src="media/kort/volt.jpg" alt="Volt som robot og som buss" onerror="this.remove()">'+
+    '<h2>Velkommen, mekaniker!</h2>'+
     '<p>Lyslaget trenger en base. Du starter med et lite verksted og roboten Volt.</p>'+
     '<p>Løs oppgaver og tjen skruer. Bruk skruene til å bygge ut hovedkvarteret og lage egne områder til robotene.</p>'+
-    '<button data-a="start">Start</button>');
+    '<button class="kjop" data-a="start">Start</button>');
 }
-
 /* ---------- Voksenmenyen ----------
    På Tavleloftet (eleven er logget inn med kode) åpnes menyen med voksenkoden fra velkomstbrevet.
    I den frittstående utgaven åpnes den rett fra tannhjulet. */
@@ -503,9 +598,9 @@ function provVoksenkode(){
 function voksenMeny(){
   var o = window.LysOppgaver ? LysOppgaver.status() : null, inne = !!(window.TL && TL.kode);
   dialog('<h2>Voksenmeny</h2><p>Løste oppgaver totalt: <strong>'+S.oppg+'</strong></p>'+
-    OMRADER.filter(function(a){return !a.kommer && !a.fri}).map(function(a){return '<div class="linje"><span class="voks">'+a.ik+' '+a.navn+'</span><strong>'+(S.lost[a.id]||0)+'</strong></div>'}).join('')+
-    (o ? '<div class="del"><div class="linje"><span class="voks">💛 Venner og følelser</span><strong>Nivå '+o.venner.apnet+' av 3</strong></div>'+
-         '<div class="linje"><span class="voks">🔭 Jeg ser'+(o.jegser.venter?' <span class="merke vent">venter på godkjenning</span>':'')+'</span><strong>'+o.jegser.godkjent+' av '+o.jegser.av+' bilder</strong></div></div>' : '')+
+    OMRADER.filter(function(a){return !a.kommer && !a.fri}).map(function(a){return '<div class="linje"><span class="flis liten">'+ikon(a.id,a.ik)+'</span><span class="voks">'+a.navn+'</span><strong>'+(S.lost[a.id]||0)+'</strong></div>'}).join('')+
+    (o ? '<div class="del"><div class="linje"><span class="flis liten">'+ikon('venner','💛')+'</span><span class="voks">Venner og følelser</span><strong>Nivå '+o.venner.apnet+' av 3</strong></div>'+
+         '<div class="linje"><span class="flis liten">'+ikon('kikk','🔭')+'</span><span class="voks">Jeg ser'+(o.jegser.venter?' <span class="merke vent">venter på godkjenning</span>':'')+'</span><strong>'+o.jegser.godkjent+' av '+o.jegser.av+' bilder</strong></div></div>' : '')+
     '<div id="vtid"></div>'+
     (inne ? '<p style="margin-top:10px"><a href="../rapport.html" target="_blank" rel="noopener">Se rapporten</a> (åpnes med voksenkoden)</p>' : '')+
     '<div class="rad" style="margin-top:14px"><button class="sek" data-a="lukk">Lukk</button>'+(inne ? '<button class="sek" data-a="loggut">Bytt elev (logg ut)</button>' : '')+'<button class="rod" data-a="nullstill">Nullstill spillet</button></div>',
@@ -534,7 +629,7 @@ function klikk(e){
     if(st.side && SIDER) return apneSide(st.side, st.navn);
     if(st.oppg && window.LysOppgaver && LysOppgaver.har(st)) return LysOppgaver.start(st, del[0]);
     return startOppgave(st, function(){var m = belonning(del[0]);
-      dialog('<h2>✅ Riktig!</h2><p class="stort">+'+m+' 🔩</p><p style="text-align:center">Du har nå '+S.skruer+' skruer.</p>'+
+      dialog('<h2>✅ Riktig!</h2><p class="stort">+'+m+' '+ikon('skrue','🔩')+'</p><p style="text-align:center">Du har nå '+S.skruer+' skruer.</p>'+
         '<div class="rad"><button data-stasjon="'+d.stasjon+'">En til</button><button class="sek" data-a="lukk">Ferdig</button></div>');
       tegnTopp();
     })}
@@ -666,8 +761,14 @@ const S2 = Math.SQRT2, UW = (u,w) => [(u+w)/S2, (w-u)/S2], tilUW = (x,z) => [(x-
 const O = id => OMRADER.find(o => o.id===id);
 const KYST = [[-320,72],[-110,66],[-80,62],[-60,50],[-45,57],[-30,48],[-18,46],[-8,53],[10,51],[25,56],[45,48],[60,53],[80,45],[110,42],[320,34]];   // kystlinja
 const kyst = u => { for(let i=1;i<KYST.length;i++) if(u <= KYST[i][0]){ const a = KYST[i-1], b = KYST[i]; return a[1]+(b[1]-a[1])*(u-a[0])/(b[0]-a[0]); } return 34; };
-const ELV = [[-52,-58],[-45,-44],[-38,-24],[-31,-8],[-30,10],[-25,28],[-18,45.5]], ELVB = 5;   // elva fra fjellet til sjøen
+const ELV = [[-52,-58],[-45,-44],[-38,-24],[-31,-8],[-30,10],[-25,28],[-19.3,42.25]], ELVB = 5;   // elva fra fjellet til sjøen. Det siste punktet er kanten der fossen faller ned i vika
 const avstElv = (u,w) => { let m = 1e9; for(let i=1;i<ELV.length;i++){ const a = ELV[i-1], b = ELV[i], dx = b[0]-a[0], dy = b[1]-a[1], t = Math.max(0, Math.min(1, ((u-a[0])*dx+(w-a[1])*dy)/(dx*dx+dy*dy))); m = Math.min(m, Math.hypot(u-a[0]-dx*t, w-a[1]-dy*t)); } return m; };
+/* Elvemunningen: et hakk i kysten, like bredt som elva. Der faller elva ned i sjøen. */
+const MUN = (() => { const a = ELV[ELV.length-2], b = ELV[ELV.length-1], l = Math.hypot(b[0]-a[0], b[1]-a[1]), t = [(b[0]-a[0])/l, (b[1]-a[1])/l], n = [t[1], -t[0]], h = ELVB/2+.1;
+  return { t, v:[b[0]-n[0]*h, b[1]-n[1]*h], h:[b[0]+n[0]*h, b[1]+n[1]*h] }; })();
+function hakk(pts){ const treff = c => { for(let i=1;i<pts.length;i++){ const p = pts[i-1], q = pts[i], ex = q[0]-p[0], ey = q[1]-p[1], d = MUN.t[0]*ey - MUN.t[1]*ex; if(Math.abs(d) < 1e-9) continue;
+      const s = ((p[0]-c[0])*ey - (p[1]-c[1])*ex)/d, r = ((p[0]-c[0])*MUN.t[1] - (p[1]-c[1])*MUN.t[0])/d; if(s > 0 && r >= 0 && r <= 1) return [c[0]+MUN.t[0]*s, c[1]+MUN.t[1]*s]; } return c; };
+  const A = treff(MUN.v), B = treff(MUN.h); return pts.filter(p => p[0] < A[0]).concat([A, MUN.v, MUN.h, B], pts.filter(p => p[0] > B[0])); }
 /* Svingete linjer: en myk kurve gjennom noen punkter, delt opp i korte rette biter */
 function bane(punkter){ const c = new THREE.CatmullRomCurve3(punkter.map(p => new THREE.Vector3(p[0],0,p[1])), false, 'centripetal'), ps = c.getSpacedPoints(Math.ceil(c.getLength()/1.2)); let d = 0;
   const pts = ps.map((p,i) => { if(i) d += p.distanceTo(ps[i-1]); return { x:p.x, z:p.z, d }; }); pts.lengde = d; return pts; }
@@ -685,7 +786,7 @@ const avstBane = (u,w) => { let m = 1e9; for(const p of SKINNER) m = Math.min(m,
 const FJELL = [];
 function flate(pts, topp, tykk, farge){ const s = new THREE.Shape(); pts.forEach((p,i) => { const [x,z] = UW(p[0],p[1]); i ? s.lineTo(x,z) : s.moveTo(x,z); });
   const geo = new THREE.ExtrudeGeometry(s, { depth:tykk, bevelEnabled:false }); geo.rotateX(PI/2); return flat(legg(scene, geo, farge, 0, topp, 0)); }
-function band(pts, bredde, y, farge){ pts.forEach((p,i) => { const [x,z] = UW(p[0],p[1]); flat(cyl(scene,bredde/2,bredde/2,.02,10,farge,x,y,z));
+function band(pts, bredde, y, farge, apen){ pts.forEach((p,i) => { const [x,z] = UW(p[0],p[1]); if(!(apen && i===pts.length-1)) flat(cyl(scene,bredde/2,bredde/2,.02,10,farge,x,y,z));   // apen = ingen rund ende på det siste punktet
   if(i){ const [x0,z0] = UW(pts[i-1][0],pts[i-1][1]); flat(box(scene,Math.hypot(x-x0,z-z0),.02,bredde,farge,(x+x0)/2,y,(z+z0)/2)).rotation.y = -Math.atan2(z-z0,x-x0); } }); }
 function fjell(u, w, r, h, farge, sno){ const [x,z] = UW(u,w), rot = rand()*PI; cyl(scene, r*.12, r, h, 7, farge, x, h/2-.1, z).rotation.y = rot;
   if(sno) flat(cyl(scene, r*.12+.03, r*.42+.03, h*.34, 7, 0xf4f6f8, x, h*.83-.1, z)).rotation.y = rot; FJELL.push({u,w,r}); }
@@ -696,8 +797,14 @@ function blob(x, z, r, o){ o = o||{}; const N = o.n||12, f = []; for(let i=0;i<N
   return flat(legg(scene, geo, o.farge, x, topp-(3+topp)/2, z)); }
 { const hav = legg(scene, new THREE.CylinderGeometry(420,420,.4,28), new THREE.MeshStandardMaterial({color:0x7ecbea,roughness:.35,flatShading:true}), 0, -5, 0); hav.castShadow = hav.receiveShadow = false;
   const bak = [[320,-300],[-320,-300]];
-  flate(KYST.concat(bak), 0, 3, GRESS); flate(KYST.map(p => [p[0], p[1]+4.5]).concat(bak), -2.8, 2.2, 0xe6d6a0);
-  band(ELV, ELVB+2.4, .015, 0xe3d6a2); band(ELV, ELVB, .03, 0x7ecbea);
+  flate(hakk(KYST).concat(bak), 0, 3, GRESS); flate(hakk(KYST.map(p => [p[0], p[1]+4.5])).concat(bak), -2.8, 2.2, 0xe6d6a0);
+  band(ELV, ELVB+2.4, .015, 0xe3d6a2, true); band(ELV, ELVB, .03, 0x7ecbea, true);
+  { const e = ELV[ELV.length-1], [ex,ez] = UW(e[0],e[1]), [tx,tz] = UW(MUN.t[0],MUN.t[1]), f = gruppe(scene, ex, ez, -Math.atan2(tz,tx));   // fossen: x peker ut mot sjøen
+    flat(box(f, .5, 4.9, ELVB, 0x8fd3ee, .2, -2.4, 0));
+    [[-1.6,.9,3.6],[.3,.6,4.4],[1.7,.8,3]].forEach(k => flat(box(f, .12, k[2], k[1], 0xeaf7fd, .47, .05-k[2]/2, k[0])));                          // hvite striper i fossen
+    flat(box(f, .9, .1, ELVB, 0xeaf7fd, .1, .06, 0));                                                                                           // skum på kanten
+    [[1.3,-1.2,1.5],[1.7,.9,1.7],[2.9,-.3,1.2],[3.7,1.1,.8]].forEach(k => flat(cyl(f, k[2], k[2], .08, 8, 0xeaf7fd, k[0], -4.76, k[1])));       // skum der fossen treffer sjøen
+    [[-.6,-3.7,.9],[-.3,3.8,1.1],[1,4,.6]].forEach(k => { const m = legg(f, new THREE.DodecahedronGeometry(k[2],0), 0x9a9fa3, k[0], .3, k[1]); m.scale.y = .7; m.rotation.set(rand(),rand(),0); }); }   // steiner ved kanten
   for(let u=-125;u<=125;u+=21){ const h = R(11,19); fjell(u+R(-4,4), -70+R(-3,3), R(15,19), h, en([0x9a9d93,0xa9a79b,0x8f948a]), h>14.5); }   // fjellkjeden bak
   for(let u=-110;u<=110;u+=36) fjell(u+R(-6,6), -98, R(22,28), R(22,30), en([0x8f948a,0x9a9d93]), true);
   [[0,-1],[SKINNER.lengde,1]].forEach(k => { const e = paa(SKINNER,k[0]); fjell(SU+e.x+e.tx*8*k[1], SW+e.z+e.tz*8*k[1], 15, 11, 0x86b070); });                                                               // åsene med tunnelene

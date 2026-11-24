@@ -12,7 +12,7 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
   innlogging (`elev/` og `lyslaget/logginn.html` sender til `basen.html`). Den gamle forsiden ligger fortsatt på `lyslaget/index.html`.
   Verden-ID er fortsatt `lyslaget`. Lagring: `lysbase-spill` og `lysbase-jegser-v1` (prefikset `lysbase-` står i `js/tavleloftet-elev.js`).
   Oppgavene i verdenen ligger i `lyslaget/basen-oppgaver.js`: Vennekroken (sosiale ferdigheter med roboten Bit, tre nivåer) og
-  «Jeg ser» (fem setninger til et myldrebilde, en voksen holder «Godkjenn» inne). Bilder og lyd: `lyslaget/basen/`.
+  «Jeg ser» (fem setninger til et myldrebilde, en voksen holder «Godkjenn» inne). Bilder og lyd: `lyslaget/basen/`. Ikonene i menyene (laget i Higgsfield 24.11.2026, gjennomsiktig bakgrunn) ligger i `lyslaget/basen/ikon/`; originalene og klippeskriptet ligger i `Skole\Robotmatte\basen\ikon\original`. Mangler et ikon, vises emoji-tegnet i stedet.
   Hør gjennom klippene på `lyslaget/lydsjekk-basen.html`. Kilden er `Skole\Robotmatte` (frittstående utgave uten innlogging). Se `maler/lyslagetverden/LES-MEG.md`.
 - `dinoparken2/` – Dinoparken med oppgavepakker (egne oppgaver per elev). Første pakke: lyder, venner og klosser. Se `dinoparken2/LES-MEG.md`
 - `dinodalen/` – Dinodalen: Dinoparken i ny drakt (elvedal, seks andre dinoer, samme oppgaver). Verden-ID `dinodalen`, lagring `dinodalen-…`. Kilden til kart og dinoer: `Skole\Dinodalen` (frittstående utgave uten innlogging)
