@@ -8,6 +8,7 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 - `spill.html` – spillrommet (lenker til spillene i `spill/`)
 - `spill/sjakkloftet.html` – Sjakkloftet (24.11.2026): sjakk mot bot, mot en medelev, sjakknøtter (fra Lichess sin åpne base, CC0), minispill, springerløype og elevdelen av turnering.
   Kopi av Mykje Sjakk fra Mykje Spill uten Mykje-referanser. Bruker Tavleloftets Firebase (stiene `sjakk`, `sjakknokkel`, `sjakkkode`, `sjakkserie`) og anonym pålogging.
+  Maskoten Sprett (åtte uttrykk, laget i Higgsfield 24.11.2026) ligger i `spill/sjakkloftet/`. Øvelser: Matt-skolen, Slå alle bøndene, Trygg rute, Rutejakt, og Fischer-sjakk.
 - `spill/sjakkloftet-turnering.html` – lærersiden som styrer turneringer (kallenavn med koder, Monrad, klokker, sammenlagt). Ikke lenket fra spillrommet. Må stå åpen mens turneringen går.
 - `skreddersydd.html` – skreddersydde verdener (lenker til elevinnloggingen og rapporten; bestillingsskjemaet er ikke laget ennå)
 - `elev/` – felles elevinnlogging: eleven skriver koden og sendes til riktig verden (`dinoparken/`, `lyslaget/`)
