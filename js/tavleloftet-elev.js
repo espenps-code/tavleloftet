@@ -21,6 +21,7 @@
   var VERDENER = {
     dinoparken: { navn: 'Dinoparken', prefikser: ['dinoparken-'] },
     dinoparken2: { navn: 'Dinoparken', prefikser: ['dp2-'] },      // Dinoparken med oppgavepakker (egne oppgaver per elev)
+    dinodalen:  { navn: 'Dinodalen',  prefikser: ['dinodalen-'] },   // Dinoparken i ny drakt: elvedal og seks andre dinoer
     lyslaget:   { navn: 'Lyslaget',   prefikser: ['kl-', 'rv-', 'ru-'] }
   };
   var me = document.currentScript;

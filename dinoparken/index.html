@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <script src="../js/tavleloftet-firebase.js"></script>
 <script src="../js/tavleloftet-elev.js" data-verden="dinoparken"></script>
+<script src="../js/tavleloftet-apningstid.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dinoparken</title>
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -313,6 +314,7 @@
     <div id="aMenu" hidden>
       <h2>Voksenmeny</h2>
       <p>Mynter nå: <b id="aCoins">0</b> · Områder eid: <b id="aOwned">1</b> av 6</p>
+      <div id="aTid"></div>
       <button class="btn back" id="aNight">Hopp over natten (egg kan klekkes nå)</button>
       <p class="small" id="aNightFb" style="margin:6px 0 0"></p>
       <button class="btn danger" id="aReset">Start parken på nytt</button>
@@ -1297,7 +1299,7 @@ function voksenkodeOk(skrevet){
 function tryPin(){
   $('pinFb').textContent='Sjekker …';
   voksenkodeOk($('pinIn').value).then(ok=>{
-    if(ok){ $('pinFb').textContent=''; $('aCoins').textContent=state.coins; $('aOwned').textContent=state.owned.length; adultView('aMenu'); }
+    if(ok){ $('pinFb').textContent=''; $('aCoins').textContent=state.coins; $('aOwned').textContent=state.owned.length; if(window.TLTid) TLTid.panel($('aTid')); adultView('aMenu'); }
     else { $('pinFb').textContent='Feil kode'; $('pinIn').select(); }
   });
 }

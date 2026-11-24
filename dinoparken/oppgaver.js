@@ -925,6 +925,7 @@ function visVoksen(){
   h+='</table>';
   $d('doBoks').innerHTML=h;
   $d('doBoks').querySelectorAll('select').forEach(s=>s.onchange=()=>{ const L2=lesLæring(); L2.tema[s.dataset.tema].nivå=+s.value; lagreLæring(L2); });
+  if(window.TLTid){ const tid=document.createElement('div'); $d('doBoks').appendChild(tid); TLTid.panel(tid); }   // åpningstid (js/tavleloftet-apningstid.js)
   $d('doFot').innerHTML=`<div class="do-valg"><button class="do-knapp" id="doNull">Nullstill læringsfremgang</button>${harRapport?'<button class="do-knapp" id="doRapport">📊 Se rapporten</button>':''}<button class="do-knapp go" id="doVLukk">Lukk</button></div>`;
   if(harRapport) $d('doRapport').onclick=()=>{   // koden legges i nettleserens lager (ikke i adressen), og rapporten henter den derfra
     try{ localStorage.setItem('tl-rapport-apne', voksenVk); }catch(e){}

@@ -12,6 +12,7 @@
 <script src="js/tavleloftet-firebase.js"></script>
 <script src="js/maal-dinoparken.js"></script>
 <script src="js/maal-dinoparken2.js"></script>
+<script src="js/maal-dinodalen.js"></script>
 <script src="js/maal-lyslaget.js"></script>
 <script src="js/tavleloftet-framgang.js"></script>
 <style>
@@ -42,6 +43,12 @@ select,input{font:700 1rem 'Nunito',system-ui,sans-serif;padding:10px 12px;borde
 .ark h1[contenteditable]{outline:none;border-bottom:2px dashed transparent;cursor:text}
 .ark h1[contenteditable]:hover,.ark h1[contenteditable]:focus{border-bottom-color:var(--strek)}
 .tips{font-size:.8rem;color:var(--graa)}
+.tid{margin-top:16px;border:1.5px solid var(--strek);border-radius:10px;padding:12px 14px;background:#f7f8f4}
+.tid h3{font-size:1.05rem;margin:0 0 2px}
+.tid .linje{margin-top:8px}
+.tid select{background:#fff;color:var(--blekk);border-color:var(--strek);padding:8px 10px}
+.tid button{background:#fff;color:var(--blekk);border:2px solid var(--blekk)}
+.tid .ok{color:var(--gronn);font-weight:700;font-size:.9rem}
 
 /* ---------- Selve rapporten: et hvitt ark ---------- */
 .ark{max-width:860px;margin:16px auto 60px;background:#fff;color:var(--blekk);border-radius:6px;padding:34px 38px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -210,7 +217,7 @@ function velg(vk){
       try { logg = JSON.parse((e.data || {})[V && V.nokkel]); } catch (x) {}
       var pakke = null;   // oppgavepakke (verdener som har det): rapporten viser bare målene i elevens pakke
       if (V && V.pakkeNokkel) { pakke = (e.data || {})[V.pakkeNokkel] || null; try { var pj = JSON.parse(pakke); if (typeof pj === 'string') pakke = pj; } catch (x) {} pakke = pakke || V.standardPakke; }
-      elever[vk] = { navn: kjente[vk].navn, verden: e.info.verden, kode: v.info.elev, pakke: pakke };
+      elever[vk] = { navn: kjente[vk].navn, verden: e.info.verden, kode: v.info.elev, pakke: pakke, innst: e.innst || {} };
       logger[vk] = { logg: logg && logg.v === 1 ? logg : F.ny(), oppdatert: e.oppdatert || 0 };
       if (valgt === vk) tegn();
     });
@@ -254,6 +261,8 @@ function tegn(){
        '<div><b>' + n + '</b><span>oppgaver løst</span></div>' +
        '<div><b>' + (n ? Math.round(riktige / n * 100) + ' %' : '–') + '</b><span>riktige på første forsøk</span></div>' +
        '<div><b>' + dager.length + '</b><span>dager med øving</span></div></div>';
+
+  h += tidKort(el);
 
   /* --- Oppsummering i klartekst --- */
   h += '<h2>Oppsummering</h2><ul class="oppsum">';
@@ -310,6 +319,40 @@ function mangler(r){
   if (v.dager < k.dager) ut.push((k.dager - v.dager) + (k.dager - v.dager === 1 ? ' dag til' : ' dager til'));
   return ut.join(', ') || 'opphevet av voksen';
 }
+
+/* ================= Åpningstid (styres her, virker i verdenen innen ett minutt) ================= */
+var TID_STANDARD = 30, TID_VALG = [10, 15, 20, 30, 45, 60, 90, 0];
+function tidNaa(el){
+  var i = el.innst || {}, idag = F.idag();
+  return { tid: typeof i.tid === 'number' ? i.tid : TID_STANDARD, ekstra: i.ekstraDag === idag ? (i.ekstraMin || 0) : 0, brukt: i.bruktDag === idag ? (i.bruktMin || 0) : 0 };
+}
+function tidKort(el){
+  var t = tidNaa(el), V = MAAL[el.verden] || {}, navn = V.navn || 'Verdenen';
+  var valg = TID_VALG.slice(); if (valg.indexOf(t.tid) < 0) valg.push(t.tid);
+  var brukt = t.tid > 0
+    ? 'Brukt i dag: <b>' + t.brukt + ' av ' + (t.tid + t.ekstra) + ' minutter</b>' + (t.ekstra ? ' (' + t.ekstra + ' ekstra i dag)' : '') + (t.brukt >= t.tid + t.ekstra ? ' – stengt for i dag' : '')
+    : 'Ingen grense. Brukt i dag: <b>' + t.brukt + ' minutter</b>';
+  return '<div class="tid ikkeprint"><h3>Åpningstid</h3><div>' + esc(navn) + ' stenger for dagen når tiden er brukt opp, så eleven ikke raser gjennom alt på én gang. ' + brukt + '.</div>' +
+    '<div class="linje"><label>Åpent hver dag: <select id="tidValg"' + (demo ? ' disabled' : '') + '>' + valg.map(function(v){ return '<option value="' + v + '"' + (v === t.tid ? ' selected' : '') + '>' + (v ? v + ' minutter' : 'Ingen grense') + '</option>'; }).join('') + '</select></label>' +
+    (t.tid > 0 ? '<button id="tidEkstra"' + (demo ? ' disabled' : '') + '>Gi 10 minutter ekstra i dag</button>' : '') + '<span class="ok" id="tidMld"></span></div></div>';
+}
+function tidLagre(endring, tekst){
+  var el = elever[valgt]; if (!el || demo) return;
+  var kommentar = ($('kommentar') || {}).value || '';
+  fetch(DB + '/elever/' + el.kode + '/innst.json', { method: 'PATCH', body: JSON.stringify(endring) })
+    .then(function(r){ if (!r.ok) throw 0; return fetch(DB + '/elever/' + el.kode + '/innst.json', { cache: 'no-store' }); })
+    .then(function(r){ return r.json(); })
+    .then(function(i){ el.innst = i || {}; tegn(); if ($('kommentar')) $('kommentar').value = kommentar; $('tidMld').textContent = tekst; })
+    .catch(function(){ mld('Klarte ikke å lagre åpningstiden. Sjekk nettet og prøv igjen.'); });
+}
+$('ark').addEventListener('change', function(e){
+  if (e.target.id === 'tidValg') tidLagre({ tid: +e.target.value }, 'Lagret. Gjelder i verdenen innen ett minutt.');
+});
+$('ark').addEventListener('click', function(e){
+  if (e.target.id !== 'tidEkstra') return;
+  var t = tidNaa(elever[valgt]), mangler = Math.max(0, t.brukt - (t.tid + t.ekstra));     // er tiden brukt opp, gir knappen 10 hele minutter
+  tidLagre({ ekstraDag: F.idag(), ekstraMin: t.ekstra + mangler + 10 }, '10 minutter lagt til. Verdenen åpner igjen innen ett minutt.');
+});
 
 /* ================= Læreren godkjenner / opphever ================= */
 $('ark').addEventListener('click', function(e){
