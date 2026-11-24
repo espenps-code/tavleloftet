@@ -1931,13 +1931,14 @@ function buildRoute(e){
   const along=(f,x0,x1)=>{ const d=Math.sign(x1-x0)||1; for(let x=x0+d*3; d*(x1-x)>2.5; x+=d*5) P(x,f(x)); };
   const pe=entrance.getPointAt(1); P(pe.x,pe.z-.5);
   { const p=entrance.getPointAt(.5); P(p.x,p.z); }
-  P(PLAZA.x+.4,PLAZA.z+2.6);
+  /* Rundt fontenen, ikke gjennom den: en bue over torget på den siden den besøkende skal videre */
+  const rundt=tx=>{ const s=Math.sign(tx-PLAZA.x)||1, r=3.5; P(PLAZA.x+s*.9,PLAZA.z+PLAZA.r-.6); P(PLAZA.x+s*r*.62,PLAZA.z+r*.78); P(PLAZA.x+s*r,PLAZA.z); P(PLAZA.x+s*r*.8,PLAZA.z-r*.62); };
   const sx=e.spur.x;
   if(e.z>0){
-    P(PLAZA.x+Math.sign(sx-PLAZA.x)*1.6, PROM.s(PLAZA.x)+1.4); along(PROM.s,PLAZA.x,sx); P(sx,PROM.s(sx));
+    rundt(sx); along(PROM.s,PLAZA.x,sx); P(sx,PROM.s(sx));
   } else {
     const cost=b=>Math.abs(b.x-PLAZA.x)+Math.abs(b.x-sx), b=BRIDGES.reduce((m,c)=>cost(c)<cost(m)?c:m);
-    P(PLAZA.x+Math.sign(b.x-PLAZA.x)*1.6, PROM.s(PLAZA.x)+1.4); along(PROM.s,PLAZA.x,b.x);
+    rundt(b.x); along(PROM.s,PLAZA.x,b.x);
     P(b.x,PROM.s(b.x)-.8); P(b.x,b.z); P(b.x,PROM.n(b.x)+.8);
     along(PROM.n,b.x,sx); P(sx,PROM.n(sx));
   }

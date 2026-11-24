@@ -954,7 +954,7 @@ function jsSkriv(){
   JS.si=[k('js-intro')];
   const boks=$d('doBoks'); boks.className='do-boks';
   boks.innerHTML=`<div class="do-js">${jsBildeknapp(a.bilde)}
-    <ol class="do-jsliste">${a.setn.map((t,i)=>`<li><input class="do-input do-jsinn" data-i="${i}" value="${jsEsc(t||'Jeg ser ')}" maxlength="90"
+    <ol class="do-jsliste">${a.setn.map((t,i)=>`<li><input class="do-input do-jsinn" data-i="${i}" value="${jsEsc(t||'')}" maxlength="90"
       autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" enterkeyhint="${i<a.setn.length-1?'next':'done'}" aria-label="Setning ${i+1}"><span class="do-jsok" aria-hidden="true"></span></li>`).join('')}</ol></div>`;
   $d('doFot').innerHTML=`<div class="do-melding bom" id="jsMld"></div><div class="do-valg"><button class="do-knapp go" id="jsFerdig">Ferdig – vis til en voksen ▶</button></div>`;
   $d('jsBilde').onclick=()=>jsStortBilde(a.bilde);
