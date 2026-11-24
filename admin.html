@@ -252,6 +252,8 @@ var VERDENER = { dinoparken: 'Dinoparken', dinoparken2: 'Dinoparken – lyder, v
 var PAKKE = { dinoparken2: { nokkel: 'dp2-pakke', verdi: 'lyd-venner-klosser' } };
 var ALFABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 /* Tekst til velkomstbrevet, per verden. «rapport» = verdenen er koblet til framgangsrapporten. */
+/* Åpningstid: samme avsnitt i velkomstbrevet for alle verdenene (js/tavleloftet-apningstid.js). */
+var BREV_APNINGSTID = '<p><b>Åpningstid.</b> Verdenen er åpen 30 minutter hver dag. Tiden telles bare mens eleven er inne, og fem minutter før stengetid kommer et varsel. Når tiden er brukt opp, stenger verdenen til neste dag. Du kan endre antall minutter, ta bort grensen eller gi 10 minutter ekstra i dag. Det gjør du på rapportsiden med voksenkoden, eller under «For voksne» på skjermen som vises når verdenen er stengt.</p>';
 var BREV = {
   dinoparken: { rapport: true,
     intro: 'Dinoparken er en læringsverden der eleven bygger sin egen dinosaurpark. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien.',
@@ -504,7 +506,7 @@ $('liste').addEventListener('click', function(e){
     $('brevElevAdr').textContent = utenHttp(rot + 'elev'); $('brevKode').textContent = fmt(k);
     $('brevRapport').style.display = B.rapport && el.voksenkode ? '' : 'none';
     $('brevRapAdr').textContent = utenHttp(rot + 'rapport.html'); $('brevVk').textContent = fmtVk(el.voksenkode);
-    $('brevOm').innerHTML = B.om;
+    $('brevOm').innerHTML = B.om + (BREV[el.verden] ? BREV_APNINGSTID : '');
     var qrB = function(id, adr){ try { var q = qrcode(0, 'M'); q.addData(adr); q.make(); $(id).innerHTML = q.createSvgTag({ scalable: true, margin: 0 }); } catch (x) { $(id).textContent = ''; } };
     var skrivBrev = function(){
       qrB('brevQr', rot + 'elev/?kode=' + k); if (el.voksenkode) qrB('brevQr2', rot + 'rapport.html?v=' + el.voksenkode);
