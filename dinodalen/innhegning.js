@@ -164,7 +164,7 @@ function pond(cx,cz,rx,rz,s=1){ const P=blob(rx,rz,14,.12,cx,cz,s); slab(P,.1,.0
   for(let i=0;i<9;i++){ const a=i/9*PI*2; add(scene,G.dod,0x8f877f,cx+Math.cos(a)*(rx+.3),.2,cz+Math.sin(a)*(rz+.3),R(.3,.5),R(.2,.35),R(.3,.5)); } }
 
 /* ---------- Stasjonene ---------- */
-const STATION_POS={ klokke:{x:-6.5,z:-4.5}, penger:{x:6.8,z:-4.2}, tier:{x:1,z:-7}, lyder:{x:6,z:5.5}, stavelser:{x:-1.5,z:8.5} };
+const STATION_POS={ klokke:{x:-6.5,z:-4.5}, penger:{x:6.8,z:-4.2}, tier:{x:1,z:-7}, lyder:{x:6,z:5.5}, stavelser:{x:-1.5,z:8.5}, jegser:{x:-10.6,z:3.6} };
 const anchors={};
 function station(id,y){ const p=STATION_POS[id], g=new THREE.Group(); g.position.set(p.x,0,p.z); scene.add(g); anchors[id]=new THREE.Vector3(p.x,y,p.z); return g; }
 /* Fôret i krybba passer til dinoen */
@@ -204,6 +204,18 @@ const FÔR = { haug:[0x6a9a3a,'blad'], lund:[0x2f2a26,'bille'], bukt:[0x9fb6c9,'
   for(let i=0;i<5;i++) add(g,G.cyl8,0xd9c79a,-2+i*1,.07,R(-.2,.2),.45,.06,.45,false);
   const cols=[0x7d64c4,0x3f86c9,0xe0782f];
   for(let i=0;i<3;i++){ const x=-1.6+i*1.6; add(g,G.cyl,0x7a4a2a,x,.8,-.7,.08,1.6,.08); const b=add(g,G.box,cols[i],x,1.5,-.7,1.1,.5,.08); b.rotation.z=(i-1)*.08; } }
+
+/* Utkikkstårnet: skriveoppgaven «Jeg ser» */
+{ const g=station('jegser',4.9);
+  for(const sx of [-1,1]) for(const sz of [-1,1]){ const b=add(g,G.cyl,0x7a4a2a,sx*.75,1.5,sz*.75,.1,3,.1); b.rotation.z=-sx*.07; b.rotation.x=sz*.07; }
+  add(g,G.box,0x9a6a3e,0,3.02,0,2.1,.14,2.1);
+  for(const sx of [-1,1]) for(const sz of [-1,1]) add(g,G.cyl,0x7a4a2a,sx*.95,3.9,sz*.95,.06,1.7,.06);
+  for(const [x,z,w,d] of [[0,-.98,2,.08],[-.98,0,.08,2],[.98,0,.08,2]]) add(g,G.box,0xc08a55,x,3.55,z,w,.1,d);
+  add(g,G.cone4,0x2a8c78,0,5.05,0,1.75,.9,1.75).rotation.y=PI/4;
+  for(let i=0;i<6;i++) add(g,G.box,0xc08a55,0,.35+i*.48,1.12,.7,.07,.07);
+  for(const sx of [-1,1]) add(g,G.box,0x7a4a2a,sx*.38,1.55,1.12,.07,3.1,.07);
+  const k=add(g,G.cyl8,0x40433f,.25,3.75,.75,.11,.9,.11); k.rotation.x=1.25; add(g,G.cyl8,0x6fc4ea,.25,3.9,1.18,.13,.05,.13,false).rotation.x=1.25;
+  add(g,G.cyl,0x40433f,.25,3.35,.6,.04,.6,.04); g.rotation.y=.9; }
 
 /* ---------- Pynt etter tema ---------- */
 const PONDS=[[PORT.center.x,PORT.center.z,2.4]];   // første «plass» holdes fri foran porten
@@ -485,6 +497,11 @@ let portRist=0;
   b.setAttribute('aria-label','Porten: trykk for å sjekke at den er låst');
   b.onclick=()=>{ portRist=1; portLyd(); portMelding(); };
   labels.appendChild(b); tags.port=b; anchors.port=new THREE.Vector3(PORT.center.x,PORT.h+1.3,PORT.center.z); }
+/* Utkikkstårnet: «Jeg ser»-oppgaven (egen knapp, ikke en av de fem nivåstasjonene) */
+{ const b=document.createElement('button'); b.className='st'; b.style.setProperty('--c','#2a8c78');
+  b.innerHTML='<span class="ic">🔭</span><span class="tx">Utkikkstårnet <small>Skrive: Jeg ser</small></span>';
+  b.onclick=()=>DinoOppgaver.jegSer({enc:ENC_ID,onClose:()=>{ refreshLabels(); spawnDinos(); window.DinoParkHUD(); }});
+  labels.appendChild(b); tags.jegser=b; }
 let portTimer;
 function portMelding(){
   let m=document.getElementById('portMelding');
@@ -508,6 +525,10 @@ function updatePort(dt,t){
   if(g0.userData.lock) g0.userData.lock.rotation.z=Math.sin(t*22)*.5*portRist;
 }
 function refreshLabels(){
+  if(tags.jegser){ const j=DinoOppgaver.jegSerStatus(), b=tags.jegser;
+    b.querySelector('small').textContent = j.venter ? 'Venter på en voksen' : `Skrive: Jeg ser · ${j.godkjent} av ${j.av} bilder`;
+    b.style.background = j.venter ? '#fff3cf' : '';
+    b.setAttribute('aria-label',`Utkikkstårnet: skrive Jeg ser-setninger, ${j.godkjent} av ${j.av} bilder godkjent${j.venter?', venter på en voksen':''}`); }
   for(const st of DinoOppgaver.STASJONER){
     const s=DinoOppgaver.status(st.id), b=tags[st.id]; if(!b) continue;
     b.querySelector('.stars').textContent='★'.repeat(s.stjerner);

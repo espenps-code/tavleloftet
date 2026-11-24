@@ -31,6 +31,12 @@
     { id: 'stavelser', navn: 'Lese ord', ikon: '🪧', maal: [
       { id: 'stavelser-1', navn: 'Korte ord' }, { id: 'stavelser-2', navn: 'To stavelser med buer' },
       { id: 'stavelser-3', navn: 'To stavelser uten buer' }, { id: 'stavelser-4', navn: 'Hør og finn ordet' },
-      { id: 'stavelser-5', navn: 'Små setninger' } ] }
+      { id: 'stavelser-5', navn: 'Små setninger' } ] },
+    /* Utkikkstårnet: eleven skriver fem «Jeg ser»-setninger til et myldrebilde, og en voksen godkjenner dem.
+       Hver godkjente setning teller som én riktig oppgave, så 5 setninger = ett bilde. */
+    { id: 'jegser', navn: 'Skrive setninger («Jeg ser»)', ikon: '🔭', maal: [
+      { id: 'jegser-1', navn: 'Første bilde godkjent (5 setninger)', krav: { oppgaver: 5, andel: 1, dager: 1 } },
+      { id: 'jegser-5', navn: 'Fem bilder godkjent', krav: { oppgaver: 20, andel: 1, dager: 1 } },
+      { id: 'jegser-10', navn: 'Alle ti bildene godkjent', krav: { oppgaver: 25, andel: 1, dager: 1 } } ] }
   ]
 };

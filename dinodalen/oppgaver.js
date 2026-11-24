@@ -773,7 +773,7 @@ function lagOverlay(){
     <footer class="do-fot" id="doFot"></footer></div>`;
   document.body.appendChild(rot);
   rot.querySelector('#doLukk').onclick=lukk;
-  rot.querySelector('#doLes').onclick=()=>R&&R.oppg&&les(R.oppg);
+  rot.querySelector('#doLes').onclick=()=>{ if(R&&R.oppg) les(R.oppg); else if(JS&&JS.si) Lyd.spill(JS.si); };
   return rot;
 }
 const $d = id => rot.querySelector('#'+id);
@@ -789,6 +789,7 @@ function open(id, {enc=1, onClose=null}={}){
   // én oppgave fra et tidligere nivå når eleven er på nivå 2 eller høyere
   const nivåer=Array(LÆRING.rundeLengde).fill(nivå);
   if(nivå>1) nivåer[1+rnd(LÆRING.rundeLengde-1)]=1+rnd(nivå-1);
+  JS=null; rot.classList.remove('do-bred');
   R={ id, st, enc, K, forfall, onClose, i:0, mynter:0, riktige:0, ko:nivåer.map(n=>({nivå:n})), oppg:null, forsøk:0 };
   rot.style.setProperty('--st',st.farge);
   $d('doIkon').textContent=st.ikon; $d('doTittel').textContent=st.navn;
@@ -888,8 +889,130 @@ function ferdig(){
 }
 function lukk(){
   Lyd.stopp();
-  if(rot){ rot.classList.remove('vis'); document.body.classList.remove('do-åpen'); }
-  const cb=R&&R.onClose; R=null; if(cb) cb();
+  if(rot){ rot.classList.remove('vis','do-bred'); document.body.classList.remove('do-åpen'); }
+  const cb=(R&&R.onClose)||(JS&&JS.onClose); R=null; JS=null; if(cb) cb();
+}
+
+/* ==========================================================================
+   «JEG SER» – skriveoppgave med myldrebilder (Utkikkstårnet)
+   --------------------------------------------------------------------------
+   Eleven ser på et myldrebilde (bilder/jegser/jegser-01.webp … -10.webp) og
+   skriver fem setninger som begynner med «Jeg ser». En voksen leser dem og
+   godkjenner ved å holde en knapp inne. Først da kommer myntene.
+
+   Lagring (dinodalen-jegser-v1):
+     ferdig  – numrene på bildene som er godkjent
+     aktivt  – bildet eleven holder på med: { bilde, setn:[…], sendt }
+   Setningene lagres bare til de er godkjent. Etterpå slettes de.
+   ========================================================================== */
+const JEGSER = { antallBilder:10, setninger:5, mynter:10, nøkkel:PARK.key.replace(/-v\d+$/,'')+'-jegser-v1' };
+const JS_BILDER = ['', 'Dinosaurer ved elva', 'Dinosaurer på stranda', 'Dinosaurer i skogen', 'Dinosaurer ved vulkanen', 'Dinosaurer på lekeplassen',
+  'Dinosaurer i bursdag', 'Dinosaurer i snøen', 'Dinosaurer på telttur om natta', 'Dinosaurer på torget', 'Dinosaurer på gården'];
+const jsEsc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function lesJegSer(){ let s=null; try{ s=JSON.parse(localStorage.getItem(JEGSER.nøkkel)); }catch(e){} s=s||{}; s.ferdig=s.ferdig||[]; return s; }
+function lagreJegSer(s){ try{ localStorage.setItem(JEGSER.nøkkel, JSON.stringify(s)); }catch(e){} }
+function jegSerStatus(){ const s=lesJegSer(); return { godkjent:Math.min(s.ferdig.length,JEGSER.antallBilder), av:JEGSER.antallBilder, venter:!!(s.aktivt&&s.aktivt.sendt) }; }
+const jsGyldig = t => /^jeg\s+ser\s+\S{2,}/i.test(String(t||'').trim());
+const jsBilde = n => `bilder/jegser/jegser-${pad(n)}.webp`;
+
+const HOLDTID = 1300;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.
+function holdeknapp(b, ferdig){
+  b.classList.add('do-hold');
+  b.innerHTML=`<span class="do-holdfyll"></span><span class="do-holdtekst">${b.innerHTML}</span>`;
+  b.style.setProperty('--hold', HOLDTID+'ms');
+  let t=null;
+  const slutt=()=>{ b.classList.remove('holder'); if(t){ clearTimeout(t); t=null; } };
+  b.addEventListener('pointerdown',e=>{ if(b.disabled) return; e.preventDefault(); slutt(); b.classList.add('holder'); t=setTimeout(()=>{ t=null; ferdig(); },HOLDTID); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,slutt));
+  b.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(!b.disabled) ferdig(); } });   // tastatur
+  b.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+let JS=null;   // { enc, onClose, si } mens Utkikkstårnet er åpent
+function jegSer({enc=1, onClose=null}={}){
+  lagOverlay(); R=null; JS={ enc, onClose, si:null };
+  const s=lesJegSer();
+  if(!s.aktivt){
+    const igjen=Array.from({length:JEGSER.antallBilder},(_,i)=>i+1).filter(n=>!s.ferdig.includes(n));   // først alle ti i tur og orden, så tilfeldig
+    s.aktivt={ bilde: igjen.length ? igjen[0] : 1+rnd(JEGSER.antallBilder), setn:Array(JEGSER.setninger).fill(''), sendt:false };
+    lagreJegSer(s);
+  }
+  rot.style.setProperty('--st','#2a8c78');
+  $d('doIkon').textContent='🔭'; $d('doTittel').textContent='Utkikkstårnet'; $d('doPrikker').innerHTML='';
+  rot.classList.add('vis','do-bred'); document.body.classList.add('do-åpen');
+  if(s.aktivt.sendt) jsTilVoksen(false); else jsSkriv();
+}
+function jsBildeknapp(n){ return `<button class="do-jsbilde" id="jsBilde" aria-label="Trykk for å se bildet stort"><img src="${jsBilde(n)}" alt="${JS_BILDER[n]||'Myldrebilde med dinosaurer'}"><span>🔍 Større bilde</span></button>`; }
+function jsStortBilde(n){
+  const d=el('div','do-jsstor',`<img src="${jsBilde(n)}" alt=""><span>Trykk for å lukke</span>`);
+  d.onclick=()=>d.remove(); document.body.appendChild(d);
+}
+function jsSkriv(){
+  const s=lesJegSer(), a=s.aktivt;
+  $d('doUnder').textContent=`Skrive setninger · Bilde ${a.bilde} av ${JEGSER.antallBilder}`;
+  $d('doTekst').innerHTML=`Se godt på bildet. Skriv ${JEGSER.setninger===5?'fem':JEGSER.setninger} setninger som begynner med <b class="do-uthev">Jeg ser</b>.`;
+  JS.si=[k('js-intro')];
+  const boks=$d('doBoks'); boks.className='do-boks';
+  boks.innerHTML=`<div class="do-js">${jsBildeknapp(a.bilde)}
+    <ol class="do-jsliste">${a.setn.map((t,i)=>`<li><input class="do-input do-jsinn" data-i="${i}" value="${jsEsc(t||'Jeg ser ')}" maxlength="90"
+      autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" enterkeyhint="${i<a.setn.length-1?'next':'done'}" aria-label="Setning ${i+1}"><span class="do-jsok" aria-hidden="true"></span></li>`).join('')}</ol></div>`;
+  $d('doFot').innerHTML=`<div class="do-melding bom" id="jsMld"></div><div class="do-valg"><button class="do-knapp go" id="jsFerdig">Ferdig – vis til en voksen ▶</button></div>`;
+  $d('jsBilde').onclick=()=>jsStortBilde(a.bilde);
+  const felt=[...boks.querySelectorAll('.do-jsinn')];
+  const merk=inn=>{ const li=inn.parentNode; li.classList.toggle('ok',jsGyldig(inn.value)); li.classList.remove('feil'); };
+  const ta=()=>{ const s2=lesJegSer(); if(!s2.aktivt) return; s2.aktivt.setn=felt.map(f=>f.value.trim().toLowerCase()==='jeg ser'?'':f.value.trim()); lagreJegSer(s2); };
+  felt.forEach((inn,i)=>{
+    merk(inn);
+    inn.addEventListener('input',()=>{ merk(inn); $d('jsMld').textContent=''; });
+    inn.addEventListener('change',ta);       // lagres når eleven går videre til neste felt
+    inn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); ta(); if(felt[i+1]){ felt[i+1].focus(); const v=felt[i+1].value; felt[i+1].setSelectionRange(v.length,v.length); } else inn.blur(); } });
+  });
+  $d('jsFerdig').onclick=()=>{
+    ta();
+    const tekster=felt.map(f=>f.value.trim().replace(/\s+/g,' '));
+    let feil=0; felt.forEach((f,i)=>{ const like=tekster.findIndex(t=>t.toLowerCase()===tekster[i].toLowerCase())!==i; const ok=jsGyldig(tekster[i]) && !like; f.parentNode.classList.toggle('feil',!ok); if(!ok) feil++; });
+    if(feil){ $d('jsMld').innerHTML=`<b>Ikke helt ferdig.</b> Alle fem setningene må begynne med «Jeg ser» og være ulike.`; Lyd.spill([k('js-mangler')]); return; }
+    const s2=lesJegSer(); s2.aktivt.setn=tekster; s2.aktivt.sendt=true; lagreJegSer(s2);
+    Lyd.pip(true); jsTilVoksen(true);
+  };
+  Lyd.spill(JS.si);
+}
+function jsTilVoksen(nettopp){
+  const s=lesJegSer(), a=s.aktivt;
+  $d('doUnder').textContent=`Venter på en voksen · Bilde ${a.bilde} av ${JEGSER.antallBilder}`;
+  $d('doTekst').innerHTML='<b>Bra jobba!</b> Vis setningene til en voksen.';
+  JS.si=[k('js-vis-voksen')];
+  const boks=$d('doBoks'); boks.className='do-boks';
+  boks.innerHTML=`<div class="do-js">${jsBildeknapp(a.bilde)}<ol class="do-jsliste les">${a.setn.map(t=>`<li>${jsEsc(t)}</li>`).join('')}</ol></div>`;
+  $d('doFot').innerHTML=`<div class="do-voksenrad"><small>Til den voksne: Les setningene sammen med eleven. Passer de til bildet, holder du «Godkjenn» inne et lite øyeblikk.</small>
+    <div class="do-valg"><button class="do-knapp" id="jsRett">✏️ Må rettes</button><button class="do-knapp go" id="jsOk">✓ Godkjenn</button></div></div>`;
+  $d('jsBilde').onclick=()=>jsStortBilde(a.bilde);
+  $d('jsRett').onclick=()=>{ const s2=lesJegSer(); s2.aktivt.sendt=false; lagreJegSer(s2); jsSkriv(); };
+  holdeknapp($d('jsOk'), jsGodkjenn);
+  if(nettopp) Lyd.spill(JS.si);
+}
+function jsGodkjenn(){
+  const s=lesJegSer(), a=s.aktivt; if(!a) return;
+  const før=s.ferdig.length;
+  if(!s.ferdig.includes(a.bilde)) s.ferdig.push(a.bilde);
+  delete s.aktivt;                       // setningene slettes når de er godkjent
+  lagreJegSer(s);
+  gimynter(JEGSER.mynter);
+  const park=parkFremgang(JS.enc);
+  // lærerrapporten: hver godkjente setning teller som én riktig oppgave i målet eleven jobber mot
+  if(window.TLFramgang){ const mål = før<1 ? 'jegser-1' : før<5 ? 'jegser-5' : 'jegser-10'; for(let i=0;i<JEGSER.setninger;i++) TLFramgang.logg(mål,true); }
+  if(window.DinoParkHUD) window.DinoParkHUD();
+  const n=Math.min(s.ferdig.length,JEGSER.antallBilder);
+  $d('doUnder').textContent='Skrive setninger';
+  $d('doTekst').innerHTML='<b>Setningene er godkjent!</b>';
+  JS.si=[k('js-godkjent'), {tall:JEGSER.mynter}, k('mynter')];
+  $d('doBoks').innerHTML=`<div class="do-slutt"><div class="do-stortall">${n} av ${JEGSER.antallBilder}</div><p>bilder ferdig</p>
+    <p class="do-mynttekst stor">+${JEGSER.mynter} 🪙 til parkkassa</p>${park?`<p class="do-park">🥚 ${park}</p>`:''}</div>`;
+  $d('doFot').innerHTML=`<div class="do-valg"><button class="do-knapp" id="doTilbake">Tilbake til innhegningen</button><button class="do-knapp go" id="jsNytt">Nytt bilde ▶</button></div>`;
+  $d('doTilbake').onclick=lukk;
+  const enc=JS.enc, cb=JS.onClose;
+  $d('jsNytt').onclick=()=>jegSer({enc, onClose:cb});
+  Lyd.pip(true); Lyd.spill(JS.si);
 }
 
 /* ==========================================================================
@@ -1041,7 +1164,30 @@ body.do-åpen{overflow:hidden}
 @media (max-width:640px){ .do-prikker{display:none} .do-titler h2{font-size:22px} .do-valg.stor .do-knapp{min-width:80px;min-height:80px;font-size:34px} .do-tallpad{grid-template-columns:repeat(4,1fr)} }
 @media (prefers-reduced-motion:reduce){ .do-overlay.vis{animation:none} .do-tromme.slag{animation:none} }
 `;
-const stil=document.createElement('style'); stil.textContent=css; document.head.appendChild(stil);
+const stil=document.createElement('style'); stil.textContent=css+`
+.do-overlay.do-bred .do-kort{width:min(1180px,100%)}
+.do-js{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.do-js{grid-template-columns:1fr}}
+.do-jsbilde{position:relative;padding:0;border:3px solid #1f3b2c;border-radius:18px;overflow:hidden;background:#fff;cursor:zoom-in;display:block;width:100%}
+.do-jsbilde img{display:block;width:100%;height:auto}
+.do-jsbilde span{position:absolute;right:8px;bottom:8px;background:rgba(255,253,246,.94);border:2px solid #1f3b2c;border-radius:999px;padding:2px 12px;font:600 15px Fredoka,sans-serif;color:#1f3b2c}
+.do-jsliste{margin:0;padding-left:30px;font:600 22px Fredoka,sans-serif;display:grid;gap:10px}
+.do-jsliste li{position:relative}
+.do-jsinn{width:100%;font:400 20px 'Atkinson Hyperlegible',system-ui,sans-serif;padding:9px 40px 9px 12px;border-width:2px}
+.do-jsok{position:absolute;right:12px;top:50%;transform:translateY(-50%);font:700 22px Fredoka,sans-serif;color:#1d7a35}
+.do-jsliste li.ok .do-jsok::before{content:'✓'}
+.do-jsliste li.feil .do-jsinn{border-color:#c2453a;background:#fff3ee}
+.do-jsliste.les li::marker{color:#2a8c78}
+.do-jsliste.les li{font:400 22px 'Atkinson Hyperlegible',system-ui,sans-serif;line-height:1.35;border-bottom:2px dashed #d9d2bf;padding:4px 2px 8px}
+.do-jsstor{position:fixed;inset:0;z-index:70;background:rgba(20,30,25,.94);display:grid;place-items:center;padding:10px;cursor:zoom-out}
+.do-jsstor img{max-width:100%;max-height:100%;border-radius:12px;display:block}
+.do-jsstor span{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(255,253,246,.94);border:2px solid #1f3b2c;border-radius:999px;padding:4px 16px;font:600 16px Fredoka,sans-serif;color:#1f3b2c}
+.do-voksenrad{border:3px dashed #9a6a3e;border-radius:18px;background:#fbf0de;padding:8px 10px;margin-top:10px;text-align:center}
+.do-voksenrad small{font:600 16px Fredoka,sans-serif;color:#7a4a2a}.do-voksenrad .do-valg{margin:6px 0 2px}
+.do-hold{position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
+.do-holdfyll{position:absolute;inset:0;background:#5cc46a;transform:scaleX(0);transform-origin:left;transition:transform .15s}
+.do-hold.holder .do-holdfyll{transform:scaleX(1);transition:transform var(--hold,1300ms) linear}.do-holdtekst{position:relative;display:inline-flex;align-items:center;gap:8px}
+`; document.head.appendChild(stil);
 
 /* ==========================================================================
    INNLESING – alle lydklipp siden bruker (innlesing.html lager innleseskriptet fra denne lista)
@@ -1101,10 +1247,13 @@ const ROS = ['Riktig!','Kjempebra!','Supert!','Ja, sånn!','Du fikk det til!'];
     reg(g,`d${id}-kresen`,`${cap(Ku.dinoEn)} er kresen! Den vil bare spise ting som begynner med`);
     Ku.kiosk.forEach(([v])=>{ if(!(`vare-${slug(v)}` in KLIPP)) reg(g,`vare-${slug(v)}`,v); });   // varer som fins fra før, gjenbrukes
   }
+  g=gruppe('Utkikkstårnet («Jeg ser»)','Skriveoppgaven med myldrebilder. Hele setninger, lest rolig.');
+  [['js-intro','Se godt på bildet. Skriv fem setninger som begynner med: Jeg ser.'],['js-vis-voksen','Bra jobba! Vis setningene til en voksen.'],
+   ['js-mangler','Ikke helt ferdig. Alle fem setningene må begynne med: Jeg ser.'],['js-godkjent','Setningene er godkjent! Du fikk']].forEach(([n,t])=>reg(g,n,t));
   g=gruppe('Stavelser','Brukes når eleven har svart feil i Skiltstien: «ka – ke – kake». Les hver stavelse kort og tydelig, slik den høres ut inne i ordet.');
   [...new Set(TO_STAV.flatMap(o=>o.stav))].forEach(st=>reg(g,'stav-'+slug(st),st.toLowerCase()));
 }
 function klippListe(){ return KLIPPGRUPPER.map(g=>({navn:g.navn, ingress:g.ingress, klipp:g.klipp.map(x=>({...x, fins:g.fins?g.fins(x.navn):false}))})); }
 
-window.DinoOppgaver = { open, status, voksen, klippListe, STASJONER, NIVÅNAVN, lesPark, KULISSE, _test:{ LAG, KULISSE, klokkeOrd, myntForslag } };
+window.DinoOppgaver = { open, status, voksen, jegSer, jegSerStatus, klippListe, STASJONER, NIVÅNAVN, lesPark, KULISSE, _test:{ LAG, KULISSE, klokkeOrd, myntForslag } };
 })();
