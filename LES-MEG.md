@@ -16,6 +16,11 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
   `Tavleloftet\Krøniken` i Dropbox (uten LES-MEG-filene). Kilden er Dropbox-mappa: endringer gjøres der og kopieres hit.
   `kroniken/index.html` sender videre til `kroniken/portal/index.html`. Elevboka: `kroniken/innhold/bok.html`.
   Krøniken bruker Firebase-prosjektet krle-sim og henter Firebase og skrifttyper (portal og prøveportal) fra Google.
+- `verktoy.html` – lærerverktøy-siden (kort med lenke til hvert verktøy i `verktoy/`)
+- `verktoy/stasjonstavla/` – Stasjonstavla. Kopi av `stasjoner.html` fra Myntland (24.11.2026), med fagikoner og musikk. Myntland-versjonen ligger fortsatt der.
+- `verktoy/spelling-express/` – Spelling Express (elevside, lærerside, veiledning). Kopi fra Myntland (24.11.2026). Bruker fortsatt Firebase-prosjektet spelling-express, så lister laget på Myntland virker her også. PDF-veiledningen nevner fortsatt myntland.no.
+- `verktoy/fotostudio/` – Fotostudio. Kopi fra Mykje Ting (24.11.2026), uten Mykje-referanser. «Tilbake» går til `verktoy.html`.
+- `verktoy/kroppsoving/` – vurdering i kroppsøving (ulenket, venter på innlogging)
 - `personvern.html` – midlertidig side til foretaket er registrert
 - `css/tavleloftet.css` – utseendet (farger, skrift, knapper) for alle sidene
 - `js/tavleloftet.js` – karusellen og den lille bevegelsen i toppbildet
