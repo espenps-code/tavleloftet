@@ -375,7 +375,7 @@ function tid(ms){
 var elever = {};
 /* ---------- Henvendelser fra skjemaet (bare for Espen) ---------- */
 var ADMIN_EPOST = 'espenps@gmail.com', henvData = {};
-var HENV_TYPE = { niva1: 'Nivå 1 – tilpasset verden', niva2: 'Nivå 2 – eget tema', kurs: 'Kurs', annet: 'Noe annet' };
+var HENV_TYPE = { niva1: 'Nivå 1 – tilpasset verden', niva2: 'Nivå 2 – eget tema', kurs: 'Kurs', annet: 'Noe annet', tingbase: 'Tingbasen – skole' };
 function lastHenv(){
   if (!bruker || bruker.email !== ADMIN_EPOST) { vis('henvBoks', false); return; }
   vis('henvBoks', true);

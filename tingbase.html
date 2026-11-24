@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tingbasen – skolens oversikt over utstyr – Tavleloftet</title>
+<meta name="description" content="Tingbasen er skolens felles oversikt over utstyr og materiell – med søk, QR-etiketter på hyllene og forslag til aktiviteter. Laget av en lærer.">
+<link rel="stylesheet" href="css/tavleloftet.css">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+.henv{display:grid;grid-template-columns:1fr 1.5fr;gap:48px;align-items:start}
+@media (max-width:860px){.henv{grid-template-columns:1fr}}
+.henv-intro p{color:var(--lys-dempet);font-size:18px;line-height:1.6;margin:0 0 14px}
+.henv-intro ul{color:var(--lys-dempet);padding-left:1.2em;margin:0;line-height:1.7}
+.henv-kort{background:var(--papir);color:var(--blekk);border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:18px}
+.henv-kort form{display:flex;flex-direction:column;gap:30px}
+.henv-kort fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
+.henv-kort [hidden]{display:none!important}
+.henv-intro h2{font-size:clamp(32px,4vw,46px);line-height:1.08}
+.henv-kort legend{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:10px;padding:0}
+.henv-valg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:520px){.henv-valg{grid-template-columns:1fr}}
+.henv-valg label{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:16px;border:2px solid #E4DCC8;background:#fff;cursor:pointer;font-weight:700;line-height:1.3}
+.henv-valg label small{display:block;font-weight:400;color:var(--dempet);margin-top:2px}
+.henv-valg input{margin-top:3px;accent-color:var(--gronn)}
+.henv-valg label:has(input:checked){border-color:var(--gronn);background:var(--mint)}
+.henv-rad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.henv-rad{grid-template-columns:1fr}}
+.henv-felt{display:flex;flex-direction:column;gap:6px}
+.henv-felt label{font-weight:800;font-size:15px}
+.henv-felt small{color:var(--dempet);font-size:14px}
+.henv-felt input,.henv-felt select,.henv-felt textarea{font:400 17px var(--tekst);padding:12px 14px;border-radius:14px;border:2px solid #D9D0BA;background:#fff;color:var(--blekk);width:100%}
+.henv-felt textarea{min-height:92px;resize:vertical}
+.henv-felt input:focus,.henv-felt select:focus,.henv-felt textarea:focus{outline:none;border-color:var(--gronn)}
+.henv-samtykke{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45;color:var(--dempet)}
+.henv-samtykke input{margin-top:4px;accent-color:var(--gronn);flex-shrink:0}
+.henv-skjult{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.henv-mld{min-height:1.4em;margin:0;font-weight:800}
+.henv-mld.feil{color:#b03a2e}.henv-mld.ok{color:var(--gronn)}
+.henv-takk{text-align:center;padding:24px 8px}
+.henv-takk h3{font-family:var(--display);font-size:28px;margin:0 0 8px}
+.henv-takk p{margin:0;color:var(--dempet);font-size:17px}
+
+.ting-funk{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:900px){.ting-funk{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.ting-funk{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topp mork">
+  <div class="topp-indre">
+    <a class="logo" href="index.html">
+        <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect x="3" y="6" width="38" height="28" rx="4" fill="#24453E" stroke="#C98B55" stroke-width="4"/><path d="M11 24c4-6 8-6 11-2s7 4 11-4" fill="none" stroke="#F3EFE4" stroke-width="2.5" stroke-linecap="round"/><rect x="10" y="36" width="24" height="5" rx="2.5" fill="#C98B55"/></svg>
+        <span>Tavleloftet</span>
+      </a>
+    <nav class="nav" aria-label="Hovedmeny">
+      <a href="index.html">Forside</a>
+      <a href="index.html#prosjekter">Prosjekter</a>
+      <a href="spill.html">Spill</a>
+      <a href="skreddersydd.html">Skreddersydd</a>
+      <a href="tingbase.html" aria-current="page">Tingbasen</a>
+      <span class="snart-lenke">Lærerverktøy <small>Kommer</small></span>
+      <span class="snart-lenke">Til utskrift <small>Kommer</small></span>
+      <a href="index.html#slik">Slik er det laget</a>
+      <a href="elev/">Elevinnlogging</a>
+      <a class="btn btn-amber btn-liten" href="https://myntland.no">Myntland</a>
+    </nav>
+  </div>
+</header>
+
+<section class="sidetopp" style="padding-top:32px;padding-bottom:88px">
+  <div class="wrap sidetopp-to">
+    <div class="sidetopp-tekst">
+      <a class="tilbake" href="index.html"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Tilbake til forsiden</a>
+      <p class="eyebrow">For hele skolen</p>
+      <h1>Finn tingene på skolen – på sekunder</h1>
+      <p class="stor">Hvor er klassesettet med kompass? Har vi egentlig en mikroskopkasse? Tingbasen er skolens felles oversikt over utstyr og materiell, så svaret ikke bare ligger i hodet til én person eller bakerst i et skap.</p>
+      <div class="knapperad"><a class="btn btn-amber" href="#henvendelse">Ta kontakt</a><a class="btn btn-ghost" href="#funksjoner">Hva får skolen?</a></div>
+    </div>
+    <div class="sidetopp-bilde"><img src="img/tingbase.webp" alt="Skjermbilde fra Tingbasen: kort med bilder av matematikkmateriell som Base 10 og fargebamser, med faner for fag, plassering og antall aktivitetsforslag"></div>
+  </div>
+</section>
+
+<main>
+<section class="seksjon" id="funksjoner" aria-labelledby="funk-tittel">
+  <div class="wrap" style="display:flex;flex-direction:column;gap:40px">
+    <div class="seksjon-topp">
+      <p class="eyebrow">I bruk på egen skole</p>
+      <h2 id="funk-tittel">Dette kan Tingbasen</h2>
+    </div>
+    <div class="ting-funk">
+      <div class="mork-kort"><span class="nr">1</span><h3>Alt på ett sted</h3><p>Utstyr og materiell sortert etter fag, med bilde, kort beskrivelse og hvor det står. Søk, og du finner det.</p></div>
+      <div class="mork-kort"><span class="nr b">2</span><h3>Alle kan bidra</h3><p>Kollegene legger inn nye ting selv. En egen admin-tilgang kan redigere og rydde.</p></div>
+      <div class="mork-kort"><span class="nr c">3</span><h3>QR på hylla</h3><p>Skriv ut QR-etiketter til kasser og hyller. Skann, og du ser hva tingen er og hva den kan brukes til.</p></div>
+      <div class="mork-kort"><span class="nr d">4</span><h3>Ideer til bruk</h3><p>Hver ting kan få forslag til aktiviteter, så materiellet faktisk kommer i bruk – ikke bare blir stående.</p></div>
+      <div class="mork-kort"><span class="nr">5</span><h3>Utskriftsmateriell</h3><p>Samle skolens kopioriginaler og ark til utskrift på samme sted som tingene.</p></div>
+      <div class="mork-kort"><span class="nr b">6</span><h3>Skolens eget preg</h3><p>Skolens navn, farger og fag. Det ser ut som deres egen side – fordi det er det.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="seksjon" aria-labelledby="pakker-tittel" style="background:var(--tavle-mork)">
+  <div class="wrap" style="display:flex;flex-direction:column;gap:40px">
+    <div class="seksjon-topp">
+      <p class="eyebrow">Pris</p>
+      <h2 id="pakker-tittel">Enkelt og forutsigbart</h2>
+    </div>
+    <div class="pakkegrid">
+      <div class="mork-kort" style="padding:32px;gap:14px">
+        <span class="eyebrow" style="font-size:13px;letter-spacing:1px">Oppstart</span>
+        <h3 style="font-size:26px">Klar til bruk</h3>
+        <p class="pris">3 990 kr <small>engangspris</small></p>
+        <p style="flex-grow:1">Skolens egen Tingbase med navn, farger og fag, innlogging for de ansatte, en kort opplæring på Teams eller e-post og en velkomstguide.</p>
+      </div>
+      <div class="pakke-lys">
+        <span class="pakke-merke">Hvert år</span>
+        <h3>Drift og oppdateringer</h3>
+        <p class="pris">990 kr <small>i året</small></p>
+        <p>Drift, sikkerhetskopi og nye funksjoner når de kommer. Første skoleår er inkludert i oppstartsprisen.</p>
+      </div>
+    </div>
+    <div class="vilkar-linje">
+      <span><strong>Ingen elevdata:</strong> Tingbasen lagrer bare opplysninger om ting, ikke om elever.</span>
+      <span><strong>Dataene er deres:</strong> Dere kan få alt eksportert hvis dere vil slutte.</span>
+      <span><strong style="color:var(--rav)">Pilotpris:</strong> 30 % rabatt på oppstart for de tre første skolene.</span>
+    </div>
+  </div>
+</section>
+
+<section class="seksjon" id="henvendelse" aria-labelledby="henv-tittel">
+  <div class="wrap henv">
+    <div class="henv-intro">
+      <p class="eyebrow">Ta kontakt</p>
+      <h2 id="henv-tittel" style="margin:0 0 16px">Vil skolen ha en Tingbase?</h2>
+      <p>Fyll ut skjemaet, så svarer jeg på e-post, som regel innen noen dager. Det er helt uforpliktende – jeg viser gjerne en demo først.</p>
+      <ul>
+        <li>Fint om du skriver omtrent hvor stor skolen er.</li>
+        <li>Fortell gjerne hvordan dere holder oversikt over utstyret i dag.</li>
+      </ul>
+    </div>
+    <div class="henv-kort">
+      <form id="tingSkjema">
+        <fieldset>
+          <legend>Om deg og skolen</legend>
+          <div class="henv-rad">
+            <div class="henv-felt"><label for="t-navn">Navn</label><input id="t-navn" maxlength="80" autocomplete="name" required></div>
+            <div class="henv-felt"><label for="t-epost">E-post</label><input id="t-epost" type="email" maxlength="120" autocomplete="email" required></div>
+          </div>
+          <div class="henv-rad">
+            <div class="henv-felt"><label for="t-rolle">Jeg er</label>
+              <select id="t-rolle"><option value="">Velg</option><option>Lærer</option><option>Skoleleder</option><option>IKT-ansvarlig</option><option>Annet</option></select></div>
+            <div class="henv-felt"><label for="t-skole">Skole</label><input id="t-skole" maxlength="120" autocomplete="organization" required></div>
+          </div>
+          <div class="henv-felt"><label for="t-storrelse">Omtrent hvor mange ansatte? <small>(valgfritt)</small></label>
+            <select id="t-storrelse"><option value="">Velg</option><option>Under 20</option><option>20–50</option><option>Over 50</option></select></div>
+          <div class="henv-felt"><label for="t-melding">Din melding</label><textarea id="t-melding" maxlength="1800" required placeholder="For eksempel: Vi vil gjerne se en demo. I dag har vi …"></textarea></div>
+          <div class="henv-skjult" aria-hidden="true"><label for="t-nettside">Ikke fyll ut dette feltet</label><input id="t-nettside" tabindex="-1" autocomplete="off"></div>
+          <label class="henv-samtykke"><input type="checkbox" id="t-samtykke" required><span>Jeg godtar at Tavleloftet lagrer det jeg har skrevet for å svare meg, og at det slettes senest 12 måneder etter siste kontakt. <a href="personvern.html" style="color:var(--gronn)">Les om personvern</a>.</span></label>
+          <button class="btn btn-amber" id="tingSend" type="submit" style="align-self:flex-start">Send henvendelse</button>
+          <p class="henv-mld" id="tingMld" role="status"></p>
+        </fieldset>
+      </form>
+      <div class="henv-takk" id="tingTakk" hidden tabindex="-1">
+        <h3>Takk!</h3>
+        <p>Henvendelsen er sendt. Du får en bekreftelse på e-post nå, og jeg svarer så snart jeg kan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="bunn">
+  <div class="wrap">
+    <div class="navn">Tavleloftet</div>
+    <div>Laget av en lærer, for lærere og elever.</div>
+    <div class="foretak" style="opacity:.75;font-size:.9em">Tavleloftet Skjelstad · Org.nr. 838 831 702</div>
+    <nav aria-label="Bunnmeny">
+      <a href="om.html">Om Tavleloftet</a>
+      <a href="elev/">Elevinnlogging</a>
+      <a href="rapport.html">Framgangsrapport</a>
+      <a href="personvern.html">Personvern</a>
+      <a href="https://buymeacoffee.com/tavleloftet" target="_blank" rel="noopener">Støtt Tavleloftet</a>
+      <a href="skreddersydd.html?om=annet#henvendelse">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+<script src="js/tavleloftet.js"></script>
+<script src="js/tavleloftet-firebase.js"></script>
+<script src="js/tingbase-henvendelse.js"></script>
+</body>
+</html>
