@@ -20,6 +20,12 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
   Hør gjennom klippene på `lyslaget/lydsjekk-basen.html`. Kilden er `Skole\Robotmatte` (frittstående utgave uten innlogging). Se `maler/lyslagetverden/LES-MEG.md`.
 - `dinoparken2/` – Dinoparken med oppgavepakker (egne oppgaver per elev). Første pakke: lyder, venner og klosser. Se `dinoparken2/LES-MEG.md`
 - `dinodalen/` – Dinodalen: Dinoparken i ny drakt (elvedal, seks andre dinoer, samme oppgaver). Verden-ID `dinodalen`, lagring `dinodalen-…`. Kilden til kart og dinoer: `Skole\Dinodalen` (frittstående utgave uten innlogging)
+- `sakuradalen/` – Sakuradalen (lagt ut 25.11.2026): monsterverdenen der eleven fanger monstre i bokser, trener dem i dojoen og dyster i arenaen.
+  Verden-ID `sakuradalen`, lagring `sakuradalen-spill` og `sakuradalen-framgang-v1`. Ulenket fra forsiden, eleven kommer inn med elevkode via `elev/`.
+  `index.html` er hele verdenen, `oppgaver.js` er oppgavepakke 1 (tallinje, klokka, måling, kalkulator, engelsk og hverdagsferdigheter).
+  `lyd/` har 643 norske klipp (Kristine) og 77 engelske (Alice), `lyd/klipp.js` er lista. `bilder/` har monstre, klær og ikoner (Higgsfield).
+  Målfil: `js/maal-sakuradalen.js` (ett mål per tema og vanskegrad). Kilden er `Tavleloftet\maler\monsterverden` (frittstående utgave uten innlogging).
+  De to utgavene er like bortsett fra linjene øverst i `<head>`. Se `maler/monsterverden/LES-MEG.md`.
 - `js/tavleloftet-apningstid.js` – åpningstid for alle verdenene (30 min per dag som standard). Styres fra `rapport.html`. Se toppen av fila
 - `admin.html` – bare for Espen (het `voksen.html` til 21.11.2026): lager elevkode og voksenkode, og skriver ut innloggingslapp
 - `voksen.html` – sender videre til `rapport.html`. «Voksensiden» er nå det kjøperen ser: rapporten, som åpnes med voksenkoden eller fra hengelåsmenyen i verdenen («Se rapporten»)

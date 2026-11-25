@@ -38,7 +38,9 @@
     dinoparken2: { navn: 'Dinoparken', sover: 'Dinoene skal sove nå.', opptatt: dinoOpptatt },
     dinodalen:   { navn: 'Dinodalen',  sover: 'Dinoene skal sove nå.', opptatt: dinoOpptatt },
     // I basen (basen.html) får en åpen oppgave bli ferdig før det stenges. De andre Lyslaget-sidene varsler og stenger som før.
-    lyslaget:    { navn: 'Lyslaget',   sover: 'Robotene skal lade batteriene nå.', opptatt: /basen\.html$/.test(location.pathname) ? function () { return !!document.querySelector('#lag .overlegg, #side.apen'); } : undefined }
+    lyslaget:    { navn: 'Lyslaget',   sover: 'Robotene skal lade batteriene nå.', opptatt: /basen\.html$/.test(location.pathname) ? function () { return !!document.querySelector('#lag .overlegg, #side.apen'); } : undefined },
+    // Sakuradalen: en åpen oppgave, fangst eller dyst får bli ferdig før det stenges.
+    sakuradalen: { navn: 'Sakuradalen', sover: 'Monstrene skal sove nå.', opptatt: function () { return !!document.querySelector('#lag .overlegg'); } }
   };
   var T = TEKST[TL.verden] || { navn: TL.verdenNavn || 'Verdenen', sover: 'Nå er det pause.' };
   var CFG = window.TAVLELOFTET_FIREBASE, DB = CFG && CFG.databaseURL ? CFG.databaseURL.replace(/\/$/, '') : null;

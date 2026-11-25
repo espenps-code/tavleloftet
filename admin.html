@@ -164,7 +164,7 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
       <h2>Ny elev</h2>
       <form id="nyElev" class="rad">
         <div><label for="navn">Navn (bare for deg)</label><input id="navn" maxlength="40" placeholder="Fornavn eller kallenavn" required></div>
-        <div><label for="verden">Verden</label><select id="verden"><option value="dinoparken">Dinoparken</option><option value="dinoparken2">Dinoparken – lyder, venner og klosser</option><option value="dinodalen">Dinodalen</option><option value="lyslaget">Lyslaget</option></select></div>
+        <div><label for="verden">Verden</label><select id="verden"><option value="dinoparken">Dinoparken</option><option value="dinoparken2">Dinoparken – lyder, venner og klosser</option><option value="dinodalen">Dinodalen</option><option value="lyslaget">Lyslaget</option><option value="sakuradalen">Sakuradalen</option></select></div>
         <button class="hoved" type="submit">Lag elevkode</button>
       </form>
       <p class="liten" style="margin:10px 0 0">Navnet lagres bare på din konto, og eleven ser det aldri. Bruk gjerne kallenavn eller fornavn. Framgangen lagres under koden, uten navn.</p>
@@ -248,7 +248,7 @@ code{background:#0f2a2b;padding:2px 6px;border-radius:6px;font-size:.92em;word-b
 'use strict';
 var CFG = window.TAVLELOFTET_FIREBASE;
 var FB = '10.12.2';
-var VERDENER = { dinoparken: 'Dinoparken', dinoparken2: 'Dinoparken – lyder, venner og klosser', dinodalen: 'Dinodalen', lyslaget: 'Lyslaget' };
+var VERDENER = { dinoparken: 'Dinoparken', dinoparken2: 'Dinoparken – lyder, venner og klosser', dinodalen: 'Dinodalen', lyslaget: 'Lyslaget', sakuradalen: 'Sakuradalen' };
 /* Oppgavepakke for verdener som har det. Lagres sammen med elevens framgang rett etter at koden er laget. */
 var PAKKE = { dinoparken2: { nokkel: 'dp2-pakke', verdi: 'lyd-venner-klosser' } };
 var ALFABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -265,6 +265,9 @@ var BREV = {
   dinodalen: { rapport: true,
     intro: 'Dinodalen er en læringsverden der eleven bygger sin egen dinosaurpark i en elvedal. Parken vokser bare når eleven løser oppgaver, så øving og spill henger sammen hele veien.',
     om: '<p>I hver innhegning står fem stasjoner med oppgaver: klokka, penger, 10-er-venner, lyder i ord og å lese ord. Oppgavene leses opp.</p><p>I Utkikkstårnet skriver eleven fem setninger som begynner med «Jeg ser» til et myldrebilde. <b>Den oppgaven trenger en voksen:</b> du leser setningene sammen med eleven og holder «Godkjenn» inne. Setningene lagres bare til de er godkjent.</p><p>Riktige svar gir mynter. Myntene brukes til nye områder og egg som klekkes. Når eleven har 8 riktige av de 10 siste på et nivå, kommer en stjerne og et nytt nivå. Det er det samme som et nådd mål i rapporten.</p><p>Voksenmenyen i verdenen åpnes med voksenkoden over, og lar deg velge startnivå for hvert tema.</p>' },
+  sakuradalen: { rapport: true,
+    intro: 'Sakuradalen er en læringsverden der eleven fanger og trener monstre i en japansk dal. Alt eleven får til i dalen, skjer ved å løse oppgaver.',
+    om: '<p>Eleven leter etter monstre i kirsebærenga, bambusskogen og på stranda, og fanger dem i bokser. For å lukke boksen må eleven løse oppgaver om hverdagen: vaske hender, invitere til lek, be om hjelp, løse små problemer og kle seg riktig. Sjeldne monstre stikker lettere av, og en bedre boks gir bedre sjanse.</p><p>I dojoen trener eleven monstrene. Hver egenskap har sitt fag: tallinje, klokka, måling og kalkulator, og engelske ord. I arenaen møter eleven vokterne i dalen til oppgaveduell, der riktig svar gir monsteret et trekk. Ingen blir skadet, monstrene blir bare slitne.</p><p>Alt leses opp. Hver løst oppgave gir mynter, og myntene brukes på bokser og på å bygge ut stedene i dalen. Det finnes ingen gratis mynter.</p><p>Voksenmenyen (tannhjulet) åpnes med voksenkoden over. Der kan du slå opplesingen av og på og se hvor mange oppgaver som er riktige på første forsøk.</p>' },
   lyslaget: { rapport: true,
     intro: 'Lyslaget er en læringsverden med roboter. Eleven bygger ut basen til robotene ved å løse oppgaver i matte, lesing, skriving, klokka og sosiale ferdigheter.',
     om: '<p>Eleven starter i basen med et lite verksted. Hver løst oppgave gir skruer, og skruene brukes til å bygge ut hovedkvarteret og egne områder til robotene. Det finnes ingen gratis skruer.</p><p>I Vennekroken øver eleven på følelser og på hvordan vi er mot hverandre, sammen med den lille roboten Bit. Oppgavene leses opp.</p><p>I Kikkerten skriver eleven fem setninger som begynner med «Jeg ser» til et myldrebilde. <b>Den oppgaven trenger en voksen:</b> du leser setningene sammen med eleven og holder «Godkjenn» inne. Setningene lagres bare til de er godkjent.</p><p>Voksenmenyen (tannhjulet oppe til høyre) åpnes med voksenkoden. Der står åpningstiden, og der er det lenke til rapporten.</p>' }
@@ -368,6 +371,9 @@ function sammendrag(verden, data){
   var n = Object.keys(data).length;
   if (verden === 'dinoparken' || verden === 'dinoparken2' || verden === 'dinodalen') {
     try { var st = JSON.parse(data[{ dinoparken2: 'dp2-v8', dinodalen: 'dinodalen-v1' }[verden] || 'dinoparken-v8']); if (st) return '🪙 ' + (st.coins || 0) + ' · områder ' + ((st.owned || []).length) + ' av 6'; } catch (e) {}
+  }
+  if (verden === 'sakuradalen') {
+    try { var sk = JSON.parse(data['sakuradalen-spill']); if (sk) return '🪙 ' + (sk.mynter || 0) + ' · monstre ' + Object.keys(sk.monstre || {}).length + ' av 20 · oppgaver ' + (sk.oppg || 0); } catch (e) {}
   }
   return n + ' lagrede ting';
 }

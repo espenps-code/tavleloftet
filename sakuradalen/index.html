@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<script src="../js/tavleloftet-firebase.js"></script>
+<script src="../js/tavleloftet-elev.js" data-verden="sakuradalen"></script>
+<script src="../js/maal-sakuradalen.js"></script>
+<script src="../js/tavleloftet-framgang.js" data-verden="sakuradalen"></script>
+<script src="../js/tavleloftet-apningstid.js"></script>
+<meta name="description" content="Sakuradalen: eleven fanger og trener monstre i en japansk dal, og kommer videre ved å løse oppgaver.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tavleloftet">
+<meta property="og:title" content="Sakuradalen – en læringsverden fra Tavleloftet">
+<meta property="og:description" content="Eleven fanger monstre i bokser, trener dem i dojoen og møter vokterne i dalen til oppgaveduell. Alt skjer ved å løse oppgaver i klokka, tallinje, måling, engelsk og hverdagsferdigheter.">
+<meta property="og:url" content="https://tavleloftet.no/sakuradalen/">
+<meta property="og:image" content="https://tavleloftet.no/sakuradalen/del.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Skjermbilde av Sakuradalen: en 3D-øy med snødekt fjell, kirsebærtrær, rød bru, dojo og arena">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#b83a55">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sakuradalen">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sakuradalen</title>
+<link rel="stylesheet" href="../fonts/skrifter.css">
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<style>
+:root{--hav:#b83a55;--hav-mork:#8f2a40;--ink:#2b2440;--kort:#fffaf3;--gull:#f2c230;--rod:#c8382e;--gronn:#2f8f46;--kant:#ecd9dc;--lys:#f6e8ea}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--ink);font-size:18px;line-height:1.4;background:linear-gradient(#d8effa,#fdeef2)}
+h1,h2,h3{font-family:Fredoka,sans-serif;margin:0 0 8px;line-height:1.15}
+h2{font-size:1.4rem}h3{font-size:1.1rem}
+p{margin:0 0 10px}
+canvas#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 18px;font-weight:700;min-height:48px;background:var(--hav);color:#fff}
+button:disabled{background:#cfc8d6;color:#f6f3f8;cursor:not-allowed}
+button.sek{background:var(--lys);color:var(--ink)}
+button.gull{background:var(--gull);color:#3a2a00}
+button.gull:disabled{background:#cfc8d6;color:#f6f3f8}
+button.rod{background:var(--rod)}
+button:focus-visible,input:focus-visible{outline:4px solid #ffb300;outline-offset:2px}
+header{position:fixed;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:8px;z-index:5;pointer-events:none;flex-wrap:wrap}
+header>*{pointer-events:auto}
+.skilt{background:var(--kort);border:3px solid var(--ink);border-radius:16px;padding:6px 12px;display:flex;align-items:center;gap:8px;min-width:0}
+.skilt .navn{font-family:Fredoka,sans-serif;font-weight:700;font-size:1.1rem;line-height:1.1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:44vw}
+.skilt .under{display:block;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:400;font-size:.8rem}
+.brikke,button.brikke{background:var(--kort);color:var(--ink);border:3px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:700;white-space:nowrap;min-height:0}
+button.brikke{min-height:44px}
+header .luft{flex:1}
+#gir{background:var(--kort);color:var(--ink);border:3px solid var(--ink);border-radius:50%;width:48px;padding:0;font-size:1.3rem}
+#tags button{position:absolute;left:0;top:0;transform:translate(-50%,-100%);background:var(--kort);color:var(--ink);border:3px solid var(--ink);border-radius:14px;padding:6px 12px;min-height:44px;white-space:nowrap;font-size:.95rem;z-index:2;box-shadow:0 3px 0 rgba(43,36,64,.25)}
+#tags button.last{background:#e9eee0;border-style:dashed}
+@media(max-width:600px){#tags:not(.liste) .t{display:none}#tags:not(.liste) button{padding:6px 10px;font-size:1.05rem}}
+#tags.liste{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;z-index:2}
+#tags.liste button{position:static;transform:none}
+#panel{position:fixed;left:0;right:0;bottom:0;max-height:62vh;overflow:auto;background:var(--kort);border:3px solid var(--ink);border-bottom:0;border-radius:22px 22px 0 0;padding:16px;z-index:8;display:none}
+#panel.apen{display:block}
+@media(min-width:800px){#panel{left:auto;top:76px;right:12px;bottom:12px;width:410px;max-height:none;border-bottom:3px solid var(--ink);border-radius:22px}}
+.del{border-top:2px solid var(--kant);padding-top:12px;margin-top:12px}
+.rad{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.liten{font-size:.9rem;color:#5a5070}
+.proeve{background:#fff6d6;border:2px dashed #c99700;border-radius:12px;padding:8px 12px;font-size:.9rem;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stasjon{text-align:left;background:#fff;color:var(--ink);border:2px solid var(--kant);border-radius:16px;padding:12px;display:block;width:100%}
+.stasjon .ik{font-size:1.9rem;display:block}
+.stasjon small{display:block;font-weight:400;color:#5a5070;font-size:.8rem}
+.linje{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--kant)}
+.linje:last-child{border-bottom:0}
+.linje .voks{flex:1;min-width:0}
+.linje button{padding:8px 10px;font-size:.9rem}
+.linje .ik{font-size:1.5rem;width:38px;text-align:center;flex:none}
+.linje svg{flex:none}
+.merke{display:inline-block;background:#e9e2ff;color:#44307a;border-radius:999px;padding:1px 9px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.merke.ja{background:#d8f0d6;color:#1d5a2a}
+.valg{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 12px}
+.valg button{background:var(--lys);color:var(--ink);padding:8px 12px;min-height:44px;font-size:.92rem;border:2px solid transparent}
+.valg button[aria-pressed="true"]{background:var(--hav-mork);color:#fff;border-color:var(--ink)}
+.overlegg{position:fixed;inset:0;background:rgba(30,22,48,.6);display:grid;place-items:center;padding:16px;z-index:20}
+.dialog{background:#fff;border-radius:22px;padding:22px;max-width:480px;width:100%;max-height:90vh;overflow:auto}
+.dialog.bred{max-width:640px}
+.svar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.svar button{font-size:1.5rem;min-height:68px;background:var(--lys);color:var(--ink)}
+.svar button.feil{background:#f6c9c4}
+.stort{font-size:2rem;font-weight:700;text-align:center;margin:10px 0;font-family:Fredoka,sans-serif}
+.midt{text-align:center}
+.farger{display:flex;gap:8px;flex-wrap:wrap}
+.farger button{width:48px;height:48px;min-height:48px;padding:0;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #a79db5}
+.farger button[aria-pressed="true"]{box-shadow:0 0 0 4px var(--ink)}
+input[type=text]{font:inherit;padding:12px;border-radius:12px;border:2px solid #a79db5;width:100%}
+.nivaa{display:inline-flex;gap:4px;vertical-align:middle}
+.nivaa i{width:14px;height:14px;border-radius:50%;background:#e6dce4;display:inline-block}
+.nivaa i.pa{background:var(--hav)}
+.bok{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.bok div{border:2px solid var(--kant);border-radius:14px;padding:8px;text-align:center;font-size:.85rem}
+.bok div.tom{background:#f6f3f8;color:#6a6080}
+.bok strong{display:block;font-size:.95rem}
+.merke.sj1{background:#ece8f0;color:#4a4060}.merke.sj2{background:#dcebff;color:#1f4a8a}.merke.sj3{background:#fff0c2;color:#7a5600}
+.soyle{display:inline-block;position:relative;width:96px;height:12px;border-radius:6px;background:#e6dce4;vertical-align:middle;overflow:hidden}
+.soyle i{position:absolute;left:0;top:0;bottom:0;background:var(--hav);border-radius:6px}
+.soyle b{position:absolute;top:0;bottom:0;width:3px;margin-left:-3px;background:var(--ink)}
+.belte{flex:none;width:38px;height:14px;border-radius:4px;border:2px solid var(--ink)}
+.pokal{display:block;font-size:2rem;line-height:1.2}
+.valg button{display:inline-flex;align-items:center;gap:6px}
+.kratt{height:96px;border-radius:16px;background:linear-gradient(#e4f5d8 0 60%,#9bd975 60%);margin:10px 0;display:flex;align-items:flex-end;justify-content:center;gap:10px;overflow:hidden}
+.kratt span{width:70px;height:60px;border-radius:50% 50% 0 0;background:#58a94c;border:3px solid var(--ink);border-bottom:0;transform-origin:50% 100%}
+.kratt span:nth-child(2){height:78px;background:#6fbf5a}
+.bokser{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0}
+.boksvalg{background:#fff;color:var(--ink);border:2px solid var(--kant);padding:8px 4px;display:flex;flex-direction:column;align-items:center;font-size:.9rem}
+.boksvalg small{display:block;font-weight:400;font-size:.78rem}
+.boksvalg:disabled{background:#f6f3f8;color:#6a6080;opacity:.75}
+.iboks{position:relative;display:inline-block}.iboks>span{position:absolute;left:50%;top:-6px;transform:translateX(-50%)}
+.ring{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin:8px 0}
+.ring strong{display:block}.ring .mot{font-family:Fredoka,sans-serif;font-weight:700;color:#6a6080}
+.ring .sliten svg,.ring .sliten img{filter:grayscale(1);opacity:.55;transform:rotate(18deg)}
+.energi{display:block;height:14px;border-radius:7px;background:#e6dce4;overflow:hidden;border:2px solid var(--ink);margin:4px 0 2px}
+.energi i{display:block;height:100%;background:var(--gronn);transition:width .4s}
+.logg{background:var(--lys);border-radius:14px;padding:10px 12px;margin:10px 0;min-height:3.2em}.logg p{margin:0 0 4px}.logg p:last-child{margin:0}
+.fag{width:100%;border-collapse:collapse;font-size:.9rem}.fag th,.fag td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--kant)}.fag td{white-space:nowrap}
+.mbilde{object-fit:contain;vertical-align:middle}.mbilde.ukjent{filter:brightness(0);opacity:.28}
+.iboks>span{top:-22px}
+.boksvalg .sjanse{font-weight:700;border-radius:999px;padding:1px 8px;margin-top:3px}.sjanse.s3{background:#d8f0d6;color:#1d5a2a}.sjanse.s2{background:#fff0c2;color:#7a5600}.sjanse.s1{background:#f6d6d2;color:#8f2a24}
+.stakk{display:inline-block;opacity:.45;transform:translateX(40px) rotate(12deg)}
+.iko{width:1.35em;height:1.35em;object-fit:contain;vertical-align:-.32em}.brikke .iko{width:1.2em;height:1.2em}#gir .iko{width:30px;height:30px;vertical-align:middle}h2 .iko{width:1.5em;height:1.5em}
+#laster{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-family:Fredoka,sans-serif;font-size:1.3rem;z-index:1}
+@media (prefers-reduced-motion:no-preference){
+  .dialog{animation:inn .18s ease-out}@keyframes inn{from{transform:translateY(12px);opacity:0}}
+  .hopp svg,.hopp img{animation:hopp 1.1s ease-in-out infinite}@keyframes hopp{50%{transform:translateY(-8px)}}
+  .kratt span{animation:rasle .5s ease-in-out infinite}.kratt span:nth-child(2){animation-delay:.15s}.kratt span:nth-child(3){animation-delay:.3s}
+  @keyframes rasle{50%{transform:rotate(7deg) scale(1.06)}}
+  .rister{animation:rister .3s ease-in-out infinite}@keyframes rister{25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+}
+</style>
+</head>
+<body>
+<div id="laster">Bygger dalen …</div>
+<canvas id="scene" aria-label="3D-oversikt over Sakuradalen"></canvas>
+<header id="topp"></header>
+<div id="tags" class="liste"></div>
+<aside id="panel" aria-live="polite"></aside>
+<div id="lag"></div>
+
+<script>
+/* =====================================================================
+   SAKURADALEN – ramme for en monsterverden (prøveversjon)
+   Del 1: regler og sider (denne blokka). Del 2: 3D-verdenen (lenger ned).
+   Alt som har med OPPGAVER å gjøre går gjennom ett sted: startOppgave().
+   Lagring bruker nøkler som starter med «sakuradalen-», slik at Tavleloftets
+   elevinnlogging kan ta sikkerhetskopi på samme måte som i Dinoparken.
+
+   Slik henger det sammen: hver løst oppgave gir mynter.
+   JAKT:    let i enga, skogen eller på stranda -> velg boks -> løs oppgaver -> boksen rister ->
+            fanget, eller monsteret stikker av. Sjeldne monstre er vanskeligere. Bedre boks hjelper.
+   TRENING: velg monster og egenskap i dojoen -> løs en oppgave -> egenskapen vokser.
+   DYST:    oppgaveduell i arenaen. Riktig svar = monsteret ditt gjør et trekk.
+   Myntene brukes på bokser og på å bygge ut stedene.
+   ===================================================================== */
+
+/* ---------- Tall du kan skru på (balansen i spillet) ---------- */
+var OPPSETT = {
+  mynterPerOppgave: 5,    // mynter for én løst oppgave (fangst, trening og dyst)
+  startmynter: 10,
+  startbokser: 3,         // trekasser fra start
+  nyttMonsterBonus: 5,    // ekstra mynter første gang et monster havner i Monsterboka
+  dublett: [2, 6, 15],    // mynter for et monster du har fra før (vanlig, sjelden, legendarisk)
+  nyFlaks: 3,             // monstre som mangler i boka dukker opp så mange ganger oftere
+  venteMin: 900,          // millisekunder du leter før noe dukker opp (korteste og lengste)
+  venteMaks: 2200,
+  dojoTak: [0, 5, 10, 15],// høyeste nivå en egenskap kan trenes til på dojo nivå 1, 2 og 3
+  arenaTrinn: [0, 3, 7, 10], // hvor mange motstandere som er åpne på arena nivå 1, 2 og 3
+  /* FANGST. Sjansen (i prosent) for at monsteret blir i boksen: [vanlig, sjelden, legendarisk] for hver boks. */
+  fangst: {tre:[80,35,10], lakk:[95,65,30], gull:[100,90,60]},
+  fangstOppgaver: [1, 2, 3],  // hvor mange oppgaver eleven må løse for å lukke boksen (vanlig, sjelden, legendarisk)
+  fangstRiktig: 10,           // sjansen øker så mye for hver oppgave som er riktig på første forsøk
+  fangstFeil: 10              // og synker så mye for hver oppgave der første forsøk var galt
+};
+/* Stedene i verdenen. x og z er plasseringen i 3D-verdenen, h er høyden på merkelappen. */
+var OMRADER = [
+  {id:'eng',      ik:'🌸', navn:'Kirsebærenga',     x:-3,  z:-30, h:7},
+  {id:'skog',     ik:'🎋', navn:'Bambusskogen',     x:-42, z:-33, h:9,   om:'Åpne bambusskogen. Her gjemmer skog- og steinmonstre seg.'},
+  {id:'strand',   ik:'🐚', navn:'Stranda',          x:44,  z:3,   h:5.5, om:'Åpne stranda. Her finner du vannmonstre.'},
+  {id:'dojo',     ik:'🥋', navn:'Dojoen',           x:-21, z:-10, h:9.5},
+  {id:'verksted', ik:'🔨', navn:'Bokseverkstedet',  x:-37, z:4,   h:6.5},
+  {id:'arena',    ik:'🥁', navn:'Dyst-arenaen',     x:38,  z:-21, h:8,   om:'Bygg arenaen og utfordre vokterne i dalen til oppgaveduell.'},
+  {id:'trofe',    ik:'🏆', navn:'Troférommet',      x:-8,  z:-56, h:11,  h0:8.5, om:'Bygg et troférom på høyden. Her står pokalene og merkene dine.'}
+];
+/* Pris for nivå 1, 2 og 3. Pris 0 = du har det fra start. */
+var PRIS = {eng:[0,40,100], skog:[30,60,120], strand:[50,80,140], dojo:[0,80,200], verksted:[0,50,130], arena:[40,100,220], trofe:[30,80,160]};
+var BYGG = {
+  eng:      {navn:'Kirsebærenga',    hva:['','Blomstereng','Kirsebærlund med hvilebenk','Lund med lite tempel'], gir:'Sjeldnere monstre våger seg fram.'},
+  skog:     {navn:'Bambusskogen',    hva:['','Lysning i bambusen','Steinsti og lykt','Port til den hellige steinen'], gir:'Sjeldnere monstre våger seg fram.'},
+  strand:   {navn:'Stranda',         hva:['','Sandstrand med fjærepytt','Båtplass og parasoll','Klippeport og port i sjøen'], gir:'Sjeldnere monstre våger seg fram.'},
+  dojo:     {navn:'Dojo',            hva:['','Enkel dojo (nivå 5)','Treningshall (nivå 10)','Mesterpagode (nivå 15)'], gir:'Monstrene kan trenes til høyere nivå.'},
+  verksted: {navn:'Bokseverksted',   hva:['','Lager trekasser','Lager lakkesker','Lager gullskrin'], gir:'Bedre bokser fanger sjeldnere monstre.'},
+  arena:    {navn:'Arena',           hva:['','Ring med 3 motstandere','Tribuner og 4 nye motstandere','Tak, trommer og de 3 siste'], gir:'Flere motstandere og større pokaler.'},
+  trofe:    {navn:'Troférom',        hva:['','Liten paviljong','Trofésal','Den gylne paviljongen'], gir:'Finere plass til pokalene dine.'}
+};
+/* De fem klassene. «slaar» = klassen denne er sterk mot. Ringen går rundt:
+   Vann slår Ild, Ild slår Skog, Skog slår Stein, Stein slår Vind, Vind slår Vann. */
+var KLASSER = [
+  {id:'skog',  ik:'🌿', navn:'Skog',  c:'#58a94c', slaar:'stein'},
+  {id:'vann',  ik:'💧', navn:'Vann',  c:'#3f8fd0', slaar:'ild'},
+  {id:'ild',   ik:'🔥', navn:'Ild',   c:'#e8703a', slaar:'skog'},
+  {id:'stein', ik:'🪨', navn:'Stein', c:'#8c8f9a', slaar:'vind'},
+  {id:'vind',  ik:'🌬️', navn:'Vind',  c:'#9b8fd9', slaar:'vann'}
+];
+/* Sjeldenhet. «bonus» legges til alle fire egenskapene i dyst. */
+var SJELDEN = [null,
+  {navn:'Vanlig',      stj:'★',   bonus:0, w:6},
+  {navn:'Sjelden',     stj:'★★',  bonus:2, w:2.5},
+  {navn:'Legendarisk', stj:'★★★', bonus:4, w:1}
+];
+/* De fire egenskapene. «fag» er bare en merkelapp nå – her kobles oppgavetypene på senere. */
+var EGENSKAPER = [
+  {id:'styrke', ik:'💪', navn:'Styrke',       fag:'Fag 1 (f.eks. regning)',  om:'Hvor mye energi motstanderen mister når du svarer riktig.'},
+  {id:'fart',   ik:'💨', navn:'Fart',         fag:'Fag 2 (f.eks. lesing)',   om:'Raskest starter. Er du raskest, smetter du unna hvert tredje trekk.'},
+  {id:'uth',    ik:'❤️', navn:'Utholdenhet',  fag:'Fag 3 (f.eks. skriving)', om:'Hvor mye energi monsteret ditt har.'},
+  {id:'klokt',  ik:'🧠', navn:'Kløkt',        fag:'Fag 4 (f.eks. klokka)',   om:'Monsteret skjønner hva som kommer og mister mindre energi.'}
+];
+/* Stasjoner som ikke er egenskaper: fangst og dyst. */
+var FANGST = {id:'fangst', ik:'📦', navn:'Lukk boksen',   fag:'Fag 5 (f.eks. blandet repetisjon)'};
+var DYST   = {id:'dyst',   ik:'🥁', navn:'Oppgaveduell',  fag:'Blandet fra alle fagene'};
+/* Boksene. niv = verkstednivået som trengs. Hvor godt hver boks fanger, står i OPPSETT.fangst. */
+var BOKSER = [
+  {id:'tre',  navn:'Trekasse',  fl:'trekasser', pris:2,  niv:1, om:'Fin til vanlige monstre. Sjeldne stikker ofte av.'},
+  {id:'lakk', navn:'Lakkeske',  fl:'lakkesker', pris:8,  niv:2, om:'God til vanlige og sjeldne monstre.'},
+  {id:'gull', navn:'Gullskrin', fl:'gullskrin', pris:20, niv:3, om:'Den beste boksen. Trengs til de legendariske.'}
+];
+/* MONSTRENE. kl = klasse, sj = sjeldenhet (1–3), sted = hvor det lever, c = farge på plassholderen.
+   «om» er en kort beskrivelse – den brukes også som utgangspunkt for bildene som skal lages.
+   bilde = bildet av monsteret (laget med Higgsfield). Tas bilde bort, vises en enkel tegning i stedet.
+   Stedet må være bygd ut til samme nivå som sjeldenheten før monsteret viser seg. */
+var MONSTRE = [
+  {id:'mosuri',    navn:'Mosuri',    bilde:'bilder/monstre/mosuri.webp', kl:'skog',  sj:1, sted:'skog',   c:'#6fbf5a', om:'Rund mosedott med to små blader på hodet.'},
+  {id:'takepo',    navn:'Takepo',    bilde:'bilder/monstre/takepo.webp', kl:'skog',  sj:1, sted:'skog',   c:'#8fcf4d', om:'Liten bambusspire som hopper på ett bein.'},
+  {id:'sakumi',    navn:'Sakumi',    bilde:'bilder/monstre/sakumi.webp', kl:'skog',  sj:2, sted:'eng',    c:'#f48fb1', om:'Kirsebærblomst med fem kronblader som skjørt.'},
+  {id:'morinushi', navn:'Morinushi', bilde:'bilder/monstre/morinushi.webp', kl:'skog',  sj:3, sted:'skog',   c:'#2f7a45', om:'Gammelt tre som går, med lykter i greinene.'},
+  {id:'plasku',    navn:'Plasku',    bilde:'bilder/monstre/plasku.webp', kl:'vann',  sj:1, sted:'strand', c:'#5fb8e8', om:'Blid vanndråpe som plasker når den går.'},
+  {id:'awako',     navn:'Awako',     bilde:'bilder/monstre/awako.webp', kl:'vann',  sj:1, sted:'strand', c:'#9fd8f2', om:'Klynge med såpebobler og store øyne.'},
+  {id:'namiro',    navn:'Namiro',    bilde:'bilder/monstre/namiro.webp', kl:'vann',  sj:2, sted:'strand', c:'#2f7fc0', om:'Liten bølge med skumtopp som lugg.'},
+  {id:'umiryu',    navn:'Umiryu',    bilde:'bilder/monstre/umiryu.webp', kl:'vann',  sj:3, sted:'strand', c:'#1f5a9c', om:'Lang havslange med perle i panna.'},
+  {id:'glopi',     navn:'Glopi',     bilde:'bilder/monstre/glopi.webp', kl:'ild',   sj:1, sted:'eng',    c:'#f28c28', om:'Lite glødende kull med korte bein.'},
+  {id:'hinoko',    navn:'Hinoko',    bilde:'bilder/monstre/hinoko.webp', kl:'ild',   sj:1, sted:'strand', c:'#f2b632', om:'Gnist fra bålet som aldri sitter stille.'},
+  {id:'takibi',    navn:'Takibi',    bilde:'bilder/monstre/takibi.webp', kl:'ild',   sj:2, sted:'skog',   c:'#d8463b', om:'Vandrende leirbål med kvister som armer.'},
+  {id:'taiyomaru', navn:'Taiyomaru', bilde:'bilder/monstre/taiyomaru.webp', kl:'ild',   sj:3, sted:'eng',    c:'#e8402a', om:'Liten sol med stråler som manke.'},
+  {id:'koishi',    navn:'Koishi',    bilde:'bilder/monstre/koishi.webp', kl:'stein', sj:1, sted:'strand', c:'#a9adb0', om:'Glatt strandstein med søvnige øyne.'},
+  {id:'ganko',     navn:'Ganko',     bilde:'bilder/monstre/ganko.webp', kl:'stein', sj:1, sted:'skog',   c:'#8a8f7a', om:'Sta liten kampestein med mose på ryggen.'},
+  {id:'iwado',     navn:'Iwado',     bilde:'bilder/monstre/iwado.webp', kl:'stein', sj:2, sted:'skog',   c:'#6b7684', om:'Steinlykt som har våknet til liv.'},
+  {id:'fujigan',   navn:'Fujigan',   bilde:'bilder/monstre/fujigan.webp', kl:'stein', sj:3, sted:'strand', c:'#5a6a8c', om:'Lite fjell med snø på toppen og rolig blikk.'},
+  {id:'fuwari',    navn:'Fuwari',    bilde:'bilder/monstre/fuwari.webp', kl:'vind',  sj:1, sted:'eng',    c:'#d9d2f2', om:'Lodden løvetannfnokk som svever.'},
+  {id:'kazeko',    navn:'Kazeko',    bilde:'bilder/monstre/kazeko.webp', kl:'vind',  sj:1, sted:'eng',    c:'#b8a8e8', om:'Liten virvelvind med skjerf.'},
+  {id:'soramimi',  navn:'Soramimi',  bilde:'bilder/monstre/soramimi.webp', kl:'vind',  sj:2, sted:'eng',    c:'#8f7fd0', om:'Sky med lange ører som flagrer.'},
+  {id:'arashio',   navn:'Arashio',   bilde:'bilder/monstre/arashio.webp', kl:'vind',  sj:3, sted:'eng',    c:'#5a4a9c', om:'Stormsky med tromme på ryggen.'}
+];
+/* Motstanderne i arenaen, i rekkefølge. niv = nivået på alle fire egenskapene til monsteret deres. */
+var MOTSTANDERE = [
+  {navn:'Hvitt belte',   c:'#ffffff', monster:'takepo',    niv:2,  premie:15},
+  {navn:'Gult belte',    c:'#f2c230', monster:'glopi',     niv:3,  premie:20},
+  {navn:'Oransje belte', c:'#f28c28', monster:'plasku',    niv:5,  premie:25},
+  {navn:'Grønt belte',   c:'#2f8f46', monster:'ganko',     niv:6,  premie:30},
+  {navn:'Blått belte',   c:'#2b6cb0', monster:'kazeko',    niv:7,  premie:35},
+  {navn:'Lilla belte',   c:'#7b3fa0', monster:'sakumi',    niv:8,  premie:40},
+  {navn:'Brunt belte',   c:'#8a5a33', monster:'namiro',    niv:10, premie:50},
+  {navn:'Rødt belte',    c:'#d8463b', monster:'takibi',    niv:11, premie:60},
+  {navn:'Svart belte',   c:'#2b2440', monster:'iwado',     niv:13, premie:75},
+  {navn:'Dalens mester', c:'#e8c04a', monster:'morinushi', niv:13, premie:100}
+];
+/* Merker i troférommet. test() svarer ja eller nei. */
+var MERKER = [
+  {ik:'📦', navn:'Første fangst',       test:function(){return antall()>=1}},
+  {ik:'🖐️', navn:'Fem monstre',         test:function(){return antall()>=5}},
+  {ik:'🔟', navn:'Ti monstre',          test:function(){return antall()>=10}},
+  {ik:'📖', navn:'Full Monsterbok',     test:function(){return antall()>=MONSTRE.length}},
+  {ik:'🌈', navn:'Ett fra hver klasse', test:function(){return KLASSER.every(function(k){return MONSTRE.some(function(m){return m.kl===k.id && S.monstre[m.id]})})}},
+  {ik:'✨', navn:'Første sjeldne',      test:function(){return MONSTRE.some(function(m){return m.sj===2 && S.monstre[m.id]})}},
+  {ik:'👑', navn:'Første legendariske', test:function(){return MONSTRE.some(function(m){return m.sj===3 && S.monstre[m.id]})}},
+  {ik:'🥋', navn:'En egenskap på nivå 5',  test:function(){return toppNiv()>=5}},
+  {ik:'🎯', navn:'En egenskap på nivå 10', test:function(){return toppNiv()>=10}},
+  {ik:'🏯', navn:'En egenskap på nivå 15', test:function(){return toppNiv()>=15}}
+];
+var FARGER = ['#c8382e','#2b6cb0','#2f8f46','#f2b632','#7b3fa0','#2b2440','#ffffff','#e8799b'];
+
+/* ---------- Små hjelpere ---------- */
+function rnd(n){return Math.floor(Math.random()*n)}
+function klem(x,a,b){return Math.max(a,Math.min(b,x))}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function finn(liste,id){return liste.filter(function(s){return s.id===id})[0]}
+function omr(id){return finn(OMRADER,id)}
+function mon(id){return finn(MONSTRE,id)}
+function klasse(m){return finn(KLASSER,m.kl)}
+
+/* ---------- Spilltilstand og lagring ---------- */
+var S = null, apen = null;
+var NOKKEL = 'sakuradalen-spill';
+function lagre(){try{localStorage.setItem(NOKKEL, JSON.stringify(S))}catch(e){}}
+function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;return t&&t.v===1?t:null}catch(e){return null}}
+function nyttSpill(navn, f1, f2){
+  S = {v:1, navn:navn||'Sakuradalen', f1:f1||FARGER[0], f2:f2||FARGER[6], mynter:OPPSETT.startmynter, oppg:0, fanget:0, dyster:0,
+       anlegg:{eng:1, skog:0, strand:0, dojo:1, verksted:1, arena:0, trofe:0},
+       bokser:{tre:OPPSETT.startbokser, lakk:0, gull:0},
+       monstre:{},        // id -> {n: hvor mange fanget, st:[nivå på de fire egenskapene], tp:[treningspoeng mot neste nivå]}
+       valgt:'',          // monsteret som trener og går i arenaen
+       pokaler:0};        // hvor mange motstandere som er slått
+  lagre();
+}
+
+/* ---------- Regler ---------- */
+function eier(id){return S.anlegg[id]>0}
+function antall(){return Object.keys(S.monstre).length}
+function mine(){return MONSTRE.filter(function(m){return S.monstre[m.id]})}
+function toppNiv(){var t=0; for(var id in S.monstre) S.monstre[id].st.forEach(function(n){if(n>t)t=n}); return t}
+function bokserTotalt(){return S.bokser.tre+S.bokser.lakk+S.bokser.gull}
+function dojoTak(){return OPPSETT.dojoTak[S.anlegg.dojo]}
+/* Hvor mange treningsoppgaver som trengs for å gå opp fra dette nivået. */
+function kravTP(niv){return niv<5 ? 1 : niv<10 ? 2 : 3}
+/* Vanskegrad på treningsoppgavene: nivå 1–5 lett, 6–10 middels, 11–15 vanskelig. */
+function vanskegrad(niv){return niv<=5 ? 1 : niv<=10 ? 2 : 3}
+/* Hvorfor viser ikke dette monsteret seg nå? Tom tekst = det kan dukke opp. */
+function hinder(m){
+  if(m.sj > S.anlegg[m.sted]) return 'Bygg ut '+omr(m.sted).navn.toLowerCase()+' til nivå '+m.sj+'.';
+  return '';
+}
+/* Sjansen for fangst i prosent, og hvordan den sies til eleven. */
+function fangstSjanse(boksId, m, riktige, gale){ return klem(OPPSETT.fangst[boksId][m.sj-1] + (riktige||0)*OPPSETT.fangstRiktig - (gale||0)*OPPSETT.fangstFeil, 5, 100) }
+function sjanseOrd(p){ return p>=95 ? 'Nesten sikkert' : p>=70 ? 'God sjanse' : p>=40 ? 'Kan gå' : p>=20 ? 'Vanskelig' : 'Veldig vanskelig' }
+function trekkMonster(sted){
+  var k = MONSTRE.filter(function(m){return m.sted===sted && !hinder(m)}); if(!k.length) return null;
+  var w = k.map(function(m){return SJELDEN[m.sj].w * (S.monstre[m.id] ? 1 : OPPSETT.nyFlaks)});
+  var sum = w.reduce(function(a,b){return a+b},0), r = Math.random()*sum, i = 0;
+  while(i<k.length-1 && (r -= w[i]) > 0) i++;
+  return k[i];
+}
+function mistBoks(boksId){ S.bokser[boksId]--; lagre() }   // monsteret stakk av, boksen er brukt
+function fang(m, boksId){
+  var e = S.monstre[m.id], ny = !e, bonus;
+  if(ny){ S.monstre[m.id] = {n:1, st:[1,1,1,1], tp:[0,0,0,0]}; bonus = OPPSETT.nyttMonsterBonus; if(!S.valgt) S.valgt = m.id }
+  else { e.n++; bonus = OPPSETT.dublett[m.sj-1] }
+  S.bokser[boksId]--; S.fanget++; S.mynter += bonus; lagre();
+  return {ny:ny, bonus:bonus};
+}
+function belonning(){ // kalles hver gang en oppgave er løst
+  S.mynter += OPPSETT.mynterPerOppgave; S.oppg++; lagre();
+  return OPPSETT.mynterPerOppgave;
+}
+/* Én løst treningsoppgave. Svarer om egenskapen gikk opp et nivå. */
+function tren(id, i){
+  var e = S.monstre[id]; if(!e || e.st[i] >= dojoTak()) return null;
+  e.tp[i]++; var opp = e.tp[i] >= kravTP(e.st[i]);
+  if(opp){ e.st[i]++; e.tp[i] = 0 }
+  lagre(); return {opp:opp, niv:e.st[i]};
+}
+function bygg(id){
+  var n = S.anlegg[id], p = PRIS[id][n];
+  if(n >= PRIS[id].length || S.mynter < p) return false;
+  S.mynter -= p; S.anlegg[id]++; lagre(); return true;
+}
+function kjopBoks(id){
+  var b = finn(BOKSER,id); if(S.anlegg.verksted < b.niv || S.mynter < b.pris) return false;
+  S.mynter -= b.pris; S.bokser[id]++; lagre(); return true;
+}
+/* ---------- Dyst-reglene (alt regnes ut her) ---------- */
+function fordel(a, b){ return klasse(a).slaar===b.kl ? 1.5 : klasse(b).slaar===a.kl ? .75 : 1 }   // a sitt trekk mot b
+function kampTall(m, niv){   // niv = liste med fire nivåer
+  var b = SJELDEN[m.sj].bonus;
+  return {styrke:niv[0]+b, fart:niv[1]+b, uth:niv[2]+b, klokt:niv[3]+b, energi:10+3*(niv[2]+b)};
+}
+function trekkKraft(fra, fraTall, til, tilTall){
+  return Math.max(1, Math.round((2+fraTall.styrke)*fordel(fra,til)) - Math.floor(tilTall.klokt/2));
+}
+function aapneMotstandere(){return Math.min(OPPSETT.arenaTrinn[S.anlegg.arena], S.pokaler+1)}
+
+/* =====================================================================
+   OPPGAVER – ETT STED Å BYTTE UT
+   startOppgave(stasjon, ferdig, feil) viser én oppgave.
+   - ferdig(forste) kalles når eleven har svart riktig. forste = sann hvis det
+     var riktig på første forsøk (brukes til fangstsjansen).
+   - feil er valgfri. Uten den får eleven prøve til det blir riktig (fangst
+     og trening). Med den er det ETT forsøk, og feil() kalles ved galt svar
+     (dyst i arenaen).
+   - niv er vanskegraden 1–3 (trening: nivået på egenskapen, fangst:
+     sjeldenheten, dyst: hvor langt opp i beltene motstanderen er).
+   «stasjon» er en av EGENSKAPER, FANGST eller DYST, så riktig fag kan velges.
+   Prøveoppgaven under brukes bare hvis oppgaver.js ikke er lastet.
+   De ekte oppgavene ligger i oppgaver.js, som bytter ut denne funksjonen.
+   ===================================================================== */
+function startOppgave(stasjon, ferdig, feil, niv){
+  var a = 1+rnd(9), b = 1+rnd(9), riktig = a+b, valg = [riktig];
+  while(valg.length<4){var v = klem(riktig + rnd(7)-3, 1, 20); if(valg.indexOf(v)<0) valg.push(v)}
+  valg.sort(function(){return Math.random()-.5});
+  dialog('<p class="proeve">Prøveoppgave. De ekte oppgavene for «'+esc(stasjon.navn)+'» kommer senere.</p>'+
+    '<h2>'+stasjon.ik+' '+esc(stasjon.navn)+'</h2><p class="stort">'+a+' + '+b+' = ?</p>'+
+    '<div class="svar">'+valg.map(function(v){return '<button data-svar="'+v+'">'+v+'</button>'}).join('')+'</div>'+
+    '<p style="margin-top:14px"><button class="sek" data-a="lukk">'+(feil?'Gi opp dysten':'Avbryt')+'</button></p>',
+    function(el){
+      var bommet = false;
+      el.addEventListener('click', function(e){
+        var k = e.target.closest('[data-svar]'); if(!k) return;
+        if(+k.dataset.svar === riktig) ferdig(!bommet);
+        else if(feil) feil();
+        else {k.classList.add('feil'); k.disabled = true; bommet = true}
+      });
+    });
+}
+
+/* ---------- Småtegninger (plassholdere til bildene er laget) ---------- */
+var INK = '#2b2440';
+function monsterSvg(m, str, ukjent){
+  str = str||56;
+  if(m.bilde) return '<img class="mbilde'+(ukjent?' ukjent':'')+'" src="'+m.bilde+'" width="'+str+'" height="'+str+'" alt="">';   // ukjent = vises som skygge
+  var c = ukjent ? '#cfc8d6' : m.c, k, s = 'fill="'+c+'" stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"';
+  if(m.kl==='skog')  k = '<path d="M32 16 C24 4 14 6 14 6 C14 14 22 18 30 18Z M32 16 C40 4 50 6 50 6 C50 14 42 18 34 18Z" fill="'+(ukjent?c:'#3a8a4c')+'" stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="21" '+s+'/>';
+  if(m.kl==='vann')  k = '<path d="M32 5 C44 21 54 31 54 41 A22 21 0 0 1 10 41 C10 31 20 21 32 5Z" '+s+'/>';
+  if(m.kl==='ild')   k = '<path d="M32 3 C40 15 54 23 54 40 A22 21 0 0 1 10 40 C10 30 16 26 20 17 C23 23 25 25 28 25 C26 15 28 9 32 3Z" '+s+'/>';
+  if(m.kl==='stein') k = '<path d="M12 52 L7 31 L20 13 L44 11 L57 29 L52 52 L32 60Z" '+s+'/>';
+  if(m.kl==='vind')  k = '<path d="M14 50 A12 12 0 0 1 14 27 A14 14 0 0 1 40 19 A13 13 0 0 1 56 36 A9 9 0 0 1 50 50Z" '+s+'/><path d="M20 56 H44" stroke="'+INK+'" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>';
+  var fjes = ukjent ? '<text x="32" y="48" font-size="22" font-weight="700" text-anchor="middle" fill="'+INK+'">?</text>'
+    : '<circle cx="25" cy="38" r="3.2" fill="'+INK+'"/><circle cx="39" cy="38" r="3.2" fill="'+INK+'"/><circle cx="26" cy="37" r="1" fill="#fff"/><circle cx="40" cy="37" r="1" fill="#fff"/><path d="M27 45 Q32 50 37 45" fill="none" stroke="'+INK+'" stroke-width="2.2" stroke-linecap="round"/>';
+  var pynt = ukjent ? '' : m.sj===3 ? '<path d="M22 12 L24 3 L29 8 L32 1 L35 8 L40 3 L42 12Z" fill="#f2c230" stroke="'+INK+'" stroke-width="2" stroke-linejoin="round"/>'
+    : m.sj===2 ? '<path d="M50 6 L52 11 L57 12 L53 15 L54 20 L50 17 L46 20 L47 15 L43 12 L48 11Z" fill="#f2c230" stroke="'+INK+'" stroke-width="1.6" stroke-linejoin="round"/>' : '';
+  return '<svg viewBox="0 0 64 64" width="'+str+'" height="'+str+'" aria-hidden="true">'+k+fjes+pynt+'</svg>';
+}
+function boksSvg(id, str){ str = str||44; return '<img class="mbilde" src="bilder/ikon/'+id+'.webp" width="'+str+'" height="'+str+'" alt="">' }
+/* ---------- Ikoner ----------
+   Tekstene i spillet er skrevet med emoji. Rett før noe vises, byttes emojiene i lista under ut med
+   bildene i bilder/ikon/. Tas en linje bort herfra, vises emojien igjen. */
+var IKON = {'🌸':'eng','🎋':'skog','🐚':'strand','🥋':'dojo','🔨':'verksted','🥁':'arena','🏆':'pokal','🪙':'mynt','📖':'bok','🔒':'laas','🔍':'lupe','⚙':'tannhjul','📦':'tre',
+  '💪':'styrke','💨':'fart','❤':'uth','🧠':'klokt','🌿':'k-skog','💧':'k-vann','🔥':'k-ild','🪨':'k-stein','🌬':'k-vind',
+  '📏':'tallinje','🕒':'klokke','⚖':'maale','🧮':'kalk','🇬🇧':'engelsk','🧼':'hender','🤝':'lek','🙋':'hjelp','💡':'hverdag','👕':'rekkefolge','🌦':'klaer','🔊':'hoyttaler'};
+var IKON_RE = new RegExp('('+Object.keys(IKON).join('|')+')\\uFE0F?', 'g');
+function ik(html){ return html.replace(IKON_RE, function(_, e){ return '<img class="iko" src="bilder/ikon/'+IKON[e]+'.webp" alt="">' }) }
+function emblemSvg(f1,f2,str){
+  return '<svg viewBox="0 0 60 60" width="'+(str||56)+'" height="'+(str||56)+'" aria-hidden="true"><path d="M6 18 Q30 8 54 18 L52 24 H8Z" fill="'+f1+'" stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M12 30 H48" stroke="'+INK+'" stroke-width="7" stroke-linecap="round"/><path d="M12 30 H48" stroke="'+f2+'" stroke-width="3" stroke-linecap="round"/>'+
+    '<path d="M16 22 V54 M44 22 V54" stroke="'+INK+'" stroke-width="8" stroke-linecap="round"/><path d="M16 23 V54 M44 23 V54" stroke="'+f1+'" stroke-width="4" stroke-linecap="round"/></svg>';
+}
+function nivaa(n,maks){var s='<span class="nivaa" role="img" aria-label="Nivå '+n+' av '+maks+'">';for(var i=0;i<maks;i++)s+='<i class="'+(i<n?'pa':'')+'"></i>';return s+'</span>'}
+function soyle(n, tak){return '<span class="soyle" role="img" aria-label="Nivå '+n+' av 15"><i style="width:'+(n/15*100)+'%"></i><b style="left:'+(tak/15*100)+'%"></b></span>'}
+function klMerke(m){var k = klasse(m); return '<span class="merke" style="background:'+k.c+'22;color:'+INK+'">'+k.ik+' '+k.navn+'</span>'}
+function sjMerke(m){return '<span class="merke sj'+m.sj+'">'+SJELDEN[m.sj].stj+' '+SJELDEN[m.sj].navn+'</span>'}
+
+/* ---------- Topplinje og merkelapper ---------- */
+function tegnTopp(){
+  document.getElementById('topp').innerHTML = ik('<div class="skilt">'+emblemSvg(S.f1,S.f2,36)+
+    '<span class="navn">'+esc(S.navn)+'<span class="under">'+S.fanget+' monstre fanget</span></span></div><span class="luft"></span>'+
+    '<span class="brikke" title="Mynter">🪙 '+S.mynter+'</span><span class="brikke" title="Bokser">📦 '+bokserTotalt()+'</span>'+
+    '<button class="brikke" data-a="bok" aria-label="Monsterboka, '+antall()+' av '+MONSTRE.length+' monstre">📖 '+antall()+'/'+MONSTRE.length+'</button><button id="gir" data-a="voksen" aria-label="Voksenmeny">⚙️</button>');
+}
+function tegnTags(){
+  document.getElementById('tags').innerHTML = ik(OMRADER.map(function(o){
+    return eier(o.id) ? '<button data-omr="'+o.id+'" aria-label="'+o.navn+'">'+o.ik+'<span class="t"> '+o.navn+'</span></button>'
+                      : '<button class="last" data-omr="'+o.id+'" aria-label="'+o.navn+', koster '+PRIS[o.id][0]+' mynter">🔒<span class="t"> '+o.navn+' ·</span> 🪙'+PRIS[o.id][0]+'</button>'}).join(''));
+}
+
+/* ---------- Panelet for hvert sted ---------- */
+function byggRad(id){
+  var n = S.anlegg[id], maks = PRIS[id].length, b = BYGG[id], p = PRIS[id][n];
+  return '<div class="linje"><span class="voks"><strong>'+b.navn+'</strong> '+nivaa(n,maks)+'<br><span class="liten">Nå: '+(b.hva[n]||'–')+(n<maks?'. Neste: '+b.hva[n+1]:'')+'</span></span>'+
+    (n>=maks?'<span class="merke">Ferdig</span>':'<button data-bygg="'+id+'"'+(S.mynter<p?' disabled':'')+'>Bygg ut 🪙'+p+'</button>')+'</div>';
+}
+function boksLager(){
+  return '<p class="liten" style="margin:0">Boksene dine: '+BOKSER.map(function(b){var n = S.bokser[b.id]; return '<strong>'+n+'</strong> '+(n===1?b.navn.toLowerCase():b.fl)}).join(' · ')+'</p>';
+}
+function monsterRad(m){
+  var e = S.monstre[m.id], h = hinder(m), boks = '';
+  return '<div class="linje">'+monsterSvg(m,44,!e)+'<span class="voks"><strong>'+(e?esc(m.navn):'Ukjent monster')+'</strong> '+sjMerke(m)+'<br><span class="liten">'+
+    (h || boks || (e ? e.n+' fanget' : 'Kan dukke opp nå.'))+'</span></span>'+(h||boks?'':'<span class="merke ja">Her nå</span>')+'</div>';
+}
+function jaktPanel(v){
+  var tekst = {eng:'Høyt gress og kirsebærtrær. Her trives vind- og ildmonstre.', skog:'Tett bambus og mosegrodde steiner. Her trives skog- og steinmonstre.', strand:'Sand, fjærepytter og klipper. Her trives vannmonstre.'}[v];
+  return '<p class="liten">'+tekst+'</p>'+boksLager()+
+    '<div class="rad" style="margin-top:10px"><button class="gull" data-jakt="'+v+'"'+(bokserTotalt()<1?' disabled':'')+'>🔍 Let etter monstre</button><button class="sek" data-omr="verksted">Hent bokser</button></div>'+
+    (bokserTotalt()<1?'<p class="liten" style="margin-top:8px">Du er tom for bokser. Kjøp flere i bokseverkstedet.</p>':'')+
+    '<div class="del"><h3>Monstre her</h3>'+MONSTRE.filter(function(m){return m.sted===v}).sort(function(a,b){return a.sj-b.sj}).map(monsterRad).join('')+'</div>'+
+    '<div class="del">'+byggRad(v)+'</div>';
+}
+function velgMonster(){
+  var m = mine(); if(!m.length) return '<p><strong>Du har ingen monstre ennå.</strong> Gå på jakt i kirsebærenga først.</p><button class="gull" data-omr="eng">🌸 Til kirsebærenga</button>';
+  return '<p style="margin:0"><strong>Velg monster</strong></p><div class="valg">'+m.map(function(x){
+    return '<button data-velg="'+x.id+'" aria-pressed="'+(S.valgt===x.id)+'">'+monsterSvg(x,30)+' '+esc(x.navn)+'</button>'}).join('')+'</div>';
+}
+var PANEL = {
+  eng: function(){return jaktPanel('eng')},
+  skog: function(){return jaktPanel('skog')},
+  strand: function(){return jaktPanel('strand')},
+  dojo: function(){
+    var tak = dojoTak(), ut = velgMonster(), m = mon(S.valgt), e = m && S.monstre[m.id];
+    ut = '<p class="liten">Her trener monstrene. Én løst oppgave er én treningsøkt. Denne dojoen trener til <strong>nivå '+tak+'</strong>.</p>'+ut;
+    if(e) ut += '<div class="del"><div class="rad">'+monsterSvg(m,64)+'<span><strong>'+esc(m.navn)+'</strong><br>'+klMerke(m)+' '+sjMerke(m)+'</span></div>'+
+      EGENSKAPER.map(function(g,i){
+        var n = e.st[i], full = n>=tak, krav = kravTP(n);
+        return '<div class="linje"><span class="ik" aria-hidden="true">'+g.ik+'</span><span class="voks"><strong>'+g.navn+' '+n+'</strong> '+soyle(n,tak)+'<br><span class="liten">'+
+          (full ? (tak<15?'Taket er nådd. Bygg ut dojoen.':'Helt utlært!') : g.fag+(krav>1?' · økt '+(e.tp[i]+1)+' av '+krav:''))+'</span></span>'+
+          (full?'<span class="merke">Nivå '+n+'</span>':'<button data-tren="'+i+'" aria-label="Tren '+g.navn.toLowerCase()+'">Tren</button>')+'</div>'}).join('')+'</div>';
+    return ut+'<div class="del">'+byggRad('dojo')+'</div>';
+  },
+  verksted: function(){
+    return '<p class="liten">Her lages boksene du fanger monstre i. Sjeldne monstre stikker lett av. Bedre boks gir bedre sjanse.</p>'+
+      BOKSER.map(function(b){
+        var laast = S.anlegg.verksted < b.niv;
+        return '<div class="linje">'+boksSvg(b.id,44)+'<span class="voks"><strong>'+b.navn+'</strong> <span class="merke">Du har '+S.bokser[b.id]+'</span><br><span class="liten">'+(laast?'Bygg ut verkstedet til nivå '+b.niv+'.':b.om)+'</span></span>'+
+          '<button data-boks="'+b.id+'"'+(laast||S.mynter<b.pris?' disabled':'')+' aria-label="Kjøp '+b.navn.toLowerCase()+' for '+b.pris+' mynter">Kjøp 🪙'+b.pris+'</button></div>'}).join('')+
+      '<div class="del">'+byggRad('verksted')+'</div>';
+  },
+  arena: function(){
+    var aapne = aapneMotstandere(), m = mon(S.valgt);
+    return '<p class="liten">Oppgaveduell. Riktig svar: monsteret ditt gjør et trekk. Etter hver oppgave svarer motstanderen. Ingen blir skadet, de blir bare slitne.</p>'+velgMonster()+
+      (m ? '<div class="del"><h3>Motstandere</h3>'+MOTSTANDERE.map(function(o,i){
+        var om = mon(o.monster), slaatt = i < S.pokaler, laast = i >= aapne, trinn = OPPSETT.arenaTrinn.filter(function(t){return t<=i}).length;
+        return '<div class="linje"><span class="belte" style="background:'+o.c+'" aria-hidden="true"></span><span class="voks"><strong>'+o.navn+'</strong><br><span class="liten">'+
+          (laast && i>=OPPSETT.arenaTrinn[S.anlegg.arena] ? 'Bygg ut arenaen til nivå '+trinn+'.' : laast ? 'Slå '+MOTSTANDERE[i-1].navn.toLowerCase()+' først.' : esc(om.navn)+' · '+klasse(om).ik+' '+klasse(om).navn+' · nivå '+o.niv)+'</span></span>'+
+          (slaatt?'<button class="sek" data-dyst="'+i+'" aria-label="Dyst mot '+o.navn+' igjen">🏆 Igjen</button>':laast?'<span class="merke">🔒</span>':'<button class="gull" data-dyst="'+i+'">Utfordre</button>')+'</div>'}).join('')+'</div>' : '')+
+      '<div class="del">'+byggRad('arena')+'</div>';
+  },
+  trofe: function(){
+    return '<h3>Pokaler fra arenaen</h3><div class="bok">'+MOTSTANDERE.map(function(o,i){
+        return i<S.pokaler ? '<div><span class="pokal" style="color:'+(o.c==='#ffffff'?'#b8b0c4':o.c)+'">🏆</span><strong>'+o.navn+'</strong></div>' : '<div class="tom"><span class="pokal">❔</span><strong>'+o.navn+'</strong></div>'}).join('')+'</div>'+
+      '<h3>Merker</h3><div class="bok">'+MERKER.map(function(k){var ja = k.test();
+        return '<div class="'+(ja?'':'tom')+'"><span class="pokal">'+(ja?k.ik:'❔')+'</span><strong>'+k.navn+'</strong></div>'}).join('')+'</div>'+
+      '<div class="del">'+byggRad('trofe')+'</div>';
+  }
+};
+function tegnPanel(){
+  var p = document.getElementById('panel');
+  if(!apen){p.className=''; p.innerHTML=''; return}
+  var o = omr(apen), topp = '<div class="rad" style="margin-bottom:8px"><h2 style="flex:1;margin:0">'+o.ik+' '+o.navn+'</h2><button class="sek" data-a="tilbake">✕ Lukk</button></div>';
+  p.className = 'apen';
+  p.innerHTML = ik(topp + (eier(o.id) ? PANEL[o.id]() :
+    '<p><strong>Ikke åpnet ennå.</strong> '+o.om+'</p><p class="stort">🪙 '+PRIS[o.id][0]+'</p><button data-bygg="'+o.id+'"'+(S.mynter<PRIS[o.id][0]?' disabled':'')+'>Åpne '+o.navn.toLowerCase()+'</button>'+
+    (S.mynter<PRIS[o.id][0]?'<p class="liten" style="margin-top:8px">Du mangler '+(PRIS[o.id][0]-S.mynter)+' mynter. Hver løst oppgave gir '+OPPSETT.mynterPerOppgave+' mynter.</p>':'')));
+}
+function tegn(){tegnTopp(); tegnTags(); tegnPanel(); if(window.sync3D) window.sync3D()}
+function apne(id){apen = id; tegnPanel(); document.getElementById('panel').scrollTop = 0; if(window.fokus3D) window.fokus3D(id)}
+
+/* ---------- Dialoger (bygd inn i siden) ---------- */
+function dialog(html, etter, bred){
+  var l = document.getElementById('lag');
+  l.innerHTML = '<div class="overlegg"><div class="dialog'+(bred?' bred':'')+'" role="dialog" aria-modal="true">'+ik(html)+'</div></div>';
+  var d = l.querySelector('.dialog'); if(etter) etter(d);
+  var f = d.querySelector('button:not(:disabled),input'); if(f) f.focus();
+}
+function lukk(){document.getElementById('lag').innerHTML=''; tegn()}
+function oppsettDialog(forste){
+  var f1 = S?S.f1:FARGER[0], f2 = S?S.f2:FARGER[6];
+  function rad(hvilken, valgt){return '<div class="farger" data-rad="'+hvilken+'">'+FARGER.map(function(c){return '<button style="background:'+c+'" data-farge="'+c+'" aria-pressed="'+(c===valgt)+'" aria-label="Farge '+c+'"></button>'}).join('')+'</div>'}
+  dialog('<h2>'+(forste?'Velkommen til dalen!':'Navn og farger')+'</h2>'+(forste?'<p>Du er den nye monstervokteren. Start i kirsebærenga med tre trekasser, og fyll Monsterboka.</p>':'')+
+    '<label for="knavn"><strong>Hva heter dalen din?</strong></label><input type="text" id="knavn" maxlength="20" value="'+esc(S?S.navn:'')+'" placeholder="For eksempel Sakuradalen">'+
+    '<p style="margin-top:12px"><strong>Farge på porter og faner</strong></p>'+rad('f1',f1)+'<p style="margin-top:12px"><strong>Farge på bånd</strong></p>'+rad('f2',f2)+
+    '<div class="rad" style="margin-top:16px"><span id="dprove">'+emblemSvg(f1,f2,64)+'</span><button data-ok>'+(forste?'Start':'Lagre')+'</button>'+(forste?'':'<button class="sek" data-a="lukk">Avbryt</button>')+'</div>',
+    function(el){
+      el.addEventListener('click', function(e){
+        var c = e.target.closest('[data-farge]');
+        if(c){var r = c.parentNode.dataset.rad; if(r==='f1') f1=c.dataset.farge; else f2=c.dataset.farge;
+          [].forEach.call(c.parentNode.children,function(b){b.setAttribute('aria-pressed', b===c)}); el.querySelector('#dprove').innerHTML = emblemSvg(f1,f2,64); return}
+        if(e.target.closest('[data-ok]')){
+          var n = el.querySelector('#knavn').value.trim() || 'Sakuradalen';
+          if(forste) nyttSpill(n,f1,f2); else {S.navn=n; S.f1=f1; S.f2=f2; lagre()}
+          lukk();
+        }
+      });
+    });
+}
+/* ---------- Jakta: let, velg boks, løs oppgave, fanget ---------- */
+function jakt(v){
+  if(bokserTotalt() < 1) return;
+  dialog('<h2>🔍 '+omr(v).navn+'</h2><div class="kratt" aria-hidden="true"><span></span><span></span><span></span></div>'+
+    '<p class="stort" id="spor" aria-live="assertive">Du lister deg fram …</p><div class="rad"><button class="sek" data-a="lukk">Avbryt</button></div>',
+    function(el){
+      setTimeout(function(){ if(!el.isConnected) return; moteMonster(v, trekkMonster(v)) }, OPPSETT.venteMin + rnd(OPPSETT.venteMaks-OPPSETT.venteMin));
+    });
+}
+function moteMonster(v, m){
+  if(!m) return lukk();
+  var kjent = !!S.monstre[m.id], ant = OPPSETT.fangstOppgaver[m.sj-1];
+  dialog('<h2>'+(kjent?'Der er '+esc(m.navn)+'!':'Et nytt monster!')+'</h2><p class="midt hopp">'+monsterSvg(m,150)+'</p>'+
+    '<p class="midt"><strong style="font-size:1.3rem">'+esc(m.navn)+'</strong><br>'+klMerke(m)+' '+sjMerke(m)+'</p>'+
+    '<p class="midt liten">'+esc(m.om)+'</p><p style="margin:0"><strong>Velg boks</strong> <span class="liten">· Du må løse '+ant+' oppgave'+(ant>1?'r':'')+' for å lukke den.</span></p>'+
+    '<div class="bokser">'+BOKSER.map(function(b){
+      var n = S.bokser[b.id], p = fangstSjanse(b.id, m);
+      return '<button class="boksvalg" data-fang="'+b.id+'"'+(n<1?' disabled':'')+'>'+boksSvg(b.id,52)+'<span>'+b.navn+'<small>'+(n<1?'Du har ingen':'Du har '+n)+'</small><small class="sjanse s'+(p>=70?3:p>=40?2:1)+'">'+sjanseOrd(p)+'</small></span></button>'}).join('')+'</div>'+
+    '<p class="liten">Riktig på første forsøk gir bedre sjanse. Stikker monsteret av, er boksen brukt.</p>'+
+    '<div class="rad" style="margin-top:12px"><button class="sek" data-jakt="'+v+'">La det gå, let videre</button><button class="sek" data-a="lukk">Ferdig</button></div>',
+    function(el){
+      el.addEventListener('click', function(e){
+        var k = e.target.closest('[data-fang]'); if(!k || k.disabled) return;
+        fangst(v, m, k.dataset.fang, ant, 0, 0, 0);
+      });
+    });
+}
+/* Oppgavene som lukker boksen, én etter én. Så rister boksen, og monsteret blir enten værende eller stikker av. */
+function fangst(v, m, boks, igjen, riktige, gale, mynter){
+  if(igjen > 0) return startOppgave(FANGST, function(forste){
+    mynter += belonning(); tegnTopp();
+    if(forste === false) gale++; else riktige++;
+    fangst(v, m, boks, igjen-1, riktige, gale, mynter);
+  }, null, m.sj);
+  var p = fangstSjanse(boks, m, riktige, gale), klarte = Math.random()*100 < p;
+  dialog('<h2>Boksen rister …</h2><p class="midt"><span class="iboks rister">'+boksSvg(boks,150)+'</span></p><p class="stort" aria-live="assertive">'+esc(m.navn)+' er i boksen!</p><p class="midt liten">'+sjanseOrd(p)+'</p>',
+    function(el){
+      setTimeout(function(){ if(!el.isConnected) return;
+        var videre = (bokserTotalt() - 1 > 0 ? '<button class="gull" data-jakt="'+v+'">Let videre (📦 '+(bokserTotalt()-1)+')</button>' : '<button data-omr="verksted">Hent flere bokser</button>');
+        if(klarte){
+          var r = fang(m, boks);
+          dialog('<h2>'+(r.ny?'🌟 Nytt monster i Monsterboka!':'📦 Fanget!')+'</h2><p class="midt"><span class="iboks">'+boksSvg(boks,150)+'<span>'+monsterSvg(m,70)+'</span></span></p>'+
+            '<p class="stort">'+esc(m.navn)+'</p><p class="midt">+'+mynter+' 🪙 for oppgave'+(OPPSETT.fangstOppgaver[m.sj-1]>1?'ne':'n')+(r.ny?' og +'+r.bonus+' 🪙 for nytt monster':' og +'+r.bonus+' 🪙 fordi du hadde det fra før')+'</p>'+
+            '<div class="rad">'+videre+(r.ny?'<button data-omr="dojo">🥋 Til dojoen</button>':'')+'<button class="sek" data-a="lukk">Ferdig</button></div>');
+          if(window.sprett3D) window.sprett3D(v);
+        } else {
+          mistBoks(boks);
+          dialog('<h2>'+esc(m.navn)+' stakk av!</h2><p class="midt"><span class="stakk">'+monsterSvg(m,120)+'</span></p>'+
+            '<p class="midt">Boksen spratt opp. Du fikk +'+mynter+' 🪙 for oppgave'+(OPPSETT.fangstOppgaver[m.sj-1]>1?'ne':'n')+'.</p>'+
+            '<p class="midt liten">'+(boks!=='gull' && m.sj>1 ? 'Tips: en bedre boks holder bedre på sjeldne monstre.' : gale ? 'Tips: riktig på første forsøk gir bedre sjanse.' : 'Noen ganger er de bare for raske. Prøv igjen!')+'</p>'+
+            '<div class="rad">'+videre+'<button class="sek" data-a="lukk">Ferdig</button></div>');
+        }
+        tegnTopp();
+      }, 1500);
+    });
+}
+/* ---------- Trening i dojoen ---------- */
+function trening(i){
+  var m = mon(S.valgt), g = EGENSKAPER[i]; if(!m || S.monstre[m.id].st[i] >= dojoTak()) return;
+  startOppgave(g, function(){
+    var mynt = belonning(), r = tren(m.id, i), e = S.monstre[m.id], igjen = kravTP(e.st[i]) - e.tp[i];
+    dialog('<h2>'+(r.opp?'⬆️ '+g.navn+' nivå '+r.niv+'!':'✅ Bra økt!')+'</h2><p class="midt hopp">'+monsterSvg(m,120)+'</p>'+
+      '<p class="midt">'+(r.opp?esc(m.navn)+' ble bedre i '+g.navn.toLowerCase()+'.':esc(m.navn)+' trenger '+igjen+' økt'+(igjen>1?'er':'')+' til for neste nivå.')+'<br>+'+mynt+' 🪙</p>'+
+      '<div class="rad">'+(e.st[i]<dojoTak()?'<button class="gull" data-tren="'+i+'">En økt til</button>':'')+'<button class="sek" data-a="lukk">Ferdig</button></div>');
+    tegnTopp();
+  }, null, vanskegrad(S.monstre[m.id].st[i]));
+}
+/* ---------- Dysten i arenaen (oppgaveduell) ---------- */
+var D = null;
+function dyst(k){
+  var m = mon(S.valgt), o = MOTSTANDERE[k]; if(!m || k >= aapneMotstandere()) return;
+  var om = mon(o.monster), a = kampTall(m, S.monstre[m.id].st), b = kampTall(om, [o.niv,o.niv,o.niv,o.niv]);
+  D = {k:k, m:m, om:om, o:o, a:a, b:b, e1:a.energi, e2:b.energi, motTrekk:0, tekst:[]};
+  if(b.fart > a.fart){ D.tekst.push(esc(om.navn)+' er raskest og starter.'); motstanderTrekk() }
+  else D.tekst.push(a.fart > b.fart ? esc(m.navn)+' er raskest og starter. Hvert tredje trekk fra '+esc(om.navn)+' bommer.' : 'Like raske. Du starter.');
+  visDyst();
+}
+function motstanderTrekk(){
+  D.motTrekk++;
+  if(D.a.fart > D.b.fart && D.motTrekk%3===0){ D.tekst.push(esc(D.m.navn)+' smetter unna!'); return }
+  var t = trekkKraft(D.om, D.b, D.m, D.a); D.e1 = Math.max(0, D.e1-t);
+  D.tekst.push(esc(D.om.navn)+' gjør et trekk. '+esc(D.m.navn)+' mister '+t+' energi.');
+}
+function energi(n, maks, navn){return '<span class="energi" role="img" aria-label="'+navn+' har '+n+' av '+maks+' energi"><i style="width:'+(n/maks*100)+'%"></i></span><span class="liten">'+n+' / '+maks+' energi</span>'}
+function visDyst(){
+  var d = D, f = fordel(d.m, d.om), slutt = d.e1<=0 || d.e2<=0, vant = d.e2<=0, knapper;
+  if(!slutt) knapper = '<button class="gull" data-a="dystoppgave">Neste oppgave</button><button class="sek" data-a="lukk">Gi opp</button>';
+  else if(vant){
+    var forste = d.k === S.pokaler, premie = forste ? d.o.premie : 3;
+    S.mynter += premie; S.dyster++; if(forste) S.pokaler++; lagre();
+    d.tekst = [(forste?'🏆 Du vant pokalen fra '+d.o.navn.toLowerCase()+'!':'🏆 Seier igjen!')+' +'+premie+' 🪙'];
+    knapper = (forste && eier('trofe')?'<button data-omr="trofe">Se troférommet</button>':'')+'<button class="sek" data-omr="arena">Tilbake til arenaen</button>';
+    if(window.sprett3D) window.sprett3D('arena');
+  } else {
+    S.dyster++; lagre();
+    d.tekst = [esc(d.m.navn)+' ble for sliten. Tren mer i dojoen og prøv igjen!'];
+    knapper = '<button class="gull" data-omr="dojo">🥋 Til dojoen</button><button class="sek" data-dyst="'+d.k+'">Prøv igjen</button><button class="sek" data-omr="arena">Tilbake</button>';
+  }
+  dialog('<h2>🥁 Dyst mot '+d.o.navn.toLowerCase()+'</h2><div class="ring">'+
+    '<div class="'+(d.e1<=0?'sliten':'')+'">'+monsterSvg(d.m,96)+'<strong>'+esc(d.m.navn)+'</strong>'+energi(d.e1,d.a.energi,d.m.navn)+'</div><span class="mot" aria-hidden="true">mot</span>'+
+    '<div class="'+(d.e2<=0?'sliten':'')+'">'+monsterSvg(d.om,96)+'<strong>'+esc(d.om.navn)+'</strong>'+energi(d.e2,d.b.energi,d.om.navn)+'</div></div>'+
+    (f>1?'<p class="midt liten">'+klasse(d.m).ik+' '+klasse(d.m).navn+' er sterk mot '+klasse(d.om).navn.toLowerCase()+'. Trekkene dine teller ekstra.</p>':f<1?'<p class="midt liten">'+klasse(d.m).ik+' '+klasse(d.m).navn+' er svak mot '+klasse(d.om).navn.toLowerCase()+'. Trekkene dine teller mindre.</p>':'')+
+    '<div class="logg" aria-live="polite">'+d.tekst.map(function(t){return '<p>'+t+'</p>'}).join('')+'</div><div class="rad">'+knapper+'</div>', null, true);
+  if(slutt){ D = null; tegnTopp() }
+}
+function dystOppgave(){
+  if(!D) return;
+  function etter(riktig){
+    D.tekst = [];
+    if(riktig){ belonning(); var t = trekkKraft(D.m, D.a, D.om, D.b); D.e2 = Math.max(0, D.e2-t); D.tekst.push('✅ Riktig! '+esc(D.m.navn)+' gjør et trekk. '+esc(D.om.navn)+' mister '+t+' energi.') }
+    else D.tekst.push('❌ Ikke riktig. '+esc(D.m.navn)+' nøler denne runden.');
+    if(D.e2 > 0) motstanderTrekk();
+    visDyst(); tegnTopp();
+  }
+  startOppgave(DYST, function(){etter(true)}, function(){etter(false)}, D.k<3 ? 1 : D.k<7 ? 2 : 3);
+}
+function visBok(){
+  dialog('<div class="rad" style="margin-bottom:8px"><h2 style="flex:1;margin:0">📖 Monsterboka</h2><button class="sek" data-a="lukk">✕ Lukk</button></div><p class="liten">'+antall()+' av '+MONSTRE.length+' monstre funnet. '+
+    KLASSER.map(function(k){return k.ik+' '+k.navn+' slår '+finn(KLASSER,k.slaar).navn.toLowerCase()}).join(' · ')+'.</p>'+
+    KLASSER.map(function(k){return '<h3>'+k.ik+' '+k.navn+'</h3><div class="bok">'+MONSTRE.filter(function(m){return m.kl===k.id}).map(function(m){var e = S.monstre[m.id];
+      return e ? '<div>'+monsterSvg(m,64)+'<strong>'+esc(m.navn)+'</strong>'+sjMerke(m)+'<br>'+EGENSKAPER.map(function(g,i){return g.ik+e.st[i]}).join(' ')+'</div>'
+               : '<div class="tom">'+monsterSvg(m,64,true)+'<strong>Ukjent</strong>'+sjMerke(m)+'<br>'+omr(m.sted).navn+'</div>'}).join('')+'</div>'}).join('')+
+    '<div class="del"><h3>Kommer senere</h3><p class="liten">Plassholdere: 🎨 Ekte bilder av alle monstrene · 📚 Faktaside for hvert monster · 🃏 Monsterkort til utskrift · ❓ Ukens monsterquiz</p></div>', null, true);
+}
+
+/* Oversikt for den voksne: hvor mange oppgaver som er løst riktig på første forsøk, per tema og vanskegrad. */
+function fagTabell(){
+  if(!window.OPPGAVER || !S.fag) return '';
+  var T = window.OPPGAVER.TEMA, rader = Object.keys(T).filter(function(id){return S.fag[id]}).map(function(id){
+    return '<tr><th>'+T[id].ik+' '+T[id].navn+'</th>'+[1,2,3].map(function(n){var x = S.fag[id][n]; return '<td>'+(x ? x[0]+' av '+x[1] : '–')+'</td>'}).join('')+'</tr>'}).join('');
+  return rader ? '<div class="del"><h3>Riktig på første forsøk</h3><table class="fag"><tr><th></th><th>Lett</th><th>Middels</th><th>Vanskelig</th></tr>'+rader+'</table></div>' : '';
+}
+
+/* ---------- Voksenmenyen ----------
+   På Tavleloftet (eleven er logget inn med kode) åpnes menyen med voksenkoden fra velkomstbrevet.
+   I den frittstående utgaven åpnes den rett fra tannhjulet. */
+function voksenPort(){
+  if(!(window.TL && TL.kode && TL.sjekkVoksenkode)) return voksenMeny();
+  dialog('<h2>For voksne</h2><p>Skriv voksenkoden. Den står i velkomstbrevet.</p>'+
+    '<input id="vkinn" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="14" placeholder="Voksenkode" aria-label="Voksenkode" style="text-align:center;text-transform:uppercase;font-weight:700">'+
+    '<p class="liten" id="vkfb" style="min-height:1.4em;margin-top:8px"></p>'+
+    '<div class="rad"><button data-a="vk-ok">Åpne</button><button class="sek" data-a="lukk">Avbryt</button></div>',
+    function(el){var inn = el.querySelector('#vkinn'); inn.addEventListener('keydown', function(e){if(e.key==='Enter') provVoksenkode()}); setTimeout(function(){inn.focus()}, 60)});
+}
+function provVoksenkode(){
+  var inn = document.getElementById('vkinn'), fb = document.getElementById('vkfb'); if(!inn) return;
+  fb.textContent = 'Sjekker …';
+  TL.sjekkVoksenkode(inn.value).then(function(ja){ if(ja) voksenMeny(); else {fb.textContent = 'Feil kode. Voksenkoden står i velkomstbrevet.'; inn.select()} });
+}
+function voksenMeny(){
+  var inne = !!(window.TL && TL.kode);
+  dialog('<h2>Voksenmeny</h2><p class="liten">Løste oppgaver totalt: '+S.oppg+' · Monstre fanget: '+S.fanget+' · I Monsterboka: '+antall()+' av '+MONSTRE.length+' · Dyster: '+S.dyster+' · Pokaler: '+S.pokaler+'</p>'+
+    fagTabell()+'<div id="vtid"></div>'+
+    (inne ? '<p style="margin-top:10px"><a href="../rapport.html" target="_blank" rel="noopener">Se rapporten</a> (åpnes med voksenkoden)</p>' : '')+
+    '<div class="rad" style="margin-top:14px"><button class="sek" data-a="lukk">Lukk</button><button class="sek" data-a="navn">Endre navn og farger</button><button class="sek" data-a="lyd">Opplesing: '+(S.lydAv?'av':'på')+'</button>'+
+    (inne ? '<button class="sek" data-a="loggut">Bytt elev (logg ut)</button>' : '')+'<button class="rod" data-a="nullstill">Nullstill spillet</button></div>'+
+    (inne ? '' : '<div class="del"><p class="proeve">Bare i den frittstående utgaven: knappen under gir mynter uten oppgaver, så du kan se alt som kan bygges. Den finnes ikke når eleven er logget inn på Tavleloftet.</p><button class="sek" data-a="testmynter">Test: gi 200 mynter</button></div>'),
+    function(el){ if(window.TLTid) TLTid.panel(el.querySelector('#vtid')) });
+}
+
+/* ---------- Klikk ---------- */
+function klikk(e){
+  var t = e.target.closest('button'); if(!t || t.disabled) return; var d = t.dataset;
+  if(d.omr){D = null; document.getElementById('lag').innerHTML=''; return apne(d.omr)}
+  if(d.a==='tilbake'){apen = null; tegnPanel(); if(window.fokus3D) window.fokus3D(null); return}
+  if(d.a==='lukk'){D = null; return lukk()}
+  if(d.a==='bok') return visBok();
+  if(d.a==='navn') return oppsettDialog(false);
+  if(d.a==='dystoppgave') return dystOppgave();
+  if(d.a==='voksen') return voksenPort();
+  if(d.a==='vk-ok') return provVoksenkode();
+  if(d.a==='loggut'){ if(t.dataset.sikker){ if(window.TL && TL.loggUt) TL.loggUt() } else { t.dataset.sikker = 1; t.textContent = 'Trykk igjen for å logge ut' } return }
+  if(d.a==='lyd'){S.lydAv = !S.lydAv; lagre(); return lukk()}
+  if(d.a==='testmynter'){S.mynter += 200; lagre(); return lukk()}
+  if(d.a==='nullstill') return dialog('<h2>Nullstille alt?</h2><p>Monstrene, boksene, pokalene og alt som er bygd blir borte. Dette kan ikke angres.</p><div class="rad"><button class="rod" data-a="nullstill-ja">Ja, nullstill</button><button class="sek" data-a="lukk">Nei, behold</button></div>');
+  if(d.a==='nullstill-ja'){try{localStorage.removeItem(NOKKEL)}catch(x){} S=null; D=null; apen=null; document.getElementById('panel').className=''; if(window.fokus3D) window.fokus3D(null); return oppsettDialog(true)}
+  if(d.jakt) return jakt(d.jakt);
+  if(d.tren) return trening(+d.tren);
+  if(d.dyst) return dyst(+d.dyst);
+  if(d.velg){S.valgt = d.velg; lagre(); return tegn()}
+  if(d.boks){if(kjopBoks(d.boks)){if(window.sprett3D) window.sprett3D('verksted'); tegn()} return}
+  if(d.bygg){if(bygg(d.bygg)){if(window.sprett3D) window.sprett3D(d.bygg); tegn()} return}
+}
+
+if(typeof document !== 'undefined'){
+  document.addEventListener('click', klikk);
+  S = hent();
+  if(S) tegn(); else oppsettDialog(true);
+}
+</script>
+<!-- De ekte oppgavene (oppgaver.js) og lista over lydklipp (lyd/klipp.js). Fjern oppgaver.js-linja for å få tilbake prøveoppgaven. -->
+<script src="lyd/klipp.js"></script>
+<script src="oppgaver.js"></script>
+
+<script type="module">
+/* =====================================================================
+   Del 2: 3D-verdenen. Samme oppskrift som Dinoparken, fotballverdenen og fiskeværet:
+   low poly, flate farger, skråkamera uten perspektiv, og merkelapper oppå.
+   Landskapet (hav, kyst, elv, fjell, torg) tegnes én gang. Hvert sted
+   tegnes på nytt når nivået endrer seg (se BYGGERE).
+   ===================================================================== */
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('scene'), laster = document.getElementById('laster');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); }
+catch(e){ laster.textContent = ''; throw e; }   // uten 3D vises stedene som vanlige knapper
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const HJEM = { x:-2, z:-17 };   // midten av bildet når ingenting er valgt
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,900);
+camera.position.set(HJEM.x-24, 114, HJEM.z+168);   // langt unna, så ingenting havner bak kameraet
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(HJEM.x, 0, HJEM.z);
+controls.enableDamping = true; controls.dampingFactor = .08;
+controls.enablePan = false;
+controls.minZoom = .8; controls.maxZoom = 3.6;
+controls.minPolarAngle = .5; controls.maxPolarAngle = 1.15;
+
+function resize(){
+  const w = innerWidth, h = innerHeight, a = w/h;
+  const v = a<1 ? Math.max(72, 96/a) : Math.max(76, 138/a);
+  camera.left = -v*a/2; camera.right = v*a/2; camera.top = v/2; camera.bottom = -v/2;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);
+}
+addEventListener('resize', resize); resize();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8fae9a, 1.2));
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.5);
+sun.position.set(40,60,34); sun.castShadow = true; sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera, { left:-80, right:80, top:80, bottom:-80, near:1, far:240 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+scene.add(sun);
+
+/* ---------- Hjelpere ---------- */
+let seed = 7;
+const rand = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed);
+  t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14) >>> 0) / 4294967296; };
+const R = (a,b) => a + rand()*(b-a), en = a => a[Math.floor(rand()*a.length)];
+const PI = Math.PI, mats = {};
+const M = c => mats[c] || (mats[c] = new THREE.MeshStandardMaterial({ color:c, flatShading:true, roughness:.85 }));
+const lysMat = new THREE.MeshStandardMaterial({ color:0xfff7c2, emissive:0xffe08a, emissiveIntensity:.8, flatShading:true });
+const baalMat = new THREE.MeshStandardMaterial({ color:0xffa23a, emissive:0xff7a1a, emissiveIntensity:.9, flatShading:true });
+const fyrMat = new THREE.MeshStandardMaterial({ color:0xfff7c2, emissive:0xffe08a, emissiveIntensity:1, flatShading:true });
+const nettMat = new THREE.MeshStandardMaterial({ color:0xffffff, transparent:true, opacity:.4, roughness:1, side:THREE.DoubleSide });
+function legg(p, geo, c, x, y, z){ const m = new THREE.Mesh(geo, c.isMaterial ? c : M(c)); m.position.set(x,y,z); m.castShadow = m.receiveShadow = true; p.add(m); return m; }
+const box  = (p,w,h,d,c,x,y,z) => legg(p, new THREE.BoxGeometry(w,h,d), c, x, y, z);
+const cyl  = (p,rt,rb,h,s,c,x,y,z) => legg(p, new THREE.CylinderGeometry(rt,rb,h,s), c, x, y, z);
+const kule = (p,r,c,x,y,z) => legg(p, new THREE.IcosahedronGeometry(r,0), c, x, y, z);
+const flat = m => { m.castShadow = false; return m; };
+const gruppe = (p,x,z,rot,y) => { const g = new THREE.Group(); g.position.set(x,y||0,z); g.rotation.y = rot||0; p.add(g); return g; };
+/* Saltak: møne langs lengden. l = lengde, d = dybde, rh = høyde på taket */
+function saltak(p, l, d, rh, c, x, y, z, rot){
+  const s = new THREE.Shape(); s.moveTo(-d/2-.45,0); s.lineTo(d/2+.45,0); s.lineTo(0,rh); s.closePath();
+  const geo = new THREE.ExtrudeGeometry(s, { depth:l+.7, bevelEnabled:false }); geo.translate(0,0,-(l+.7)/2);
+  const m = legg(p, geo, c, x, y, z); m.rotation.y = PI/2 + (rot||0); return m;
+}
+/* Skilt med tekst (tegnet på et lite lerret) */
+function skilt(p, tekst, w, h, x, y, z, rot, bg, fg){
+  const c = document.createElement('canvas'); c.width = 512; c.height = Math.max(32, Math.round(512*h/w));
+  const k = c.getContext('2d'); k.fillStyle = bg||'#fff7d6'; k.fillRect(0,0,c.width,c.height);
+  k.fillStyle = fg||'#17364a'; k.textAlign = 'center'; k.textBaseline = 'middle';
+  let fs = c.height*.6; k.font = '700 '+fs+'px Fredoka, Arial, sans-serif';
+  const tw = k.measureText(tekst).width; if(tw > c.width*.88){ fs *= c.width*.88/tw; k.font = '700 '+fs+'px Fredoka, Arial, sans-serif'; }
+  k.fillText(tekst, c.width/2, c.height/2 + fs*.05);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshStandardMaterial({ map:t, roughness:.8 }));
+  m.position.set(x,y,z); m.rotation.y = rot||0; p.add(m); return m;
+}
+/* En flate tegnet fra en liste med [x,z]-punkter. tykk > 0 gir en plate med sidekanter. */
+const tilForm = P => { const s = new THREE.Shape(); P.forEach((p,i) => i ? s.lineTo(p[0],-p[1]) : s.moveTo(p[0],-p[1])); s.closePath(); return s; };
+function flate(P, y, c, tykk, hull){
+  const form = tilForm(P); if(hull) form.holes.push(new THREE.Path(hull.map(p => new THREE.Vector2(p[0],-p[1]))));
+  const geo = tykk ? new THREE.ExtrudeGeometry(form, { depth:tykk, bevelEnabled:false }) : new THREE.ShapeGeometry(form);
+  const m = new THREE.Mesh(geo, Array.isArray(c) ? c.map(M) : (c.isMaterial ? c : M(c))); m.rotation.x = -PI/2; m.position.y = y - (tykk||0); m.receiveShadow = true; scene.add(m); return m;
+}
+const skaler = (P, k, cx, cz) => P.map(p => [cx+(p[0]-cx)*k, cz+(p[1]-cz)*k]);
+const iPoly = (x,z,P) => { let inn = false; for(let i=0,j=P.length-1;i<P.length;j=i++){ const a = P[i], b = P[j]; if((a[1]>z)!==(b[1]>z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0]) inn = !inn; } return inn; };
+const dSeg = (x,z,a,b) => { const dx = b[0]-a[0], dz = b[1]-a[1], t = klem(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz),0,1); return Math.hypot(x-a[0]-t*dx, z-a[1]-t*dz); };
+const dPoly = (x,z,P) => { let d = 1e9; for(let i=0,j=P.length-1;i<P.length;j=i++) d = Math.min(d, dSeg(x,z,P[i],P[j])); return d; };
+
+const GRESS = 0x8fcf6a, STI = 0xead6a0, LAAS = 0xb9bd8f, BETONG = 0xa7afb8, TRE = 0x8a5a33, MORK = 0x3d4650, PLANKE = 0xc79a5b, PAEL = 0x7a5a3a, HVIT = 0xf4f6f8, RORBU = 0xb5382f;
+const HAVFARGE = 0x4fb0d6, GRUNT = 0x7fd0ea, FERSK = 0x63bfe0, SKUM = 0xeaf8fd, STEIN = [0xa9adb0,0x9a9fa3,0xb8bbb9];
+const HUD = [0xf2c9a0,0xd9a273,0x8d5a3b,0xf7dcc0], HAAR = [0x3b2a1a,0x6b4423,0xd9b45a,0x1c1c1c,0xa5522a];
+const HAV = -1.4;   // høyden på havflata. Bakken ligger på 0.
+let flaggene = [], duppere = [], f1hex = 0xc8382e;
+const ROD = 0xc8382e, SVART = 0x2b2440, TAK = 0x46546a, PAPIR = 0xf7efe0, TREMORK = 0x6b4226, GULL = 0xf2c230, SAND = 0xf0dfae, LEIRE = 0xd9b98a;
+const ROSA = [0xf7a8c4,0xf48fb1,0xfbc4d8,0xffd9e6], LONN = [0xd9482b,0xe8703a,0xf2a03d], GRONT = [[0x6fbf5a,0x58a94c,0x86cc66],[0x58a94c,0x4a9b55,0x79c468]];
+
+/* =====================================================================
+   KARTET. Alle punkter er [x, z]. x går mot høyre, z går mot deg.
+   LAND er kystlinja. Innhakket midt i er elva, fra munningen opp til fjellet.
+   ===================================================================== */
+const ELV_V = [[11,2],[10,-10],[15,-22],[13,-34],[18,-44]];      // venstre elvebredd, fra sjøen og oppover
+const ELV_H = [[22,-44],[19,-34],[21,-22],[16,-10],[17,2]];      // høyre elvebredd, fra fossen og nedover
+const KYST_FORAN = [[-64,3],[-54,13],[-42,17],[-31,13],[-22,9],[-12,8],[-2,8],[8,9]];
+const KYST_RESTEN = [[22,10],[32,16],[46,16],[58,9],[66,-6],[68,-26],[62,-46],[48,-60],[28,-68],[6,-71],[-18,-69],[-40,-63],[-56,-50],[-66,-32],[-69,-12]];
+const LAND = KYST_FORAN.concat(ELV_V, ELV_H, KYST_RESTEN);
+const FJELL = [[33,-51,17,27],[52,-40,8.5,11],[13,-61,8,10]];   // x, z, bredde, høyde. Det første er det store fjellet.
+const TORG = [-8,0], BRU = [[9.6,0],[18,0]], HAUG = [-8,-56,4];  // haugen troférommet står på: x, z, høyde
+const sted = id => { const o = OMRADER.find(o => o.id===id); return [o.x,o.z]; };
+const STIER = [[TORG,[-8,7]],[TORG,sted('verksted')],[TORG,sted('dojo')],[sted('dojo'),sted('skog')],[sted('dojo'),sted('eng')],[sted('eng'),[HAUG[0],HAUG[1]+11]],[TORG,BRU[0]],[BRU[1],sted('strand')],[[26,1],sted('arena')]];
+const HUS = [[-54,-6,.5],[-58,-17,.2],[27,-9,-.3],[56,-14,.4],[-24,-52,.8]];   // småhus til pynt: x, z, vinkel
+const RIS = [-49,-21];                                                           // rismarkene
+const OPPTATT = FJELL.map(f => [f[0],f[1],f[2]+1.5]).concat([[TORG[0],TORG[1],7.5],[HAUG[0],HAUG[1],11.5],[RIS[0],RIS[1],7]], HUS.map(h => [h[0],h[1],4.4]));
+const LUFT = { skog:12, eng:10.5, strand:11.5, arena:10 };   // hvor mye plass hvert sted trenger rundt seg
+
+/* ---------- Hav, land og elv ---------- */
+{ const hav = legg(scene, new THREE.CylinderGeometry(200,200,.4,28), new THREE.MeshStandardMaterial({color:HAVFARGE,roughness:.35,flatShading:true}), 0, HAV-.2, 0); hav.castShadow = false;
+  const kyst = KYST_FORAN.concat(KYST_RESTEN);
+  flat(flate(skaler(kyst,1.17,0,-26), HAV+.03, new THREE.MeshStandardMaterial({color:GRUNT,roughness:.4,flatShading:true})));   // grunt vann langs land
+  flate(skaler(kyst,1.055,0,-26), -1, SAND, 2.4);                                       // strand
+  flate(LAND, 0, [GRESS, 0xa98f62], 3);                                                 // selve landet
+  const elv = [[8.2,10.2]].concat(ELV_V, ELV_H, [[21.8,11.2]]);
+  flat(flate(elv, -.5, new THREE.MeshStandardMaterial({color:FERSK,roughness:.3,flatShading:true})));
+  const s = flat(box(scene, 13.6, .12, 1.6, SKUM, 15, -.92, 10.9)); s.rotation.set(.62, -.075, 0);   // stryk der elva møter sjøen
+  for(let i=0;i<5;i++) flat(kule(scene, R(.35,.6), SKUM, 9.5+i*2.8+R(-.5,.5), HAV+.1, 11.9+i*.2+R(-.3,.3)));
+  const midt = [[14,2],[13,-10],[18,-22],[16,-34],[20,-43]];
+  for(let i=0;i<midt.length-1;i++) for(let k=0;k<3;k++){ const t = (k+.5)/3, x = midt[i][0]+(midt[i+1][0]-midt[i][0])*t, z = midt[i][1]+(midt[i+1][1]-midt[i][1])*t, rot = -Math.atan2(midt[i+1][1]-midt[i][1], midt[i+1][0]-midt[i][0]);
+    flat(box(scene, R(1.2,2.2), .04, .22, SKUM, x+R(-1.2,1.2), -.47, z+R(-.6,.6))).rotation.y = rot;
+    if(k===1){ const m = legg(scene, new THREE.DodecahedronGeometry(R(.5,.8),0), en(STEIN), x+R(-1.6,1.6), -.45, z+R(-1,1)); m.scale.y = .6; } }
+  for(let i=0;i<10;i++){ const x = R(-56,54), z = R(-60,4); if(!iPoly(x,z,LAND) || dPoly(x,z,LAND)<8) continue; flat(cyl(scene, R(3,6), R(3,6), .06, 7, en([0x86c863,0x98d672]), x, .03, z)).rotation.y = rand(); }
+}
+
+/* ---------- Natur ---------- */
+function gran(p, x, z, s){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  cyl(g, .2, .32, 1.3, 6, 0x7a4f2d, 0, .65, 0);
+  [0x2f7a45,0x3a8a4c,0x4a9b55,0x5aab5e].forEach((c,i) => { const m = legg(g, new THREE.ConeGeometry(1.75-i*.38, 1.7, 7), c, R(-.07,.07), 1.75+i*.92, R(-.07,.07)); m.rotation.y = rand()*PI; });
+}
+function lauv(p, x, z, s){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  cyl(g, .18, .3, 2.2, 6, TRE, 0, 1.1, 0);
+  const gr = legg(g, new THREE.CylinderGeometry(.08,.12,1.1,5), TRE, .45, 2, .1); gr.rotation.z = -.8;
+  const pal = en([[0x6fbf5a,0x58a94c,0x86cc66],[0x58a94c,0x4a9b55,0x79c468],[0x8cc95f,0x6fbf5a,0xa3d977]]);
+  [[0,3.1,0,1.45],[.95,2.6,.3,1],[-.8,2.7,-.35,1.1],[.15,3.9,-.2,.95],[-.2,2.6,.8,.85]].forEach((b,i) => {
+    const m = kule(g, b[3], pal[i%3], b[0], b[1], b[2]); m.scale.y = .86; m.rotation.set(rand()*3, rand()*3, 0); });
+}
+function busk(p, x, z){ const c = en([0x58a94c,0x4a9b55,0x6fbf5a]); kule(p, R(.55,.8), c, x, .4, z).scale.y = .7; kule(p, R(.35,.5), c, x+R(-.6,.6), .3, z+R(-.6,.6)).scale.y = .7; }
+function stein(p, x, z, y, s){ const m = legg(p, new THREE.DodecahedronGeometry(s||R(.4,.85),0), en(STEIN), x, (y||0)+.25, z); m.scale.y = .6; m.rotation.y = rand()*PI; return m; }
+function blomster(p, x, z){ const c = en([0xff8fb1,0xffd84d,0xffffff,0xc79bff]); for(let i=0;i<6;i++) flat(kule(p, .16, c, x+R(-.9,.9), .16, z+R(-.9,.9))); }
+function lykt(p, x, z, y){ y = y||0; cyl(p,.08,.13,3.2,5,MORK,x,y+1.6,z); box(p,.6,.12,.6,MORK,x,y+3.3,z); flat(legg(p,new THREE.BoxGeometry(.4,.3,.4),lysMat,x,y+3.1,z)); }
+function siv(p, x, z, y){ for(let i=0;i<6;i++){ const h = R(1,1.7), sx = x+R(-.6,.6), sz = z+R(-.6,.6); flat(cyl(p,.04,.05,h,4,0x6a9a3a,sx,y+h/2,sz)); if(i%2) flat(cyl(p,.08,.08,.35,5,0x6b4423,sx,y+h+.1,sz)); } }
+/* Løvtre med valgfri fargepalett. Brukes til kirsebærtrær (rosa), lønn (rød) og vanlige trær. */
+function lovtre(p, x, z, s, pal, stamme){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  cyl(g, .18, .3, 2.2, 6, stamme||TRE, 0, 1.1, 0);
+  const gr = legg(g, new THREE.CylinderGeometry(.08,.12,1.1,5), stamme||TRE, .45, 2, .1); gr.rotation.z = -.8;
+  [[0,3.1,0,1.45],[.95,2.6,.3,1],[-.8,2.7,-.35,1.1],[.15,3.9,-.2,.95],[-.2,2.6,.8,.85]].forEach((b,i) => {
+    const m = kule(g, b[3], pal[i%pal.length], b[0], b[1], b[2]); m.scale.y = .86; m.rotation.set(rand()*3, rand()*3, 0); });
+  return g;
+}
+const sakura = (p,x,z,s) => lovtre(p, x, z, s, ROSA, TREMORK);
+/* Japansk furu: skjev stamme og flate skyer av nåler. */
+function furu(p, x, z, s){
+  const g = gruppe(p, x, z, rand()*PI); g.scale.setScalar(s);
+  const st = cyl(g, .16, .3, 3.2, 6, 0x5a3d28, .25, 1.5, 0); st.rotation.z = -.16;
+  [[.5,3.2,0,1.5],[-.7,2.5,.3,1.1],[1.3,2.3,-.3,.95],[.2,4,.1,.9]].forEach((b,i) => { const m = legg(g, new THREE.CylinderGeometry(b[3]*.8, b[3], .55, 7), [0x2f6b4a,0x3a7a52][i%2], b[0], b[1], b[2]); m.rotation.y = rand()*PI; });
+}
+/* En klynge bambus. h = omtrent høyde. */
+function bambus(p, x, z, h){
+  for(let i=0;i<4;i++){ const hh = h*R(.75,1.1), sx = x+R(-.7,.7), sz = z+R(-.7,.7), c = en([0x7fbf4d,0x8fcc55,0x6aa844]);
+    const st = flat(cyl(p, .09, .12, hh, 5, c, sx, hh/2, sz)); st.rotation.z = R(-.07,.07); st.rotation.x = R(-.07,.07);
+    const bl = flat(kule(p, R(.45,.7), en([0x5fae3f,0x74c04a]), sx+R(-.3,.3), hh+.1, sz+R(-.3,.3))); bl.scale.set(1.3,.55,1.3); bl.rotation.y = rand()*PI;
+    if(i%2){ const b2 = flat(kule(p, .4, 0x5fae3f, sx+R(-.5,.5), hh*.72, sz+R(-.5,.5))); b2.scale.set(1.3,.45,1.3); } }
+}
+function gresstust(p, x, z, c){ for(let i=0;i<3;i++){ const m = flat(legg(p, new THREE.ConeGeometry(.16, R(.6,1), 4), c||0x6fbf5a, x+R(-.25,.25), .35, z+R(-.25,.25))); m.rotation.z = R(-.25,.25); } }
+
+/* ---------- Japansk byggesett ---------- */
+/* Tak med fire sider og brede takskjegg. w og d er huset under, h er høyden på taket, ut er hvor langt taket stikker ut. */
+function pagodetak(g, w, d, h, c, x, y, z, ut){
+  ut = ut===undefined ? 1.7 : ut; const side = w+ut, t = gruppe(g, x, z, 0, y); t.scale.z = (d+ut)/side;
+  box(t, side+.1, .16, side+.1, TREMORK, 0, .05, 0);
+  const m = legg(t, new THREE.ConeGeometry(side/1.4142, h, 4), c, 0, h/2+.12, 0); m.rotation.y = PI/4;
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(k => flat(kule(t, .17, GULL, k[0]*side/2, .22, k[1]*side/2)));
+  return t;
+}
+/* Hus med papirvegger og mørkt bindingsverk. Døra vender mot +z. */
+function tehus(g, x, z, l, h, d, tak, y){ y = y||0;
+  box(g, l+.7, .3, d+.7, 0xb8b0a0, x, y+.15, z); box(g, l, h, d, PAPIR, x, y+h/2+.3, z);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(k => box(g, .22, h, .22, TREMORK, x+k[0]*l/2, y+h/2+.3, z+k[1]*d/2));
+  flat(box(g, l+.06, .16, d+.06, TREMORK, x, y+h+.22, z)); flat(box(g, l+.06, .14, d+.06, TREMORK, x, y+.42, z));
+  for(let i=1;i<Math.round(l/1.4);i++) flat(box(g, .08, h-.2, .04, TREMORK, x-l/2+i*l/Math.round(l/1.4), y+h/2+.3, z+d/2+.01));
+  return pagodetak(g, l, d, tak, TAK, x, y+h+.3, z);
+}
+function skyvedor(g, x, z, y, w, h){ flat(box(g, w+.2, h+.1, .08, TREMORK, x, y+h/2, z)); flat(box(g, w, h, .1, 0xfffaf0, x, y+h/2, z)); flat(box(g, .06, h, .12, TREMORK, x, y+h/2, z)); flat(box(g, w, .05, .12, TREMORK, x, y+h*.62, z)); }
+function torii(p, x, z, rot, s, y, c){ const g = gruppe(p, x, z, rot||0, y||0); g.scale.setScalar(s||1); c = c||ROD;
+  [-1.7,1.7].forEach(sx => { const st = cyl(g, .2, .26, 4.5, 7, c, sx, 2.25, 0); st.rotation.z = sx>0 ? .04 : -.04; box(g, .7, .3, .7, SVART, sx, .15, 0); });
+  box(g, 4.3, .28, .3, c, 0, 3.35, 0); box(g, 5.3, .34, .46, c, 0, 4.4, 0); box(g, 5.8, .2, .6, SVART, 0, 4.66, 0); box(g, .3, .8, .2, c, 0, 3.86, 0); return g; }
+function steinlykt(p, x, z, y){ y = y||0; const c = 0xb0b4b8;
+  cyl(p, .36, .46, .24, 6, c, x, y+.12, z); cyl(p, .14, .17, 1, 6, c, x, y+.7, z); box(p, .66, .12, .66, c, x, y+1.26, z);
+  flat(legg(p, new THREE.BoxGeometry(.42,.42,.42), lysMat, x, y+1.52, z)); const t = legg(p, new THREE.ConeGeometry(.58,.42,4), 0x8e9398, x, y+1.94, z); t.rotation.y = PI/4; flat(kule(p, .1, c, x, y+2.2, z)); }
+/* Fane på høy stang, slik de står utenfor sumohaller og templer. */
+function fane(g, x, y, z, f, h){ h = h||4.2; cyl(g, .06, .08, h, 5, TREMORK, x, y+h/2, z); flat(box(g, .9, .06, .06, TREMORK, x+.4, y+h-.1, z)); const d = box(g, .8, h*.62, .06, f, x+.45, y+h-.1-h*.31, z); flaggene.push(d); return d; }
+function minka(p, x, z, rot){ const g = gruppe(p, x, z, rot); tehus(g, 0, 0, 3.6, 2, 2.9, 1.5); skyvedor(g, 0, 1.47, .3, 1.2, 1.7); return g; }
+/* Liten monsterfigur som står og dupper på stedet der den er fanget. */
+const bildeTex = {}, BILDER_I_3D = location.protocol !== 'file:';   // åpnet rett fra en mappe får ikke nettleseren bruke bilder i 3D. Da vises enkle figurer.
+function monsterfigur(g, x, z, m, rot, y){ y = y||0;
+  if(m.bilde && BILDER_I_3D){ const t = bildeTex[m.id] || (bildeTex[m.id] = new THREE.TextureLoader().load(m.bilde)); t.colorSpace = THREE.SRGBColorSpace;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:t, transparent:true, alphaTest:.05 })), st = [0,1.9,2.2,2.7][m.sj]; sp.scale.set(st, st, 1); sp.center.set(.5, 0);
+    const h = gruppe(g, x, z, 0, y); h.add(sp); flat(cyl(h, st*.3, st*.3, .03, 10, new THREE.MeshBasicMaterial({ color:0x000000, transparent:true, opacity:.18 }), 0, .03, 0)); duppere.push({ g:sp, y:.05, f:x*1.7+z, a:.1 }); return h; }
+  const p = gruppe(g, x, z, rot||0, y), c = new THREE.Color(m.c).getHex(), s = [0,.8,.95,1.15][m.sj]; p.scale.setScalar(s);
+  const kr = kule(p, .62, c, 0, .6, 0); kr.scale.y = .88;
+  [-.22,.22].forEach(sx => { flat(kule(p, .13, 0xffffff, sx, .72, .5)); flat(kule(p, .07, SVART, sx, .72, .6)); });
+  if(m.kl==='skog') [-.2,.2].forEach(sx => { const b = flat(kule(p, .22, 0x3a8a4c, sx, 1.25, 0)); b.scale.set(.5,1,.3); b.rotation.z = -sx*2; });
+  if(m.kl==='vann') flat(legg(p, new THREE.ConeGeometry(.3,.6,5), c, 0, 1.3, 0));
+  if(m.kl==='ild')  flat(legg(p, new THREE.ConeGeometry(.26,.7,5), baalMat, 0, 1.35, 0));
+  if(m.kl==='stein') flat(legg(p, new THREE.DodecahedronGeometry(.28,0), 0x6f7480, .1, 1.2, -.1));
+  if(m.kl==='vind') [-.45,.45].forEach(sx => { flat(kule(p, .26, 0xffffff, sx, .9, -.2)); });
+  if(m.sj===3) flat(legg(p, new THREE.ConeGeometry(.2,.3,4), GULL, 0, 1.75, 0));
+  duppere.push({ g:p, y:y, f:x*1.7+z, a:.1 }); return p; }
+function pokal(g, x, y, z, s){ s = s||1; cyl(g, .16*s, .2*s, .12*s, 6, SVART, x, y+.06*s, z); cyl(g, .05*s, .05*s, .3*s, 5, GULL, x, y+.27*s, z); const k = cyl(g, .26*s, .12*s, .36*s, 7, GULL, x, y+.58*s, z); return k; }
+
+/* ---------- Fjell, foss, haug, stier, bru, torg og småhus (tegnes én gang) ---------- */
+const fjellene = [];
+FJELL.forEach((f,i) => { const g = gruppe(scene, f[0], f[1], i*1.3), stor = i===0;
+  fjellene.push(legg(g, new THREE.ConeGeometry(f[2], f[3], stor?10:7), [0x6f7fa8,0x8f989e,0x878f95][i], 0, f[3]/2, 0));
+  if(stor){ legg(g, new THREE.ConeGeometry(f[2]*.4, f[3]*.4, 10), 0xffffff, 0, f[3]*.805, 0); legg(g, new THREE.ConeGeometry(f[2]*.52, f[3]*.2, 10), 0xe9eef5, 0, f[3]*.62, 0).rotation.y = .3; }
+  legg(g, new THREE.ConeGeometry(f[2]*1.08, f[3]*.28, stor?10:7), 0x7fb866, 0, f[3]*.14, 0).rotation.y = .4; });
+{ // fossen: renner ned fjellsida og ut i elva
+  const f = FJELL[0], dx = -.78, dz = .62, ned = new THREE.Raycaster(), topp = r => { ned.set(new THREE.Vector3(f[0]+dx*r, 80, f[1]+dz*r), new THREE.Vector3(0,-1,0)); const h = ned.intersectObject(fjellene[0], false)[0]; return new THREE.Vector3(f[0]+dx*r, (h ? h.point.y : 0)+.12, f[1]+dz*r); };
+  scene.updateMatrixWorld(true);
+  const a = topp(7.5), b = topp(15.6), l = a.distanceTo(b), midt = a.clone().lerp(b,.5);
+  const m = flat(legg(scene, new THREE.BoxGeometry(2.4,.3,l), new THREE.MeshStandardMaterial({color:0x8fd6f2,roughness:.3,flatShading:true}), midt.x, midt.y, midt.z)); m.lookAt(b);
+  const m2 = flat(legg(scene, new THREE.BoxGeometry(1,.4,l*.92), SKUM, midt.x, midt.y, midt.z)); m2.lookAt(b);
+  flat(kule(scene, 1, SKUM, b.x, b.y+.2, b.z)); flat(kule(scene, .7, SKUM, a.x, a.y, a.z));
+  flat(cyl(scene, 2.1, 2.1, .08, 8, SKUM, 19.4, -.46, -40.4)); [[18,-39.8],[21,-40.4],[19.6,-38.8]].forEach(p => flat(kule(scene, .5, SKUM, p[0], -.4, p[1]))); }
+{ // haugen med trapp opp til troférommet
+  const h = gruppe(scene, HAUG[0], HAUG[1], 0), y = HAUG[2];
+  cyl(h, 6.2, 10.5, y, 9, 0x86c863, 0, y/2, 0); flat(cyl(h, 6, 6.2, .12, 9, STI, 0, y+.04, 0));
+  for(let i=0;i<8;i++) box(h, 2.6, .5, .8, 0xbfc3c6, 0, y-.25-i*.5, 6.3+i*.62);
+  [-1,1].forEach(s => { steinlykt(h, s*2.2, 11.6); sakura(h, s*6.5, 8.2, 1); furu(h, s*8.4, -2.5, 1); }); }
+function sti(a, b){ const l = Math.hypot(b[0]-a[0], b[1]-a[1]), rot = -Math.atan2(b[1]-a[1], b[0]-a[0]), x = (a[0]+b[0])/2, z = (a[1]+b[1])/2;
+  flat(box(scene, l, .1, 2.4, STI, x, .05, z)).rotation.y = rot; flat(box(scene, l, .06, 2.9, 0xd9c48c, x, .03, z)).rotation.y = rot; }
+STIER.forEach(s => sti(s[0], s[1]));
+[[-22,3],[-14,-5.5],[-31,-21],[-12,-20],[-5,-43],[2,1.6],[27,3.6],[31,-9]].forEach(p => steinlykt(scene, p[0], p[1]));
+{ // den røde brua over elva
+  const x0 = BRU[0][0]-.3, l = BRU[1][0]-BRU[0][0]+.6, n = 9, buet = t => .1+1.1*Math.sin(t*PI);
+  for(let i=0;i<n;i++){ const t = (i+.5)/n, x = x0+t*l, y = buet(t); const p = box(scene, l/n+.06, .16, 2.7, 0xb98a4b, x, y, 0); p.rotation.z = Math.cos(t*PI)*.36;
+    if(i%2===0) [-1.25,1.25].forEach(z => { box(scene, .16, 1.1, .16, ROD, x, y+.6, z); flat(kule(scene, .13, SVART, x, y+1.22, z)); }); }
+  [-1.25,1.25].forEach(z => { for(let i=0;i<4;i++){ const t0 = (i*2+.5)/n, t1 = ((i+1)*2+.5)/n, xa = x0+t0*l, xb = x0+t1*l, ya = buet(t0)+1, yb = buet(t1)+1;
+    const r = flat(box(scene, Math.hypot(xb-xa,yb-ya)+.1, .12, .12, ROD, (xa+xb)/2, (ya+yb)/2, z)); r.rotation.z = Math.atan2(yb-ya, xb-xa); } }); }
+{ // torget: steinlagt plass med det store kirsebærtreet, og brygga der du kommer i land
+  flat(cyl(scene, 6.2, 6.2, .12, 10, 0xcfd3d6, TORG[0], .06, TORG[1])); flat(cyl(scene, 6.9, 6.9, .08, 10, 0xb9bdc0, TORG[0], .04, TORG[1]));
+  cyl(scene, 1.9, 2.1, .5, 8, 0xb0b4b8, TORG[0], .25, TORG[1]); flat(cyl(scene, 1.7, 1.7, .1, 8, 0x86c863, TORG[0], .52, TORG[1]));
+  const tre = sakura(scene, TORG[0], TORG[1], 1.9); tre.position.y = .4;
+  [[-4.6,2.6],[4.6,2.6],[-4.6,-2.6],[4.6,-2.6]].forEach(p => steinlykt(scene, TORG[0]+p[0], TORG[1]+p[1]));
+  benk(scene, TORG[0]-3.4, TORG[1]-4.4, .5, 2.2); benk(scene, TORG[0]+3.4, TORG[1]-4.4, -.5, 2.2);
+  box(scene, 2.6, .28, 9, 0xb98a4b, -8, .2, 12); for(let z=8.4; z<=16; z+=2.5) [-1,1].forEach(s => cyl(scene, .18, .22, 3.4, 6, PAEL, -8+s*1.15, -1.2, z));
+  torii(scene, -8, 7.2, 0, 1.25);
+  const b = gruppe(scene, -5.6, 14.6, .25, HAV); box(b, 1.5, .5, 3.6, 0xb98a4b, 0, .25, 0); box(b, 1.2, .3, .9, TREMORK, 0, .55, -1.1); duppere.push({ g:b, y:HAV, f:3, a:.08 }); }
+HUS.forEach(h => minka(scene, h[0], h[1], h[2]));
+{ // rismarker i trapper
+  [[0,0,6.4,4.6,.05],[5.2,-4.4,5.4,4,.3],[-1.6,-5,6,3.8,.55]].forEach((r,i) => { const g = gruppe(scene, RIS[0]+r[0], RIS[1]+r[1], .2, r[4]);
+    box(g, r[2]+.5, .5, r[3]+.5, 0x9a7b4f, 0, -.2, 0); flat(box(g, r[2], .06, r[3], 0x7fc4d9, 0, .08, 0));
+    for(let x=-r[2]/2+.6; x<r[2]/2; x+=.9) for(let z=-r[3]/2+.6; z<r[3]/2; z+=.9) flat(legg(g, new THREE.ConeGeometry(.1,.5,4), 0x6fbf5a, x, .34, z)); }); }
+
+/* ---------- Pynt på land: trær, busker, steiner og blomster ---------- */
+const ledig = (x, z, luft) => iPoly(x,z,LAND) && dPoly(x,z,LAND) > 2.4+luft &&
+  !OMRADER.some(o => Math.hypot(o.x-x,o.z-z) < (LUFT[o.id]||8.5)+luft) && !STIER.some(s => dSeg(x,z,s[0],s[1]) < 2.4+luft) &&
+  !OPPTATT.some(c => Math.hypot(c[0]-x,c[1]-z) < c[2]+luft);
+function stro(antall, luft, lag){ for(let i=0, n=0; i<antall*30 && n<antall; i++){ const x = R(-68,66), z = R(-70,18); if(!ledig(x,z,luft)) continue; n++; lag(x,z); } }
+stro(30, 1.2, (x,z) => sakura(scene,x,z,R(.85,1.3)));
+stro(22, 1.2, (x,z) => lovtre(scene,x,z,R(.85,1.25),en(GRONT)));
+stro(18, 1.2, (x,z) => furu(scene,x,z,R(.9,1.3)));
+stro(8, 1.2, (x,z) => lovtre(scene,x,z,R(.8,1.1),LONN,TREMORK));
+stro(10, 1.2, (x,z) => gran(scene,x,z,R(.8,1.2)));
+stro(8, 1, (x,z) => bambus(scene,x,z,R(4,5.5)));
+stro(24, .4, (x,z) => busk(scene,x,z));
+stro(14, .4, (x,z) => stein(scene,x,z));
+stro(22, .3, (x,z) => blomster(scene,x,z));
+
+/* ---------- Pynt i sjøen: skjær og traner ---------- */
+const kretser = [];
+function skjaer(p, x, z, s){ const g = gruppe(p, x, z, rand()*PI); [[0,0,1.8],[1.5,.6,1.2],[-1.3,.9,1],[.4,-1.4,.9]].forEach(k => { const m = legg(g, new THREE.DodecahedronGeometry(k[2]*s,0), en(STEIN), k[0]*s, HAV+.15, k[1]*s); m.scale.y = .55; m.rotation.y = rand()*PI; }); return g; }
+function maake(p, x, y, z, rot){ const m = gruppe(p, x, z, rot||0, y); legg(m, new THREE.OctahedronGeometry(.28,0), 0xffffff, 0, 0, 0).scale.set(.7,.6,1.7);
+  [-1,1].forEach(s => { flat(box(m,.95,.05,.36,0xdfe6ea,s*.52,.1,0)).rotation.z = s*.38; }); flat(box(m,.08,.08,.22,0xf2b632,0,0,.52)); return m; }
+{ skjaer(scene, -46, 33, 1.1); skjaer(scene, -24, 50, .8); skjaer(scene, 30, 40, 1); maake(scene, -46.4, HAV+1.3, 33.2, 1);
+  const o = skjaer(scene, 6, 34, 1.3); furu(o, 0, 0, .9); o.children[o.children.length-1].position.y = HAV+1;
+  [[6,34,7,9,.4,3],[-8,12,9,11,-.3,2],[44,14,8,10,.45,2]].forEach(k => { const piv = gruppe(scene, k[0], k[1], 0);
+    for(let i=0;i<k[5];i++){ const a = i*PI*2/k[5]+i*.5, r = k[2]*(1-i*.14); maake(piv, Math.cos(a)*r, k[3]+i*.9, Math.sin(a)*r, -a+(k[4]>0?PI:0)); }
+    kretser.push({ g:piv, fart:k[4] }); }); }
+/* Kronblader som daler over dalen. */
+const blader = [];
+{ const geo = new THREE.PlaneGeometry(.42,.3), mat = new THREE.MeshBasicMaterial({ color:0xffc4d8, side:THREE.DoubleSide });
+  for(let i=0;i<46;i++){ const m = new THREE.Mesh(geo, mat); m.userData = { x:R(-60,60), z:R(-62,12), f:R(0,20), fart:R(1.2,2.2) }; scene.add(m); blader.push(m); } }
+
+/* ---------- Byggeklosser ---------- */
+function tomt(g, r, farge){ const t = flat(cyl(g, r, r+.4, .14, 9, farge, 0, .07, 0)); t.rotation.y = rand()*PI; flat(cyl(g, r+.7, r+1, .08, 9, 0xd9c48c, 0, .04, 0)).rotation.y = t.rotation.y; }
+function tilSalgs(g, tekst){
+  tomt(g, 5, LAAS);
+  for(let i=0;i<8;i++){ const a = i*PI/4; cyl(g,.1,.1,.9,5,TRE,Math.cos(a)*4.2,.45,Math.sin(a)*4.2); const r = box(g,3.2,.07,.07,0xf28c28,Math.cos(a+PI/8)*3.88,.75,Math.sin(a+PI/8)*3.88); r.rotation.y = -(a+PI/8)+PI/2; r.castShadow = false; }
+  const s = gruppe(g, 0, 0, .25); box(s,.2,2.4,.2,TRE,-1.5,1.2,0); box(s,.2,2.4,.2,TRE,1.5,1.2,0); box(s,3.9,1.7,.16,0xd8463b,0,2.5,0);
+  skilt(s,tekst,3.6,1.4,0,2.5,.09,0); skilt(s,tekst,3.6,1.4,0,2.5,-.09,PI);
+  [0,.24,.48].forEach((y,i) => { box(g,2.6,.2,.5,PLANKE,-2.2,.25+y,-1.8+i*.12).rotation.y = .3; });
+}
+function figur(g, x, z, f, s, rot, y){ const p = gruppe(g, x, z, rot===undefined ? rand()*PI*2 : rot, y||0); p.scale.setScalar(s||1);
+  box(p,.5,.72,.34,f,0,.92,0); box(p,.5,.26,.36,0x35475a,0,.5,0); box(p,.17,.42,.2,0x35475a,-.14,.2,0); box(p,.17,.42,.2,0x35475a,.14,.2,0);
+  box(p,.14,.5,.18,f,-.33,.98,0); box(p,.14,.5,.18,f,.33,.98,0);
+  const hud = en(HUD); box(p,.36,.36,.36,hud,0,1.47,0); flat(box(p,.4,.14,.4,en(HAAR),0,1.7,-.01)); return p; }
+function flagg(g, x, y, z, f, h){ h = h||3.4; cyl(g,.07,.09,h,5,0xdfe3e6,x,y+h/2,z); kule(g,.12,0xf2c230,x,y+h+.08,z); const d = box(g,1.8,1.05,.07,f,x+.95,y+h-.6,z); flaggene.push(d); }
+function benk(g, x, z, rot, l, y){ const b = gruppe(g, x, z, rot, y||0); box(b,l,.12,.5,PLANKE,0,.55,0); box(b,l,.4,.1,PLANKE,0,.95,-.22); box(b,.12,.55,.45,MORK,-l/2+.3,.27,0); box(b,.12,.55,.45,MORK,l/2-.3,.27,0); }
+function kasser(g, x, y, z, n, c){ for(let i=0;i<n;i++) box(g,.9,.36,.62,i%2?0xffffff:(c||0x3f8fc0),x+(i%2)*.06,y+.18+Math.floor(i/1)*.38,z).rotation.y = (i%3)*.06; }
+function tonne(g, x, y, z, c){ cyl(g,.36,.36,.9,8,c||0x2b6cb0,x,y+.45,z); flat(cyl(g,.38,.38,.08,8,MORK,x,y+.7,z)); }
+/* Monstrene som er fanget på et sted står framme der. */
+function fangetHer(g, id, plasser){ MONSTRE.filter(m => m.sted===id && S.monstre[m.id]).slice(0, plasser.length).forEach((m,i) => monsterfigur(g, plasser[i][0], plasser[i][1], m, plasser[i][2]||0)); }
+function navneskilt(g, tekst, x, z, rot){ const s = gruppe(g, x, z, rot||0); box(s,.14,1.5,.14,TREMORK,-1.1,.75,0); box(s,.14,1.5,.14,TREMORK,1.1,.75,0); box(s,2.9,.75,.12,PLANKE,0,1.35,0); skilt(s,tekst,2.7,.6,0,1.35,.07,0); flat(box(s,3.2,.12,.4,TAK,0,1.8,0)); }
+
+/* =====================================================================
+   STEDENE. Hver funksjon tegner ett sted. n = nivået (0 = ikke åpnet).
+   f og f2 er fargene eleven har valgt. +z er mot deg.
+   ===================================================================== */
+const BYGGERE = {
+  eng(g, A){
+    const n = A.eng; flat(cyl(g, 7.6, 8, .1, 10, 0x9bd975, 0, .05, 0)); flat(cyl(g, 4, 4.4, .06, 8, 0xa8e080, -1, .11, .5));
+    for(let i=0;i<22;i++){ const a = rand()*PI*2, r = R(1.5,7); gresstust(g, Math.cos(a)*r, Math.sin(a)*r, en([0x6fbf5a,0x86cc66,0x58a94c])); }
+    for(let i=0;i<7;i++){ const a = rand()*PI*2, r = R(2,6.8); blomster(g, Math.cos(a)*r, Math.sin(a)*r); }
+    navneskilt(g, 'Kirsebærenga', 4.6, 6.2, -.3); sakura(g, -6, -3.4, 1.15); sakura(g, 6.2, -2.2, 1);
+    if(n >= 2){ sakura(g, -3, -6.4, 1.3); sakura(g, 2.4, -6.6, 1.1); sakura(g, -7, 2.6, .95); steinlykt(g, -4.4, 5.4); benk(g, 5.6, 2.2, -1.1, 2.2); }
+    if(n >= 3){ sakura(g, 7.2, -5.6, 1.25); sakura(g, -8, -6.6, 1.1);
+      const t = gruppe(g, 0, -4.2, 0); box(t, 2.4, .5, 2, 0xb0b4b8, 0, .25, 0); box(t, 1.5, 1.3, 1.2, ROD, 0, 1.15, 0); skyvedor(t, 0, .62, .5, .7, 1.1); pagodetak(t, 1.5, 1.2, .9, TAK, 0, 1.8, 0, 1.3);
+      torii(g, 0, -.6, 0, .62); steinlykt(g, -2.2, -2.2); steinlykt(g, 2.2, -2.2); }
+    fangetHer(g, 'eng', [[-2.6,2.6,.3],[1.8,3.4,-.3],[3.4,-.6,-.6],[-4.4,-.4,.6],[-.4,5.2,0],[5.4,4.2,-.5],[-5.6,4.6,.5]]);
+  },
+  skog(g, A){
+    const n = A.skog; if(!n) return tilSalgs(g, 'Bambusskogen');
+    flat(cyl(g, 9, 9.5, .1, 10, 0x7fbf6a, 0, .05, 0)); flat(cyl(g, 3.6, 4, .06, 8, 0x9ad07a, 0, .11, 2));
+    const antall = 16 + n*8;
+    for(let i=0;i<antall;i++){ const a = PI*.12 + i/antall*PI*1.76 + R(-.1,.1), r = R(4.6,9), x = -Math.sin(a)*r, z = -Math.cos(a)*r*.9 - .5; bambus(g, x, z, R(4.5,7)); }   // åpning mot deg
+    navneskilt(g, 'Bambusskogen', 5, 8, -.35); stein(g, -3.4, 4.6, 0, .7); stein(g, 2.8, .4, 0, .6); busk(g, -2, -.6);
+    if(n >= 2){ for(let i=0;i<6;i++) flat(cyl(g, .5, .55, .1, 6, 0xb0b4b8, Math.sin(i*.8)*.9, .12, 7.6-i*1.5)).rotation.y = rand(); steinlykt(g, -2.4, 3.2); steinlykt(g, 2.6, 5.4); }
+    if(n >= 3){ torii(g, 0, 6.2, 0, .7); const s = legg(g, new THREE.DodecahedronGeometry(1.5,0), 0x8a8f7a, 0, 1, -2.4); s.scale.y = 1.15; const r = flat(legg(g, new THREE.TorusGeometry(1.42,.09,5,12), 0xffffff, 0, 1.2, -2.4)); r.rotation.x = PI/2;
+      [0,1,2,3].forEach(i => flat(box(g, .16, .34, .04, 0xffffff, Math.sin(i*PI/2+.8)*1.46, .95, -2.4+Math.cos(i*PI/2+.8)*1.46))); flat(kule(g, .5, 0x6fbf5a, .3, 2.5, -2.4)).scale.y = .4; }
+    fangetHer(g, 'skog', [[-1.8,2.4,.3],[1.6,3.2,-.3],[-.2,5,0],[3.2,1.8,-.6],[-3.6,1,.6],[.6,.6,0]]);
+  },
+  strand(g, A){
+    const n = A.strand; if(!n) return tilSalgs(g, 'Stranda');
+    flat(cyl(g, 9, 9.4, .1, 11, SAND, 0, .05, 1)); flat(cyl(g, 5, 5.4, .06, 9, 0xf7e9bf, 1, .11, 2.4));
+    flat(cyl(g, 1.7, 1.9, .06, 7, 0x7fd0ea, -4.2, .13, 3.4)); [[-5.8,2.6],[-3,4.8],[-4.6,5.2],[-2.8,2.2]].forEach(p => stein(g, p[0], p[1], 0, R(.4,.7)));   // fjærepytt
+    for(let i=0;i<10;i++){ const a = rand()*PI*2, r = R(1,7.5); flat(kule(g, .14, en([0xffffff,0xffc4d8,0xf2b632]), Math.cos(a)*r, .16, 1+Math.sin(a)*r)); }
+    const dr = box(g, 2.4, .22, .22, 0xbfa57a, 4.4, .2, 5.6); dr.rotation.y = .5; navneskilt(g, 'Stranda', -6.4, -4.6, .5); gresstust(g, 6, -4, 0xb8c46a); gresstust(g, -2, -5.6, 0xb8c46a); furu(g, 7.4, -5.6, 1.1);
+    if(n >= 2){ const b = gruppe(g, 5.2, 1.4, .7); box(b, 1.4, .5, 3.4, f1hex, 0, .3, 0); box(b, 1.1, .12, 3, 0xf7efe0, 0, .58, 0); box(b, 1.2, .1, .4, TREMORK, 0, .66, .2);
+      cyl(g, .07, .07, 2.6, 5, TREMORK, 0, 1.3, 3.4); const p = legg(g, new THREE.ConeGeometry(1.7,.7,8), ROD, 0, 2.7, 3.4); flat(legg(g, new THREE.ConeGeometry(1.72,.24,8), 0xffffff, 0, 2.48, 3.4)); flat(box(g, 1.6, .06, .9, 0xfffaf0, .2, .12, 4.4)); }
+    if(n >= 3){ [[-8.6,7.4,2.2,3],[-5.2,8.6,1.8,2.4]].forEach(k => { const s = legg(g, new THREE.DodecahedronGeometry(k[2],0), en(STEIN), k[0], k[3]*.45, k[1]); s.scale.y = 1.5; }); const bue = legg(g, new THREE.DodecahedronGeometry(2,0), 0x9a9fa3, -6.9, 3.6, 8); bue.scale.set(1.5,.5,.8);
+      furu(g, -6.9, 8, .6); g.children[g.children.length-1].position.y = 4.2; torii(g, 3, 17.5, .1, .95, HAV-.2); }
+    fangetHer(g, 'strand', [[-1.4,1.4,.3],[2.2,3.8,-.3],[-.6,5.6,0],[2.6,-.6,-.6],[-2.6,-1.8,.6],[.4,-3.2,0],[5.2,-2.2,-.5]]);
+  },
+  dojo(g, A, f, f2){
+    const n = A.dojo; tomt(g, 6.6, STI);
+    flat(box(g, 3.4, .1, 2.4, 0xb8c46a, 3.4, .16, 3.6)); flat(box(g, 3.5, .06, 2.5, 0x4a7a4a, 3.4, .13, 3.6));   // treningsmatta
+    [[-3.6,4],[-2.4,4.6]].forEach(p => { cyl(g, .12, .14, 1.5, 6, TREMORK, p[0], .75, p[1]); flat(cyl(g, .2, .2, .5, 6, 0xe9dcc0, p[0], 1.2, p[1])); });
+    if(n === 1){ tehus(g, 0, -1.4, 4.6, 2.3, 3.4, 1.7); skyvedor(g, 0, .33, .3, 1.5, 1.9); }
+    if(n === 2){ box(g, 8.2, .5, 5.6, TREMORK, 0, .25, -1.4); tehus(g, 0, -1.4, 7, 2.7, 4.4, 2.2, .3); skyvedor(g, 0, .83, .6, 2, 2.1); box(g, 2.4, .25, .9, 0xb0b4b8, 0, .12, 1.8);
+      fane(g, -4.8, 0, 2.2, f); fane(g, 4.6, 0, 2.2, f); }
+    if(n === 3){ box(g, 8.2, .6, 7, 0xb0b4b8, 0, .3, -1.6);
+      [[5.6,2.3,0],[4.4,2,3.5],[3.2,1.8,6.6]].forEach((k,i) => { const y = .6+k[2]; box(g, k[0], k[1], k[0], i ? ROD : PAPIR, 0, y+k[1]/2, -1.6);
+        [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(h => box(g, .24, k[1], .24, i ? SVART : TREMORK, h[0]*k[0]/2, y+k[1]/2, -1.6+h[1]*k[0]/2)); pagodetak(g, k[0], k[0], i===2 ? 1.9 : 1.2, TAK, 0, y+k[1], -1.6, 2); });
+      cyl(g, .07, .07, 1.6, 5, GULL, 0, 11.4, -1.6); flat(kule(g, .22, GULL, 0, 12.2, -1.6)); skyvedor(g, 0, 1.22, .6, 1.8, 2);
+      box(g, 2.4, .2, 1, 0xb0b4b8, 0, .1, 2.4); box(g, 2.4, .4, .8, 0xb0b4b8, 0, .2, 1.9); fane(g, -5, 0, 2.6, f); fane(g, 4.8, 0, 2.6, f); steinlykt(g, -2.2, 3); steinlykt(g, 2.2, 3);
+      figur(g, 3, 3.9, 0xffffff, 1, -.6); }
+    figur(g, 2.6, 3.2, 0xffffff, 1, 2.6); const valgt = MONSTRE.find(m => m.id===S.valgt); if(valgt) monsterfigur(g, 4, 3.6, valgt, -.8);
+    navneskilt(g, 'Dojo', -4.6, 6.2, .3);
+  },
+  verksted(g, A, f, f2){
+    const n = A.verksted; tomt(g, 5.6, STI);
+    const kasse = (x,y,z,c,s) => { s = s||1; box(g, .8*s, .6*s, .8*s, c, x, y+.3*s, z); flat(box(g, .86*s, .12*s, .86*s, c===0xc79a5b ? 0xa9793f : c===ROD ? 0x8f2a24 : 0xd9a520, x, y+.62*s, z)); };
+    if(n === 1){ [[-1.6,-1],[1.6,-1],[-1.6,1],[1.6,1]].forEach(p => box(g, .2, 2.4, .2, TREMORK, p[0], 1.2, p[1]-1)); pagodetak(g, 3.2, 2, 1.1, TAK, 0, 2.4, -1, 1.4); box(g, 3, .9, .8, PLANKE, 0, .45, -.2); }
+    else { tehus(g, 0, -1.6, 5.2, 2.4, 3.6, 1.8); skyvedor(g, -1.2, .23, .3, 1.3, 1.9); [-1.6,-1.2,-.8].forEach((x,i) => flat(box(g, .36, .8, .05, i%2 ? 0xffffff : f2, x, 1.9, .28)));
+      box(g, 2.6, .9, .9, PLANKE, 1.8, .45, 1.2); kasse(1.2, .9, 1.2, ROD, .7); kasse(2.3, .9, 1.2, ROD, .7); }
+    kasse(-3, 0, 2.2, 0xc79a5b); kasse(-3.9, 0, 2.6, 0xc79a5b); kasse(-3.4, .7, 2.4, 0xc79a5b, .9); kasse(n===1 ? 0 : -1.8, n===1 ? .9 : 0, n===1 ? -.2 : 3.4, 0xc79a5b, .8);
+    if(n >= 3){ box(g, 1.3, .7, 1.3, 0xb0b4b8, 3.8, .35, 3.2); kasse(3.8, .7, 3.2, GULL, 1); flat(kule(g, .14, 0xe8799b, 3.8, 1.56, 3.2));
+      cyl(g, .7, .9, 1.6, 7, 0xb5523b, 3.6, .8, -3.4); cyl(g, .3, .4, 1.6, 6, 0xb5523b, 3.6, 2.3, -3.4); [0,1,2].forEach(i => flat(kule(g, .34+i*.12, 0xe9eef2, 3.6+i*.3, 3.5+i*.7, -3.4))); fane(g, -4.6, 0, -.6, f); }
+    figur(g, n===1 ? 0 : 1.8, n===1 ? -1.1 : .3, f2===0xffffff ? 0x2b6cb0 : f2, 1, 0); navneskilt(g, 'Bokser', 4.4, 5.4, -.3);
+  },
+  arena(g, A, f, f2){
+    const n = A.arena; if(!n) return tilSalgs(g, 'Arena');
+    tomt(g, 7.4, 0xcfd3d6); cyl(g, 4.6, 5, .7, 12, LEIRE, 0, .35, 0); flat(cyl(g, 4.2, 4.2, .06, 12, 0xe6cda4, 0, .72, 0));
+    const tau = flat(legg(g, new THREE.TorusGeometry(3.3,.13,5,16), 0xf7efe0, 0, .78, 0)); tau.rotation.x = PI/2; flat(box(g, .9, .04, .14, 0xffffff, -.7, .76, 0)); flat(box(g, .9, .04, .14, 0xffffff, .7, .76, 0));
+    [0,1,2].forEach(i => box(g, 2-i*.4, .25, .7, 0xb0b4b8, 0, .12+i*.22, 5.3-i*.5));
+    const tatt = MOTSTANDERE[Math.min(S.pokaler, MOTSTANDERE.length-1)], mot = MONSTRE.find(m => m.id===tatt.monster), meg = MONSTRE.find(m => m.id===S.valgt);
+    monsterfigur(g, 1.3, 0, mot, -PI/2, .75); if(meg) monsterfigur(g, -1.3, 0, meg, PI/2, .75);
+    if(n >= 2){ [-1,1].forEach(s => { const t = gruppe(g, s*7.4, -2.2, s*-.5); [0,1,2].forEach(i => box(t, 1.2, .6+i*.6, 6, i%2 ? 0xc9a36a : PLANKE, s*i*1.1, .3+i*.3, 0));
+        [-2,0,2].forEach((z,i) => figur(t, s*(i%3)*1.1, z, en([f, 0xffffff, 0x2b6cb0, 0xf2b632]), .9, -s*PI/2, .6+(i%3)*.6)); });
+      fane(g, -5.6, 0, 5.4, f); fane(g, 4.8, 0, 5.4, f2===0xffffff ? f : f2); fane(g, -3.6, 0, -6.6, f2===0xffffff ? f : f2); fane(g, 2.8, 0, -6.6, f); }
+    if(n >= 3){ [[-4.4,-4.4],[4.4,-4.4],[-4.4,4.4],[4.4,4.4]].forEach(p => cyl(g, .28, .32, 6.4, 7, ROD, p[0], 3.2, p[1])); pagodetak(g, 9, 9, 2.6, TAK, 0, 6.4, 0, 2.4); flat(kule(g, .3, GULL, 0, 9.2, 0));
+      [-1,1].forEach(s => { const d = cyl(g, .8, .8, 1, 10, ROD, s*6.2, 1.3, 5.2); d.rotation.x = PI/2; flat(cyl(g, .72, .72, 1.04, 10, 0xf7efe0, s*6.2, 1.3, 5.2)).rotation.x = PI/2; box(g, 1.2, .8, .9, TREMORK, s*6.2, .4, 5.2); });
+      [[-4.4,4.4],[4.4,4.4]].forEach(p => { flat(legg(g, new THREE.CylinderGeometry(.34,.34,.7,8), lysMat, p[0], 5.4, p[1]+.5)); }); }
+    navneskilt(g, 'Arena', 5.2, 7.4, -.3);
+  },
+  trofe(g, A, f, f2){
+    const n = A.trofe, y = HAUG[2]+.1, t = gruppe(g, 0, 0, 0, y);
+    if(!n){ t.scale.setScalar(.82); return tilSalgs(t, 'Troférom'); }
+    const rad = (antall, z, bredde) => { for(let i=0;i<antall;i++){ const x = antall>1 ? -bredde/2 + i*bredde/(antall-1) : 0; box(t, .5, .5, .5, 0xb0b4b8, x, .25, z); pokal(t, x, .5, z, .8+i*.03); } };
+    if(n === 1){ [[-1.5,-1],[1.5,-1],[-1.5,1],[1.5,1]].forEach(p => box(t, .22, 2.4, .22, ROD, p[0], 1.2, p[1]-.8)); box(t, 3.6, .3, 2.8, 0xb0b4b8, 0, .15, -.8); pagodetak(t, 3, 2, 1.3, TAK, 0, 2.4, -.8, 1.6);
+      box(t, .9, .9, .9, 0xb0b4b8, 0, .75, -.8); pokal(t, 0, 1.2, -.8, 1.3); }
+    if(n === 2){ tehus(t, 0, -1.2, 5.2, 2.5, 3.4, 1.9); skyvedor(t, 0, .53, .3, 1.6, 2); fane(t, -3.6, 0, 1.2, f); fane(t, 3.2, 0, 1.2, f); }
+    if(n === 3){ box(t, 6.6, .5, 5, 0xb0b4b8, 0, .25, -1.2);
+      [[5,2.2,.5],[3.8,1.9,3.6]].forEach((k,i) => { box(t, k[0], k[1], k[0]*.72, 0xe8c04a, 0, k[2]+k[1]/2, -1.2); pagodetak(t, k[0], k[0]*.72, i ? 1.7 : 1, TAK, 0, k[2]+k[1], -1.2, 1.9); });
+      skyvedor(t, 0, .62, .5, 1.5, 1.8); const fugl = legg(t, new THREE.OctahedronGeometry(.34,0), GULL, 0, 7.6, -1.2); fugl.scale.set(.6,1.3,1.4); fane(t, -4.4, 0, 1.6, f); fane(t, 4, 0, 1.6, f); steinlykt(t, -2, 2.6); steinlykt(t, 2, 2.6); }
+    if(S.pokaler) rad(Math.min(S.pokaler, 5), n===1 ? 2.2 : 2.9, 3.4); if(S.pokaler > 5) rad(S.pokaler-5, n===1 ? 3.1 : 3.9, 3.4);
+  }
+};
+
+/* ---------- Grupper, treffbokser og merkelapper ---------- */
+const G = {}, treff = [], signatur = {}, sprett = {};
+const BOKS = { trofe:[13,11,13,0,6.5,0], dojo:[14,10,14,0,5,0], arena:[17,8,17,0,4,0], skog:[18,8,18,0,4,0], eng:[16,6,16,0,3,0], strand:[18,6,18,0,3,1] };   // bredde, høyde, dybde, og hvor boksen står i forhold til stedet
+OMRADER.forEach(o => {
+  const g = G[o.id] = new THREE.Group(); g.position.set(o.x,0,o.z); scene.add(g);
+  const k = BOKS[o.id] || [14,7,14,0,3.5,0], b = new THREE.Mesh(new THREE.BoxGeometry(k[0],k[1],k[2]));
+  b.position.set(o.x+k[3], k[4], o.z+k[5]); b.visible = false; b.userData.id = o.id; scene.add(b); treff.push(b);
+});
+function tom(g){ g.traverse(o => { if(o.geometry) o.geometry.dispose(); if(o.material && o.material.map && !o.isSprite){ o.material.map.dispose(); o.material.dispose(); } }); g.clear(); }
+const iScenen = o => { while(o.parent) o = o.parent; return o === scene; };
+window.sync3D = function(){
+  if(!S) return;
+  const farger = S.f1+S.f2, her = id => MONSTRE.filter(m => m.sted===id && S.monstre[m.id]).length;
+  f1hex = new THREE.Color(S.f1).getHex();
+  OMRADER.forEach(o => {
+    const sig = S.anlegg[o.id] + '|' + ({ eng:her('eng'), skog:her('skog'), strand:her('strand'), dojo:S.valgt, arena:S.valgt+S.pokaler, trofe:S.pokaler }[o.id] || '');
+    if(signatur[o.id] === sig+farger) return;
+    signatur[o.id] = sig+farger; seed = 100 + OMRADER.indexOf(o)*17;
+    tom(G[o.id]); BYGGERE[o.id](G[o.id], S.anlegg, f1hex, new THREE.Color(S.f2).getHex());
+  });
+  flaggene = flaggene.filter(iScenen); duppere = duppere.filter(d => iScenen(d.g));
+};
+window.sprett3D = id => { sprett[id] = performance.now(); };
+let maal3 = { x:HJEM.x, z:HJEM.z, zoom:1 }, flytter = false;
+window.fokus3D = id => { const o = id && OMRADER.find(o => o.id===id);
+  maal3 = o ? { x:o.x, z:o.z, zoom:{ trofe:1.9, dojo:2, arena:2 }[o.id] || 2.2 } : { x:HJEM.x, z:HJEM.z, zoom:1 };
+  if(o && innerWidth < 800){   // på smal skjerm dekker panelet nedre del: løft stedet opp i den synlige delen
+    const dx = camera.position.x-controls.target.x, dz = camera.position.z-controls.target.z, l = Math.hypot(dx,dz)||1;
+    const d = .23*(camera.top-camera.bottom)/maal3.zoom/Math.cos(controls.getPolarAngle());
+    maal3.x += dx/l*d; maal3.z += dz/l*d;
+  }
+  flytter = true; };
+controls.addEventListener('start', () => { flytter = false; });
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let ned = null;
+canvas.addEventListener('pointerdown', ev => { ned = { x:ev.clientX, y:ev.clientY }; });
+canvas.addEventListener('pointerup', ev => {
+  if(ned && S && Math.hypot(ev.clientX-ned.x, ev.clientY-ned.y) < 6){
+    ndc.set(ev.clientX/innerWidth*2-1, -(ev.clientY/innerHeight)*2+1); ray.setFromCamera(ndc, camera);
+    const h = ray.intersectObjects(treff, false)[0];
+    if(h) apne(h.object.userData.id);
+  }
+  ned = null;
+});
+
+const tags = document.getElementById('tags'); tags.className = ''; laster.remove();
+const v3 = new THREE.Vector3();
+function plasserTags(){
+  const kn = tags.children;
+  for(let i=0;i<kn.length;i++){ const o = OMRADER[i]; if(!o) continue;
+    v3.set(o.x, eier(o.id) ? o.h : (o.h0||4.6), o.z).project(camera);
+    kn[i].style.transform = 'translate(-50%,-100%) translate('+((v3.x+1)/2*innerWidth).toFixed(1)+'px,'+((1-v3.y)/2*innerHeight).toFixed(1)+'px)';
+  }
+}
+window.sync3D();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { for(const k in signatur) delete signatur[k]; window.sync3D(); });   // tegn skiltene på nytt når skriften er lastet
+const rolig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let forrige = 0;
+function bilde(t){
+  requestAnimationFrame(bilde);
+  const k = 1 - Math.exp(-Math.min(.1,(t-forrige)/1000)*5); forrige = t;   // lik fart uansett hvor rask enheten er
+  if(flytter){
+    const fx = (maal3.x-controls.target.x)*k, fz = (maal3.z-controls.target.z)*k;   // flytt kamera og siktepunkt like mye
+    controls.target.x += fx; controls.target.z += fz; camera.position.x += fx; camera.position.z += fz;
+    camera.zoom += (maal3.zoom-camera.zoom)*k; camera.updateProjectionMatrix();
+    if(Math.abs(maal3.x-controls.target.x)+Math.abs(maal3.z-controls.target.z)+Math.abs(maal3.zoom-camera.zoom) < .01) flytter = false;
+  }
+  for(const id in sprett){ const d = (t-sprett[id])/450; if(d >= 1){ G[id].scale.setScalar(1); delete sprett[id]; } else G[id].scale.setScalar(1 + Math.sin(d*PI)*.1); }
+  if(!rolig){
+    flaggene.forEach((f,i) => { f.rotation.y = Math.sin(t/420+i)*.22; });
+    duppere.forEach(d => { d.g.position.y = d.y + Math.abs(Math.sin(t/520+d.f))*d.a*1.6; });                 // monstrene hopper litt, båten dupper
+    kretser.forEach(m => { m.g.rotation.y = t/1000*m.fart; });                                              // tranene kretser
+    blader.forEach(b => { const u = b.userData, s = (t/1000*u.fart + u.f) % 20; b.position.set(u.x + Math.sin(s*1.3+u.f)*2 + s*.6, 20 - s, u.z + Math.cos(s+u.f)*1.5); b.rotation.set(s*2, s*1.4+u.f, s); });
+  }
+  controls.update(); renderer.render(scene, camera);
+  if(S) plasserTags();
+}
+requestAnimationFrame(bilde);
+</script>
+</body>
+</html>
