@@ -119,7 +119,7 @@ input[type=text]{font:inherit;padding:12px;border-radius:12px;border:2px solid #
 .boksvalg{background:#fff;color:var(--ink);border:2px solid var(--kant);padding:8px 4px;display:flex;flex-direction:column;align-items:center;font-size:.9rem}
 .boksvalg small{display:block;font-weight:400;font-size:.78rem}
 .boksvalg:disabled{background:#f6f3f8;color:#6a6080;opacity:.75}
-.iboks{position:relative;display:inline-block}.iboks>span{position:absolute;left:50%;top:-6px;transform:translateX(-50%)}
+.iboks{position:relative;display:inline-block}.iboks>.hjorne{position:absolute;right:-34px;bottom:-12px;filter:drop-shadow(0 2px 3px rgba(43,36,64,.35))}
 .ring{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin:8px 0}
 .ring strong{display:block}.ring .mot{font-family:Fredoka,sans-serif;font-weight:700;color:#6a6080}
 .ring .sliten svg,.ring .sliten img{filter:grayscale(1);opacity:.55;transform:rotate(18deg)}
@@ -128,7 +128,12 @@ input[type=text]{font:inherit;padding:12px;border-radius:12px;border:2px solid #
 .logg{background:var(--lys);border-radius:14px;padding:10px 12px;margin:10px 0;min-height:3.2em}.logg p{margin:0 0 4px}.logg p:last-child{margin:0}
 .fag{width:100%;border-collapse:collapse;font-size:.9rem}.fag th,.fag td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--kant)}.fag td{white-space:nowrap}
 .mbilde{object-fit:contain;vertical-align:middle}.mbilde.ukjent{filter:brightness(0);opacity:.28}
-.iboks>span{top:-22px}
+/* Samlekortet monstrene står på: lys bunn i klassefargen, mørk kant. Legendariske får gullkant. */
+.mkort{display:inline-grid;place-items:center;flex:none;box-sizing:border-box;vertical-align:middle;border:3px solid var(--ink);border-radius:18%;overflow:hidden;
+  background:radial-gradient(circle at 50% 38%,#fff 0 22%,color-mix(in srgb,var(--kf) 38%,#fff) 70%,color-mix(in srgb,var(--kf) 62%,#fff) 100%)}
+.mkort img{width:84%;height:84%}
+.mkort.sj2{box-shadow:0 0 0 3px #9cc3f2}.mkort.sj3{box-shadow:0 0 0 3px var(--gull)}
+.mkort.ukjent{background:#ece8f0;box-shadow:none}
 .boksvalg .sjanse{font-weight:700;border-radius:999px;padding:1px 8px;margin-top:3px}.sjanse.s3{background:#d8f0d6;color:#1d5a2a}.sjanse.s2{background:#fff0c2;color:#7a5600}.sjanse.s1{background:#f6d6d2;color:#8f2a24}
 .stakk{display:inline-block;opacity:.45;transform:translateX(40px) rotate(12deg)}
 .iko{width:1.35em;height:1.35em;object-fit:contain;vertical-align:-.32em}.brikke .iko{width:1.2em;height:1.2em}#gir .iko{width:30px;height:30px;vertical-align:middle}h2 .iko{width:1.5em;height:1.5em}
@@ -170,7 +175,7 @@ input[type=text]{font:inherit;padding:12px;border-radius:12px;border:2px solid #
 var OPPSETT = {
   mynterPerOppgave: 5,    // mynter for én løst oppgave (fangst, trening og dyst)
   startmynter: 10,
-  startbokser: 3,         // trekasser fra start
+  startbokser: 3,         // pappesker fra start
   nyttMonsterBonus: 5,    // ekstra mynter første gang et monster havner i Monsterboka
   dublett: [2, 6, 15],    // mynter for et monster du har fra før (vanlig, sjelden, legendarisk)
   nyFlaks: 3,             // monstre som mangler i boka dukker opp så mange ganger oftere
@@ -179,7 +184,7 @@ var OPPSETT = {
   dojoTak: [0, 5, 10, 15],// høyeste nivå en egenskap kan trenes til på dojo nivå 1, 2 og 3
   arenaTrinn: [0, 3, 7, 10], // hvor mange motstandere som er åpne på arena nivå 1, 2 og 3
   /* FANGST. Sjansen (i prosent) for at monsteret blir i boksen: [vanlig, sjelden, legendarisk] for hver boks. */
-  fangst: {tre:[80,35,10], lakk:[95,65,30], gull:[100,90,60]},
+  fangst: {papp:[80,35,10], tre:[95,65,30], gull:[100,90,60]},
   fangstOppgaver: [1, 2, 3],  // hvor mange oppgaver eleven må løse for å lukke boksen (vanlig, sjelden, legendarisk)
   fangstRiktig: 10,           // sjansen øker så mye for hver oppgave som er riktig på første forsøk
   fangstFeil: 10              // og synker så mye for hver oppgave der første forsøk var galt
@@ -190,7 +195,7 @@ var OMRADER = [
   {id:'skog',     ik:'🎋', navn:'Bambusskogen',     x:-42, z:-33, h:9,   om:'Åpne bambusskogen. Her gjemmer skog- og steinmonstre seg.'},
   {id:'strand',   ik:'🐚', navn:'Stranda',          x:44,  z:3,   h:5.5, om:'Åpne stranda. Her finner du vannmonstre.'},
   {id:'dojo',     ik:'🥋', navn:'Dojoen',           x:-21, z:-10, h:9.5},
-  {id:'verksted', ik:'🔨', navn:'Bokseverkstedet',  x:-37, z:4,   h:6.5},
+  {id:'verksted', ik:'🔨', navn:'Boks-verkstedet',  x:-37, z:4,   h:6.5},
   {id:'arena',    ik:'🥁', navn:'Dyst-arenaen',     x:38,  z:-21, h:8,   om:'Bygg arenaen og utfordre vokterne i dalen til oppgaveduell.'},
   {id:'trofe',    ik:'🏆', navn:'Troférommet',      x:-8,  z:-56, h:11,  h0:8.5, om:'Bygg et troférom på høyden. Her står pokalene og merkene dine.'}
 ];
@@ -201,7 +206,7 @@ var BYGG = {
   skog:     {navn:'Bambusskogen',    hva:['','Lysning i bambusen','Steinsti og lykt','Port til den hellige steinen'], gir:'Sjeldnere monstre våger seg fram.'},
   strand:   {navn:'Stranda',         hva:['','Sandstrand med fjærepytt','Båtplass og parasoll','Klippeport og port i sjøen'], gir:'Sjeldnere monstre våger seg fram.'},
   dojo:     {navn:'Dojo',            hva:['','Enkel dojo (nivå 5)','Treningshall (nivå 10)','Mesterpagode (nivå 15)'], gir:'Monstrene kan trenes til høyere nivå.'},
-  verksted: {navn:'Bokseverksted',   hva:['','Lager trekasser','Lager lakkesker','Lager gullskrin'], gir:'Bedre bokser fanger sjeldnere monstre.'},
+  verksted: {navn:'Boks-verksted',   hva:['','Lager pappesker','Lager trekasser','Lager gullskrin'], gir:'Bedre bokser fanger sjeldnere monstre.'},
   arena:    {navn:'Arena',           hva:['','Ring med 3 motstandere','Tribuner og 4 nye motstandere','Tak, trommer og de 3 siste'], gir:'Flere motstandere og større pokaler.'},
   trofe:    {navn:'Troférom',        hva:['','Liten paviljong','Trofésal','Den gylne paviljongen'], gir:'Finere plass til pokalene dine.'}
 };
@@ -232,8 +237,8 @@ var FANGST = {id:'fangst', ik:'📦', navn:'Lukk boksen',   fag:'Fag 5 (f.eks. b
 var DYST   = {id:'dyst',   ik:'🥁', navn:'Oppgaveduell',  fag:'Blandet fra alle fagene'};
 /* Boksene. niv = verkstednivået som trengs. Hvor godt hver boks fanger, står i OPPSETT.fangst. */
 var BOKSER = [
-  {id:'tre',  navn:'Trekasse',  fl:'trekasser', pris:2,  niv:1, om:'Fin til vanlige monstre. Sjeldne stikker ofte av.'},
-  {id:'lakk', navn:'Lakkeske',  fl:'lakkesker', pris:8,  niv:2, om:'God til vanlige og sjeldne monstre.'},
+  {id:'papp', navn:'Pappeske',  fl:'pappesker', pris:2,  niv:1, om:'Fin til vanlige monstre. Sjeldne stikker ofte av.'},
+  {id:'tre',  navn:'Trekasse',  fl:'trekasser', pris:8,  niv:2, om:'God til vanlige og sjeldne monstre.'},
   {id:'gull', navn:'Gullskrin', fl:'gullskrin', pris:20, niv:3, om:'Den beste boksen. Trengs til de legendariske.'}
 ];
 /* MONSTRENE. kl = klasse, sj = sjeldenhet (1–3), sted = hvor det lever, c = farge på plassholderen.
@@ -303,11 +308,11 @@ function klasse(m){return finn(KLASSER,m.kl)}
 var S = null, apen = null;
 var NOKKEL = 'sakuradalen-spill';
 function lagre(){try{localStorage.setItem(NOKKEL, JSON.stringify(S))}catch(e){}}
-function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;return t&&t.v===1?t:null}catch(e){return null}}
+function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;if(t&&t.bokser&&'lakk' in t.bokser)t.bokser={papp:t.bokser.tre||0,tre:t.bokser.lakk||0,gull:t.bokser.gull||0};return t&&t.v===1?t:null}catch(e){return null}}
 function nyttSpill(navn, f1, f2){
   S = {v:1, navn:navn||'Sakuradalen', f1:f1||FARGER[0], f2:f2||FARGER[6], mynter:OPPSETT.startmynter, oppg:0, fanget:0, dyster:0,
        anlegg:{eng:1, skog:0, strand:0, dojo:1, verksted:1, arena:0, trofe:0},
-       bokser:{tre:OPPSETT.startbokser, lakk:0, gull:0},
+       bokser:{papp:OPPSETT.startbokser, tre:0, gull:0},
        monstre:{},        // id -> {n: hvor mange fanget, st:[nivå på de fire egenskapene], tp:[treningspoeng mot neste nivå]}
        valgt:'',          // monsteret som trener og går i arenaen
        pokaler:0};        // hvor mange motstandere som er slått
@@ -319,7 +324,7 @@ function eier(id){return S.anlegg[id]>0}
 function antall(){return Object.keys(S.monstre).length}
 function mine(){return MONSTRE.filter(function(m){return S.monstre[m.id]})}
 function toppNiv(){var t=0; for(var id in S.monstre) S.monstre[id].st.forEach(function(n){if(n>t)t=n}); return t}
-function bokserTotalt(){return S.bokser.tre+S.bokser.lakk+S.bokser.gull}
+function bokserTotalt(){return S.bokser.papp+S.bokser.tre+S.bokser.gull}
 function dojoTak(){return OPPSETT.dojoTak[S.anlegg.dojo]}
 /* Hvor mange treningsoppgaver som trengs for å gå opp fra dette nivået. */
 function kravTP(niv){return niv<5 ? 1 : niv<10 ? 2 : 3}
@@ -416,7 +421,11 @@ function startOppgave(stasjon, ferdig, feil, niv){
 var INK = '#2b2440';
 function monsterSvg(m, str, ukjent){
   str = str||56;
-  if(m.bilde) return '<img class="mbilde'+(ukjent?' ukjent':'')+'" src="'+m.bilde+'" width="'+str+'" height="'+str+'" alt="">';   // ukjent = vises som skygge
+  if(m.bilde){   // ukjent = vises som skygge. Fra 44 px og opp står monsteret på et samlekort i klassefargen.
+    var img = '<img class="mbilde'+(ukjent?' ukjent':'')+'" src="'+m.bilde+'" width="'+str+'" height="'+str+'" alt="">';
+    if(str < 44) return img;
+    return '<span class="mkort sj'+m.sj+(ukjent?' ukjent':'')+'" style="--kf:'+klasse(m).c+';width:'+str+'px;height:'+str+'px">'+img+'</span>';
+  }
   var c = ukjent ? '#cfc8d6' : m.c, k, s = 'fill="'+c+'" stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"';
   if(m.kl==='skog')  k = '<path d="M32 16 C24 4 14 6 14 6 C14 14 22 18 30 18Z M32 16 C40 4 50 6 50 6 C50 14 42 18 34 18Z" fill="'+(ukjent?c:'#3a8a4c')+'" stroke="'+INK+'" stroke-width="2.5" stroke-linejoin="round"/><circle cx="32" cy="38" r="21" '+s+'/>';
   if(m.kl==='vann')  k = '<path d="M32 5 C44 21 54 31 54 41 A22 21 0 0 1 10 41 C10 31 20 21 32 5Z" '+s+'/>';
@@ -479,7 +488,7 @@ function jaktPanel(v){
   var tekst = {eng:'Høyt gress og kirsebærtrær. Her trives vind- og ildmonstre.', skog:'Tett bambus og mosegrodde steiner. Her trives skog- og steinmonstre.', strand:'Sand, fjærepytter og klipper. Her trives vannmonstre.'}[v];
   return '<p class="liten">'+tekst+'</p>'+boksLager()+
     '<div class="rad" style="margin-top:10px"><button class="gull" data-jakt="'+v+'"'+(bokserTotalt()<1?' disabled':'')+'>🔍 Let etter monstre</button><button class="sek" data-omr="verksted">Hent bokser</button></div>'+
-    (bokserTotalt()<1?'<p class="liten" style="margin-top:8px">Du er tom for bokser. Kjøp flere i bokseverkstedet.</p>':'')+
+    (bokserTotalt()<1?'<p class="liten" style="margin-top:8px">Du er tom for bokser. Kjøp flere i boks-verkstedet.</p>':'')+
     '<div class="del"><h3>Monstre her</h3>'+MONSTRE.filter(function(m){return m.sted===v}).sort(function(a,b){return a.sj-b.sj}).map(monsterRad).join('')+'</div>'+
     '<div class="del">'+byggRad(v)+'</div>';
 }
@@ -552,7 +561,7 @@ function lukk(){document.getElementById('lag').innerHTML=''; tegn()}
 function oppsettDialog(forste){
   var f1 = S?S.f1:FARGER[0], f2 = S?S.f2:FARGER[6];
   function rad(hvilken, valgt){return '<div class="farger" data-rad="'+hvilken+'">'+FARGER.map(function(c){return '<button style="background:'+c+'" data-farge="'+c+'" aria-pressed="'+(c===valgt)+'" aria-label="Farge '+c+'"></button>'}).join('')+'</div>'}
-  dialog('<h2>'+(forste?'Velkommen til dalen!':'Navn og farger')+'</h2>'+(forste?'<p>Du er den nye monstervokteren. Start i kirsebærenga med tre trekasser, og fyll Monsterboka.</p>':'')+
+  dialog('<h2>'+(forste?'Velkommen til dalen!':'Navn og farger')+'</h2>'+(forste?'<p>Du er den nye monstervokteren. Start i kirsebærenga med tre pappesker, og fyll Monsterboka.</p>':'')+
     '<label for="knavn"><strong>Hva heter dalen din?</strong></label><input type="text" id="knavn" maxlength="20" value="'+esc(S?S.navn:'')+'" placeholder="For eksempel Sakuradalen">'+
     '<p style="margin-top:12px"><strong>Farge på porter og faner</strong></p>'+rad('f1',f1)+'<p style="margin-top:12px"><strong>Farge på bånd</strong></p>'+rad('f2',f2)+
     '<div class="rad" style="margin-top:16px"><span id="dprove">'+emblemSvg(f1,f2,64)+'</span><button data-ok>'+(forste?'Start':'Lagre')+'</button>'+(forste?'':'<button class="sek" data-a="lukk">Avbryt</button>')+'</div>',
@@ -610,7 +619,7 @@ function fangst(v, m, boks, igjen, riktige, gale, mynter){
         var videre = (bokserTotalt() - 1 > 0 ? '<button class="gull" data-jakt="'+v+'">Let videre (📦 '+(bokserTotalt()-1)+')</button>' : '<button data-omr="verksted">Hent flere bokser</button>');
         if(klarte){
           var r = fang(m, boks);
-          dialog('<h2>'+(r.ny?'🌟 Nytt monster i Monsterboka!':'📦 Fanget!')+'</h2><p class="midt"><span class="iboks">'+boksSvg(boks,150)+'<span>'+monsterSvg(m,70)+'</span></span></p>'+
+          dialog('<h2>'+(r.ny?'🌟 Nytt monster i Monsterboka!':'📦 Fanget!')+'</h2><p class="midt"><span class="iboks">'+monsterSvg(m,170)+'<span class="hjorne">'+boksSvg(boks,72)+'</span></span></p>'+
             '<p class="stort">'+esc(m.navn)+'</p><p class="midt">+'+mynter+' 🪙 for oppgave'+(OPPSETT.fangstOppgaver[m.sj-1]>1?'ne':'n')+(r.ny?' og +'+r.bonus+' 🪙 for nytt monster':' og +'+r.bonus+' 🪙 fordi du hadde det fra før')+'</p>'+
             '<div class="rad">'+videre+(r.ny?'<button data-omr="dojo">🥋 Til dojoen</button>':'')+'<button class="sek" data-a="lukk">Ferdig</button></div>');
           if(window.sprett3D) window.sprett3D(v);
@@ -1139,10 +1148,10 @@ const BYGGERE = {
   },
   verksted(g, A, f, f2){
     const n = A.verksted; tomt(g, 5.6, STI);
-    const kasse = (x,y,z,c,s) => { s = s||1; box(g, .8*s, .6*s, .8*s, c, x, y+.3*s, z); flat(box(g, .86*s, .12*s, .86*s, c===0xc79a5b ? 0xa9793f : c===ROD ? 0x8f2a24 : 0xd9a520, x, y+.62*s, z)); };
+    const kasse = (x,y,z,c,s) => { s = s||1; box(g, .8*s, .6*s, .8*s, c, x, y+.3*s, z); flat(box(g, .86*s, .12*s, .86*s, c===0xc79a5b ? 0xa9793f : c===0x9c6b3c ? 0x7d5230 : 0xd9a520, x, y+.62*s, z)); };
     if(n === 1){ [[-1.6,-1],[1.6,-1],[-1.6,1],[1.6,1]].forEach(p => box(g, .2, 2.4, .2, TREMORK, p[0], 1.2, p[1]-1)); pagodetak(g, 3.2, 2, 1.1, TAK, 0, 2.4, -1, 1.4); box(g, 3, .9, .8, PLANKE, 0, .45, -.2); }
     else { tehus(g, 0, -1.6, 5.2, 2.4, 3.6, 1.8); skyvedor(g, -1.2, .23, .3, 1.3, 1.9); [-1.6,-1.2,-.8].forEach((x,i) => flat(box(g, .36, .8, .05, i%2 ? 0xffffff : f2, x, 1.9, .28)));
-      box(g, 2.6, .9, .9, PLANKE, 1.8, .45, 1.2); kasse(1.2, .9, 1.2, ROD, .7); kasse(2.3, .9, 1.2, ROD, .7); }
+      box(g, 2.6, .9, .9, PLANKE, 1.8, .45, 1.2); kasse(1.2, .9, 1.2, 0x9c6b3c, .7); kasse(2.3, .9, 1.2, 0x9c6b3c, .7); }
     kasse(-3, 0, 2.2, 0xc79a5b); kasse(-3.9, 0, 2.6, 0xc79a5b); kasse(-3.4, .7, 2.4, 0xc79a5b, .9); kasse(n===1 ? 0 : -1.8, n===1 ? .9 : 0, n===1 ? -.2 : 3.4, 0xc79a5b, .8);
     if(n >= 3){ box(g, 1.3, .7, 1.3, 0xb0b4b8, 3.8, .35, 3.2); kasse(3.8, .7, 3.2, GULL, 1); flat(kule(g, .14, 0xe8799b, 3.8, 1.56, 3.2));
       cyl(g, .7, .9, 1.6, 7, 0xb5523b, 3.6, .8, -3.4); cyl(g, .3, .4, 1.6, 6, 0xb5523b, 3.6, 2.3, -3.4); [0,1,2].forEach(i => flat(kule(g, .34+i*.12, 0xe9eef2, 3.6+i*.3, 3.5+i*.7, -3.4))); fane(g, -4.6, 0, -.6, f); }
