@@ -134,6 +134,7 @@ input[type=text]{font:inherit;padding:12px;border-radius:12px;border:2px solid #
 .mkort img{width:84%;height:84%}
 .mkort.sj2{box-shadow:0 0 0 3px #9cc3f2}.mkort.sj3{box-shadow:0 0 0 3px var(--gull)}
 .mkort.ukjent{background:#ece8f0;box-shadow:none}
+.hjelp{background:#fff6d6;border:2px solid var(--gull);border-radius:14px;padding:10px 12px;margin:8px 0}.hjelp p{margin:0 0 8px}
 .boksvalg .sjanse{font-weight:700;border-radius:999px;padding:1px 8px;margin-top:3px}.sjanse.s3{background:#d8f0d6;color:#1d5a2a}.sjanse.s2{background:#fff0c2;color:#7a5600}.sjanse.s1{background:#f6d6d2;color:#8f2a24}
 .stakk{display:inline-block;opacity:.45;transform:translateX(40px) rotate(12deg)}
 .iko{width:1.35em;height:1.35em;object-fit:contain;vertical-align:-.32em}.brikke .iko{width:1.2em;height:1.2em}#gir .iko{width:30px;height:30px;vertical-align:middle}h2 .iko{width:1.5em;height:1.5em}
@@ -345,6 +346,16 @@ function trekkMonster(sted){
   while(i<k.length-1 && (r -= w[i]) > 0) i++;
   return k[i];
 }
+/* Tom for bokser og uten råd til en pappeske: da kan eleven hjelpe til i verkstedet (én oppgave = én pappeske), så ingen blir stående fast. */
+function blakk(){return bokserTotalt()<1 && S.mynter < BOKSER[0].pris}
+function hjelpVerksted(){
+  startOppgave(FANGST, function(){
+    S.bokser[BOKSER[0].id]++; S.oppg++; lagre(); if(window.sprett3D) window.sprett3D('verksted');
+    dialog('<h2>🔨 Takk for hjelpen!</h2><p class="midt">'+boksSvg(BOKSER[0].id,120)+'</p><p class="stort">Du fikk en '+BOKSER[0].navn.toLowerCase()+'</p>'+
+      '<div class="rad"><button class="gull" data-omr="eng">🌸 Til kirsebærenga</button><button class="sek" data-a="lukk">Ferdig</button></div>');
+    tegnTopp();
+  }, null, 1);
+}
 function mistBoks(boksId){ S.bokser[boksId]--; lagre() }   // monsteret stakk av, boksen er brukt
 function fang(m, boksId){
   var e = S.monstre[m.id], ny = !e, bonus;
@@ -488,7 +499,7 @@ function jaktPanel(v){
   var tekst = {eng:'Høyt gress og kirsebærtrær. Her trives vind- og ildmonstre.', skog:'Tett bambus og mosegrodde steiner. Her trives skog- og steinmonstre.', strand:'Sand, fjærepytter og klipper. Her trives vannmonstre.'}[v];
   return '<p class="liten">'+tekst+'</p>'+boksLager()+
     '<div class="rad" style="margin-top:10px"><button class="gull" data-jakt="'+v+'"'+(bokserTotalt()<1?' disabled':'')+'>🔍 Let etter monstre</button><button class="sek" data-omr="verksted">Hent bokser</button></div>'+
-    (bokserTotalt()<1?'<p class="liten" style="margin-top:8px">Du er tom for bokser. Kjøp flere i boks-verkstedet.</p>':'')+
+    (bokserTotalt()<1?'<p class="liten" style="margin-top:8px">Du er tom for bokser. '+(blakk()?'Hjelp til i boks-verkstedet, så får du en ny.':'Kjøp flere i boks-verkstedet.')+'</p>':'')+
     '<div class="del"><h3>Monstre her</h3>'+MONSTRE.filter(function(m){return m.sted===v}).sort(function(a,b){return a.sj-b.sj}).map(monsterRad).join('')+'</div>'+
     '<div class="del">'+byggRad(v)+'</div>';
 }
@@ -514,6 +525,7 @@ var PANEL = {
   },
   verksted: function(){
     return '<p class="liten">Her lages boksene du fanger monstre i. Sjeldne monstre stikker lett av. Bedre boks gir bedre sjanse.</p>'+
+      (blakk()?'<div class="hjelp"><p><strong>Tom for bokser og mynter?</strong> Hjelp til i verkstedet. Løs én oppgave, så får du en '+BOKSER[0].navn.toLowerCase()+'.</p><button class="gull" data-a="hjelpverksted">🔨 Hjelp til i verkstedet</button></div>':'')+
       BOKSER.map(function(b){
         var laast = S.anlegg.verksted < b.niv;
         return '<div class="linje">'+boksSvg(b.id,44)+'<span class="voks"><strong>'+b.navn+'</strong> <span class="merke">Du har '+S.bokser[b.id]+'</span><br><span class="liten">'+(laast?'Bygg ut verkstedet til nivå '+b.niv+'.':b.om)+'</span></span>'+
@@ -751,6 +763,7 @@ function klikk(e){
   if(d.a==='vk-ok') return provVoksenkode();
   if(d.a==='loggut'){ if(t.dataset.sikker){ if(window.TL && TL.loggUt) TL.loggUt() } else { t.dataset.sikker = 1; t.textContent = 'Trykk igjen for å logge ut' } return }
   if(d.a==='lyd'){S.lydAv = !S.lydAv; lagre(); return lukk()}
+  if(d.a==='hjelpverksted') return hjelpVerksted();
   if(d.a==='testmynter'){S.mynter += 200; lagre(); return lukk()}
   if(d.a==='nullstill') return dialog('<h2>Nullstille alt?</h2><p>Monstrene, boksene, pokalene og alt som er bygd blir borte. Dette kan ikke angres.</p><div class="rad"><button class="rod" data-a="nullstill-ja">Ja, nullstill</button><button class="sek" data-a="lukk">Nei, behold</button></div>');
   if(d.a==='nullstill-ja'){try{localStorage.removeItem(NOKKEL)}catch(x){} S=null; D=null; apen=null; document.getElementById('panel').className=''; if(window.fokus3D) window.fokus3D(null); return oppsettDialog(true)}
