@@ -35,7 +35,10 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
   Hør gjennom klippene på `lyslaget/lydsjekk-basen.html`. Kilden er `Skole\Robotmatte` (frittstående utgave uten innlogging). Se `maler/lyslagetverden/LES-MEG.md`.
 - «Jeg ser» (Lyslaget-basen og Dinodalen, 26.11.2026): en setning får hake først når den slutter med punktum (! og ? godtas også). Mangler tegnet, kommer tipset
   «Husk punktum» når eleven går ut av feltet eller trykker «Ferdig», og feltet blir oransje. Endret i `lyslaget/basen-oppgaver.js` og `dinodalen/oppgaver.js`.
-  De frittstående kildene (`Skole\\Robotmatte`, `Skole\\Dinodalen`) har ikke fått endringen ennå. Tipset har ikke eget lydklipp.
+  Tipset leses opp med klippet `js-punktum.mp3` («Husk å sette punktum til slutt.», Terje, lest inn 26.11.2026): `lyslaget/basen/lyd/` og `dinodalen/lyd/dino/`.
+  De frittstående kildene (`Skole\\Robotmatte`, `Skole\\Dinodalen`) har samme endring og samme klipp.
+- Pengeoppgavene i Dinodalen og Dinoparken (26.11.2026): betaler eleven riktig beløp med flere mynter enn nødvendig, kommer tipset «Visste du at det går med færre mynter?»
+  med klippet `lyd/dino/faerre-tips.mp3`. Eleven får full uttelling likevel. Hentet fra kilden `Skole\\Dinodalen`. `dinoparken2/` har ikke fått det.
 - `dinoparken2/` – Dinoparken med oppgavepakker (egne oppgaver per elev). Første pakke: lyder, venner og klosser. Se `dinoparken2/LES-MEG.md`
 - `dinodalen/` – Dinodalen: Dinoparken i ny drakt (elvedal, seks andre dinoer, samme oppgaver). Verden-ID `dinodalen`, lagring `dinodalen-…`. Kilden til kart og dinoer: `Skole\Dinodalen` (frittstående utgave uten innlogging)
 - `sakuradalen/` – Sakuradalen (lagt ut 25.11.2026): monsterverdenen der eleven fanger monstre i bokser, trener dem i dojoen og dyster i arenaen.

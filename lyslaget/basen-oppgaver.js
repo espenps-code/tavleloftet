@@ -293,7 +293,9 @@
     var merk = function (inn) { var li = inn.parentNode; li.classList.toggle('ok', jsGyldig(inn.value)); li.classList.remove('feil'); if (!jsManglerPunktum(inn.value)) li.classList.remove('punktum'); };
     /* Tips om punktum: kommer først når eleven går ut av feltet, ikke mens eleven skriver */
     var tips = function (inn) {
-      var mangler = jsManglerPunktum(inn.value); inn.parentNode.classList.toggle('punktum', mangler);
+      var mangler = jsManglerPunktum(inn.value), ny = mangler && !inn.parentNode.classList.contains('punktum');
+      inn.parentNode.classList.toggle('punktum', mangler);
+      if (ny) spill(['js-punktum']);          // leses bare første gang, ikke hver gang eleven er innom feltet
       if (mangler) $('jsMld').innerHTML = '<b>Husk punktum</b> til slutt i setning ' + (+inn.dataset.i + 1) + '.';
     };
     var ta = function () { var s2 = lesJS(); if (!s2.aktivt) return; s2.aktivt.setn = felt.map(function (f) { return f.value.trim().toLowerCase() === 'jeg ser' ? '' : f.value.trim(); }); lagreJS(s2); };
@@ -317,8 +319,8 @@
         f.parentNode.classList.toggle('feil', !ok && !punktum); f.parentNode.classList.toggle('punktum', punktum);
         if (!ok) feil++; if (punktum) barePunktum++;
       });
-      // Mangler det bare punktum, får eleven et tips om det (uten lydklippet, som handler om «Jeg ser»)
-      if (feil && feil === barePunktum) { $('jsMld').innerHTML = '<b>Nesten!</b> Husk punktum til slutt i ' + (feil === 1 ? 'setningen som er merket.' : 'setningene som er merket.'); return; }
+      // Mangler det bare punktum, får eleven et tips om det, med eget lydklipp
+      if (feil && feil === barePunktum) { $('jsMld').innerHTML = '<b>Nesten!</b> Husk punktum til slutt i ' + (feil === 1 ? 'setningen som er merket.' : 'setningene som er merket.'); spill(['js-punktum']); return; }
       if (feil) { $('jsMld').innerHTML = '<b>Ikke helt ferdig.</b> Alle fem setningene må begynne med «Jeg ser», slutte med punktum og være ulike.'; spill(['js-mangler']); return; }
       var s2 = lesJS(); s2.aktivt.setn = tekster; s2.aktivt.sendt = true; lagreJS(s2);
       jsTilVoksen(true);
