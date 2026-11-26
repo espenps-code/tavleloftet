@@ -94,3 +94,6 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 Lagt til 20.11.2026 (fra Fontsource, samme SIL Open Font License 1.1):
 Atkinson Hyperlegible (Braille Institute), Fredoka One, Bangers, Alfa Slab One, Fredoka 400.
+
+Lagt til 26.11.2026 (fra Fontsource, samme SIL Open Font License 1.1):
+Andika 400 og 700 (SIL International) – brukes i Lesetrim.

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesetrim – høyfrekvente ord – Tavleloftet</title>
+<link rel="canonical" href="https://tavleloftet.no/verktoy/lesetrim/">
+<meta name="description" content="Lesetrim med høyfrekvente ord på bokmål og nynorsk – ett ord om gangen på tavla, med lesemonstre som heier. Velg tempo, lydering eller egen ordliste.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tavleloftet.no/verktoy/lesetrim/">
+<meta property="og:title" content="Lesetrim – høyfrekvente ord">
+<meta property="og:description" content="Lesetrim med høyfrekvente ord på bokmål og nynorsk – ett ord om gangen på tavla, med lesemonstre som heier. Velg tempo, lydering eller egen ordliste.">
+<meta property="og:image" content="https://tavleloftet.no/img/deling/lesetrim.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="nb_NO">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="stylesheet" href="../../fonts/skrifter.css">
+<style>
+:root{--bg:#FFF7EA;--card:#FFFFFF;--ink:#2B2350;--muted:#6B6480;--line:#EADFCB;--shadow:#EFE3CF;--accent:#C2410C;--accent-d:#8F2F08;--sel:#0F766E;--sel-bg:#E6F4F1;--warm:#FFE9D4;--bar:#F1E4CE;--word:#2B2350}
+body.dark{--bg:#1F3B2D;--card:#264A38;--ink:#F5F3EA;--muted:#C4D3C9;--line:#3A6450;--shadow:#16291F;--bar:#16291F;--word:#F7F5EC}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",Verdana,sans-serif;transition:background .3s}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #E8641E;outline-offset:2px}
+.f{font-family:Fredoka,sans-serif}
+body.dark .mimg{background:radial-gradient(circle,#FFF7EA 66%,transparent 67%)}
+.screen{display:none}.screen.on{display:block}
+
+/* Oppsett */
+#oppsett{padding:28px 40px 48px}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header img{width:64px;height:64px}
+.logo{font-weight:700;font-size:34px;line-height:1}
+.sub{font-size:15px;color:var(--muted)}
+.hbtn{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:12px;border:2px solid var(--line);background:var(--card);font-weight:700}
+.cols{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.left{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:22px}
+section{background:var(--card);border-radius:24px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 0 var(--shadow)}
+h2{margin:0;font-weight:600;font-size:22px}
+.monsters{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.mon{border-radius:16px;background:var(--card);border:3px solid transparent;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.mon img{width:100%;aspect-ratio:1;object-fit:contain;display:block}
+.mon span{font-size:14px;font-weight:700}
+.mon.on{border-color:var(--accent);background:#FFF1E4}
+body.dark .mon.on{background:#3A5A48}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{border-radius:16px;background:var(--card);border:2px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:44px}
+.card b{font-family:Fredoka,sans-serif;font-weight:600;font-size:19px}
+.card small{font-size:14px;color:var(--muted)}
+.card.on{border-color:var(--sel);background:var(--sel-bg)}
+body.dark .card.on{background:#2F5F4E}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips>span{font-size:14px;color:var(--muted);margin-right:4px}
+.chip{height:44px;padding:0 16px;border-radius:999px;font-size:15px;font-weight:700;border:2px solid var(--line);background:var(--card)}
+.chip.on{background:var(--sel);border-color:var(--sel);color:#fff}
+#customBox{display:none}
+#customBox textarea{width:100%;min-height:90px;font:inherit;font-size:16px;border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--bg);color:var(--ink)}
+.checks{display:flex;flex-wrap:wrap;gap:6px 22px}
+.checks label{display:flex;align-items:center;gap:8px;font-size:16px;min-height:44px;cursor:pointer}
+.checks input{width:22px;height:22px;accent-color:var(--sel)}
+.more{display:flex;flex-wrap:wrap;gap:14px 24px;padding-top:6px;border-top:2px dashed var(--line)}
+.more label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.more select,.more input[type=range]{font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:6px 8px;min-width:150px;height:44px}
+aside{flex:1 1 380px;min-width:300px;background:var(--warm);border-radius:28px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:18px;position:sticky;top:20px}
+body.dark aside{background:#2C5240}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A4B1C}
+body.dark .kicker{color:#F4D9A8}
+.preview{background:#fff;border-radius:22px;width:100%;padding:30px 16px;display:flex;justify-content:center;box-shadow:0 4px 0 #F2D2B2}
+.preview span{font-family:Andika,sans-serif;font-size:84px;line-height:1;color:#2B2350}
+#bigMon{width:230px;height:230px;margin-top:-6px}
+.ready{margin:-8px 0 0;font-size:17px;text-align:center;line-height:1.4}
+.ready span{color:var(--muted)}
+.start{width:100%;height:68px;border-radius:20px;border:0;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;font-family:Fredoka,sans-serif;font-weight:600;font-size:26px;box-shadow:0 5px 0 var(--accent-d)}
+.start:active{transform:translateY(3px);box-shadow:0 2px 0 var(--accent-d)}
+.hint{font-size:14px;color:var(--muted);text-align:center}
+
+/* Lesing */
+#lesing{height:100vh;position:relative;overflow:hidden}
+.top{position:absolute;top:28px;left:40px;right:40px;display:flex;align-items:center;gap:18px}
+.top .f{font-weight:700;font-size:22px}
+.bar{flex:1;height:14px;border-radius:999px;background:var(--bar);overflow:hidden}
+#prog{width:0;height:100%;border-radius:999px;background:#E8641E;transition:width .25s}
+#count{font-size:18px;font-weight:700;color:var(--muted)}
+.stage{position:absolute;top:13vh;left:12vw;right:12vw;height:52vh;background:var(--card);border-radius:44px;box-shadow:0 8px 0 var(--shadow);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;padding:20px}
+#word{font-family:Andika,sans-serif;line-height:1.05;color:var(--word);text-align:center;word-break:break-word}
+#word .l{opacity:0;transition:opacity .12s}#word .l.on{opacity:1}
+#word.pop{animation:pop .18s ease-out}
+@keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:scale(1);opacity:1}}
+.buddy{position:absolute;left:40px;bottom:30px;display:flex;align-items:flex-end}
+.buddy img{width:min(260px,26vh);height:min(260px,26vh)}
+#bubble{margin-bottom:17vh;margin-left:-20px;background:var(--card);border-radius:20px 20px 20px 4px;padding:12px 18px;font-weight:600;font-size:20px;box-shadow:0 3px 0 var(--shadow);transition:opacity .3s,transform .3s}
+#bubble.hide{opacity:0;transform:translateY(8px)}
+.ctrl{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:flex;gap:12px;background:var(--card);padding:10px;border-radius:22px;box-shadow:0 3px 0 var(--shadow)}
+.ctrl button{width:60px;height:60px;border-radius:16px;border:0;background:#FFF1E4;color:#2B2350;display:grid;place-items:center}
+.ctrl #pauseBtn{width:84px;background:var(--accent);color:#fff}
+.corner{position:absolute;bottom:44px;right:40px;display:flex;gap:10px}
+.corner button{width:56px;height:56px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center}
+
+/* Ferdig */
+#ferdig{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:40px;text-align:center}
+#ferdig.on{display:flex}
+.arc{display:flex;align-items:flex-end;justify-content:center}
+.arc img{width:150px;height:150px}
+.arc img:nth-child(2),.arc img:nth-child(6){margin-bottom:30px}
+.arc img:nth-child(3),.arc img:nth-child(5){width:160px;height:160px;margin-bottom:52px}
+.arc img:nth-child(4){width:230px;height:230px;margin-bottom:60px}
+.arc img{animation:hop 1.2s ease-in-out infinite}
+.arc img:nth-child(odd){animation-delay:.3s}
+@keyframes hop{50%{transform:translateY(-12px)}}
+#ferdig h1{margin:-40px 0 0;font-weight:700;font-size:76px;line-height:1}
+#doneText{margin:0;font-size:26px}
+.stats{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.stat{background:var(--card);border-radius:20px;padding:16px 28px;display:flex;flex-direction:column;align-items:center;box-shadow:0 3px 0 var(--shadow)}
+.stat b{font-family:Fredoka,sans-serif;font-weight:600;font-size:34px}
+.stat small{font-size:15px;color:var(--muted)}
+.dbtns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.dbtns button{height:64px;padding:0 30px;border-radius:20px;font-family:Fredoka,sans-serif;font-weight:600;font-size:24px;display:flex;align-items:center;gap:10px}
+.dbtns .p{border:0;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-d)}
+.dbtns .s{border:2px solid var(--line);background:var(--card)}
+
+@media (max-width:900px){.monsters{grid-template-columns:repeat(4,minmax(0,1fr))}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}aside{position:static}.buddy{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#print{display:none}
+@media print{
+  body{background:#fff}.screen,#ferdig{display:none!important}
+  #print{display:block}
+  #print h1{font:700 14pt Verdana,sans-serif;margin:0 0 8mm}
+  #print .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+  #print .card{border:1px solid #999;border-radius:3mm;padding:6mm 2mm;text-align:center;font-size:20pt;break-inside:avoid;display:block;color:#000;background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ OPPSETT ============ -->
+<div id="oppsett" class="screen on">
+<div class="wrap">
+<header>
+  <img class="mimg" id="logoMon" alt="">
+  <div><div class="logo f">Lesetrim</div><div class="sub">Les raskere – ett ord om gangen</div></div>
+  <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
+    <a class="hbtn" href="../../verktoy.html" style="text-decoration:none;color:inherit"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Lærerverktøy</a>
+    <button class="hbtn" id="printBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>Skriv ut ordkort</button>
+  </div>
+</header>
+
+<div class="cols">
+<div class="left">
+  <section>
+    <h2 class="f">1. Velg lesekompis</h2>
+    <div class="monsters" id="monsters"></div>
+  </section>
+
+  <section>
+    <h2 class="f">2. Hvilke ord?</h2>
+    <div class="g3" id="lists"></div>
+    <div class="chips" id="ranges"><span>Utvalg:</span></div>
+    <div id="customBox">
+      <textarea id="customText" placeholder="Skriv eller lim inn ord – ett per linje, eller skilt med komma.&#10;sol, bil, hus, katt …"></textarea>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="f">3. Tempo og modus</h2>
+    <div class="g4" id="tempos"></div>
+    <div class="g3" id="modes"></div>
+    <div class="checks">
+      <label><input type="checkbox" id="random" checked> Tilfeldig rekkefølge</label>
+      <label><input type="checkbox" id="upper"> STORE BOKSTAVER</label>
+      <label><input type="checkbox" id="dark"> Grønn tavle</label>
+    </div>
+    <div class="more">
+      <label>Pause mellom ord<select id="pause"></select></label>
+      <label>Skriftstørrelse<input type="range" id="size" min="80" max="320" step="10" value="220"></label>
+      <label>Skrift<select id="font">
+        <option value="Andika,Verdana,sans-serif">Andika (skolebokstaver)</option>
+        <option value='"Atkinson Hyperlegible",Verdana,sans-serif'>Atkinson (lesevennlig)</option>
+        <option value="Verdana,sans-serif">Verdana</option>
+        <option value="Arial,sans-serif">Arial</option>
+      </select></label>
+    </div>
+  </section>
+</div>
+
+<aside>
+  <span class="kicker">Klar til å lese</span>
+  <div class="preview"><span id="previewWord">skole</span></div>
+  <img class="mimg" id="bigMon" alt="">
+  <p class="ready"><b id="bigName"></b> leser med deg!<br><span id="summary"></span></p>
+  <button class="start" id="startBtn"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>Start</button>
+  <span class="hint">Mellomrom = start / pause · ← → = forrige / neste · F = fullskjerm · Esc = tilbake</span>
+</aside>
+</div>
+</div>
+</div>
+
+<!-- ============ LESING ============ -->
+<div id="lesing" class="screen">
+  <div class="top"><span class="f">Lesetrim</span><div class="bar"><div id="prog"></div></div><span id="count"></span></div>
+  <div class="stage" id="stage"><div id="word"></div></div>
+  <div class="buddy"><img class="mimg" id="buddyImg" alt=""><div id="bubble" class="f hide"></div></div>
+  <div class="ctrl">
+    <button id="prevBtn" aria-label="Forrige ord"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button id="pauseBtn" aria-label="Pause"></button>
+    <button id="nextBtn" aria-label="Neste ord"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div class="corner">
+    <button id="fsBtn" aria-label="Fullskjerm"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button id="stopBtn" aria-label="Avslutt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+</div>
+
+<!-- ============ FERDIG ============ -->
+<div id="ferdig">
+  <div class="arc" id="arc"></div>
+  <h1 class="f">Kjempebra!</h1>
+  <p id="doneText"></p>
+  <div class="stats">
+    <div class="stat"><b id="sTime"></b><small>minutter</small></div>
+    <div class="stat"><b id="sTempo"></b><small id="sTempoSub"></small></div>
+    <div class="stat"><b id="sList"></b><small id="sListSub"></small></div>
+  </div>
+  <div class="dbtns">
+    <button class="p" id="againBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v5h5"/></svg>Les igjen</button>
+    <button class="s" id="newBtn">Velg nye ord</button>
+  </div>
+</div>
+
+<div id="print"><h1 id="printTitle"></h1><div class="grid" id="printGrid"></div></div>
+
+<script>
+/* ---------- Lesemonstre ---------- */
+const MON = [
+  ['Tuva','bilder/m1.webp'],['Rosa','bilder/m2.webp'],['Grå','bilder/m3.webp'],['Raggen','bilder/m4.webp'],
+  ['Blåbær','bilder/m5.webp'],['Kløver','bilder/m6.webp'],['Brumle','bilder/m7.webp'],['Fia','bilder/m8.webp']];
+
+/* ---------- Ordlister (omtrent i frekvensrekkefølge) ---------- */
+const LISTS = {
+nb: `og i det på er en som til at å han av for med ikke den har jeg de om var et men så seg vi hun kan fra vil skal du ble da bli eller sa noe man nå etter inn ut opp hadde alle når meg ham hva dem her der også mot bare kunne selv over år hvor mer sin sine sitt mange to oss hvis må blir får går kom nei ja sier mye ingen noen andre hele godt ned under mellom før hos uten hennes hans deg dere min mitt mine din ditt vår vårt våre denne dette disse hvem hvorfor hvordan hvilken fordi mens enn siden igjen aldri alltid bort hjem dag tid gang ting folk mann dame barn mor far hus vann skole bok liten lite små stor stort store ny nytt nye gammel god gode fin lang første siste egen samme annen annet hver litt veldig kanskje sammen borte langt helt vel jo nok først sist gikk tok fikk gjorde sto satt lå ville skulle måtte se si gå komme ta få gjøre ha være ligge sitte stå like vite tro tenke finne gi leke spise sove løpe hoppe lese skrive høre snakke rope le gråte hjelpe vente bo kjøre kaste holde legge sette bære slå åpne lukke begynne slutte prøve trenger liker vet tror ser kommer tar gjør sitter står ligger katt hund sol bil ball dør vei stol bord seng mat brød melk eple natt morgen kveld venn gutt jente øye hånd hode rød blå gul grønn svart hvit tre fire fem seks sju åtte ni ti`,
+nn: `og i det på er ein eit som til at å han av for med ikkje den har eg dei om var men så seg vi ho kan frå vil skal du vart då bli eller sa noko no etter inn ut opp hadde alle når meg kva her der også mot berre kunne sjølv over år kvar meir sin sine sitt mange to oss viss må blir får går kom nei ja seier mykje ingen nokon andre heile godt ned under mellom før hos utan hennar hans deg de dykk min mitt mine din ditt vår vårt våre denne dette desse kven kvifor korleis fordi medan enn sidan igjen aldri alltid bort heim dag tid gong ting folk mann dame barn mor far hus vatn skule bok liten lite små stor stort store ny nytt nye gamal god gode fin lang første siste eigen same annan anna litt veldig kanskje saman borte langt heilt vel jo nok først sist gjekk tok fekk gjorde stod sat låg ville skulle måtte sjå seie gå kome ta få gjere ha vere liggje sitje stå like vite tru tenkje finne gje leike ete sove springe hoppe lese skrive høyre snakke rope le gråte hjelpe vente bu køyre kaste halde leggje setje bere slå opne byrje slutte prøve treng likar veit trur ser kjem tek gjer sit står ligg katt hund sol bil ball dør veg stol bord seng mat brød mjølk eple natt morgon kveld ven gut jente auge hand hovud raud blå gul grøn svart kvit tre fire fem seks sju åtte ni ti`
+};
+const uniq = s => [...new Set(s.split(/[\s,;]+/).map(w=>w.trim()).filter(Boolean))];
+
+const LIST_OPTS = [
+  {id:'nb', name:'Bokmål', sub:uniq(LISTS.nb).length+' høyfrekvente ord'},
+  {id:'nn', name:'Nynorsk', sub:uniq(LISTS.nn).length+' høgfrekvente ord'},
+  {id:'egen', name:'Egen liste', sub:'Lim inn ukas ord'}];
+const RANGES = [{id:'0-50',name:'De 50 første'},{id:'0-100',name:'De 100 første'},{id:'100-200',name:'101–200'},{id:'200-9999',name:'201 og utover'},{id:'all',name:'Alle'}];
+const TEMPOS = [{s:3,name:'Snegle'},{s:2,name:'Rolig'},{s:1,name:'Middels'},{s:0.5,name:'Lyn'}];
+const MODES = [{id:'auto',name:'Automatisk',sub:'Ordene kommer av seg selv'},{id:'manual',name:'Selvstyrt',sub:'Trykk for neste ord'},{id:'lyd',name:'Lydering',sub:'Bokstav for bokstav'}];
+const PRAISE = ['Du leser kjempefint!','Dette klarer du!','For et tempo!','Fortsett sånn!','Jeg er så stolt av deg!','Wow, du er god!','Bare ett ord til …','Du er en lesehelt!'];
+const fmtS = s => (s+'').replace('.',',');
+
+/* ---------- Tilstand ---------- */
+const $ = id => document.getElementById(id);
+const S = { mon:7, list:'nb', range:'0-50', tempo:2, mode:'auto' };
+try{ Object.assign(S, JSON.parse(localStorage.getItem('lesetrim2')||'{}').S||{}); }catch(e){}
+const CHK = ['random','upper','dark'];
+[0,0.25,0.5,1,1.5,2].forEach(s => $('pause').add(new Option(s===0?'Ingen':fmtS(s)+' sek', s)));
+$('pause').value = 0.5;
+try{ const o=JSON.parse(localStorage.getItem('lesetrim2')||'{}'); CHK.forEach(k=>{ if(o[k]!==undefined) $(k).checked=o[k]; });
+  ['pause','size','font','customText'].forEach(k=>{ if(o[k]!==undefined) $(k).value=o[k]; }); }catch(e){}
+function save(){ try{ const o={S}; CHK.forEach(k=>o[k]=$(k).checked); ['pause','size','font','customText'].forEach(k=>o[k]=$(k).value); localStorage.setItem('lesetrim2',JSON.stringify(o)); }catch(e){} }
+
+/* ---------- Bygg oppsett ---------- */
+function btn(cls, html, on, fn, label){ const b=document.createElement('button'); b.className=cls+(on?' on':''); b.innerHTML=html; if(label) b.setAttribute('aria-label',label); b.setAttribute('aria-pressed',on); b.onclick=()=>{fn(); save(); render();}; return b; }
+function render(){
+  const m=$('monsters'); m.innerHTML='';
+  MON.forEach((x,i)=>m.appendChild(btn('mon',`<img class="mimg" src="${x[1]}" alt=""><span>${x[0]}</span>`, S.mon===i, ()=>S.mon=i, x[0])));
+  const l=$('lists'); l.innerHTML='';
+  LIST_OPTS.forEach(x=>l.appendChild(btn('card',`<b>${x.name}</b><small>${x.sub}</small>`, S.list===x.id, ()=>S.list=x.id)));
+  const r=$('ranges'); r.querySelectorAll('button').forEach(b=>b.remove());
+  r.style.display = S.list==='egen' ? 'none' : 'flex';
+  RANGES.forEach(x=>r.appendChild(btn('chip',x.name, S.range===x.id, ()=>S.range=x.id)));
+  $('customBox').style.display = S.list==='egen' ? 'block' : 'none';
+  const t=$('tempos'); t.innerHTML='';
+  TEMPOS.forEach((x,i)=>t.appendChild(btn('card',`<b>${x.name}</b><small>${fmtS(x.s)} sek per ord</small>`, S.tempo===i, ()=>S.tempo=i)));
+  const d=$('modes'); d.innerHTML='';
+  MODES.forEach(x=>d.appendChild(btn('card',`<b>${x.name}</b><small>${x.sub}</small>`, S.mode===x.id, ()=>S.mode=x.id)));
+  const mon=MON[S.mon];
+  $('bigMon').src=mon[1]; $('logoMon').src=MON[7][1]; $('bigName').textContent=mon[0];
+  const n=getWords(false).length;
+  const ln=LIST_OPTS.find(x=>x.id===S.list).name;
+  $('summary').textContent = `${ln} · ${n} ord · ${TEMPOS[S.tempo].name.toLowerCase()} tempo`;
+  $('previewWord').style.fontFamily=$('font').value;
+  $('previewWord').textContent = $('upper').checked ? 'SKOLE' : 'skole';
+  document.body.classList.toggle('dark',$('dark').checked);
+}
+CHK.concat(['pause','size','font','customText']).forEach(k=>$(k).addEventListener('input',()=>{save();render();}));
+
+function getWords(shuffle=true){
+  let src = S.list==='egen' ? $('customText').value : LISTS[S.list];
+  let w = uniq(src);
+  if (S.list!=='egen' && S.range!=='all'){ const [a,b]=S.range.split('-').map(Number); w=w.slice(a,b); }
+  if (shuffle && $('random').checked) for(let i=w.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[w[i],w[j]]=[w[j],w[i]];}
+  if ($('upper').checked) w=w.map(x=>x.toLocaleUpperCase('nb'));
+  return w;
+}
+
+
+/* ---------- Avspilling ---------- */
+let words=[], idx=0, running=false, paused=false, gen=0, t0=0, sinceBubble=0;
+const wait=(ms,g)=>new Promise(r=>setTimeout(()=>{ if(g===gen) r(); },ms));
+const W=$('word');
+const PAUSE_ICON='<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+const PLAY_ICON='<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
+
+function show(screen){
+  ['oppsett','lesing'].forEach(s=>$(s).classList.toggle('on',s===screen));
+  $('ferdig').classList.toggle('on',screen==='ferdig');
+}
+function setPauseBtn(){ const p = paused || S.mode==='manual'; $('pauseBtn').innerHTML = p?PLAY_ICON:PAUSE_ICON; $('pauseBtn').setAttribute('aria-label', S.mode==='manual'?'Neste ord':(paused?'Fortsett':'Pause')); }
+function status(){
+  $('count').textContent = `${Math.min(idx+1,words.length)} av ${words.length}`;
+  $('prog').style.width = (idx/words.length*100)+'%';
+}
+function showWord(w){
+  W.textContent=w; W.classList.remove('pop'); void W.offsetWidth; W.classList.add('pop');
+}
+function bubble(){
+  sinceBubble++;
+  if (sinceBubble>=8){ sinceBubble=0;
+    const b=$('bubble'); b.textContent=PRAISE[Math.floor(Math.random()*PRAISE.length)]; b.classList.remove('hide');
+    setTimeout(()=>b.classList.add('hide'),2600);
+  }
+}
+
+async function play(){
+  const g=++gen;
+  while(running && !paused && idx<words.length){
+    const w=words[idx]; status(); bubble();
+    const showMs=TEMPOS[S.tempo].s*1000, pauseMs=$('pause').value*1000;
+    if (S.mode==='lyd'){
+      W.classList.remove('pop');
+      W.innerHTML=[...w].map(c=>`<span class="l">${c}</span>`).join('');
+      for(const s of W.querySelectorAll('.l')){ s.classList.add('on'); await wait(Math.max(250,showMs*0.5),g); }
+      await wait(showMs,g);
+    } else {
+      showWord(w);
+      if (S.mode==='manual') return;
+      await wait(showMs,g);
+    }
+    if (pauseMs>0){ W.textContent=''; await wait(pauseMs,g); }
+    idx++;
+  }
+  if (running && idx>=words.length) finish();
+}
+function start(){
+  words=getWords();
+  if(!words.length){ $('customText').focus(); $('customText').placeholder='Skriv inn noen ord først 🙂'; return; }
+  idx=0; running=true; paused=false; t0=Date.now(); sinceBubble=0;
+  W.style.fontFamily=$('font').value; W.style.fontSize=`min(${$('size').value}px, 18vw)`;
+  $('buddyImg').src=MON[S.mon][1]; $('bubble').classList.add('hide');
+  show('lesing'); setPauseBtn(); play();
+}
+function togglePause(){
+  if(!running) return;
+  if(S.mode==='manual'){ next(); return; }
+  paused=!paused; gen++; setPauseBtn();
+  if(!paused) play(); else { showWord(words[idx]); status(); }
+}
+function jump(d){
+  if(!running) return;
+  gen++; idx=Math.max(0,idx+d);
+  if(idx>=words.length){ finish(); return; }
+  if(paused || S.mode==='manual'){ showWord(words[idx]); status(); bubble(); }
+  else play();
+}
+const next=()=>jump(1), prev=()=>jump(-1);
+function stop(){ gen++; running=false; paused=false; if(document.fullscreenElement) document.exitFullscreen(); show('oppsett'); }
+function finish(){
+  gen++; running=false; paused=false;
+  const sec=Math.round((Date.now()-t0)/1000);
+  $('doneText').innerHTML=`Du leste <strong>${words.length} ord</strong> med ${MON[S.mon][0]}`;
+  $('sTime').textContent=`${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+  $('sTempo').textContent=TEMPOS[S.tempo].name; $('sTempoSub').textContent=`tempo · ${fmtS(TEMPOS[S.tempo].s)} sek`;
+  const lo=LIST_OPTS.find(x=>x.id===S.list); $('sList').textContent=lo.name;
+  $('sListSub').textContent = S.list==='egen' ? 'egne ord' : RANGES.find(x=>x.id===S.range).name.toLowerCase();
+  const others=[0,1,2,3,4,5,6,7].filter(i=>i!==S.mon);
+  const arc=[others[0],others[1],others[2],S.mon,others[3],others[4],others[5]];
+  $('arc').innerHTML=arc.map(i=>`<img class="mimg" src="${MON[i][1]}" alt="">`).join('');
+  show('ferdig');
+}
+
+/* ---------- Knapper og tastatur ---------- */
+$('startBtn').onclick=start;
+$('pauseBtn').onclick=togglePause;
+$('nextBtn').onclick=next; $('prevBtn').onclick=prev;
+$('stage').onclick=()=> S.mode==='manual'?next():togglePause();
+$('stopBtn').onclick=stop;
+$('againBtn').onclick=start;
+$('newBtn').onclick=()=>show('oppsett');
+function fullscreen(){ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
+$('fsBtn').onclick=fullscreen;
+document.addEventListener('keydown',e=>{
+  if(['TEXTAREA','SELECT','INPUT'].includes(e.target.tagName) && e.key!=='Escape') return;
+  const reading=$('lesing').classList.contains('on');
+  if(e.code==='Space'){ e.preventDefault(); reading?togglePause():($('oppsett').classList.contains('on')&&start()); }
+  else if(e.key==='ArrowRight'&&reading) next();
+  else if(e.key==='ArrowLeft'&&reading) prev();
+  else if(e.key==='Escape'&&reading) stop();
+  else if(e.key==='f'||e.key==='F') fullscreen();
+});
+
+/* ---------- Utskrift ---------- */
+$('printBtn').onclick=()=>{
+  const ws=getWords(false);
+  const lo=LIST_OPTS.find(x=>x.id===S.list);
+  $('printTitle').textContent=`Lesetrim – ${lo.name} (${ws.length} ord)`;
+  $('printGrid').innerHTML='';
+  ws.forEach(w=>{ const d=document.createElement('div'); d.className='card'; d.textContent=w; d.style.fontFamily=$('font').value; $('printGrid').appendChild(d); });
+  window.print();
+};
+
+render();
+</script>
+</body>
+</html>
