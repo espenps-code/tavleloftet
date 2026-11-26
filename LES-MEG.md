@@ -6,6 +6,7 @@ Dette er selve nettsiden til Tavleloftet. Alt ligger i denne mappa, og ingenting
 ## Hva er hva
 - `index.html` – forsiden
 - `spill.html` – spillrommet (lenker til spillene i `spill/`)
+- `spill/vaskemester.html` – Vaskemester (26.11.2026): renholdsspill i 3D førsteperson, hybel → leilighet → enebolig. Kopi fra Mykje Spill (hadde ingen Mykje-referanser). Lyd (Bobla) i `spill/vaskemester/lyd/`, skrifter (Atkinson Hyperlegible, Baloo 2) i `spill/vaskemester/fonts/`. Lagrer i nettleseren (`vaskemester-v1`), ingen Firebase.
 - `spill/sjakkloftet.html` – Sjakkloftet (24.11.2026): sjakk mot bot, mot en medelev, sjakknøtter (fra Lichess sin åpne base, CC0), minispill, springerløype og elevdelen av turnering.
   Kopi av Mykje Sjakk fra Mykje Spill uten Mykje-referanser. Bruker Tavleloftets Firebase (stiene `sjakk`, `sjakknokkel`, `sjakkkode`, `sjakkserie`) og anonym pålogging.
   Maskoten Sprett (åtte uttrykk, laget i Higgsfield 24.11.2026) ligger i `spill/sjakkloftet/`. Øvelser: Matt-skolen, Slå alle bøndene, Trygg rute, Rutejakt, og Fischer-sjakk.
