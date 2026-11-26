@@ -197,16 +197,18 @@ var PLAGG = {
   pentoy:'👔 Pen skjorte', pensko:'👞 Pene sko', caps:'🧢 Caps'
 };
 var KLAER = [
-  {e:'🌧️', sp:'Det regner ute. Hva tar du på deg?', ok:['regnjakke','regnbukse','stovler'], feil:['sandaler','shorts','solhatt','solbriller']},
-  {e:'❄️', sp:'Det snør og er kaldt. Hva tar du på deg?', ok:['lue','votter','vinterjakke','vintersko','skjerf'], feil:['shorts','sandaler','solhatt','badetoy']},
-  {e:'☀️', sp:'Det er sol og veldig varmt. Hva tar du på deg?', ok:['shorts','tskjorte','sandaler','solhatt'], feil:['vinterjakke','lue','votter','skjerf']},
-  {e:'🏃', sp:'Du skal ha gym. Hva trenger du?', ok:['gymtoy','gymsko'], feil:['pysj','stovler','vinterjakke','pentoy']},
-  {e:'🏊', sp:'Du skal i svømmehallen. Hva tar du med?', ok:['badetoy','handkle'], feil:['votter','gymsko','regnbukse','lue']},
-  {e:'🌙', sp:'Det er kveld og du skal legge deg. Hva tar du på deg?', ok:['pysj','tofler'], feil:['regnjakke','gymsko','solbriller','vintersko']},
-  {e:'🎂', sp:'Du skal i bursdag. Hva kan passe?', ok:['pentoy','pensko'], feil:['pysj','regnbukse','badetoy','gymtoy']},
-  {e:'🏖️', sp:'Du skal på stranda en varm sommerdag. Hva tar du med?', ok:['badetoy','handkle','solhatt','solbriller'], feil:['vinterjakke','votter','skjerf','vintersko']},
-  {e:'💨', sp:'Det er høst, kaldt og vått. Hva tar du på deg?', ok:['regnjakke','stovler','lue'], feil:['shorts','sandaler','badetoy','solbriller']}
+  {e:'🌧️', sp:'Det regner ute. Hva tar du på deg?', ok:['regnjakke','regnbukse','stovler'], feil:['sandaler','shorts','solhatt','solbriller'], grunn:['truse','sokker','bukse','tskjorte','genser']},
+  {e:'❄️', sp:'Det snør og er kaldt. Hva tar du på deg?', ok:['lue','votter','vinterjakke','vintersko','skjerf'], feil:['shorts','sandaler','solhatt','badetoy'], grunn:['truse','ullsokker','bukse','tskjorte','genser']},
+  {e:'☀️', sp:'Det er sol og veldig varmt. Hva tar du på deg?', ok:['shorts','tskjorte','sandaler','solhatt'], feil:['vinterjakke','lue','votter','skjerf'], grunn:['truse']},
+  {e:'🏃', sp:'Du skal ha gym. Hva trenger du?', ok:['gymtoy','gymsko'], feil:['pysj','stovler','vinterjakke','pentoy'], grunn:['truse','sokker']},
+  {e:'🏊', sp:'Du skal i svømmehallen. Hva tar du med?', ok:['badetoy','handkle'], feil:['votter','gymsko','regnbukse','lue'], grunn:[]},
+  {e:'🌙', sp:'Det er kveld og du skal legge deg. Hva tar du på deg?', ok:['pysj','tofler'], feil:['regnjakke','gymsko','solbriller','vintersko'], grunn:['truse']},
+  {e:'🎂', sp:'Du skal i bursdag. Hva kan passe?', ok:['pentoy','pensko'], feil:['pysj','regnbukse','badetoy','gymtoy'], grunn:['truse','sokker','bukse']},
+  {e:'🏖️', sp:'Du skal på stranda en varm sommerdag. Hva tar du med?', ok:['badetoy','handkle','solhatt','solbriller'], feil:['vinterjakke','votter','skjerf','vintersko'], grunn:[]},
+  {e:'💨', sp:'Det er høst, kaldt og vått. Hva tar du på deg?', ok:['regnjakke','stovler','lue'], feil:['shorts','sandaler','badetoy','solbriller'], grunn:['truse','sokker','bukse','tskjorte','genser']}
 ];
+/* grunn = det figuren allerede har på seg i «Klær som passer», så den ikke står naken. Passende plagg som ikke er med
+   i oppgaven, er også på fra start. Eleven skal bare finne det som mangler for å bli klar. */
 
 /* ---------- Hjelpere ---------- */
 function en(a){return a[rnd(a.length)]}
@@ -342,10 +344,11 @@ var LAG = {
     return {sp:'Du skal kle på deg. Trykk på det du tar på først, og så videre.', hint:'Dra klærne bort på figuren, eller trykk på dem.', type:'kle', modus:'rekke', steg:steg,
       plagg:stokk(steg.map(function(t){return {id:TING[t.slice(t.indexOf(' ')+1)], navn:t.slice(t.indexOf(' ')+1)}}))} },
   klaer: function(niv){
-    /* Figuren kles på: alle plaggene som passer må på, og ingen av de som ikke passer. Høyere nivå gir flere plagg å velge mellom. */
+    /* Figuren er nesten påkledd og mangler noe: alle plaggene som mangler må på, og ingen av de som ikke passer. Høyere nivå gir flere plagg å velge mellom. */
     var k = en(KLAER), n = Math.min(niv+1, k.ok.length), ok = stokk(k.ok).slice(0,n), feil = stokk(k.feil).slice(0, niv+1);
+    var grunn = (k.grunn||[]).concat(k.ok.filter(function(id){return ok.indexOf(id)<0}));
     var navn = function(id){var t = PLAGG[id]; return t.slice(t.indexOf(' ')+1)}, del = k.sp.split('. ');
-    return {sp:k.sp, lyd:[del[0]+'.', del[1]], hint:'Dra det som passer bort på figuren, eller trykk på det. Trykk «Ferdig» når du er klar.', type:'kle', modus:'velg', scene:k.e,
+    return {sp:k.sp, lyd:[del[0]+'.', del[1]], hint:'Figuren er nesten klar. Dra det som mangler bort på figuren, eller trykk på det. Trykk «Ferdig» når du er klar.', type:'kle', modus:'velg', scene:k.e, grunn:grunn,
       steg:ok.map(function(id){return PLAGG[id]}), ok:ok, plagg:stokk(ok.concat(feil)).map(function(id){return {id:id, navn:navn(id)}})};
   }
 };
@@ -412,6 +415,10 @@ function kalkHtml(){
   return '<div class="kalk"><output id="kdisp" aria-live="polite">0</output><div class="ktast">'+['7','8','9','+','4','5','6','−','1','2','3','×','C','0','=','÷'].map(function(k){
     return '<button data-k="'+k+'" class="'+(/\d/.test(k)?'':'op')+(k==='='?' er':'')+'">'+k+'</button>'}).join('')+'</div></div>';
 }
+function plaggGrunn(id){   // fast plagg figuren har på fra start (kan ikke tas av)
+  var p = KLE_POS[id];
+  return '<img class="kgrunn" data-g="'+id+'" data-s="'+KROPP[id].s+'" src="bilder/kle/'+id+'.webp" alt="" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+p[2]+'%;z-index:'+KROPP[id].z+'">';
+}
 function plaggPaa(id){
   var p = KLE_POS[id];
   return '<button class="kpaa" data-av="'+id+'" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+p[2]+'%;z-index:'+KROPP[id].z+'" aria-label="Ta av"><img src="bilder/kle/'+id+'.webp" alt=""></button>';
@@ -424,7 +431,7 @@ function vis(o, stasjon, ferdig, feil){
   if(o.type==='linje') kropp = linjeHtml(o.linje, true);
   if(o.type==='kalk')  kropp = kalkHtml()+'<p class="midt"><button class="gull" data-sjekk>Dette er svaret</button></p>';
   if(o.type==='rekke') kropp = '<ol class="rekke" id="rlagt"></ol><div class="svar lang" id="rvalg">'+stokk(o.steg.map(function(t,i){return {t:t,i:i}})).map(function(v){return alt(v.i, o.stegLes[v.i], '<button data-i="'+v.i+'">'+pynt(v.t)+'</button>')}).join('')+'</div>';
-  if(o.type==='kle') kropp = '<p class="khint">'+esc(o.hint)+'</p><div class="kle"><div class="kfig" id="kfig"'+(o.scene?' style="background:linear-gradient('+KLE_SCENE[o.scene]+')"':'')+'>'+(o.scene?'<span class="kvaer">'+(o.scene==='💨'?'🍂':o.scene)+'</span>':'')+'<div class="kdukke" style="aspect-ratio:'+KLE_FORHOLD+'"><img class="kbase" src="bilder/kle/figur.webp" alt="">'+'</div></div>'+
+  if(o.type==='kle') kropp = '<p class="khint">'+esc(o.hint)+'</p><div class="kle"><div class="kfig" id="kfig"'+(o.scene?' style="background:linear-gradient('+KLE_SCENE[o.scene]+')"':'')+'>'+(o.scene?'<span class="kvaer">'+(o.scene==='💨'?'🍂':o.scene)+'</span>':'')+'<div class="kdukke" style="aspect-ratio:'+KLE_FORHOLD+'"><img class="kbase" src="bilder/kle/figur.webp" alt="">'+(o.grunn||[]).map(plaggGrunn).join('')+'</div></div>'+
     '<div class="kskuff" id="kskuff">'+o.plagg.map(function(p){return '<button data-p="'+p.id+'"><img src="bilder/kle/'+p.id+'.webp" alt="" draggable="false"><span>'+esc(p.navn)+'</span></button>'}).join('')+'</div></div>'+
     (o.modus==='velg' ? '<p class="midt"><button class="gull" data-sjekk>Ferdig</button></p>' : '');
   if(o.type==='skriv'){ var bok = o.ord.split(''); for(var x=0;x<o.ekstra;x++) bok.push(en('aeiorstln'.split('')));
@@ -439,7 +446,9 @@ function vis(o, stasjon, ferdig, feil){
       function med(id){return o.plagg.some(function(p){return p.id===id})}
       function skuffKnapp(id){return el.querySelector('#kskuff [data-p="'+id+'"]')}
       function rist(k){ if(!k) return; k.classList.add('rist'); setTimeout(function(){k.classList.remove('rist')}, 400) }
-      function taAv(id){ var i = paa.indexOf(id); if(i<0) return; paa.splice(i,1); var b = el.querySelector('#kfig [data-av="'+id+'"]'); if(b) b.remove(); var k = skuffKnapp(id); if(k) k.classList.remove('brukt') }
+      function grunnVis(s, vis){ [].forEach.call(el.querySelectorAll('#kfig .kgrunn[data-s="'+s+'"]'), function(g){g.style.display = vis ? '' : 'none'}) }
+      function taAv(id){ var i = paa.indexOf(id); if(i<0) return; paa.splice(i,1); var b = el.querySelector('#kfig [data-av="'+id+'"]'); if(b) b.remove(); var k = skuffKnapp(id); if(k) k.classList.remove('brukt');
+        var s = KROPP[id].s; if(!paa.some(function(x){return KROPP[x].s===s})) grunnVis(s, true) }
       function taPaa(id){
         var p = KROPP[id], k = skuffKnapp(id); if(!p || paa.indexOf(id)>=0) return;
         if(o.modus==='rekke'){
@@ -447,6 +456,7 @@ function vis(o, stasjon, ferdig, feil){
           if(mangler.length){ rist(k); mangler.forEach(function(x){ var m = skuffKnapp(x); if(m){ m.classList.add('forst'); setTimeout(function(){m.classList.remove('forst')}, 1600) } }); return galt(FEILMELD.rekke) }
         }
         paa.filter(function(x){return KROPP[x].s===p.s}).forEach(taAv);   // to plagg på samme plass bytter med hverandre
+        grunnVis(p.s, false);   // et plagg på samme plass som grunnantrekket erstatter det mens det er på
         paa.push(id); k.classList.add('brukt'); meld.textContent = '';
         el.querySelector('#kfig .kdukke').insertAdjacentHTML('beforeend', plaggPaa(id));
         if(o.modus==='rekke' && paa.length === o.plagg.length) setTimeout(riktig, 900);
@@ -555,7 +565,7 @@ st.textContent = '.oppg .spm{font-size:1.25rem;font-weight:700;margin:4px 0 10px
   '.khint{margin:-4px 0 8px;font-size:.95rem;color:#5a5070}.kle{display:flex;gap:12px;align-items:stretch}'+
   '.kfig{position:relative;flex:0 0 48%;max-width:320px;border-radius:18px;background:linear-gradient(#f3ecf6,#e6dcea);border:3px solid var(--kant);overflow:hidden;align-self:flex-start;padding:8px 6px 4px}.kfig.over{border-color:var(--gull);box-shadow:0 0 0 4px #f2c23066}'+
   '.kdukke{position:relative;width:100%}.kbase{position:absolute;inset:0;width:100%;height:100%;display:block}.kvaer{position:absolute;right:6px;top:2px;font-size:2.2rem;line-height:1.2;z-index:1}'+
-  '.oppg .kpaa{position:absolute;padding:0;min-height:0;background:none;border:0;border-radius:0}.kpaa img{display:block;width:100%;pointer-events:none}'+
+  '.kgrunn{position:absolute;display:block;pointer-events:none}.oppg .kpaa{position:absolute;padding:0;min-height:0;background:none;border:0;border-radius:0}.kpaa img{display:block;width:100%;pointer-events:none}'+
   '.kskuff{flex:1;min-width:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;align-content:start}'+
   '.oppg .kskuff button{background:var(--lys);color:var(--ink);border:3px solid var(--kant);padding:6px 4px;min-height:0;font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:none;user-select:none;-webkit-user-select:none}'+
   '.kskuff img{width:64px;height:64px;object-fit:contain;pointer-events:none}.kskuff .brukt{opacity:.25}.kskuff .dras{opacity:.4}.oppg .kskuff .feil{background:#f6c9c4;opacity:.6}.oppg .kskuff .forst{border-color:var(--gull);box-shadow:0 0 0 4px #f2c23066}'+
