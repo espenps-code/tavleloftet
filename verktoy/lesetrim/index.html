@@ -49,6 +49,8 @@ h2{margin:0;font-weight:600;font-size:22px}
 .mon span{font-size:14px;font-weight:700}
 .mon.on{border-color:var(--accent);background:#FFF1E4}
 body.dark .mon.on{background:#3A5A48}
+.glabel{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .card{border-radius:16px;background:var(--card);border:2px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:44px}
@@ -164,10 +166,16 @@ body.dark .kicker{color:#F4D9A8}
 
   <section>
     <h2 class="f">2. Hvilke ord?</h2>
+    <div class="glabel">Høyfrekvente ord</div>
     <div class="g3" id="lists"></div>
     <div class="chips" id="ranges"><span>Utvalg:</span></div>
+    <div class="glabel">Tema</div>
+    <div class="chips" id="themes"></div>
+    <div class="glabel">Egne ord</div>
+    <div class="g2" id="owns"></div>
     <div id="customBox">
-      <textarea id="customText" placeholder="Skriv eller lim inn ord – ett per linje, eller skilt med komma.&#10;sol, bil, hus, katt …"></textarea>
+      <textarea id="customText"></textarea>
+      <button type="button" class="chip" id="sampleBtn" style="margin-top:8px">Prøv en eksempelhistorie</button>
     </div>
   </section>
 
@@ -239,6 +247,8 @@ body.dark .kicker{color:#F4D9A8}
 
 <div id="print"><h1 id="printTitle"></h1><div class="grid" id="printGrid"></div></div>
 
+<script src="lister-tema.js"></script>
+<script src="lister-ekstra.js"></script>
 <script>
 /* ---------- Lesemonstre ---------- */
 const MON = [
@@ -252,11 +262,21 @@ nn: `og i det på er ein eit som til at å han av for med ikkje den har eg dei o
 };
 const uniq = s => [...new Set(s.split(/[\s,;]+/).map(w=>w.trim()).filter(Boolean))];
 
-const LIST_OPTS = [
-  {id:'nb', name:'Bokmål', sub:uniq(LISTS.nb).length+' høyfrekvente ord'},
-  {id:'nn', name:'Nynorsk', sub:uniq(LISTS.nn).length+' høgfrekvente ord'},
-  {id:'egen', name:'Egen liste', sub:'Lim inn ukas ord'}];
-const RANGES = [{id:'0-50',name:'De 50 første'},{id:'0-100',name:'De 100 første'},{id:'100-200',name:'101–200'},{id:'200-9999',name:'201 og utover'},{id:'all',name:'Alle'}];
+const EX = window.LESETRIM_EKSTRA||{}, TEMA = window.LESETRIM_TEMA||{};
+LISTS.nb += ' ' + (EX.nb||''); LISTS.nn += ' ' + (EX.nn||''); LISTS.en = EX.en||'';
+Object.keys(TEMA).forEach(k => LISTS[k] = TEMA[k]);
+const HF = [
+  {id:'nb', name:'Bokmål', sub:uniq(LISTS.nb).length+' vanlige ord'},
+  {id:'nn', name:'Nynorsk', sub:uniq(LISTS.nn).length+' vanlege ord'},
+  {id:'en', name:'Engelsk', sub:uniq(LISTS.en).length+' common words'}];
+const THEMES = [['alfabet','Alfabetet'],['telle','Telle'],['ordenstall','Ordenstall'],['kropp','Kroppen'],['dyr','Dyr'],['mat','Mat og drikke'],['hjem','Møbler og interiør'],['jentenavn','Jentenavn'],['guttenavn','Guttenavn'],['diftonger','Diftonger'],['nonord','Nonord (tulleord)']]
+  .filter(t => LISTS[t[0]]).map(t => ({id:t[0], name:t[1]}));
+const OWNS = [{id:'egen', name:'Egne ord', sub:'Lim inn ukas ord'},{id:'tekst', name:'Egen tekst', sub:'Les en tekst ord for ord'}];
+const LIST_OPTS = HF.concat(THEMES, OWNS);
+const RANGES = [{id:'0-50',name:'De 50 første'},{id:'0-100',name:'De 100 første'},{id:'100-200',name:'101–200'},{id:'200-300',name:'201–300'},{id:'300-9999',name:'301 og utover'},{id:'all',name:'Alle'}];
+const isHF = () => HF.some(x=>x.id===S.list);
+const isOwn = () => S.list==='egen' || S.list==='tekst';
+const SAMPLE = 'Fia hadde en rød ball. Hun kastet ballen høyt opp i lufta. Ballen landet i et tre. – Å nei! sa Fia. Hun hentet en stige og klatret opp. Der satt en liten fugl og så på ballen. – Er det din? spurte fuglen. – Ja, sa Fia og smilte. Fuglen dyttet ballen ned, og Fia tok imot. – Tusen takk! ropte hun.';
 const TEMPOS = [{s:3,name:'Snegle'},{s:2,name:'Rolig'},{s:1,name:'Middels'},{s:0.5,name:'Lyn'}];
 const MODES = [{id:'auto',name:'Automatisk',sub:'Ordene kommer av seg selv'},{id:'manual',name:'Selvstyrt',sub:'Trykk for neste ord'},{id:'lyd',name:'Lydering',sub:'Bokstav for bokstav'}];
 const fmtS = s => (s+'').replace('.',',');
@@ -275,14 +295,26 @@ function save(){ try{ const o={S}; CHK.forEach(k=>o[k]=$(k).checked); ['pause','
 /* ---------- Bygg oppsett ---------- */
 function btn(cls, html, on, fn, label){ const b=document.createElement('button'); b.className=cls+(on?' on':''); b.innerHTML=html; if(label) b.setAttribute('aria-label',label); b.setAttribute('aria-pressed',on); b.onclick=()=>{fn(); save(); render();}; return b; }
 function render(){
+  if (!LIST_OPTS.find(x=>x.id===S.list)) S.list='nb';
   const m=$('monsters'); m.innerHTML='';
   MON.forEach((x,i)=>m.appendChild(btn('mon',`<img class="mimg" src="${x[1]}" alt=""><span>${x[0]}</span>`, S.mon===i, ()=>S.mon=i, x[0])));
   const l=$('lists'); l.innerHTML='';
-  LIST_OPTS.forEach(x=>l.appendChild(btn('card',`<b>${x.name}</b><small>${x.sub}</small>`, S.list===x.id, ()=>S.list=x.id)));
+  HF.forEach(x=>l.appendChild(btn('card',`<b>${x.name}</b><small>${x.sub}</small>`, S.list===x.id, ()=>S.list=x.id)));
   const r=$('ranges'); r.querySelectorAll('button').forEach(b=>b.remove());
-  r.style.display = S.list==='egen' ? 'none' : 'flex';
-  RANGES.forEach(x=>r.appendChild(btn('chip',x.name, S.range===x.id, ()=>S.range=x.id)));
-  $('customBox').style.display = S.list==='egen' ? 'block' : 'none';
+  r.style.display = isHF() ? 'flex' : 'none';
+  if (isHF()){
+    const len=uniq(LISTS[S.list]).length;
+    const ok=RANGES.filter(x=>x.id==='all'||Number(x.id.split('-')[0])<len);
+    if(!ok.find(x=>x.id===S.range)) S.range='all';
+    ok.forEach(x=>r.appendChild(btn('chip',x.name, S.range===x.id, ()=>S.range=x.id)));
+  }
+  const th=$('themes'); th.innerHTML='';
+  THEMES.forEach(x=>th.appendChild(btn('chip',x.name, S.list===x.id, ()=>S.list=x.id)));
+  const ow=$('owns'); ow.innerHTML='';
+  OWNS.forEach(x=>ow.appendChild(btn('card',`<b>${x.name}</b><small>${x.sub}</small>`, S.list===x.id, ()=>S.list=x.id)));
+  $('customBox').style.display = isOwn() ? 'block' : 'none';
+  $('sampleBtn').style.display = S.list==='tekst' ? 'inline-flex' : 'none';
+  $('customText').placeholder = S.list==='tekst' ? 'Lim inn en tekst. Ordene vises i samme rekkefølge som i teksten.' : 'Skriv eller lim inn ord – ett per linje, eller skilt med komma.\nsol, bil, hus, katt …';
   const t=$('tempos'); t.innerHTML='';
   TEMPOS.forEach((x,i)=>t.appendChild(btn('card',`<b>${x.name}</b><small>${fmtS(x.s)} sek per ord</small>`, S.tempo===i, ()=>S.tempo=i)));
   const d=$('modes'); d.innerHTML='';
@@ -299,10 +331,10 @@ function render(){
 CHK.concat(['pause','size','font','customText']).forEach(k=>$(k).addEventListener('input',()=>{save();render();}));
 
 function getWords(shuffle=true){
-  let src = S.list==='egen' ? $('customText').value : LISTS[S.list];
-  let w = uniq(src);
-  if (S.list!=='egen' && S.range!=='all'){ const [a,b]=S.range.split('-').map(Number); w=w.slice(a,b); }
-  if (shuffle && $('random').checked) for(let i=w.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[w[i],w[j]]=[w[j],w[i]];}
+  let src = isOwn() ? $('customText').value : LISTS[S.list];
+  let w = S.list==='tekst' ? src.split(/\s+/).filter(Boolean) : uniq(src);
+  if (isHF() && S.range!=='all'){ const [a,b]=S.range.split('-').map(Number); w=w.slice(a,b); }
+  if (shuffle && S.list!=='tekst' && $('random').checked) for(let i=w.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[w[i],w[j]]=[w[j],w[i]];}
   if ($('upper').checked) w=w.map(x=>x.toLocaleUpperCase('nb'));
   return w;
 }
@@ -392,7 +424,7 @@ function finish(){
   $('sTime').textContent=`${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
   $('sTempo').textContent=TEMPOS[S.tempo].name; $('sTempoSub').textContent=`tempo · ${fmtS(TEMPOS[S.tempo].s)} sek`;
   const lo=LIST_OPTS.find(x=>x.id===S.list); $('sList').textContent=lo.name;
-  $('sListSub').textContent = S.list==='egen' ? 'egne ord' : RANGES.find(x=>x.id===S.range).name.toLowerCase();
+  $('sListSub').textContent = isHF() ? RANGES.find(x=>x.id===S.range).name.toLowerCase() : (isOwn() ? 'egne ord' : 'tema');
   const others=[0,1,2,3,4,5,6,7].filter(i=>i!==S.mon);
   const arc=[others[0],others[1],others[2],S.mon,others[3],others[4],others[5]];
   $('arc').innerHTML=arc.map(i=>`<img class="mimg" src="${MON[i][1]}" alt="">`).join('');
@@ -401,6 +433,7 @@ function finish(){
 
 /* ---------- Knapper og tastatur ---------- */
 $('startBtn').onclick=start;
+$('sampleBtn').onclick=()=>{ $('customText').value=SAMPLE; save(); render(); };
 $('pauseBtn').onclick=togglePause;
 $('nextBtn').onclick=next; $('prevBtn').onclick=prev;
 $('stage').onclick=()=> waiting?go():(S.mode==='manual'?next():togglePause());
