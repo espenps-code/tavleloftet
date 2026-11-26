@@ -912,7 +912,7 @@ const jsEsc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<'
 function lesJegSer(){ let s=null; try{ s=JSON.parse(localStorage.getItem(JEGSER.nøkkel)); }catch(e){} s=s||{}; s.ferdig=s.ferdig||[]; return s; }
 function lagreJegSer(s){ try{ localStorage.setItem(JEGSER.nøkkel, JSON.stringify(s)); }catch(e){} }
 function jegSerStatus(){ const s=lesJegSer(); return { godkjent:Math.min(s.ferdig.length,JEGSER.antallBilder), av:JEGSER.antallBilder, venter:!!(s.aktivt&&s.aktivt.sendt) }; }
-const jsGyldig = t => /^jeg\s+ser\s+\S{2,}/i.test(String(t||'').trim());
+const jsGyldig = t => /^jeg\s+ser\s+(?:\d+\s+)?\p{L}\S+/iu.test(String(t||'').trim());
 const jsBilde = n => `bilder/jegser/jegser-${pad(n)}.webp`;
 
 const HOLDTID = 1300;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.

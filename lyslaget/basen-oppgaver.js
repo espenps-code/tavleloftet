@@ -241,7 +241,7 @@
      ===================================================================== */
   function lesJS() { var s = null; try { s = JSON.parse(localStorage.getItem(JEGSER.nokkel)); } catch (e) {} s = s || {}; s.ferdig = s.ferdig || []; return s; }
   function lagreJS(s) { try { localStorage.setItem(JEGSER.nokkel, JSON.stringify(s)); } catch (e) {} }
-  function jsGyldig(t) { return /^jeg\s+ser\s+\S{2,}/i.test(String(t || '').trim()); }
+  function jsGyldig(t) { return /^jeg\s+ser\s+(?:\d+\s+)?\p{L}\S+/iu.test(String(t || '').trim()); }
   function jsBilde(n) { return ROT + 'jegser/jegser-' + to(n) + '.webp'; }
   function jsStatus() { var s = lesJS(); return { godkjent: Math.min(s.ferdig.length, JEGSER.antallBilder), av: JEGSER.antallBilder, venter: !!(s.aktivt && s.aktivt.sendt), paabegynt: !!s.aktivt }; }
   function holdeknapp(b, ferdig) {
