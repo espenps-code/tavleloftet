@@ -210,6 +210,18 @@ var KLAER = [
 /* grunn = det figuren allerede har på seg i «Klær som passer», så den ikke står naken. Passende plagg som ikke er med
    i oppgaven, er også på fra start. Eleven skal bare finne det som mangler for å bli klar. */
 
+/* «Kle på seg»: det figuren har på seg fra start. Oppgaven kan handle om bare overkroppen (t-skjorte, genser, jakke)
+   eller bare underkroppen. Da har figuren resten på fra før, så den er ferdig påkledd når oppgaven er løst. */
+function kleGrunn(ids){
+  var har = function(){ return [].some.call(arguments, function(id){return ids.indexOf(id)>=0}) }, g = [];
+  if(har('vinterdress')){ if(!har('undertoy','truse')) g.push('undertoy'); return g }
+  if(!har('truse','undertoy')) g.push('truse');
+  if(!har('bukse')){ if(!har('sokker','ullsokker')) g.push('sokker'); g.push('bukse'); if(har('jakke','sekk') && !har('sko')) g.push('sko') }
+  else if(har('sko') && !har('sokker','ullsokker')) g.push('sokker');
+  if(!har('tskjorte')) g.push('tskjorte');
+  return g;
+}
+
 /* ---------- Hjelpere ---------- */
 function en(a){return a[rnd(a.length)]}
 function mellom(a,b){return a+rnd(b-a+1)}
@@ -314,11 +326,11 @@ var LAG = {
     q = en(MAAL_RIMELIG); return {sp:q.sp, type:'valg', lang:true, valg:valgFra(q.ok,q.feil,3)};
   },
   kalk: function(niv){
-    var a, b, pluss = rnd(2)===0, stykke = function(){return {sp:'Bruk kalkulatoren. Regn ut stykket.', bilde:'<span class="eng-ord">'+a+(pluss?' + ':' − ')+b+'</span>', type:'kalk', svar:pluss?a+b:a-b}};
+    var a, b, pluss = rnd(2)===0, stykke = function(){return {sp:'Bruk kalkulatoren. Regn ut stykket.', bilde:'<span class="eng-ord">'+a+(pluss?' + ':' − ')+b+'</span>', type:'kalk', tall:[a,b], svar:pluss?a+b:a-b}};
     if(niv===1){ a = mellom(2,12); b = mellom(1,8); if(!pluss && b>a){var t=a;a=b;b=t} return stykke() }
     if(niv===2){ a = mellom(21,69); b = mellom(11,29); if(!pluss && b>a){var t2=a;a=b;b=t2} return stykke() }
     var f = en(REGNEFORTELLINGER), par = en(f.tall); a = par[0]; b = par[1];
-    return {sp:f.t.replace('{a}',a).replace('{b}',b), type:'kalk', svar:f.regn==='+'?a+b:f.regn==='-'?a-b:a*b};
+    return {sp:f.t.replace('{a}',a).replace('{b}',b), type:'kalk', tall:[a,b], svar:f.regn==='+'?a+b:f.regn==='-'?a-b:a*b};
   },
   engelsk: function(niv){
     var o = en(ORD), andre = stokk(ORD.filter(function(x){return x!==o})).slice(0,3), v = rnd(2), korte = ORD.filter(function(x){return x.en.length<=5});
@@ -341,8 +353,9 @@ var LAG = {
   hjelp: function(niv){return situasjon(en(HJELP), niv)},
   hverdag: function(niv){return situasjon(en(HVERDAG), niv)},
   rekkefolge: function(niv){ var steg = en(KLE_PAA[niv]);
+    var plagg = steg.map(function(t){return {id:TING[t.slice(t.indexOf(' ')+1)], navn:t.slice(t.indexOf(' ')+1)}});
     return {sp:'Du skal kle på deg. Trykk på det du tar på først, og så videre.', hint:'Dra klærne bort på figuren, eller trykk på dem.', type:'kle', modus:'rekke', steg:steg,
-      plagg:stokk(steg.map(function(t){return {id:TING[t.slice(t.indexOf(' ')+1)], navn:t.slice(t.indexOf(' ')+1)}}))} },
+      grunn:kleGrunn(plagg.map(function(p){return p.id})), plagg:stokk(plagg)} },
   klaer: function(niv){
     /* Figuren er nesten påkledd og mangler noe: alle plaggene som mangler må på, og ingen av de som ikke passer. Høyere nivå gir flere plagg å velge mellom. */
     var k = en(KLAER), n = Math.min(niv+1, k.ok.length), ok = stokk(k.ok).slice(0,n), feil = stokk(k.feil).slice(0, niv+1);
@@ -486,7 +499,7 @@ function vis(o, stasjon, ferdig, feil){
         var vakt = new MutationObserver(function(){ if(!document.body.contains(el)){ vakt.disconnect(); window.removeEventListener('pointermove', flytt); window.removeEventListener('pointerup', slipp); window.removeEventListener('pointercancel', slipp); if(spok) spok.remove() } });
         vakt.observe(document.getElementById('lag'), {childList:true});
       }
-      var meld = el.querySelector('#tmeld'), lagt = [], skrevet = [], disp = '0', forrigeTall = null, op = null, nytt = true;
+      var meld = el.querySelector('#tmeld'), lagt = [], skrevet = [], disp = '0', forrigeTall = null, op = null, nytt = true, regnet = null;   // regnet = de to tallene i det siste stykket kalkulatoren regnet ut
       function knapp(i){return el.querySelector('[data-i="'+i+'"]')}
       function lesAlt(){
         var l = o.lyd.map(function(t){return {t:t}}); if(o.les2) l.push({t:o.les2, eng:true});
@@ -533,11 +546,17 @@ function vis(o, stasjon, ferdig, feil){
               skrevet.forEach(function(x){x.k.style.visibility = ''}); skrevet = []; setTimeout(tegnOrd, 500); return galt(FEILMELD.nesten) } }
           return }
         if(o.type==='kalk'){
-          if('sjekk' in d){ if(parseFloat(disp) === o.svar) return riktig(); return galt(FEILMELD.kalk) }
+          if('sjekk' in d){
+            /* Svaret må komme fra kalkulatoren: eleven må ha tastet inn de to tallene i oppgaven og regnet dem ut.
+               Å bare skrive svaret i ruta holder ikke. Det gir et tips, men teller ikke som feil. */
+            var brukt = regnet && o.tall && regnet.slice().sort().join() === o.tall.slice().sort().join();
+            if(parseFloat(disp) === o.svar && (brukt || !o.tall)) return riktig();
+            if(parseFloat(disp) === o.svar){ meld.textContent = 'Bruk kalkulatoren. Tast inn stykket og trykk =.'; return spill([{t:'Bruk kalkulatoren. Regn ut stykket.'}]) }
+            return galt(FEILMELD.kalk) }
           if(d.k){ var t = d.k, regn = function(a,b,p){return p==='+'?a+b:p==='−'?a-b:p==='×'?a*b:b===0?0:a/b};
-            if(/\d/.test(t)){ disp = nytt || disp==='0' ? t : (disp.length<9 ? disp+t : disp); nytt = false }
-            else if(t==='C'){ disp = '0'; forrigeTall = null; op = null; nytt = true }
-            else { if(op && !nytt) disp = String(Math.round(regn(forrigeTall, parseFloat(disp), op)*100)/100);
+            if(/\d/.test(t)){ if(nytt) regnet = null; disp = nytt || disp==='0' ? t : (disp.length<9 ? disp+t : disp); nytt = false }
+            else if(t==='C'){ disp = '0'; forrigeTall = null; op = null; nytt = true; regnet = null }
+            else { if(op && !nytt){ regnet = [forrigeTall, parseFloat(disp)]; disp = String(Math.round(regn(forrigeTall, parseFloat(disp), op)*100)/100) }
               forrigeTall = parseFloat(disp); op = t==='=' ? null : t; nytt = true }
             el.querySelector('#kdisp').textContent = disp.replace('.',','); meld.textContent = '' }
         }

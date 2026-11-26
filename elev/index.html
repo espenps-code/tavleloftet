@@ -78,6 +78,7 @@
 <script>
 (function(){
   'use strict';
+  try { sessionStorage.removeItem('tl-prove'); } catch (e) {}   // en ekte innlogging avslutter «Prøv en verden» i denne fanen
   /* Verdener som kan logges inn i. Ny verden: legg den til her (mappe, navn, emoji og farge). */
   var VERDENER = {
     dinoparken: { navn: 'Dinoparken', emoji: '🦕', farge: '#5fd35a', farge2: '#e8c24a' },

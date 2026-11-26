@@ -26,7 +26,8 @@
 (function () {
   'use strict';
   var TL = window.TL;
-  if (!TL || !TL.verden || !(TL.kode || TL.testmodus)) return;     // ikke logget inn (sendes til logginn) eller ukjent verden
+  if (!TL || !TL.verden || !(TL.kode || TL.testmodus)) return;
+  if (TL.prove) return;                                             // «Prøv en verden»: ingen åpningstid for den som bare titter     // ikke logget inn (sendes til logginn) eller ukjent verden
   // Vises siden inne i verdenen (Lyslaget-basen åpner Verkstedet osv. i en ramme), teller den ytre siden tiden. Ellers ville tiden gått dobbelt.
   try { if (window.top !== window.self && window.parent.TLTid && window.parent.TL && window.parent.TL.verden === TL.verden) return; } catch (e) {}
 

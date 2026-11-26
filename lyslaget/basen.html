@@ -332,7 +332,7 @@ var S = null, apen = null, DEMO = false;
 function lagre(){if(DEMO) return; try{localStorage.setItem(NOKKEL, JSON.stringify(S))}catch(e){}}
 function fyllUt(t){robotomr().forEach(function(o){if(t.omr[o.id]==null) t.omr[o.id]=0}); return t}   // nye områder får plass i gamle lagringer
 function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;return t&&t.v===1?fyllUt(t):null}catch(e){return null}}
-function nyttSpill(){S = fyllUt({v:1, skruer:OPPSETT.startskruer, hk:1, omr:{}, form:{}, oppg:0, lost:{}}); sjekkJobber(); lagre()}
+function nyttSpill(){S = fyllUt({v:1, skruer:OPPSETT.startskruer+(window.TL&&TL.proveStart||0), hk:1, omr:{}, form:{}, oppg:0, lost:{}}); sjekkJobber(); lagre()}
 /* ?demo i adressen viser basen fullt utbygd uten å lagre noe. ?demo=3 viser nivå 3. */
 function demoSpill(d){
   DEMO = true; nyttSpill(); S.hk = klem(d||5,1,5); S.skruer = 999;

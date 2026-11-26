@@ -395,7 +395,7 @@ const ENC_PAGES = { 1:'trompetenga.html', 2:'panserhaugen.html', 3:'urfugl-lunde
 const dayStr = (d=new Date()) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const yesterday = () => { const d=new Date(); d.setDate(d.getDate()-1); return dayStr(d); };
 // Start: Trompetenga eies, og det første egget er nesten klart (rask første klekking)
-let state = { coins:CONFIG.startCoins, owned:[1], dinos:{}, eggs:{ 1:{ warm:CONFIG.eggWarm-1, day:yesterday() } } };
+let state = { coins:CONFIG.startCoins+(window.TL&&TL.proveStart||0), owned:[1], dinos:{}, eggs:{ 1:{ warm:CONFIG.eggWarm-1, day:yesterday() } } };
 try { const raw = localStorage.getItem(SAVE_KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); } catch(e){}
 const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e){} };
 

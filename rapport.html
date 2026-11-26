@@ -162,6 +162,8 @@ function rens(t){ return String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 function fmtVk(k){ return k.slice(0,5) + '-' + k.slice(5); }
 function mld(t){ $('mld').textContent = t || ''; }
 
+/* Åpningstid: valgene må stå før «Start», for eksempelvisningen tegner rapporten med en gang. */
+var TID_STANDARD = 30, TID_VALG = [10, 15, 20, 30, 45, 60, 90, 0];
 /* ================= Start ================= */
 if (demo) { vis('demoMerke', true); vis('leggTil', false); lagDemo(); fyllVelger('DEMO'); }
 else {
@@ -322,7 +324,6 @@ function mangler(r){
 }
 
 /* ================= Åpningstid (styres her, virker i verdenen innen ett minutt) ================= */
-var TID_STANDARD = 30, TID_VALG = [10, 15, 20, 30, 45, 60, 90, 0];
 function tidNaa(el){
   var i = el.innst || {}, idag = F.idag();
   return { tid: typeof i.tid === 'number' ? i.tid : TID_STANDARD, ekstra: i.ekstraDag === idag ? (i.ekstraMin || 0) : 0, brukt: i.bruktDag === idag ? (i.bruktMin || 0) : 0 };

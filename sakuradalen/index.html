@@ -311,7 +311,7 @@ var NOKKEL = 'sakuradalen-spill';
 function lagre(){try{localStorage.setItem(NOKKEL, JSON.stringify(S))}catch(e){}}
 function hent(){try{var t=localStorage.getItem(NOKKEL);t=t?JSON.parse(t):null;if(t&&t.bokser&&'lakk' in t.bokser)t.bokser={papp:t.bokser.tre||0,tre:t.bokser.lakk||0,gull:t.bokser.gull||0};return t&&t.v===1?t:null}catch(e){return null}}
 function nyttSpill(navn, f1, f2){
-  S = {v:1, navn:navn||'Sakuradalen', f1:f1||FARGER[0], f2:f2||FARGER[6], mynter:OPPSETT.startmynter, oppg:0, fanget:0, dyster:0,
+  S = {v:1, navn:navn||'Sakuradalen', f1:f1||FARGER[0], f2:f2||FARGER[6], mynter:OPPSETT.startmynter+(window.TL&&TL.proveStart||0), oppg:0, fanget:0, dyster:0,
        anlegg:{eng:1, skog:0, strand:0, dojo:1, verksted:1, arena:0, trofe:0},
        bokser:{papp:OPPSETT.startbokser, tre:0, gull:0},
        monstre:{},        // id -> {n: hvor mange fanget, st:[nivå på de fire egenskapene], tp:[treningspoeng mot neste nivå]}

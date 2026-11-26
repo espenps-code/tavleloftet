@@ -129,7 +129,7 @@ function lagreLæring(s){ try{ localStorage.setItem(LKEY, JSON.stringify(s)); }c
 function lesPark(){
   let s=null; try{ s=JSON.parse(localStorage.getItem(PARK.key)); }catch(e){}
   if(!s){ const y=new Date(); y.setDate(y.getDate()-1);
-    s={ coins:PARK.startCoins, owned:[1], dinos:{}, eggs:{ 1:{ warm:PARK.eggWarm-1, day:dayStr(y) } } }; }
+    s={ coins:PARK.startCoins+(window.TL&&TL.proveStart||0), owned:[1], dinos:{}, eggs:{ 1:{ warm:PARK.eggWarm-1, day:dayStr(y) } } }; }
   s.dinos=s.dinos||{}; s.eggs=s.eggs||{};
   return s;
 }
@@ -912,7 +912,11 @@ const jsEsc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<'
 function lesJegSer(){ let s=null; try{ s=JSON.parse(localStorage.getItem(JEGSER.nøkkel)); }catch(e){} s=s||{}; s.ferdig=s.ferdig||[]; return s; }
 function lagreJegSer(s){ try{ localStorage.setItem(JEGSER.nøkkel, JSON.stringify(s)); }catch(e){} }
 function jegSerStatus(){ const s=lesJegSer(); return { godkjent:Math.min(s.ferdig.length,JEGSER.antallBilder), av:JEGSER.antallBilder, venter:!!(s.aktivt&&s.aktivt.sendt) }; }
-const jsGyldig = t => /^jeg\s+ser\s+(?:\d+\s+)?\p{L}\S+/iu.test(String(t||'').trim());
+/* En setning er ferdig når den begynner med «Jeg ser», har minst ett ord til og slutter med punktum
+   (utropstegn og spørsmålstegn godtas også). Uten tegn til slutt er den «nesten», og eleven får et tips. */
+const jsNesten = t => /^jeg\s+ser\s+(?:\d+\s+)?\p{L}\S+/iu.test(String(t||'').trim());
+const jsGyldig = t => jsNesten(t) && /[.!?]$/.test(String(t||'').trim());
+const jsManglerPunktum = t => jsNesten(t) && !jsGyldig(t);
 const jsBilde = n => `bilder/jegser/jegser-${pad(n)}.webp`;
 
 const HOLDTID = 1300;   // så lenge (ms) må den voksne holde knappen inne. Hindrer at en ivrig elev trykker seg videre.
@@ -959,19 +963,26 @@ function jsSkriv(){
   $d('doFot').innerHTML=`<div class="do-melding bom" id="jsMld"></div><div class="do-valg"><button class="do-knapp go" id="jsFerdig">Ferdig – vis til en voksen ▶</button></div>`;
   $d('jsBilde').onclick=()=>jsStortBilde(a.bilde);
   const felt=[...boks.querySelectorAll('.do-jsinn')];
-  const merk=inn=>{ const li=inn.parentNode; li.classList.toggle('ok',jsGyldig(inn.value)); li.classList.remove('feil'); };
+  const merk=inn=>{ const li=inn.parentNode; li.classList.toggle('ok',jsGyldig(inn.value)); li.classList.remove('feil'); if(!jsManglerPunktum(inn.value)) li.classList.remove('punktum'); };
+  // Tips om punktum: kommer først når eleven går ut av feltet, ikke mens eleven skriver
+  const tips=inn=>{ const mangler=jsManglerPunktum(inn.value); inn.parentNode.classList.toggle('punktum',mangler); if(mangler) $d('jsMld').innerHTML=`<b>Husk punktum</b> til slutt i setning ${+inn.dataset.i+1}.`; };
   const ta=()=>{ const s2=lesJegSer(); if(!s2.aktivt) return; s2.aktivt.setn=felt.map(f=>f.value.trim().toLowerCase()==='jeg ser'?'':f.value.trim()); lagreJegSer(s2); };
   felt.forEach((inn,i)=>{
     merk(inn);
     inn.addEventListener('input',()=>{ merk(inn); $d('jsMld').textContent=''; });
     inn.addEventListener('change',ta);       // lagres når eleven går videre til neste felt
+    inn.addEventListener('blur',()=>tips(inn));
     inn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); ta(); if(felt[i+1]){ felt[i+1].focus(); const v=felt[i+1].value; felt[i+1].setSelectionRange(v.length,v.length); } else inn.blur(); } });
   });
   $d('jsFerdig').onclick=()=>{
     ta();
     const tekster=felt.map(f=>f.value.trim().replace(/\s+/g,' '));
-    let feil=0; felt.forEach((f,i)=>{ const like=tekster.findIndex(t=>t.toLowerCase()===tekster[i].toLowerCase())!==i; const ok=jsGyldig(tekster[i]) && !like; f.parentNode.classList.toggle('feil',!ok); if(!ok) feil++; });
-    if(feil){ $d('jsMld').innerHTML=`<b>Ikke helt ferdig.</b> Alle fem setningene må begynne med «Jeg ser» og være ulike.`; Lyd.spill([k('js-mangler')]); return; }
+    let feil=0, barePunktum=0;
+    felt.forEach((f,i)=>{ const like=tekster.findIndex(t=>t.toLowerCase()===tekster[i].toLowerCase())!==i; const ok=jsGyldig(tekster[i]) && !like, punktum=!like && jsManglerPunktum(tekster[i]);
+      f.parentNode.classList.toggle('feil',!ok && !punktum); f.parentNode.classList.toggle('punktum',punktum); if(!ok) feil++; if(punktum) barePunktum++; });
+    // Mangler det bare punktum, får eleven et tips om det (uten lydklippet, som handler om «Jeg ser»)
+    if(feil && feil===barePunktum){ $d('jsMld').innerHTML=`<b>Nesten!</b> Husk punktum til slutt i ${feil===1?'setningen som er merket.':'setningene som er merket.'}`; return; }
+    if(feil){ $d('jsMld').innerHTML=`<b>Ikke helt ferdig.</b> Alle fem setningene må begynne med «Jeg ser», slutte med punktum og være ulike.`; Lyd.spill([k('js-mangler')]); return; }
     const s2=lesJegSer(); s2.aktivt.setn=tekster; s2.aktivt.sendt=true; lagreJegSer(s2);
     Lyd.pip(true); jsTilVoksen(true);
   };
@@ -1177,6 +1188,9 @@ const stil=document.createElement('style'); stil.textContent=css+`
 .do-jsok{position:absolute;right:12px;top:50%;transform:translateY(-50%);font:700 22px Fredoka,sans-serif;color:#1d7a35}
 .do-jsliste li.ok .do-jsok::before{content:'✓'}
 .do-jsliste li.feil .do-jsinn{border-color:#c2453a;background:#fff3ee}
+.do-jsliste li.punktum .do-jsinn{border-color:#c77d0a;background:#fff8e6}
+.do-jsliste li.punktum .do-jsok{color:#8a5500}
+.do-jsliste li.punktum .do-jsok::before{content:'.'}
 .do-jsliste.les li::marker{color:#2a8c78}
 .do-jsliste.les li{font:400 22px 'Atkinson Hyperlegible',system-ui,sans-serif;line-height:1.35;border-bottom:2px dashed #d9d2bf;padding:4px 2px 8px}
 .do-jsstor{position:fixed;inset:0;z-index:70;background:rgba(20,30,25,.94);display:grid;place-items:center;padding:10px;cursor:zoom-out}

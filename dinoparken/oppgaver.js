@@ -129,7 +129,7 @@ function lagreLæring(s){ try{ localStorage.setItem(LKEY, JSON.stringify(s)); }c
 function lesPark(){
   let s=null; try{ s=JSON.parse(localStorage.getItem(PARK.key)); }catch(e){}
   if(!s){ const y=new Date(); y.setDate(y.getDate()-1);
-    s={ coins:PARK.startCoins, owned:[1], dinos:{}, eggs:{ 1:{ warm:PARK.eggWarm-1, day:dayStr(y) } } }; }
+    s={ coins:PARK.startCoins+(window.TL&&TL.proveStart||0), owned:[1], dinos:{}, eggs:{ 1:{ warm:PARK.eggWarm-1, day:dayStr(y) } } }; }
   s.dinos=s.dinos||{}; s.eggs=s.eggs||{};
   return s;
 }
