@@ -92,11 +92,14 @@ body.dark .kicker{color:#F4D9A8}
 #word{font-family:Andika,sans-serif;line-height:1.05;color:var(--word);text-align:center;word-break:break-word}
 #word .l{opacity:0;transition:opacity .12s}#word .l.on{opacity:1}
 #word.pop{animation:pop .18s ease-out}
+.go{display:flex;flex-direction:column;align-items:center;gap:16px;font-family:'Atkinson Hyperlegible',Verdana,sans-serif}
+.go button{height:96px;padding:0 48px;border:0;border-radius:28px;background:var(--accent);color:#fff;display:flex;align-items:center;gap:16px;font:600 44px Fredoka,sans-serif;box-shadow:0 7px 0 var(--accent-d)}
+.go button:active{transform:translateY(4px);box-shadow:0 3px 0 var(--accent-d)}
+.go span{font-size:20px;color:var(--muted)}
+#word.count{color:#E8641E}
 @keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:scale(1);opacity:1}}
 .buddy{position:absolute;left:40px;bottom:30px;display:flex;align-items:flex-end}
 .buddy img{width:min(260px,26vh);height:min(260px,26vh)}
-#bubble{margin-bottom:17vh;margin-left:-20px;background:var(--card);border-radius:20px 20px 20px 4px;padding:12px 18px;font-weight:600;font-size:20px;box-shadow:0 3px 0 var(--shadow);transition:opacity .3s,transform .3s}
-#bubble.hide{opacity:0;transform:translateY(8px)}
 .ctrl{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);display:flex;gap:12px;background:var(--card);padding:10px;border-radius:22px;box-shadow:0 3px 0 var(--shadow)}
 .ctrl button{width:60px;height:60px;border-radius:16px;border:0;background:#FFF1E4;color:#2B2350;display:grid;place-items:center}
 .ctrl #pauseBtn{width:84px;background:var(--accent);color:#fff}
@@ -206,7 +209,7 @@ body.dark .kicker{color:#F4D9A8}
 <div id="lesing" class="screen">
   <div class="top"><span class="f">Lesetrim</span><div class="bar"><div id="prog"></div></div><span id="count"></span></div>
   <div class="stage" id="stage"><div id="word"></div></div>
-  <div class="buddy"><img class="mimg" id="buddyImg" alt=""><div id="bubble" class="f hide"></div></div>
+  <div class="buddy"><img class="mimg" id="buddyImg" alt=""></div>
   <div class="ctrl">
     <button id="prevBtn" aria-label="Forrige ord"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
     <button id="pauseBtn" aria-label="Pause"></button>
@@ -256,7 +259,6 @@ const LIST_OPTS = [
 const RANGES = [{id:'0-50',name:'De 50 første'},{id:'0-100',name:'De 100 første'},{id:'100-200',name:'101–200'},{id:'200-9999',name:'201 og utover'},{id:'all',name:'Alle'}];
 const TEMPOS = [{s:3,name:'Snegle'},{s:2,name:'Rolig'},{s:1,name:'Middels'},{s:0.5,name:'Lyn'}];
 const MODES = [{id:'auto',name:'Automatisk',sub:'Ordene kommer av seg selv'},{id:'manual',name:'Selvstyrt',sub:'Trykk for neste ord'},{id:'lyd',name:'Lydering',sub:'Bokstav for bokstav'}];
-const PRAISE = ['Du leser kjempefint!','Dette klarer du!','For et tempo!','Fortsett sånn!','Jeg er så stolt av deg!','Wow, du er god!','Bare ett ord til …','Du er en lesehelt!'];
 const fmtS = s => (s+'').replace('.',',');
 
 /* ---------- Tilstand ---------- */
@@ -307,7 +309,7 @@ function getWords(shuffle=true){
 
 
 /* ---------- Avspilling ---------- */
-let words=[], idx=0, running=false, paused=false, gen=0, t0=0, sinceBubble=0;
+let words=[], idx=0, running=false, paused=false, waiting=false, gen=0, t0=0;
 const wait=(ms,g)=>new Promise(r=>setTimeout(()=>{ if(g===gen) r(); },ms));
 const W=$('word');
 const PAUSE_ICON='<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
@@ -325,18 +327,11 @@ function status(){
 function showWord(w){
   W.textContent=w; W.classList.remove('pop'); void W.offsetWidth; W.classList.add('pop');
 }
-function bubble(){
-  sinceBubble++;
-  if (sinceBubble>=8){ sinceBubble=0;
-    const b=$('bubble'); b.textContent=PRAISE[Math.floor(Math.random()*PRAISE.length)]; b.classList.remove('hide');
-    setTimeout(()=>b.classList.add('hide'),2600);
-  }
-}
 
 async function play(){
   const g=++gen;
   while(running && !paused && idx<words.length){
-    const w=words[idx]; status(); bubble();
+    const w=words[idx]; status();
     const showMs=TEMPOS[S.tempo].s*1000, pauseMs=$('pause').value*1000;
     if (S.mode==='lyd'){
       W.classList.remove('pop');
@@ -356,26 +351,40 @@ async function play(){
 function start(){
   words=getWords();
   if(!words.length){ $('customText').focus(); $('customText').placeholder='Skriv inn noen ord først 🙂'; return; }
-  idx=0; running=true; paused=false; t0=Date.now(); sinceBubble=0;
+  idx=0; running=true; paused=false; t0=Date.now();
   W.style.fontFamily=$('font').value; W.style.fontSize=`min(${$('size').value}px, 18vw)`;
-  $('buddyImg').src=MON[S.mon][1]; $('bubble').classList.add('hide');
-  show('lesing'); setPauseBtn(); play();
+  $('buddyImg').src=MON[S.mon][1];
+  waiting=true; gen++; status();
+  W.classList.remove('pop','count');
+  W.innerHTML='<div class="go"><button id="goBtn" type="button"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>Start</button><span>eller trykk mellomrom</span></div>';
+  $('goBtn').onclick=e=>{ e.stopPropagation(); go(); };
+  show('lesing'); paused=true; setPauseBtn(); paused=false;
+  $('goBtn').focus();
+}
+async function go(){
+  if(!waiting) return;
+  waiting=false; const g=++gen;
+  W.classList.add('count');
+  for(const n of ['3','2','1']){ showWord(n); await wait(700,g); }
+  W.classList.remove('count');
+  t0=Date.now(); setPauseBtn(); play();
 }
 function togglePause(){
   if(!running) return;
+  if(waiting){ go(); return; }
   if(S.mode==='manual'){ next(); return; }
   paused=!paused; gen++; setPauseBtn();
   if(!paused) play(); else { showWord(words[idx]); status(); }
 }
 function jump(d){
-  if(!running) return;
+  if(!running || waiting) return;
   gen++; idx=Math.max(0,idx+d);
   if(idx>=words.length){ finish(); return; }
-  if(paused || S.mode==='manual'){ showWord(words[idx]); status(); bubble(); }
+  if(paused || S.mode==='manual'){ showWord(words[idx]); status(); }
   else play();
 }
 const next=()=>jump(1), prev=()=>jump(-1);
-function stop(){ gen++; running=false; paused=false; if(document.fullscreenElement) document.exitFullscreen(); show('oppsett'); }
+function stop(){ gen++; running=false; paused=false; waiting=false; if(document.fullscreenElement) document.exitFullscreen(); show('oppsett'); }
 function finish(){
   gen++; running=false; paused=false;
   const sec=Math.round((Date.now()-t0)/1000);
@@ -394,7 +403,7 @@ function finish(){
 $('startBtn').onclick=start;
 $('pauseBtn').onclick=togglePause;
 $('nextBtn').onclick=next; $('prevBtn').onclick=prev;
-$('stage').onclick=()=> S.mode==='manual'?next():togglePause();
+$('stage').onclick=()=> waiting?go():(S.mode==='manual'?next():togglePause());
 $('stopBtn').onclick=stop;
 $('againBtn').onclick=start;
 $('newBtn').onclick=()=>show('oppsett');
