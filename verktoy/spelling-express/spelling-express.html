@@ -196,6 +196,28 @@ img.ico.l{width:30px;height:30px}
 .opt.drag{position:fixed;z-index:50;pointer-events:none;transform:scale(1.1) rotate(-3deg);box-shadow:0 14px 24px rgba(0,0,0,.25)}
 .hintrow{display:flex;justify-content:center;gap:10px;align-items:center;min-height:30px}
 .hintno{font-weight:900;color:var(--purple);font-size:18px}
+/* Lave skjermer (iPad i liggende format): mindre oppgaveboks, så det blir plass til toget over */
+@media (max-height:860px) and (min-width:700px){
+  #task{padding:10px 16px 10px;bottom:calc(8px + env(safe-area-inset-bottom));border-radius:22px}
+  .thead{min-height:38px;margin:0}
+  .thead .lbl{font-size:12px}
+  .thead .no{font-size:clamp(34px,4.6vw,48px);margin:0 0 2px}
+  .slots{margin:4px 0 8px;min-height:54px;gap:6px}
+  .slot{width:46px;height:52px;border-radius:12px;font-size:28px}
+  .slot.gap{width:18px}
+  .tray{min-height:58px;gap:8px}
+  .tile{width:52px;height:54px;border-radius:12px;font-size:30px}
+  .kbd{gap:5px}
+  .kbd .r{gap:5px}
+  .key{height:44px;font-size:24px;border-radius:11px}
+  .hint{min-height:20px;margin-top:3px;font-size:15px}
+  .match{gap:8px;margin:0}
+  .wcard{height:116px}
+  .sentence{font-size:clamp(26px,3.6vw,36px);margin:2px 0}
+  .hintrow{min-height:26px}
+  .opts{margin:6px 0 0;gap:10px}
+  .opt{padding:9px 20px;font-size:25px}
+}
 .exitbtn{position:fixed;left:14px;top:calc(64px + env(safe-area-inset-top));z-index:6}
 
 /* ---------- modaler ---------- */
@@ -888,9 +910,21 @@ const easeOutBack=t=>{ const c1=1.4,c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math
 function anim(dur,fn,done){ anims.push({t:0,dur,fn,done}); }
 
 /* kamera */
-const look=new THREE.Vector3(0,2,0); let camDist=30; let camMode='idle'; let idleT=0;
+const look=new THREE.Vector3(0,2,0); let camDist=30; let camMode='idle'; let idleT=0; let camShift=0;
+const CAM_TAN=Math.tan(THREE.MathUtils.degToRad(20)), CAM_LEN=Math.hypot(.16,.36,.95);
 function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 addEventListener('resize',resize); resize();
+// iPad melder noen ganger ny størrelse litt etter at skjermen er snudd
+addEventListener('orientationchange',()=>{ setTimeout(resize,250); setTimeout(resize,700); });
+if(window.visualViewport) visualViewport.addEventListener('resize',resize);
+// Det ledige feltet mellom topplinja og oppgaveboksen. Kameraet sikter midt i dette feltet,
+// så toget ikke havner bak boksen på lave skjermer (iPad i liggende format).
+function freeArea(){
+  const H=innerHeight, t=$('task'), top=Math.min(60,H*.1);
+  let bottom=H;
+  if(!t.classList.contains('hidden')) bottom=Math.min(H,Math.max(top+90,t.offsetTop));
+  return {top,bottom};
+}
 
 const clock=new THREE.Clock(); let puffT=0;
 function loop(){
@@ -911,7 +945,7 @@ function loop(){
   for(let i=anims.length-1;i>=0;i--){ const a=anims[i]; a.t+=dt; const t=Math.min(1,a.t/a.dur); a.fn(t); if(t>=1){ anims.splice(i,1); a.done&&a.done(); } }
   // kamera
   const aspect=camera.aspect;
-  let tgt, want;
+  let tgt, want, shiftWant=0;
   if(camMode==='idle'||!locoObj){
     idleT+=dt*.05; tgt=new THREE.Vector3(30+Math.sin(idleT)*40,6,0); want=48;
   } else {
@@ -923,15 +957,24 @@ function loop(){
     if(camMode==='fjell'){ right=Math.max(right,front+10); }
     if(camMode==='ende'){ left=Math.min(left,ENDE.x-ENDE.len/2-2); right=Math.max(right,ENDE.x+ENDE.len/2+2); }
     const span=right-left;
-    tgt=new THREE.Vector3((left+right)/2, trackH((left+right)/2)+1.5, 0);
-    want=Math.max(26,(span*1.05)/Math.max(.7,aspect)+9)*(aspect<1?1.5:1);
-    want=Math.min(want,95);
+    // høydeforskjellen på sporet i utsnittet (bakken opp til toppen)
+    let lo=Infinity, hi=-Infinity;
+    for(let i=0;i<=8;i++){ const y=trackH(left+span*i/8); if(y<lo) lo=y; if(y>hi) hi=y; }
+    const fa=freeArea(), H=innerHeight;
+    const frac=Math.max(.18,(fa.bottom-fa.top)/H);          // andelen av skjermen som er ledig
+    const tall=(camMode==='ende'?13:10.5)+(hi-lo);         // hvor høyt utsnitt som må få plass
+    tgt=new THREE.Vector3((left+right)/2, (lo+hi)/2+3, 0);
+    const dW=span*1.14/(2*CAM_TAN*aspect), dH=tall/(2*CAM_TAN*frac);
+    want=Math.min(Math.max(26,dW,dH)/CAM_LEN,95);
+    shiftWant=H/2-(fa.top+fa.bottom)/2;                    // flytt bildet opp i det ledige feltet
   }
   camDist+=(want-camDist)*Math.min(1,dt*1.5);
   look.lerp(tgt,Math.min(1,dt*2));
-  const lowerUI = camMode!=='idle' ? (innerHeight>innerWidth?-3:-4.5) : -1;
+  camShift+=(shiftWant-camShift)*Math.min(1,dt*3);
+  const lowerUI = camMode!=='idle'&&locoObj ? 0 : -1;
   camera.position.set(look.x+camDist*.16, look.y+camDist*.36, look.z+camDist*.95);
   camera.lookAt(look.x, look.y+lowerUI, look.z);
+  if(Math.abs(camShift)>.5) camera.setViewOffset(innerWidth,innerHeight,0,camShift,innerWidth,innerHeight); else if(camera.view) camera.clearViewOffset();
   sun.position.set(look.x+25,look.y+40,20); sun.target.position.set(look.x,look.y,0);
   renderer.render(scene,camera);
   requestAnimationFrame(loop);
